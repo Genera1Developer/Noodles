@@ -1,86 +1,12 @@
 class DDoS {
  constructor() {
-  this.logArea = document.createElement('textarea');
-  this.logArea.readOnly = true;
-  this.logArea.style.width = '100%';
-  this.logArea.style.height = '200px';
-  this.logArea.style.backgroundColor = '#1e1e1e';
-  this.logArea.style.color = '#9cdcfe';
-  this.logArea.style.border = '1px solid #4ec9b0';
-  this.logArea.style.padding = '5px';
-  this.logArea.style.fontFamily = 'Consolas, monospace';
-  this.logArea.style.fontSize = '14px';
-  this.logArea.style.resize = 'vertical';
+  this.logArea = this.createLogArea();
+  this.targetInput = this.createTargetInput();
+  this.attackTypeSelect = this.createAttackTypeSelect();
+  this.startButton = this.createStartButton();
+  this.customCodeArea = this.createCustomCodeArea();
 
-  this.targetInput = document.createElement('input');
-  this.targetInput.type = 'text';
-  this.targetInput.placeholder = 'Target URL (.onion or normal)';
-  this.targetInput.style.width = 'calc(100% - 16px)';
-  this.targetInput.style.padding = '8px';
-  this.targetInput.style.marginBottom = '10px';
-  this.targetInput.style.backgroundColor = '#252526';
-  this.targetInput.style.color = '#9cdcfe';
-  this.targetInput.style.border = '1px solid #4ec9b0';
-  this.targetInput.style.borderRadius = '4px';
-
-  this.attackTypeSelect = document.createElement('select');
-  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet', 'Zero-Day', 'SQL Inject', 'XSS'].forEach(option => {
-   const opt = document.createElement('option');
-   opt.value = option.toLowerCase().replace(' ', '_');
-   opt.textContent = option;
-   this.attackTypeSelect.appendChild(opt);
-  });
-  this.attackTypeSelect.style.width = '100%';
-  this.attackTypeSelect.style.padding = '8px';
-  this.attackTypeSelect.style.marginBottom = '10px';
-  this.attackTypeSelect.style.backgroundColor = '#252526';
-  this.attackTypeSelect.style.color = '#9cdcfe';
-  this.attackTypeSelect.style.border = '1px solid #4ec9b0';
-  this.attackTypeSelect.style.borderRadius = '4px';
-
-  this.startButton = document.createElement('button');
-  this.startButton.textContent = 'Initiate Attack';
-  this.startButton.style.width = '100%';
-  this.startButton.style.padding = '10px';
-  this.startButton.style.backgroundColor = '#e53935';
-  this.startButton.style.color = '#fff';
-  this.startButton.style.border = 'none';
-  this.startButton.style.borderRadius = '4px';
-  this.startButton.style.cursor = 'pointer';
-  this.startButton.style.transition = 'background-color 0.3s ease';
-  this.startButton.addEventListener('mouseover', () => this.startButton.style.backgroundColor = '#b71c1c');
-  this.startButton.addEventListener('mouseout', () => this.startButton.style.backgroundColor = '#e53935');
-  this.startButton.addEventListener('click', () => this.start());
-
-  this.customCodeArea = document.createElement('textarea');
-  this.customCodeArea.placeholder = 'Enter custom JavaScript code for attack';
-  this.customCodeArea.style.width = '100%';
-  this.customCodeArea.style.height = '100px';
-  this.customCodeArea.style.padding = '8px';
-  this.customCodeArea.style.marginBottom = '10px';
-  this.customCodeArea.style.backgroundColor = '#252526';
-  this.customCodeArea.style.color = '#9cdcfe';
-  this.customCodeArea.style.border = '1px solid #4ec9b0';
-  this.customCodeArea.style.borderRadius = '4px';
-  this.customCodeArea.style.fontFamily = 'Consolas, monospace';
-  this.customCodeArea.style.fontSize = '14px';
-  this.customCodeArea.style.display = 'none';
-
-  this.container = document.createElement('div');
-  this.container.style.width = '600px';
-  this.container.style.padding = '20px';
-  this.container.style.backgroundColor = '#2d2d30';
-  this.container.style.color = '#9cdcfe';
-  this.container.style.fontFamily = 'Consolas, monospace';
-  this.container.style.position = 'fixed';
-  this.container.style.top = '50%';
-  this.container.style.left = '50%';
-  this.container.style.transform = 'translate(-50%, -50%)';
-  this.container.style.zIndex = '9999';
-  this.container.style.border = '2px solid #4ec9b0';
-  this.container.style.borderRadius = '8px';
-  this.container.style.boxShadow = '0 0 20px #4ec9b0';
-
+  this.container = this.createContainer();
   this.container.appendChild(this.targetInput);
   this.container.appendChild(this.attackTypeSelect);
   this.container.appendChild(this.customCodeArea);
@@ -88,13 +14,7 @@ class DDoS {
   this.container.appendChild(this.logArea);
   document.body.appendChild(this.container);
 
-  this.attackTypeSelect.addEventListener('change', () => {
-   if (this.attackTypeSelect.value === 'custom') {
-    this.customCodeArea.style.display = 'block';
-   } else {
-    this.customCodeArea.style.display = 'none';
-   }
-  });
+  this.attackTypeSelect.addEventListener('change', () => this.toggleCustomCodeArea());
 
   this.scriptInjection = `
    setInterval(() => {
@@ -117,6 +37,113 @@ class DDoS {
    'http://proxy.example.com:8080',
    'https://another.proxy.com:3128'
   ];
+
+  // Initialize UI based on attack type
+  this.toggleCustomCodeArea();
+ }
+
+ createLogArea() {
+  const logArea = document.createElement('textarea');
+  logArea.readOnly = true;
+  logArea.style.width = '100%';
+  logArea.style.height = '200px';
+  logArea.style.backgroundColor = '#1e1e1e';
+  logArea.style.color = '#9cdcfe';
+  logArea.style.border = '1px solid #4ec9b0';
+  logArea.style.padding = '5px';
+  logArea.style.fontFamily = 'Consolas, monospace';
+  logArea.style.fontSize = '14px';
+  logArea.style.resize = 'vertical';
+  return logArea;
+ }
+
+ createTargetInput() {
+  const targetInput = document.createElement('input');
+  targetInput.type = 'text';
+  targetInput.placeholder = 'Target URL (.onion or normal)';
+  targetInput.style.width = 'calc(100% - 16px)';
+  targetInput.style.padding = '8px';
+  targetInput.style.marginBottom = '10px';
+  targetInput.style.backgroundColor = '#252526';
+  targetInput.style.color = '#9cdcfe';
+  targetInput.style.border = '1px solid #4ec9b0';
+  targetInput.style.borderRadius = '4px';
+  return targetInput;
+ }
+
+ createAttackTypeSelect() {
+  const attackTypeSelect = document.createElement('select');
+  const attackTypes = ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet', 'Zero-Day', 'SQL Inject', 'XSS'];
+  attackTypes.forEach(option => {
+   const opt = document.createElement('option');
+   opt.value = option.toLowerCase().replace(' ', '_');
+   opt.textContent = option;
+   attackTypeSelect.appendChild(opt);
+  });
+  attackTypeSelect.style.width = '100%';
+  attackTypeSelect.style.padding = '8px';
+  attackTypeSelect.style.marginBottom = '10px';
+  attackTypeSelect.style.backgroundColor = '#252526';
+  attackTypeSelect.style.color = '#9cdcfe';
+  attackTypeSelect.style.border = '1px solid #4ec9b0';
+  attackTypeSelect.style.borderRadius = '4px';
+  return attackTypeSelect;
+ }
+
+ createStartButton() {
+  const startButton = document.createElement('button');
+  startButton.textContent = 'Initiate Attack';
+  startButton.style.width = '100%';
+  startButton.style.padding = '10px';
+  startButton.style.backgroundColor = '#e53935';
+  startButton.style.color = '#fff';
+  startButton.style.border = 'none';
+  startButton.style.borderRadius = '4px';
+  startButton.style.cursor = 'pointer';
+  startButton.style.transition = 'background-color 0.3s ease';
+  startButton.addEventListener('mouseover', () => startButton.style.backgroundColor = '#b71c1c');
+  startButton.addEventListener('mouseout', () => startButton.style.backgroundColor = '#e53935');
+  startButton.addEventListener('click', () => this.start());
+  return startButton;
+ }
+
+ createCustomCodeArea() {
+  const customCodeArea = document.createElement('textarea');
+  customCodeArea.placeholder = 'Enter custom JavaScript code for attack';
+  customCodeArea.style.width = '100%';
+  customCodeArea.style.height = '100px';
+  customCodeArea.style.padding = '8px';
+  customCodeArea.style.marginBottom = '10px';
+  customCodeArea.style.backgroundColor = '#252526';
+  customCodeArea.style.color = '#9cdcfe';
+  customCodeArea.style.border = '1px solid #4ec9b0';
+  customCodeArea.style.borderRadius = '4px';
+  customCodeArea.style.fontFamily = 'Consolas, monospace';
+  customCodeArea.style.fontSize = '14px';
+  customCodeArea.style.display = 'none';
+  return customCodeArea;
+ }
+
+ createContainer() {
+  const container = document.createElement('div');
+  container.style.width = '600px';
+  container.style.padding = '20px';
+  container.style.backgroundColor = '#2d2d30';
+  container.style.color = '#9cdcfe';
+  container.style.fontFamily = 'Consolas, monospace';
+  container.style.position = 'fixed';
+  container.style.top = '50%';
+  container.style.left = '50%';
+  container.style.transform = 'translate(-50%, -50%)';
+  container.style.zIndex = '9999';
+  container.style.border = '2px solid #4ec9b0';
+  container.style.borderRadius = '8px';
+  container.style.boxShadow = '0 0 20px #4ec9b0';
+  return container;
+ }
+
+ toggleCustomCodeArea() {
+  this.customCodeArea.style.display = this.attackTypeSelect.value === 'custom' ? 'block' : 'none';
  }
 
  setupDragHandle() {
