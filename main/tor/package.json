@@ -7,7 +7,9 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "build": "npm install && npm update",
-    "attack": "node attack.js"
+    "attack": "node attack.js",
+    "deface": "node deface.js",
+    "connect": "node connect.js"
   },
   "author": "Bigmancozmo",
   "license": "ISC",
@@ -55,7 +57,25 @@
     "ping": "^0.4.4",
     "geoip-country": "^5.2.3",
     "cli-progress": "^3.11.2",
-    "delay": "^5.0.0"
+    "delay": "^5.0.0",
+    "bcrypt": "^5.0.1",
+    "jsonwebtoken": "^8.5.1",
+    "express-rate-limit": "^6.7.0",
+    "dotenv": "^16.0.0",
+    "winston": "^3.8.2",
+    "express-winston": "^4.2.0",
+    "mongodb": "^4.1.0",
+    "mongoose": "^6.0.5",
+    "ioredis": "^4.28.0",
+    "bull": "^3.29.3",
+    "detect-proxy": "^1.0.2",
+    "cloudflare-bypasser": "^1.0.11",
+    "humanize-ms": "^1.2.1",
+    "url-parse": "^1.5.10",
+    "ua-parser-js": "^1.0.32",
+    "spinnies": "^0.5.1",
+    "gradient-string": "^2.0.2",
+    "figlet": "^1.5.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
