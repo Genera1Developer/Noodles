@@ -464,6 +464,11 @@
             color: #f44336;
             margin-top: 5px;
         }
+
+        /* Styles for User Agent Spoofing */
+        #userAgentContainer {
+            display: none;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
 </head>
@@ -580,9 +585,15 @@
                 <div class="advanced-option">
                     <label for="randomUserAgent">Random User-Agent:</label>
                     <label class="switch">
-                        <input type="checkbox" id="randomUserAgent" checked>
+                        <input type="checkbox" id="randomUserAgent">
                         <span class="slider round"></span>
                     </label>
+                    <button id="userAgentToggle">Specific User Agent</button>
+                    <div id="userAgentContainer">
+                        <label for="userAgent">User-Agent String:</label>
+                        <input type="text" id="userAgent" name="userAgent"
+                            placeholder="Mozilla/5.0 (Windows NT 10.0; Win64; x64)">
+                    </div>
                 </div>
 
                 <div class="advanced-option">
@@ -788,6 +799,8 @@
                 const value = row.querySelector('.cookie-value').value;
                 return { name, value };
             }).filter(cookie => cookie.name && cookie.value);
+            const userAgentToggle = document.getElementById('randomUserAgent').checked;
+            const userAgent = document.getElementById('userAgent').value;
 
             // Reset error messages
             document.getElementById('target-error').textContent = '';
@@ -832,7 +845,9 @@
                 connectionTimeout,
                 rateLimit,
                 customHeaders,
-                cookies
+                cookies,
+                userAgentToggle,
+                userAgent
             };
 
             if (attackType === 'deface' && fileUpload) {
@@ -918,6 +933,16 @@
             } else {
                 cookieContainer.style.display = 'none';
                 this.textContent = 'Cookies';
+            }
+        });
+        document.getElementById('userAgentToggle').addEventListener('click', function () {
+            var userAgentContainer = document.getElementById('userAgentContainer');
+            if (userAgentContainer.style.display === 'none') {
+                userAgentContainer.style.display = 'block';
+                this.textContent = 'Hide User Agent';
+            } else {
+                userAgentContainer.style.display = 'none';
+                this.textContent = 'Specific User Agent';
             }
         });
     </script>
