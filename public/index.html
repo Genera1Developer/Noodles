@@ -174,6 +174,50 @@
             text-decoration: none;
             cursor: pointer;
         }
+
+        /* Improved Dark Mode Styles */
+        body {
+            background-color: #0d1117; /* Darker background */
+            color: #c9d1d9; /* Lighter text */
+        }
+
+        #header {
+            background-color: #161b22; /* Darker header */
+            border-bottom: 1px solid #30363d;
+        }
+
+        #controls {
+            background-color: #161b22; /* Darker controls */
+            border-right: 1px solid #30363d;
+        }
+
+        #controls input, #controls select, #controls textarea {
+            background-color: #0d1117; /* Even darker input fields */
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+        }
+
+        #logs {
+            background-color: #0d1117; /* Darker logs */
+        }
+
+        #footer {
+            background-color: #161b22; /* Darker footer */
+            border-top: 1px solid #30363d;
+        }
+
+        /* Focus styles for accessibility */
+        input:focus, select:focus, textarea:focus, button:focus {
+            outline: 2px solid #58a6ff; /* Focus highlight */
+            outline-offset: 1px;
+        }
+
+        /* Darker Modal */
+        .modal-content {
+            background-color: #161b22;
+            border: 1px solid #30363d;
+        }
+
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
 </head>
@@ -195,6 +239,7 @@
                 <option value="xss">XSS (Requires Vulnerability)</option>
                 <option value="credential_stuffing">Credential Stuffing</option>
                 <option value="ransomware">Ransomware (Requires Access)</option>
+                <option value="zero_day">Zero-Day Exploit (Requires Module)</option>
             </select>
 
             <label for="duration">Duration (seconds):</label>
@@ -214,6 +259,13 @@
 
             <label for="ransomNote">Ransom Note (for Ransomware):</label>
             <textarea id="ransomNote" name="ransomNote" rows="4" placeholder="Your files have been encrypted. Pay [AMOUNT] to [ADDRESS]"></textarea>
+
+            <label for="zeroDayModule">Zero-Day Module (Optional):</label>
+            <select id="zeroDayModule" name="zeroDayModule">
+                <option value="">Select Module</option>
+                <option value="module1">CVE-2024-XXXX- Web Server RCE</option>
+                <option value="module2">CVE-2024-YYYY - SQL DB Injection</option>
+            </select>
 
             <button onclick="initiateAttack()">Initiate Attack</button>
         </div>
@@ -235,10 +287,10 @@
     </div>
 
     <script>
-        function logMessage(message) {
+        async function logMessage(message) {
             const logContent = document.getElementById('logContent');
             logContent.innerHTML += message + '\n';
-            logContent.scrollTop = logContent.scrollHeight; // Auto-scroll to bottom
+            logContent.scrollTop = logContent.scrollHeight;
         }
 
         async function initiateAttack() {
@@ -250,8 +302,21 @@
             const customPayload = document.getElementById('customPayload').value;
             const credentialList = document.getElementById('credentialList').value.split('\n').filter(Boolean);
             const ransomNote = document.getElementById('ransomNote').value;
+            const zeroDayModule = document.getElementById('zeroDayModule').value;
 
             logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads.`);
+
+            const attackData = {
+                target,
+                attackType,
+                duration,
+                threads,
+                proxyList,
+                customPayload,
+                credentialList,
+                ransomNote,
+                zeroDayModule
+            };
 
             try {
                 const response = await fetch('/attack', {
@@ -259,16 +324,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        target,
-                        attackType,
-                        duration,
-                        threads,
-                        proxyList,
-                        customPayload,
-                        credentialList,
-                        ransomNote
-                    })
+                    body: JSON.stringify(attackData)
                 });
 
                 const data = await response.json();
@@ -279,18 +335,13 @@
             }
         }
 
-        // Get the modal
         var modal = document.getElementById("myModal");
-
-        // Get the <span> element that closes the modal
         var span = document.getElementsByClassName("close")[0];
 
-        // When the user clicks on <span> (x), close the modal
         span.onclick = function() {
             modal.style.display = "none";
         }
 
-        // When the user clicks anywhere outside of the modal, close it
         window.onclick = function(event) {
             if (event.target == modal) {
                 modal.style.display = "none";
@@ -302,5 +353,75 @@
             modal.style.display = "block";
         }
     </script>
+<script>
+// JavaScript to handle UI functionality and communication with the backend.
+
+async function logMessage(message) {
+    const logContent = document.getElementById('logContent');
+    logContent.innerHTML += message + '\n';
+    logContent.scrollTop = logContent.scrollHeight;
+}
+
+async function initiateAttack() {
+    const target = document.getElementById('target').value;
+    const attackType = document.getElementById('attackType').value;
+    const duration = parseInt(document.getElementById('duration').value);
+    const threads = parseInt(document.getElementById('threads').value);
+    const proxyList = document.getElementById('proxyList').value.split('\n').filter(Boolean);
+    const customPayload = document.getElementById('customPayload').value;
+    const credentialList = document.getElementById('credentialList').value.split('\n').filter(Boolean);
+    const ransomNote = document.getElementById('ransomNote').value;
+    const zeroDayModule = document.getElementById('zeroDayModule').value;
+
+    logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads.`);
+
+    const attackData = {
+        target,
+        attackType,
+        duration,
+        threads,
+        proxyList,
+        customPayload,
+        credentialList,
+        ransomNote,
+        zeroDayModule
+    };
+
+    try {
+        const response = await fetch('/attack', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(attackData)
+        });
+
+        const data = await response.json();
+        logMessage(data.message);
+
+    } catch (error) {
+        logMessage(`Error initiating attack: ${error}`);
+    }
+}
+
+// Modal handling (if you choose to use modals for alerts/info)
+var modal = document.getElementById("myModal");
+var span = document.getElementsByClassName("close")[0];
+
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+function openModal(message) {
+    document.getElementById('modalContent').innerText = message;
+    modal.style.display = "block";
+}
+</script>
 </body>
 </html>
