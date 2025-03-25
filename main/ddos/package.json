@@ -18,7 +18,11 @@
     "logviewer": "node logviewer.js",
     "dashboard": "node dashboard.js",
     "all": "concurrently \"npm run api\" \"npm run websocket\" \"npm run dashboard\" \"npm run logviewer\"",
-    "self-destruct": "node self-destruct.js"
+    "self-destruct": "node self-destruct.js",
+    "fuzz": "node fuzzer.js",
+    "scan": "node scanner.js",
+    "botnet": "node botnet.js",
+    "injector": "node injector.js"
   },
   "author": "Noodles",
   "license": "MIT",
@@ -115,7 +119,9 @@
     "node-pty": "^1.0.0",
     "jimp": "^0.22.14",
     "recursive-readdir": "^2.2.3",
-    "jsdom": "^24.0.0"
+    "jsdom": "^24.0.0",
+    "user-home": "^3.0.0",
+    "geoip2ws": "^1.0.15"
   },
   "devDependencies": {
     "husky": "^9.0.11",
