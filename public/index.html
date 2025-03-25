@@ -443,6 +443,27 @@
             font-size: 0.9em;
             margin-top: 10px;
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #container {
+                flex-direction: column;
+            }
+
+            #controls {
+                width: 100%;
+                min-width: auto;
+                resize: none;
+                border-right: none;
+                border-bottom: 1px solid #30363d;
+            }
+        }
+
+        /* Error Message Styling */
+        .error-message {
+            color: #f44336;
+            margin-top: 5px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
 </head>
@@ -454,7 +475,8 @@
     <div id="container">
         <div id="controls">
             <label for="target">Target URL (.onion or normal):</label>
-            <input type="text" id="target" name="target" placeholder="http://example.com">
+            <input type="text" id="target" name="target" placeholder="http://example.com" required>
+            <div id="target-error" class="error-message"></div>
 
             <div id="httpMethodContainer">
                 <label>HTTP Method:</label>
@@ -504,7 +526,8 @@
             </div>
 
             <label for="duration">Duration (seconds):</label>
-            <input type="number" id="duration" name="duration" value="30">
+            <input type="number" id="duration" name="duration" value="30" required>
+            <div id="duration-error" class="error-message"></div>
 
             <label for="threads">Threads (for DDoS):</label>
             <input type="number" id="threads" name="threads" value="1000">
@@ -765,6 +788,22 @@
                 const value = row.querySelector('.cookie-value').value;
                 return { name, value };
             }).filter(cookie => cookie.name && cookie.value);
+
+            // Reset error messages
+            document.getElementById('target-error').textContent = '';
+            document.getElementById('duration-error').textContent = '';
+
+            // Validate target URL
+            if (!target) {
+                document.getElementById('target-error').textContent = 'Target URL is required.';
+                return;
+            }
+
+            // Validate duration
+            if (isNaN(duration) || duration <= 0) {
+                document.getElementById('duration-error').textContent = 'Duration must be a positive number.';
+                return;
+            }
 
             logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads. Priority: ${priority}`);
 
