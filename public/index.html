@@ -6,8 +6,8 @@
     <title>Noodles - Attack Panel</title>
     <style>
         body {
-            background-color: #1e1e1e;
-            color: #d4d4d4;
+            background-color: #0d1117;
+            color: #c9d1d9;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
@@ -18,11 +18,12 @@
         }
 
         #header {
-            background-color: #2a2a2a;
+            background-color: #161b22;
             padding: 15px;
             text-align: center;
-            font-size: 1.8em;
-            border-bottom: 1px solid #444;
+            font-size: 2em;
+            border-bottom: 1px solid #30363d;
+            font-weight: bold;
         }
 
         #container {
@@ -33,12 +34,12 @@
 
         #controls {
             width: 350px;
-            background-color: #252526;
+            background-color: #161b22;
             padding: 15px;
             box-sizing: border-box;
             resize: horizontal;
             overflow: auto;
-            border-right: 1px solid #444;
+            border-right: 1px solid #30363d;
             min-width: 250px;
         }
 
@@ -46,7 +47,7 @@
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
-            color: #aaa;
+            color: #8b949e;
         }
 
         #controls input, #controls select, #controls textarea {
@@ -55,16 +56,16 @@
             width: 100%;
             padding: 10px;
             box-sizing: border-box;
-            background-color: #333;
-            color: #d4d4d4;
-            border: 1px solid #555;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
             border-radius: 4px;
             font-size: 1em;
         }
 
         #controls button {
-            background-color: #5cb85c;
-            color: white;
+            background-color: #238636;
+            color: #fff;
             border: none;
             padding: 12px 20px;
             cursor: pointer;
@@ -74,13 +75,13 @@
         }
 
         #controls button:hover {
-            background-color: #449d44;
+            background-color: #2ea043;
         }
 
         #logs {
             flex: 1;
-            background-color: #121212;
-            color: #d4d4d4;
+            background-color: #0d1117;
+            color: #c9d1d9;
             padding: 15px;
             overflow-y: auto;
             font-family: 'Courier New', monospace;
@@ -91,7 +92,8 @@
         #logs h2 {
             margin-top: 0;
             margin-bottom: 10px;
-            color: #eee;
+            color: #fff;
+            font-size: 1.5em;
         }
 
         #logContent {
@@ -99,11 +101,12 @@
         }
 
         #footer {
-            background-color: #2a2a2a;
+            background-color: #161b22;
             padding: 8px;
             text-align: center;
             font-size: 0.9em;
-            border-top: 1px solid #444;
+            border-top: 1px solid #30363d;
+            color: #8b949e;
         }
 
         /* Custom Scrollbar */
@@ -112,16 +115,16 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: #252526;
+            background: #161b22;
         }
 
         ::-webkit-scrollbar-thumb {
-            background: #555;
+            background: #30363d;
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: #777;
+            background: #555;
         }
 
         /* Resizable Container */
@@ -141,28 +144,28 @@
 
         /* New Styles for Modals */
         .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
+            display: none;
+            position: fixed;
+            z-index: 1;
             left: 0;
             top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
         }
 
         .modal-content {
-            background-color: #252526;
-            margin: 15% auto; /* 15% from the top and centered */
+            background-color: #161b22;
+            margin: 15% auto;
             padding: 20px;
-            border: 1px solid #444;
-            width: 80%; /* Could be more or less, depending on screen size */
-            color: #d4d4d4;
+            border: 1px solid #30363d;
+            width: 80%;
+            color: #c9d1d9;
         }
 
         .close {
-            color: #aaa;
+            color: #8b949e;
             float: right;
             font-size: 28px;
             font-weight: bold;
@@ -170,54 +173,40 @@
 
         .close:hover,
         .close:focus {
-            color: white;
+            color: #fff;
             text-decoration: none;
             cursor: pointer;
         }
 
-        /* Improved Dark Mode Styles */
-        body {
-            background-color: #0d1117; /* Darker background */
-            color: #c9d1d9; /* Lighter text */
-        }
-
-        #header {
-            background-color: #161b22; /* Darker header */
-            border-bottom: 1px solid #30363d;
-        }
-
-        #controls {
-            background-color: #161b22; /* Darker controls */
-            border-right: 1px solid #30363d;
-        }
-
-        #controls input, #controls select, #controls textarea {
-            background-color: #0d1117; /* Even darker input fields */
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-        }
-
-        #logs {
-            background-color: #0d1117; /* Darker logs */
-        }
-
-        #footer {
-            background-color: #161b22; /* Darker footer */
-            border-top: 1px solid #30363d;
-        }
-
-        /* Focus styles for accessibility */
         input:focus, select:focus, textarea:focus, button:focus {
-            outline: 2px solid #58a6ff; /* Focus highlight */
+            outline: 2px solid #58a6ff;
             outline-offset: 1px;
         }
 
-        /* Darker Modal */
-        .modal-content {
-            background-color: #161b22;
-            border: 1px solid #30363d;
+        /* Additional styles for compact layout */
+        #controls label {
+            margin-bottom: 5px;
         }
 
+        #controls input, #controls select, #controls textarea {
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 0.9em;
+        }
+
+        #controls button {
+            padding: 10px 15px;
+            font-size: 1em;
+        }
+
+        /* Styles for resizable layout */
+        body {
+            height: 100vh;
+        }
+
+        #container {
+            flex: 1;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
 </head>
@@ -275,14 +264,13 @@
         </div>
     </div>
     <div id="footer">
-        &copy; 2024 Noodles. All rights reserved.  For purely "educational" purposes.
+        &copy; 2024 Noodles. All rights reserved.
     </div>
 
-    <!-- The Modal -->
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <p id="modalContent">Some text in the Modal..</p>
+            <p id="modalContent"></p>
         </div>
     </div>
 
@@ -353,75 +341,5 @@
             modal.style.display = "block";
         }
     </script>
-<script>
-// JavaScript to handle UI functionality and communication with the backend.
-
-async function logMessage(message) {
-    const logContent = document.getElementById('logContent');
-    logContent.innerHTML += message + '\n';
-    logContent.scrollTop = logContent.scrollHeight;
-}
-
-async function initiateAttack() {
-    const target = document.getElementById('target').value;
-    const attackType = document.getElementById('attackType').value;
-    const duration = parseInt(document.getElementById('duration').value);
-    const threads = parseInt(document.getElementById('threads').value);
-    const proxyList = document.getElementById('proxyList').value.split('\n').filter(Boolean);
-    const customPayload = document.getElementById('customPayload').value;
-    const credentialList = document.getElementById('credentialList').value.split('\n').filter(Boolean);
-    const ransomNote = document.getElementById('ransomNote').value;
-    const zeroDayModule = document.getElementById('zeroDayModule').value;
-
-    logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads.`);
-
-    const attackData = {
-        target,
-        attackType,
-        duration,
-        threads,
-        proxyList,
-        customPayload,
-        credentialList,
-        ransomNote,
-        zeroDayModule
-    };
-
-    try {
-        const response = await fetch('/attack', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(attackData)
-        });
-
-        const data = await response.json();
-        logMessage(data.message);
-
-    } catch (error) {
-        logMessage(`Error initiating attack: ${error}`);
-    }
-}
-
-// Modal handling (if you choose to use modals for alerts/info)
-var modal = document.getElementById("myModal");
-var span = document.getElementsByClassName("close")[0];
-
-span.onclick = function() {
-    modal.style.display = "none";
-}
-
-window.onclick = function(event) {
-    if (event.target == modal) {
-        modal.style.display = "none";
-    }
-}
-
-function openModal(message) {
-    document.getElementById('modalContent').innerText = message;
-    modal.style.display = "block";
-}
-</script>
 </body>
 </html>
