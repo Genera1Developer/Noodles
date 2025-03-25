@@ -1,1 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noodles - DDoS Platform</title>
+    <style>
+        body {
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
 
+        #header {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.5em;
+        }
+
+        #container {
+            display: flex;
+            flex: 1;
+        }
+
+        #controls {
+            width: 300px;
+            background-color: #252526;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #controls label, #controls input, #controls button {
+            display: block;
+            margin-bottom: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        #controls input {
+            background-color: #333;
+            color: #d4d4d4;
+            border: 1px solid #555;
+            padding: 5px;
+        }
+
+        #controls button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        #logs {
+            flex: 1;
+            background-color: #000;
+            color: #d4d4d4;
+            padding: 10px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+
+        #footer {
+            background-color: #333;
+            padding: 5px;
+            text-align: center;
+            font-size: 0.8em;
+        }
+
+        /* Resizable */
+        #container {
+            overflow: hidden;
+        }
+
+        #controls {
+            resize: horizontal;
+            overflow: auto;
+        }
+    </style>
+</head>
+<body>
+    <div id="header">
+        <h1>Noodles - Advanced Attack Platform</h1>
+    </div>
+    <div id="container">
+        <div id="controls">
+            <label for="target">Target URL (.onion or normal):</label>
+            <input type="text" id="target" name="target" placeholder="http://example.com">
+
+            <label for="attackType">Attack Type:</label>
+            <select id="attackType" name="attackType">
+                <option value="ddos">DDoS</option>
+                <option value="deface">Deface (Requires Vulnerability)</option>
+                <option value="connect">Connect (Attempt)</option>
+            </select>
+
+            <label for="duration">Duration (seconds):</label>
+            <input type="number" id="duration" name="duration" value="30">
+
+            <button onclick="initiateAttack()">Initiate Attack</button>
+        </div>
+        <div id="logs">
+            <h2>Logs:</h2>
+            <div id="logContent"></div>
+        </div>
+    </div>
+    <div id="footer">
+        &copy; 2024 Noodles. All rights reserved.  For purely "educational" purposes.
+    </div>
+
+    <script>
+        function log(message) {
+            const logContent = document.getElementById('logContent');
+            logContent.innerHTML += message + '<br>';
+            logContent.scrollTop = logContent.scrollHeight; // Auto-scroll
+        }
+
+        async function initiateAttack() {
+            const target = document.getElementById('target').value;
+            const attackType = document.getElementById('attackType').value;
+            const duration = parseInt(document.getElementById('duration').value);
+
+            log(`Initiating ${attackType} attack on ${target} for ${duration} seconds...`);
+
+            // Simulate attack (replace with actual attack code)
+            try {
+                const response = await fetch('/attack', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ target: target, attackType: attackType, duration: duration })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    log(data.message);
+                } else {
+                    log(`Attack failed: ${response.status} ${response.statusText}`);
+                }
+            } catch (error) {
+                log(`Error: ${error}`);
+            }
+        }
+    </script>
+</body>
+</html>
