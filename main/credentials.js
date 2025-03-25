@@ -57,8 +57,8 @@ const credentials = {
     payloads: {
       'default': '<body bgcolor="black"><center><h1 style="color:red;">HACKED BY NOODLES</h1><p style="color:white;">Site owned.</p></center></body>',
       'political': '<body bgcolor="black"><center><h1 style="color:yellow;">FREEDOM</h1><p style="color:white;">The truth will prevail.</p></center></body>',
-      'nsfw': '<body bgcolor="black"><center><img src="https://example.com/nsfw.gif"><p style="color:white;">Get Noodled!</p></center></body>',
-      'rickroll': '<body bgcolor="black"><center><iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" frameborder="0" allowfullscreen></iframe></center></body>',
+      'nsfw': '<body bgcolor="black"><center><img src="https://example.com/nsfw.gif" alt="NSFW Image"><p style="color:white;">Get Noodled!</p></center></body>',
+      'rickroll': '<body bgcolor="black"><center><iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" title="Rickroll Video" frameborder="0" allowfullscreen></iframe></center></body>',
       'custom': '',
       'donation': '<body bgcolor="black"><center><h1 style="color:lime;">SUPPORT US</h1><p style="color:white;">Donate Bitcoin: 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa</p></center></body>'
     },
@@ -170,7 +170,7 @@ const credentials = {
   security: {
     xssProtection: true,
     csrfProtection: true,
-    contentSecurityPolicy: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:; font-src 'self' data:;",
+    contentSecurityPolicy: "default-src 'self' 'unsafe-inline' 'unsafe-eval'; img-src 'self' data:; font-src 'self' data: https://www.youtube.com; media-src 'self' data: https://www.youtube.com; object-src 'none';",
     hstsEnabled: true,
     hstsMaxAge: 31536000,
     clickjackingProtection: true,
