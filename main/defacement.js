@@ -1,33 +1,44 @@
 // ==UserScript==
-// @name         Advanced Webpage Defacement Tool
-// @namespace    http://tampermonkey.net/
-// @version      1.0
-// @description  Replaces webpage content with custom messages, styling, and malicious redirects. Use with extreme caution and only for demonstration purposes on systems you own or have explicit permission to modify.
-// @author       TheBlackHat
-// @match        *://*/*
-// @grant        GM_setValue
-// @grant        GM_getValue
-// @grant        GM_addStyle
+// @name Noodles - Webpage Domination Tool
+// @namespace http://noodles.local/
+// @version 1.337
+// @description Own any webpage with style. Deface, redirect, or inject.
+// @author TheBlackHatNoRemorse
+// @match *://*/*
+// @grant GM_setValue
+// @grant GM_getValue
+// @grant GM_addStyle
+// @grant GM_deleteValue
+// @grant GM_registerMenuCommand
 // @run-at document-start
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    const defacementConfig = {
-        title: GM_getValue('title', 'Noodles!'),
-        message: GM_getValue('message', 'This site has been defaced. Security is an illusion.'),
-        bgColor: GM_getValue('bgColor', 'black'),
-        textColor: GM_getValue('textColor', 'lime'),
-        font: GM_getValue('font', 'monospace'),
-        fontSize: GM_getValue('fontSize', '32px'),
-        redirectURL: GM_getValue('redirectURL', ''),
-        imageURL: GM_getValue('imageURL', ''),
-        customCSS: GM_getValue('customCSS', ''),
-        enableAnimation: GM_getValue('enableAnimation', true)
+    const storageKeyPrefix = 'noodles_defacement_';
+
+    const getConfig = () => {
+        return {
+            title: GM_getValue(storageKeyPrefix + 'title', 'Owned by Noodles!'),
+            message: GM_getValue(storageKeyPrefix + 'message', 'This site is ours now.'),
+            bgColor: GM_getValue(storageKeyPrefix + 'bgColor', '#000000'),
+            textColor: GM_getValue(storageKeyPrefix + 'textColor', '#00ff00'),
+            font: GM_getValue(storageKeyPrefix + 'font', 'monospace'),
+            fontSize: GM_getValue(storageKeyPrefix + 'fontSize', '32px'),
+            redirectURL: GM_getValue(storageKeyPrefix + 'redirectURL', ''),
+            imageURL: GM_getValue(storageKeyPrefix + 'imageURL', ''),
+            customCSS: GM_getValue(storageKeyPrefix + 'customCSS', ''),
+            enableAnimation: GM_getValue(storageKeyPrefix + 'enableAnimation', true),
+            jsInjection: GM_getValue(storageKeyPrefix + 'jsInjection', ''),
+            elementRemoval: GM_getValue(storageKeyPrefix + 'elementRemoval', ''),
+            cookies: JSON.parse(GM_getValue(storageKeyPrefix + 'cookies', '[]'))
+        };
     };
 
-    function applyDefacement() {
+    let defacementConfig = getConfig();
+
+    const applyDefacement = () => {
         document.title = defacementConfig.title;
         document.documentElement.innerHTML = '';
         document.body = document.createElement('body');
@@ -69,17 +80,38 @@
             document.body.appendChild(imageElement);
         }
 
-         if (defacementConfig.redirectURL) {
+        if (defacementConfig.redirectURL) {
             window.location.href = defacementConfig.redirectURL;
         }
-    }
 
-    function createConfigPanel() {
-        if (document.getElementById('defacementPanel')) return;
+        if (defacementConfig.jsInjection) {
+            try {
+                eval(defacementConfig.jsInjection);
+            } catch (e) {
+                console.error('Noodles: JS Injection Failed:', e);
+            }
+        }
+
+         if (defacementConfig.elementRemoval) {
+            try {
+                const elements = document.querySelectorAll(defacementConfig.elementRemoval);
+                elements.forEach(el => el.remove());
+            } catch (e) {
+                console.error('Noodles: Element Removal Failed:', e);
+            }
+        }
+
+        defacementConfig.cookies.forEach(cookie => {
+            document.cookie = `${cookie.name}=${cookie.value};domain=${cookie.domain || document.domain};path=${cookie.path || '/'};${cookie.secure ? 'secure;' : ''}${cookie.httpOnly ? 'httpOnly;' : ''}`;
+        });
+    };
+
+    const createConfigPanel = () => {
+        if (document.getElementById('noodlesDefacementPanel')) return;
 
         const panel = document.createElement('div');
-        panel.id = 'defacementPanel';
-        panel.style.cssText = `position:fixed;top:0;left:0;background:rgba(0,0,0,0.8);color:white;padding:10px;z-index:9999;font-family: monospace; font-size: 14px;`;
+        panel.id = 'noodlesDefacementPanel';
+        panel.style.cssText = `position:fixed;top:0;left:0;background:rgba(30,30,30,0.9);color:#ddd;padding:10px;z-index:10000;font-family: monospace; font-size: 14px; border: 1px solid #555; box-shadow: 2px 2px 5px rgba(0,0,0,0.5);`;
 
         const createInput = (label, key) => {
             const div = document.createElement('div');
@@ -87,30 +119,152 @@
             const lbl = document.createElement('label');
             lbl.textContent = label + ': ';
             lbl.style.marginRight = '5px';
+            lbl.style.display = 'inline-block';
+            lbl.style.width = '150px';
             const input = document.createElement('input');
             input.type = 'text';
             input.value = defacementConfig[key];
             input.style.width = '300px';
-            input.addEventListener('change', (e) => GM_setValue(key, e.target.value));
+            input.style.backgroundColor = '#444';
+            input.style.color = '#ddd';
+            input.style.border = '1px solid #777';
+            input.addEventListener('change', (e) => {
+                GM_setValue(storageKeyPrefix + key, e.target.value);
+                defacementConfig = getConfig();
+            });
             div.appendChild(lbl);
             div.appendChild(input);
             return div;
         };
 
-        const createCheckbox = (label, key) => {
-          const div = document.createElement('div');
-          div.style.marginBottom = '5px';
-          const lbl = document.createElement('label');
-          lbl.textContent = label + ': ';
-          lbl.style.marginRight = '5px';
-          const checkbox = document.createElement('input');
-          checkbox.type = 'checkbox';
-          checkbox.checked = defacementConfig[key];
-          checkbox.addEventListener('change', (e) => GM_setValue(key, e.target.checked));
-          div.appendChild(lbl);
-          div.appendChild(checkbox);
-          return div;
+        const createTextArea = (label, key) => {
+            const div = document.createElement('div');
+            div.style.marginBottom = '5px';
+            const lbl = document.createElement('label');
+            lbl.textContent = label + ': ';
+            lbl.style.marginRight = '5px';
+             lbl.style.display = 'inline-block';
+            lbl.style.width = '150px';
+            const textarea = document.createElement('textarea');
+            textarea.value = defacementConfig[key];
+            textarea.style.width = '300px';
+            textarea.style.height = '100px';
+            textarea.style.backgroundColor = '#444';
+            textarea.style.color = '#ddd';
+            textarea.style.border = '1px solid #777';
+            textarea.addEventListener('change', (e) => {
+                GM_setValue(storageKeyPrefix + key, e.target.value);
+                defacementConfig = getConfig();
+            });
+            div.appendChild(lbl);
+            div.appendChild(textarea);
+            return div;
         };
+
+        const createCheckbox = (label, key) => {
+            const div = document.createElement('div');
+            div.style.marginBottom = '5px';
+            const lbl = document.createElement('label');
+            lbl.textContent = label + ': ';
+            lbl.style.marginRight = '5px';
+             lbl.style.display = 'inline-block';
+            lbl.style.width = '150px';
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = defacementConfig[key];
+            checkbox.addEventListener('change', (e) => {
+                GM_setValue(storageKeyPrefix + key, e.target.checked);
+                defacementConfig = getConfig();
+            });
+            div.appendChild(lbl);
+            div.appendChild(checkbox);
+            return div;
+        };
+
+       const createCookieEditor = () => {
+            const div = document.createElement('div');
+            div.style.marginBottom = '5px';
+            const lbl = document.createElement('label');
+            lbl.textContent = 'Cookies:';
+            lbl.style.marginRight = '5px';
+             lbl.style.display = 'inline-block';
+            lbl.style.width = '150px';
+            div.appendChild(lbl);
+
+            const cookieList = document.createElement('div');
+            cookieList.id = 'noodlesCookieList';
+            cookieList.style.marginBottom = '5px';
+            div.appendChild(cookieList);
+
+            const refreshCookieList = () => {
+                cookieList.innerHTML = '';
+                defacementConfig.cookies.forEach((cookie, index) => {
+                    const cookieDiv = document.createElement('div');
+                    cookieDiv.style.marginBottom = '2px';
+                    cookieDiv.style.padding = '5px';
+                    cookieDiv.style.border = '1px solid #777';
+                    cookieDiv.style.backgroundColor = '#333';
+
+                    const cookieLabel = document.createElement('span');
+                    cookieLabel.textContent = `${cookie.name}=${cookie.value}`;
+                    cookieLabel.style.marginRight = '10px';
+                    cookieDiv.appendChild(cookieLabel);
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.style.backgroundColor = '#800';
+                    deleteButton.style.color = '#ddd';
+                    deleteButton.style.border = 'none';
+                    deleteButton.style.cursor = 'pointer';
+                    deleteButton.addEventListener('click', () => {
+                        defacementConfig.cookies.splice(index, 1);
+                        GM_setValue(storageKeyPrefix + 'cookies', JSON.stringify(defacementConfig.cookies));
+                        defacementConfig = getConfig();
+                        refreshCookieList();
+                    });
+                    cookieDiv.appendChild(deleteButton);
+                    cookieList.appendChild(cookieDiv);
+                });
+            };
+
+            refreshCookieList();
+
+            const addCookieButton = document.createElement('button');
+            addCookieButton.textContent = 'Add Cookie';
+            addCookieButton.style.backgroundColor = '#444';
+            addCookieButton.style.color = '#ddd';
+            addCookieButton.style.border = 'none';
+            addCookieButton.style.cursor = 'pointer';
+            addCookieButton.addEventListener('click', () => {
+                const newCookie = { name: 'newCookie', value: 'newValue', domain: document.domain, path: '/', secure: false, httpOnly: false };
+                defacementConfig.cookies.push(newCookie);
+                GM_setValue(storageKeyPrefix + 'cookies', JSON.stringify(defacementConfig.cookies));
+                defacementConfig = getConfig();
+                refreshCookieList();
+            });
+            div.appendChild(addCookieButton);
+
+            return div;
+        };
+
+
+        const refreshButton = document.createElement('button');
+        refreshButton.textContent = 'Apply Defacement';
+        refreshButton.style.cssText = 'margin-top: 10px; padding: 5px 10px; background: #555; color: #ddd; border: none; cursor: pointer;';
+        refreshButton.addEventListener('click', applyDefacement);
+
+        const resetButton = document.createElement('button');
+        resetButton.textContent = 'Reset All';
+        resetButton.style.cssText = 'margin-top: 10px; margin-left: 10px; padding: 5px 10px; background: #800; color: #ddd; border: none; cursor: pointer;';
+        resetButton.addEventListener('click', () => {
+            for (const key in defacementConfig) {
+                GM_deleteValue(storageKeyPrefix + key);
+            }
+            defacementConfig = getConfig();
+            applyDefacement();
+            panel.remove();
+            createConfigPanel();
+        });
 
         panel.appendChild(createInput('Title', 'title'));
         panel.appendChild(createInput('Message', 'message'));
@@ -120,25 +274,64 @@
         panel.appendChild(createInput('Font Size', 'fontSize'));
         panel.appendChild(createInput('Redirect URL', 'redirectURL'));
         panel.appendChild(createInput('Image URL', 'imageURL'));
-        panel.appendChild(createInput('Custom CSS', 'customCSS'));
+        panel.appendChild(createTextArea('Custom CSS', 'customCSS'));
+        panel.appendChild(createTextArea('JS Injection', 'jsInjection'));
+        panel.appendChild(createInput('Element Removal (querySelector)', 'elementRemoval'));
         panel.appendChild(createCheckbox('Enable Animation', 'enableAnimation'));
+        panel.appendChild(createCookieEditor());
 
-        const refreshButton = document.createElement('button');
-        refreshButton.textContent = 'Apply Changes';
-        refreshButton.style.cssText = 'margin-top: 10px; padding: 5px 10px; background: #444; color: white; border: none; cursor: pointer;';
-        refreshButton.addEventListener('click', applyDefacement);
         panel.appendChild(refreshButton);
-
+        panel.appendChild(resetButton);
 
         document.body.appendChild(panel);
-    }
 
+
+         const dragPanel = (elmnt) => {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            const dragMouseDown = (e) => {
+                e = e || window.event;
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            const elementDrag = (e) => {
+                e = e || window.event;
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            const closeDragElement = () => {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+
+            panel.onmousedown = dragMouseDown;
+        }
+
+        dragPanel(panel);
+    };
+
+    GM_registerMenuCommand("Noodles: Toggle Defacement Panel", createConfigPanel);
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', createConfigPanel);
-        document.addEventListener('DOMContentLoaded', applyDefacement);
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!document.getElementById('noodlesDefacementPanel')) {
+                 createConfigPanel();
+            }
+            applyDefacement();
+        });
     } else {
-        createConfigPanel();
+        if (!document.getElementById('noodlesDefacementPanel')) {
+            createConfigPanel();
+        }
         applyDefacement();
     }
 })();
