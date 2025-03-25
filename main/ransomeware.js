@@ -29,10 +29,10 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Consider removing 'unsafe-inline' and 'unsafe-eval' for better security. Use nonces or hashes.
             styleSrc: ["'self'", "'unsafe-inline'"],
             imgSrc: ["'self'", 'data:'],
-            connectSrc: ["'self'", 'ws://localhost:8080', 'ws://127.0.0.1:8080', process.env.NODE_ENV === 'development' ? 'ws://127.0.0.1:*' : 'wss://yourdomain.com:*'], // Secure WebSocket for production
+            connectSrc: ["'self'", process.env.NODE_ENV === 'development' ? 'ws://127.0.0.1:*' : 'wss://yourdomain.com:*'], // Secure WebSocket for production.  Remove localhost connection in prod
 
         },
     },
@@ -47,7 +47,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 app.use(morgan('combined', { stream: accessLogStream }));
 
 const corsOptions = {
-    origin: '*', // Allow all origins, consider restricting in production
+    origin: (process.env.NODE_ENV === 'development') ? '*' : 'https://yourdomain.com', // Restrict in production
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204
@@ -501,7 +501,9 @@ app.post('/attack', validateAttackInput, async (req, res) => {
             let targetDirectory = req.body.targetDirectory;
             let encryptionKey = crypto.randomBytes(32).toString('hex');
 
-            command = `node ransomware.js --targetDirectory "${targetDirectory}" --encryptionKey "${encryptionKey}"`;
+            // command = `node ransomware.js --targetDirectory "${targetDirectory}" --encryptionKey "${encryptionKey}"`; // commented out for safety reasons
+            log('Ransomware attack is disabled for safety. Remove comment to enable.');
+            return res.status(500).send("Ransomware attack disabled for safety.");
             break;
        case 'data_theft':
             let dataSelector = req.body.dataSelector;
