@@ -1,7 +1,7 @@
 {
   "name": "noodles-ddos",
   "version": "3.0.0",
-  "description": "A powerful DDoS, deface, and connect web application. Includes advanced attack methods, botnet integration, zero-day exploits, and custom Chromium build. USE AT YOUR OWN RISK. Features a REST API, Websocket integration, and advanced logging.",
+  "description": "A powerful DDoS, deface, and connect web application. Includes advanced attack methods, botnet integration, zero-day exploits, and custom Chromium build. USE AT YOUR OWN RISK. Features a REST API, Websocket integration, advanced logging, and real-time attack monitoring.",
   "main": "ddos.js",
   "scripts": {
     "start": "node ddos.js",
@@ -15,7 +15,8 @@
     "connect": "node connect.js",
     "api": "node api.js",
     "websocket": "node websocket.js",
-    "logviewer": "node logviewer.js"
+    "logviewer": "node logviewer.js",
+    "dashboard": "node dashboard.js"
   },
   "author": "Noodles",
   "license": "MIT",
@@ -99,7 +100,15 @@
     "formidable": "^4.0.0",
     "prom-client": "^16.0.0",
     "selenium-webdriver": "^4.19.0",
-    "chromedriver": "^125.0.0"
+    "chromedriver": "^125.0.0",
+    "node-telegram-bot-api": "^0.64.0",
+    "ip6": "^4.0.0",
+    "netmask": "^2.0.2",
+    "whois-json": "^3.2.0",
+    "dns-sync": "^0.1.2",
+    "node-powershell": "^5.0.1",
+    "sudo-prompt": "^0.9.2",
+    "windows-registry": "^1.0.0"
   },
   "devDependencies": {
     "husky": "^9.0.11",
