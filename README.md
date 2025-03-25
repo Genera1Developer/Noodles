@@ -1,1 +1,1 @@
-<img style="height: 5em;" src="./assets/banner.gif"></a>
+<img style="height: 5em; width: 100%;" src="./assets/banner.gif"></a>
