@@ -40,6 +40,43 @@ class Tor {
         this.currentIndex = 0;
         this.failedGateways = new Set();
         this.maxRetries = 3;
+        this.requestTimeout = 15000;
+        this.gatewayCheckInterval = 60000;
+        this.startGatewayMonitoring();
+    }
+
+    async isGatewayOnline(gateway) {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            const testUrl = `${gateway}/httpbin.org/get`;
+            const response = await fetch(testUrl, {
+                method: 'GET',
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            return response.ok;
+        } catch (error) {
+            console.warn(`Gateway ${gateway} check failed:`, error);
+            return false;
+        }
+    }
+
+    async startGatewayMonitoring() {
+        setInterval(async () => {
+            for (const gateway of this.gateways) {
+                const isFailed = this.failedGateways.has(gateway);
+                const isOnline = await this.isGatewayOnline(gateway);
+
+                if (isOnline && isFailed) {
+                    this.failedGateways.delete(gateway);
+                    console.log(`Gateway ${gateway} is back online.`);
+                } else if (!isOnline && !isFailed) {
+                    this.failedGateways.add(gateway);
+                    console.warn(`Gateway ${gateway} is offline. Adding to blacklist.`);
+                }
+            }
+        }, this.gatewayCheckInterval);
     }
 
     async fetchWithTor(url, options = {}, retryCount = 0) {
@@ -57,7 +94,11 @@ class Tor {
         const torURL = `${gateway}/${url}`;
 
         try {
-            const response = await fetch(torURL, options);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), this.requestTimeout);
+            const response = await fetch(torURL, { ...options, signal: controller.signal });
+            clearTimeout(timeoutId);
+
             if (!response.ok) {
                 if (response.status === 404 || response.status === 500 || response.status === 503) {
                     this.failedGateways.add(gateway);
@@ -90,11 +131,11 @@ class Tor {
     }
 
     async getText(url) {
-       const response = await this.fetchWithTor(url);
-       return await response.text();
+        const response = await this.fetchWithTor(url);
+        return await response.text();
     }
 
-   async postWithTor(url, data, retryCount = 0) {
+    async postWithTor(url, data, retryCount = 0) {
         const options = {
             method: 'POST',
             headers: {
@@ -107,8 +148,41 @@ class Tor {
         try {
             return await this.fetchWithTor(url, options, retryCount);
         } catch (error) {
-             console.error("POST request failed:", error);
-             throw error;
+            console.error("POST request failed:", error);
+            throw error;
+        }
+    }
+
+    async rawFetch(url, options = {}) {
+        try {
+            const response = await fetch(url, options);
+            return response;
+        } catch (error) {
+            console.error("Raw fetch error:", error);
+            throw error;
+        }
+    }
+
+    async rawGetText(url) {
+        const response = await this.rawFetch(url);
+        return await response.text();
+    }
+
+    async rawPost(url, data) {
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+            redirect: 'follow'
+        };
+
+        try {
+            return await this.rawFetch(url, options);
+        } catch (error) {
+            console.error("Raw POST request failed:", error);
+            throw error;
         }
     }
 }
