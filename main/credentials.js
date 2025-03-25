@@ -406,7 +406,47 @@ const credentials = {
     shreddingTechniques: true,
     antiForensicMeasures: true,
     irreversibleDeletion: true,
+  },
+  // Added a section to disable potentially malicious features
+  safety: {
+    disableDangerousFeatures: true, // If true, disables features below
+    disabledModules: [ // Add names of modules to disable
+      'ddos',
+      'defacement',
+      'automaticExploitation',
+      'reverseEngineering',
+      'credentialStuffing',
+      'networkSniffing',
+      'privilegeEscalation',
+      'hardwareHacking',
+      'socialEngineering',
+      'ransomware',
+      'dataWiping',
+      'botnet',
+      'phishing',
+      'spam',
+      'dataExfiltration'
+    ]
   }
 };
+
+if (credentials.safety.disableDangerousFeatures) {
+  credentials.safety.disabledModules.forEach(moduleName => {
+    if (credentials[moduleName]) {
+      console.warn(`[SECURITY] Disabling potentially dangerous module: ${moduleName}`);
+      for (const key in credentials[moduleName]) {
+        if (typeof credentials[moduleName][key] === 'boolean') {
+          credentials[moduleName][key] = false; // Primarily disables "enabled" flags
+        } else if (Array.isArray(credentials[moduleName][key])){
+            credentials[moduleName][key] = []; // Empty the array
+        } else if (typeof credentials[moduleName][key] === 'string'){
+            credentials[moduleName][key] = ''; // Clears strings
+        } else if(typeof credentials[moduleName][key] === 'number'){
+          credentials[moduleName][key] = 0; // Set to zero
+        }
+      }
+    }
+  });
+}
 
 module.exports = credentials;
