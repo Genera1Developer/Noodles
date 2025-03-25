@@ -283,6 +283,34 @@
             font-size: 1em;
             margin-bottom: 15px;
         }
+
+        /* New Styles for Advanced Options */
+        #advancedOptionsContainer {
+            display: none;
+            margin-top: 15px;
+            border: 1px solid #30363d;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        #advancedOptionsToggle {
+            background-color: #30363d;
+            color: #c9d1d9;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        #advancedOptionsToggle:hover {
+            background-color: #555;
+        }
+
+        .advanced-option {
+            margin-bottom: 10px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
 </head>
@@ -345,6 +373,34 @@
                 <span class="slider round"></span>
             </label>
 
+            <button id="advancedOptionsToggle">Advanced Options</button>
+
+            <div id="advancedOptionsContainer">
+                <div class="advanced-option">
+                    <label for="sourceIpSpoofing">Source IP Spoofing:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="sourceIpSpoofing">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="advanced-option">
+                    <label for="randomUserAgent">Random User-Agent:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="randomUserAgent" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <div class="advanced-option">
+                    <label for="torRouting">TOR Routing (Slower):</label>
+                    <label class="switch">
+                        <input type="checkbox" id="torRouting">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
             <button onclick="initiateAttack()">Initiate Attack</button>
         </div>
         <div id="logs">
@@ -382,6 +438,9 @@
             const zeroDayModule = document.getElementById('zeroDayModule').value;
             const bypassProtection = document.getElementById('bypassProtection').checked;
             const priority = document.getElementById('priority').value;
+            const sourceIpSpoofing = document.getElementById('sourceIpSpoofing').checked;
+            const randomUserAgent = document.getElementById('randomUserAgent').checked;
+            const torRouting = document.getElementById('torRouting').checked;
 
             logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads. Priority: ${priority}`);
 
@@ -396,7 +455,10 @@
                 ransomNote,
                 zeroDayModule,
                 bypassProtection,
-                priority
+                priority,
+                sourceIpSpoofing,
+                randomUserAgent,
+                torRouting
             };
 
             try {
@@ -433,6 +495,17 @@
             document.getElementById('modalContent').innerText = message;
             modal.style.display = "block";
         }
+
+        document.getElementById('advancedOptionsToggle').addEventListener('click', function() {
+            var advancedOptions = document.getElementById('advancedOptionsContainer');
+            if (advancedOptions.style.display === 'none') {
+                advancedOptions.style.display = 'block';
+                this.textContent = 'Hide Advanced Options';
+            } else {
+                advancedOptions.style.display = 'none';
+                this.textContent = 'Advanced Options';
+            }
+        });
     </script>
     <script src="/main.js"></script>
 </body>
