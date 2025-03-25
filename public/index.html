@@ -311,6 +311,24 @@
         .advanced-option {
             margin-bottom: 10px;
         }
+
+        /* New Styles for File Upload (Deface) */
+        #fileUploadContainer {
+            display: none; /* Initially hidden */
+        }
+
+        #fileUpload {
+            display: block;
+            margin-bottom: 15px;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            font-size: 1em;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
 </head>
@@ -324,7 +342,7 @@
             <input type="text" id="target" name="target" placeholder="http://example.com">
 
             <label for="attackType">Attack Type:</label>
-            <select id="attackType" name="attackType">
+            <select id="attackType" name="attackType" onchange="toggleFileUpload()">
                 <option value="ddos">DDoS</option>
                 <option value="deface">Deface (Requires Vulnerability)</option>
                 <option value="connect">Connect (Attempt)</option>
@@ -335,6 +353,11 @@
                 <option value="zero_day">Zero-Day Exploit (Requires Module)</option>
             </select>
 
+            <div id="fileUploadContainer">
+                <label for="fileUpload">Defacement File:</label>
+                <input type="file" id="fileUpload" name="fileUpload">
+            </div>
+
             <label for="duration">Duration (seconds):</label>
             <input type="number" id="duration" name="duration" value="30">
 
@@ -344,7 +367,7 @@
              <label for="proxyList">Proxy List (Optional, one per line):</label>
             <textarea id="proxyList" name="proxyList" rows="4" placeholder="http://proxy1.com:8080\nhttp://proxy2.com:8080"></textarea>
 
-            <label for="customPayload">Custom Payload (Optional, for Deface/XSS):</label>
+            <label for="customPayload">Custom Payload (Optional, for XSS):</label>
             <textarea id="customPayload" name="customPayload" rows="4" placeholder="<script>alert('XSS')</script>"></textarea>
 
             <label for="credentialList">Credential List (Optional, for Credential Stuffing, user:pass per line):</label>
@@ -399,6 +422,22 @@
                         <span class="slider round"></span>
                     </label>
                 </div>
+
+                 <div class="advanced-option">
+                    <label for="reflectAmplification">Reflective Amplification:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="reflectAmplification">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                  <div class="advanced-option">
+                    <label for="cacheBypass">Cache Bypass:</label>
+                    <label class="switch">
+                        <input type="checkbox" id="cacheBypass">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
             </div>
 
             <button onclick="initiateAttack()">Initiate Attack</button>
@@ -426,6 +465,16 @@
             logContent.scrollTop = logContent.scrollHeight;
         }
 
+        function toggleFileUpload() {
+            var attackType = document.getElementById('attackType').value;
+            var fileUploadContainer = document.getElementById('fileUploadContainer');
+            if (attackType === 'deface') {
+                fileUploadContainer.style.display = 'block';
+            } else {
+                fileUploadContainer.style.display = 'none';
+            }
+        }
+
         async function initiateAttack() {
             const target = document.getElementById('target').value;
             const attackType = document.getElementById('attackType').value;
@@ -441,6 +490,9 @@
             const sourceIpSpoofing = document.getElementById('sourceIpSpoofing').checked;
             const randomUserAgent = document.getElementById('randomUserAgent').checked;
             const torRouting = document.getElementById('torRouting').checked;
+             const reflectAmplification = document.getElementById('reflectAmplification').checked;
+            const cacheBypass = document.getElementById('cacheBypass').checked;
+            const fileUpload = document.getElementById('fileUpload').files[0];
 
             logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads. Priority: ${priority}`);
 
@@ -458,8 +510,15 @@
                 priority,
                 sourceIpSpoofing,
                 randomUserAgent,
-                torRouting
+                torRouting,
+                 reflectAmplification,
+                cacheBypass
             };
+
+            if (attackType === 'deface' && fileUpload) {
+                attackData.file = await readFileAsync(fileUpload);
+                attackData.filename = fileUpload.name;
+            }
 
             try {
                 const response = await fetch('/attack', {
@@ -477,6 +536,21 @@
                 logMessage(`Error initiating attack: ${error}`);
             }
         }
+
+        function readFileAsync(file) {
+            return new Promise((resolve, reject) => {
+                let reader = new FileReader();
+
+                reader.onload = () => {
+                    resolve(reader.result);
+                };
+
+                reader.onerror = reject;
+
+                reader.readAsDataURL(file);
+            })
+        }
+
 
         var modal = document.getElementById("myModal");
         var span = document.getElementsByClassName("close")[0];
