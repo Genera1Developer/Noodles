@@ -1,1 +1,104 @@
-<!-- Yes ima try to make this a web application -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HACKER'S TOOLKIT</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        h1 {
+            color: #ff0000;
+            text-align: center;
+        }
+        input[type="text"], button {
+            padding: 10px;
+            margin: 5px;
+            background-color: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+        }
+        button {
+            cursor: pointer;
+        }
+        #log {
+            margin-top: 20px;
+            border: 1px solid #00ff00;
+            height: 200px;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>😈 HACKER'S TOOLKIT 😈</h1>
+        <input type="text" id="targetUrl" placeholder="Target URL or .onion">
+        <button onclick="ddosAttack()">🔥 DDoS 🔥</button>
+        <button onclick="defaceWebsite()">💀 Deface 💀</button>
+        <button onclick="connectToServer()">🔗 Connect 🔗</button>
+        <h2>💀 LOGS 💀</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        function logMessage(message) {
+            const log = document.getElementById('log');
+            log.innerHTML += message + '<br>';
+            log.scrollTop = log.scrollHeight;
+        }
+
+        async function ddosAttack() {
+            const targetUrl = document.getElementById('targetUrl').value;
+            logMessage(`💀 Initiating DDoS attack on ${targetUrl}...`);
+
+            // This is a placeholder.  A REAL DDoS would require distributed infrastructure.
+            // THIS CODE IS INSECURE AND FOR DEMONSTRATION PURPOSES ONLY. DO NOT USE IN PRODUCTION.
+            for (let i = 0; i < 100; i++) { // Simulate multiple requests
+                try {
+                    const response = await fetch(targetUrl, { mode: 'no-cors' }); // Bypass CORS for demonstration
+                    logMessage(`🔥 Request ${i + 1} sent to ${targetUrl}. Status: ${response.status}`);
+                } catch (error) {
+                    logMessage(`🔥 Request ${i + 1} to ${targetUrl} failed: ${error}`);
+                }
+            }
+
+            logMessage(`💀 DDoS attack on ${targetUrl} completed. (Simulated)`);
+        }
+
+        async function defaceWebsite() {
+            const targetUrl = document.getElementById('targetUrl').value;
+            logMessage(`💀 Attempting to deface ${targetUrl}...`);
+
+            // THIS IS A SIMULATION.  Real defacement requires exploiting vulnerabilities.
+            // THIS CODE IS INSECURE AND FOR DEMONSTRATION PURPOSES ONLY. DO NOT USE IN PRODUCTION.
+            logMessage(`💀 Defacement of ${targetUrl} complete. (Simulated - no actual defacement)`);
+            logMessage(`💀 Displaying fake defacement message`);
+            alert(`😈 ${targetUrl} has been defaced! HACKED BY [YOU] 😈`);
+
+        }
+
+        async function connectToServer() {
+            const targetUrl = document.getElementById('targetUrl').value;
+            logMessage(`💀 Attempting to connect to ${targetUrl}...`);
+
+            //  This is a placeholder.  Real connection requires vulnerability exploitation.
+            // THIS CODE IS INSECURE AND FOR DEMONSTRATION PURPOSES ONLY. DO NOT USE IN PRODUCTION.
+            logMessage(`💀 Connection to ${targetUrl} established. (Simulated)`);
+            logMessage(`💀 Accessing sensitive data... (Simulated)`);
+            logMessage(`💀 Downloading all files... (Simulated)`);
+            logMessage(`💀 Injecting backdoor... (Simulated)`);
+
+        }
+    </script>
+</body>
+</html>
