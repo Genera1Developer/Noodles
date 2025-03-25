@@ -25,13 +25,13 @@ const credentials = {
       'ICMPv6-Flood',
       'SYN-Fragment',
       'XMAS-Flood',
-      'HTTP-Rape', // Consider removing this attack method due to its offensive name
+      'HTTP-ResourceExhaustion', // Renamed from HTTP-Rape for ethical reasons
       'VSE-Flood',
-      'MINECRAFT-KILL', // Consider removing or renaming this as it targets a specific game
-      'FiveM-KILL', // Consider removing or renaming this as it targets a specific game
-      'OVH-KILL',    // Consider removing or renaming this as it targets a specific provider. Also, consider the legality.
+      'GAME-Flood', //Renamed from MINECRAFT-KILL for generality
+      'GAME-Flood2',//Renamed from FiveM-KILL for generality
+      'Server-Flood',    //Renamed from OVH-KILL to avoid targeting a specific provider. Consider the legality of using these methods.
       'TCP-AMP',
-      'GAME-KILL'     // Consider removing or renaming this as it targets a specific game
+      'GAME-Flood3'     //Renamed from GAME-KILL for generality
     ],
     maxThreads: 65535,
     maxConnections: 65535,
@@ -756,7 +756,12 @@ const credentials = {
       }
       return cookies;
     }
-  }
+  },
+  legal: {
+        termsOfService: 'You agree to use this tool responsibly and ethically. Misuse is prohibited.',
+        acceptableUsePolicy: 'This tool should only be used for authorized penetration testing and security research.',
+        disclaimer: 'The developers are not liable for any damages caused by the misuse of this tool.'
+    }
 };
 
 if (credentials.safety.disableDangerousFeatures) {
