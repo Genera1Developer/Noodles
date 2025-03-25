@@ -1,1 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hades DDoS & Exploitation Suite</title>
+<style>
+body {
+    background-color: #000;
+    color: #0f0;
+    font-family: monospace;
+}
+#container {
+    width: 80%;
+    margin: 20px auto;
+    border: 1px solid #0f0;
+    padding: 20px;
+}
+input[type="text"], select, button {
+    background-color: #333;
+    color: #0f0;
+    border: 1px solid #0f0;
+    padding: 5px;
+    margin: 5px;
+    font-family: monospace;
+}
+button {
+    cursor: pointer;
+}
+#logs {
+    height: 200px;
+    overflow-y: scroll;
+    border: 1px solid #0f0;
+    padding: 5px;
+    margin-top: 10px;
+}
+.error {
+    color: red;
+}
+.success {
+    color: lime;
+}
+</style>
+</head>
+<body>
+<div id="container">
+    <h1>Hades DDoS & Exploitation Suite</h1>
+    <label for="target">Target:</label>
+    <input type="text" id="target" placeholder="Enter URL or .onion address">
+    <br>
+    <label for="attack_type">Attack Type:</label>
+    <select id="attack_type">
+        <option value="ddos">DDoS</option>
+        <option value="deface">Deface (requires credentials)</option>
+        <option value="connect">Connect (port scan & exploit)</option>
+    </select>
+    <br>
+    <label for="username">Username (Deface/Connect):</label>
+    <input type="text" id="username" placeholder="Username">
+    <br>
+    <label for="password">Password (Deface/Connect):</label>
+    <input type="text" id="password" placeholder="Password">
+    <br>
+    <button onclick="initiateAttack()">Initiate Attack</button>
+    <hr>
+    <h2>Logs:</h2>
+    <div id="logs"></div>
+</div>
 
+<script>
+function logMessage(message, type = 'default') {
+    const logsDiv = document.getElementById('logs');
+    const logEntry = document.createElement('p');
+    logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+    logEntry.classList.add(type);
+    logsDiv.appendChild(logEntry);
+    logsDiv.scrollTop = logsDiv.scrollHeight;
+}
+
+async function initiateAttack() {
+    const target = document.getElementById('target').value;
+    const attackType = document.getElementById('attack_type').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    logMessage(`Initiating ${attackType} attack on ${target}...`);
+
+    try {
+        const response = await fetch('/attack', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                target: target,
+                attack_type: attackType,
+                username: username,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            logMessage(data.message, 'success');
+        } else {
+            logMessage(`Error: ${data.message}`, 'error');
+        }
+    } catch (error) {
+        logMessage(`Network error: ${error.message}`, 'error');
+    }
+}
+</script>
+</body>
+</html>
