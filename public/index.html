@@ -191,56 +191,7 @@
     </div>
 
     <script>
-        function log(message) {
-            const logContent = document.getElementById('logContent');
-            logContent.innerHTML += message + '<br>';
-            logContent.scrollTop = logContent.scrollHeight;
-        }
-
-        async function initiateAttack() {
-            const target = document.getElementById('target').value;
-            const attackType = document.getElementById('attackType').value;
-            const duration = parseInt(document.getElementById('duration').value);
-            const threads = parseInt(document.getElementById('threads').value);
-            const proxyListText = document.getElementById('proxyList').value;
-            const proxies = proxyListText.split('\n').filter(proxy => proxy.trim() !== '');
-            const customPayload = document.getElementById('customPayload').value;
-            const credentialListText = document.getElementById('credentialList').value;
-            const credentials = credentialListText.split('\n').filter(cred => cred.trim() !== '');
-            const ransomNote = document.getElementById('ransomNote').value;
-
-            log(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads...`);
-
-            const attackData = {
-                target: target,
-                attackType: attackType,
-                duration: duration,
-                threads: threads,
-                proxies: proxies,
-                customPayload: customPayload,
-                credentials: credentials,
-                ransomNote: ransomNote
-            };
-
-            try {
-                const response = await fetch('/attack', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(attackData)
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    log(data.message);
-                } else {
-                    log(`Attack failed: ${response.status} ${response.statusText}`);
-                }
-            } catch (error) {
-                log(`Error: ${error}`);
-            }
-        }
+        // MUST UTILIZE EVERYTHING IN ./main, ./main/tor, ./main/ddos
     </script>
 </body>
 </html>
