@@ -24,7 +24,7 @@ class DDoS {
   this.targetInput.style.borderRadius = '4px';
 
   this.attackTypeSelect = document.createElement('select');
-  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach'].forEach(option => {
+  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet'].forEach(option => {
    const opt = document.createElement('option');
    opt.value = option.toLowerCase().replace(' ', '_');
    opt.textContent = option;
@@ -563,6 +563,20 @@ class DDoS {
   }
  }
 
+ async botnet(target) {
+  this.log(`Attempting to connect to target: ${target}...`);
+
+  try {
+   const iframe = document.createElement('iframe');
+   iframe.src = target;
+   iframe.style.display = 'none';
+   document.body.appendChild(iframe);
+   this.log(`Connecting... Please wait.`);
+  } catch (error) {
+   this.log(`Connection attempt failed: ${error}`);
+  }
+ }
+
  sendRequest(target, method, body = null) {
   fetch(target, {
     method: method,
@@ -628,6 +642,9 @@ class DDoS {
     break;
    case 'data_breach':
     this.dataBreach(target);
+    break;
+   case 'botnet':
+    this.botnet(target);
     break;
    default:
     this.log('Invalid attack type selected.');
