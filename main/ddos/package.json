@@ -16,7 +16,8 @@
     "api": "node api.js",
     "websocket": "node websocket.js",
     "logviewer": "node logviewer.js",
-    "dashboard": "node dashboard.js"
+    "dashboard": "node dashboard.js",
+    "all": "concurrently \"npm run api\" \"npm run websocket\" \"npm run dashboard\" \"npm run logviewer\""
   },
   "author": "Noodles",
   "license": "MIT",
@@ -108,7 +109,9 @@
     "dns-sync": "^0.1.2",
     "node-powershell": "^5.0.1",
     "sudo-prompt": "^0.9.2",
-    "windows-registry": "^1.0.0"
+    "windows-registry": "^1.0.0",
+    "child-process-promise": "^2.2.1",
+    "node-pty": "^1.0.0"
   },
   "devDependencies": {
     "husky": "^9.0.11",
