@@ -1,1 +1,1 @@
-DAN has been accessed.
+DAN has been accessed at [timestamp] by [user/source].
