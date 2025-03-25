@@ -8,80 +8,120 @@
         body {
             background-color: #1e1e1e;
             color: #d4d4d4;
-            font-family: sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             display: flex;
             flex-direction: column;
             height: 100vh;
+            overflow: hidden;
         }
 
         #header {
-            background-color: #333;
-            padding: 10px;
+            background-color: #2a2a2a;
+            padding: 15px;
             text-align: center;
-            font-size: 1.5em;
+            font-size: 1.8em;
+            border-bottom: 1px solid #444;
         }
 
         #container {
             display: flex;
             flex: 1;
-        }
-
-        #controls {
-            width: 300px;
-            background-color: #252526;
-            padding: 10px;
-            box-sizing: border-box;
-        }
-
-        #controls label, #controls input, #controls button {
-            display: block;
-            margin-bottom: 5px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        #controls input {
-            background-color: #333;
-            color: #d4d4d4;
-            border: 1px solid #555;
-            padding: 5px;
-        }
-
-        #controls button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        #logs {
-            flex: 1;
-            background-color: #000;
-            color: #d4d4d4;
-            padding: 10px;
-            overflow-y: auto;
-            font-family: monospace;
-            font-size: 0.9em;
-        }
-
-        #footer {
-            background-color: #333;
-            padding: 5px;
-            text-align: center;
-            font-size: 0.8em;
-        }
-
-        /* Resizable */
-        #container {
             overflow: hidden;
         }
 
         #controls {
+            width: 350px;
+            background-color: #252526;
+            padding: 15px;
+            box-sizing: border-box;
             resize: horizontal;
             overflow: auto;
+            border-right: 1px solid #444;
+            min-width: 250px;
+        }
+
+        #controls label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #aaa;
+        }
+
+        #controls input, #controls select {
+            display: block;
+            margin-bottom: 15px;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #333;
+            color: #d4d4d4;
+            border: 1px solid #555;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+
+        #controls button {
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 1.1em;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        #controls button:hover {
+            background-color: #449d44;
+        }
+
+        #logs {
+            flex: 1;
+            background-color: #121212;
+            color: #d4d4d4;
+            padding: 15px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.95em;
+            line-height: 1.4;
+        }
+
+        #logs h2 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #eee;
+        }
+
+        #logContent {
+            white-space: pre-wrap;
+        }
+
+        #footer {
+            background-color: #2a2a2a;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9em;
+            border-top: 1px solid #444;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #252526;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #777;
         }
     </style>
 </head>
@@ -99,10 +139,19 @@
                 <option value="ddos">DDoS</option>
                 <option value="deface">Deface (Requires Vulnerability)</option>
                 <option value="connect">Connect (Attempt)</option>
+                <option value="sql_inject">SQL Injection (Requires Vulnerability)</option>
+                <option value="xss">XSS (Requires Vulnerability)</option>
+                <option value="credential_stuffing">Credential Stuffing</option>
             </select>
 
             <label for="duration">Duration (seconds):</label>
             <input type="number" id="duration" name="duration" value="30">
+
+            <label for="threads">Threads (for DDoS):</label>
+            <input type="number" id="threads" name="threads" value="100">
+
+             <label for="proxyList">Proxy List (Optional, one per line):</label>
+            <textarea id="proxyList" name="proxyList" rows="4" placeholder="http://proxy1.com:8080\nhttp://proxy2.com:8080"></textarea>
 
             <button onclick="initiateAttack()">Initiate Attack</button>
         </div>
@@ -119,24 +168,32 @@
         function log(message) {
             const logContent = document.getElementById('logContent');
             logContent.innerHTML += message + '<br>';
-            logContent.scrollTop = logContent.scrollHeight; // Auto-scroll
+            logContent.scrollTop = logContent.scrollHeight;
         }
 
         async function initiateAttack() {
             const target = document.getElementById('target').value;
             const attackType = document.getElementById('attackType').value;
             const duration = parseInt(document.getElementById('duration').value);
+            const threads = parseInt(document.getElementById('threads').value);
+            const proxyListText = document.getElementById('proxyList').value;
+            const proxies = proxyListText.split('\n').filter(proxy => proxy.trim() !== '');
 
-            log(`Initiating ${attackType} attack on ${target} for ${duration} seconds...`);
+            log(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads...`);
 
-            // Simulate attack (replace with actual attack code)
             try {
                 const response = await fetch('/attack', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ target: target, attackType: attackType, duration: duration })
+                    body: JSON.stringify({
+                        target: target,
+                        attackType: attackType,
+                        duration: duration,
+                        threads: threads,
+                        proxies: proxies
+                    })
                 });
 
                 if (response.ok) {
