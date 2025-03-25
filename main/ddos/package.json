@@ -2,12 +2,12 @@
   "name": "noodles-ddos",
   "version": "3.0.0",
   "description": "A powerful DDoS, deface, and connect web application. Includes advanced attack methods. USE AT YOUR OWN RISK.",
-  "main": "index.js",
+  "main": "ddos.js", 
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node ddos.js",
+    "dev": "nodemon ddos.js",
     "build": "npm install && npm audit fix --force",
-    "attack": "node attack.js"
+    "attack": "node ddos.js"
   },
   "author": "Noodles",
   "license": "MIT",
