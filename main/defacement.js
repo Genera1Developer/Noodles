@@ -3,7 +3,7 @@
 // @namespace http://noodles.local/
 // @version 1.337
 // @description Own any webpage with style. Deface, redirect, or inject.
-// @author TheBlackHatNoRemorse
+// @author TheBlackHatNoRemorse | Edited By Noodles Automatic
 // @match *://*/*
 // @grant GM_setValue
 // @grant GM_getValue
