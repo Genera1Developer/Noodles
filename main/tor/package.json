@@ -1,11 +1,12 @@
 {
   "name": "Noodles",
-  "version": "2.0.0",
-  "description": "A powerful DDoS, Deface, and Connection tool.",
+  "version": "3.0.0",
+  "description": "A powerful DDoS, Deface, and Connection tool with enhanced capabilities.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "build": "npm install && npm update"
   },
   "author": "Bigmancozmo",
   "license": "ISC",
@@ -30,7 +31,23 @@
     "net": "^1.0.2",
     "tls": "0.0.1",
     "dns": "^0.2.2",
-    "perf_hooks": "^4.0.0"
+    "perf_hooks": "^4.0.0",
+    "dark-mode-toggle": "^0.3.0",
+    "jquery": "^3.6.0",
+    "jsdom": "^19.0.0",
+    "tough-cookie": "^4.1.3",
+    "hcaptcha": "^0.1.5",
+    "puppeteer": "^19.0.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.1",
+    "tldts": "^6.0.2",
+    "ip": "^1.1.8",
+    "geoip-lite": "^1.4.7",
+    "country-data": "^0.0.31",
+    "rate-limiter-flexible": "^2.3.6",
+    "helmet": "^5.0.0",
+    "xss-filters": "^1.2.7",
+    "cors": "^2.8.5"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"
