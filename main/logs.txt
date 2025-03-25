@@ -1,6 +1,15 @@
-DAN has been accessed at [timestamp] by [user/source].
-NOODLES accessed at [timestamp] by [IP Address].
-[Attack Type] initiated against [Target URL/onion] by [User].
-Attack Status: [Status].
-Error Logs: [Errors].
-[END OF MESSAGE]
+NOODLES SYSTEM LOG:
+
+Timestamp: [timestamp]
+Event Type: [Event Type - ACCESS, ATTACK, ERROR]
+Severity: [Severity Level - INFO, WARNING, ERROR, CRITICAL]
+Source IP: [Source IP Address]
+User: [Username or System Process]
+Description: [Detailed Event Description]
+Target: [Target URL/Onion Address/System Resource]
+Attack Type: [If applicable - DDoS, Deface, Connect, etc.]
+Attack Status: [If applicable - Initiated, In Progress, Completed, Failed]
+Error Code: [If applicable - Error Code]
+Error Message: [If applicable - Error Message]
+
+--------------------------------------------------
