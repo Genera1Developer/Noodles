@@ -20,6 +20,7 @@ const WebSocket = require('ws');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const sanitize = require('sanitize-html');
+const validator = require('validator');
 
 // Security Enhancements
 app.use(helmet({
@@ -285,7 +286,7 @@ app.post('/attack', async (req, res) => {
     }
 
     // Input Validation to prevent command injection
-    if (typeof encodedTarget !== 'string' || !/^[a-zA-Z0-9.:\/-]+$/.test(encodedTarget)) {
+    if (typeof encodedTarget !== 'string' || !validator.isURL(encodedTarget, { protocols: ['http','https'], require_protocol: true })) {
         log('Error: Invalid target format. Potential command injection attempt.');
         return res.status(400).send('Invalid target format.');
     }
@@ -539,54 +540,56 @@ app.post('/attack', async (req, res) => {
             return res.status(400).send('Invalid attack type.');
     }
 
-    log(`Initiating ${attackType} attack on ${target} for ${duration} seconds with intensity ${intensity}.`);
+    if (command) { // Only execute if a command has been constructed
+      log(`Initiating ${attackType} attack on ${target} for ${duration} seconds with intensity ${intensity}.`);
 
-    attackCounter.inc({ attackType: attackType, target: target });
-    const attackStartTime = Date.now();
+      attackCounter.inc({ attackType: attackType, target: target });
+      const attackStartTime = Date.now();
 
-    try {
-        const { stdout, stderr } = await executeCommand(command);
-        const attackEndTime = Date.now();
-        const actualDuration = (attackEndTime - attackStartTime) / 1000;
-        attackDurationGauge.set({ attackType: attackType, target: target }, actualDuration);
+      try {
+          const { stdout, stderr } = await executeCommand(command);
+          const attackEndTime = Date.now();
+          const actualDuration = (attackEndTime - attackStartTime) / 1000;
+          attackDurationGauge.set({ attackType: attackType, target: target }, actualDuration);
 
-        if (stderr) {
-            log(`Attack stderr: ${stderr}`);
-        }
-        log(`Attack completed. stdout: ${stdout}`);
+          if (stderr) {
+              log(`Attack stderr: ${stderr}`);
+          }
+          log(`Attack completed. stdout: ${stdout}`);
 
-        if (wss && wss.clients) {
-            wss.clients.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                    try {
-                        client.send(JSON.stringify({ type: 'attack_result', stdout: stdout, stderr: stderr }));
-                    } catch (e) {
-                        console.error("WebSocket error:", e);
-                    }
+          if (wss && wss.clients) {
+              wss.clients.forEach(client => {
+                  if (client.readyState === WebSocket.OPEN) {
+                      try {
+                          client.send(JSON.stringify({ type: 'attack_result', stdout: stdout, stderr: stderr }));
+                      } catch (e) {
+                          console.error("WebSocket error:", e);
+                      }
 
-                }
-            });
-        }
+                  }
+              });
+          }
 
-        res.send('Attack initiated. Check logs for details.');
-    } catch (error) {
-        log(`Attack failed: ${error.message}`);
-        console.error(`exec error: ${error}`);
+          res.send('Attack initiated. Check logs for details.');
+      } catch (error) {
+          log(`Attack failed: ${error.message}`);
+          console.error(`exec error: ${error}`);
 
-        if (wss && wss.clients) {
-            wss.clients.forEach(client => {
-                if (client.readyState === WebSocket.OPEN) {
-                    try {
-                        client.send(JSON.stringify({ type: 'attack_failed', error: error.message }));
-                    } catch (e) {
-                        console.error("WebSocket error:", e);
-                    }
+          if (wss && wss.clients) {
+              wss.clients.forEach(client => {
+                  if (client.readyState === WebSocket.OPEN) {
+                      try {
+                          client.send(JSON.stringify({ type: 'attack_failed', error: error.message }));
+                      } catch (e) {
+                          console.error("WebSocket error:", e);
+                      }
 
-                }
-            });
-        }
+                  }
+              });
+          }
 
-        res.status(500).send(`Attack failed: ${error.message}`);
+          res.status(500).send(`Attack failed: ${error.message}`);
+      }
     }
 });
 
