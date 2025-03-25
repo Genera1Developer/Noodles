@@ -1,7 +1,7 @@
 {
   "name": "noodles-ddos",
   "version": "3.0.0",
-  "description": "A powerful DDoS, deface, and connect web application with Tor support.",
+  "description": "A powerful DDoS, deface, and connect web application with Tor & proxy support. Includes advanced attack methods.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -57,7 +57,16 @@
     "hcaptcha": "^0.1.5",
     "undici": "^6.6.1",
     "ws": "^8.16.0",
-    "eventsource": "^2.0.2"
+    "eventsource": "^2.0.2",
+    "fake-useragent": "^1.0.1",
+    "proxy-chain": "^2.0.2",
+    "needle": "^3.2.0",
+    "global-agent": "^3.0.0",
+    "rate-limiter-flexible": "^4.0.0",
+    "ip-range-check": "^0.2.0",
+    "node-ip": "^2.0.0",
+    "is-reachable": "^5.2.0",
+    "bottleneck": "^2.19.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
