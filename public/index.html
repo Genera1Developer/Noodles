@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,7 +51,9 @@
             color: #8b949e;
         }
 
-        #controls input, #controls select, #controls textarea {
+        #controls input,
+        #controls select,
+        #controls textarea {
             display: block;
             margin-bottom: 15px;
             width: 100%;
@@ -152,7 +155,7 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgba(0, 0, 0, 0.4);
         }
 
         .modal-content {
@@ -178,7 +181,10 @@
             cursor: pointer;
         }
 
-        input:focus, select:focus, textarea:focus, button:focus {
+        input:focus,
+        select:focus,
+        textarea:focus,
+        button:focus {
             outline: 2px solid #58a6ff;
             outline-offset: 1px;
         }
@@ -188,7 +194,9 @@
             margin-bottom: 5px;
         }
 
-        #controls input, #controls select, #controls textarea {
+        #controls input,
+        #controls select,
+        #controls textarea {
             margin-bottom: 10px;
             padding: 8px;
             font-size: 0.9em;
@@ -248,15 +256,15 @@
             border-radius: 50%;
         }
 
-        input:checked + .slider {
+        input:checked+.slider {
             background-color: #238636;
         }
 
-        input:focus + .slider {
+        input:focus+.slider {
             box-shadow: 0 0 1px #238636;
         }
 
-        input:checked + .slider:before {
+        input:checked+.slider:before {
             -webkit-transform: translateX(26px);
             -ms-transform: translateX(26px);
             transform: translateX(26px);
@@ -314,7 +322,7 @@
 
         /* New Styles for File Upload (Deface) */
         #fileUploadContainer {
-            display: none; /* Initially hidden */
+            display: none;
         }
 
         #fileUpload {
@@ -329,16 +337,116 @@
             border-radius: 4px;
             font-size: 1em;
         }
+
         #keyloggerContainer {
             display: none;
         }
+
         #connectContainer {
             display: none;
         }
 
+        /* Styles for custom headers */
+        #customHeadersContainer {
+            display: none;
+            margin-top: 15px;
+            border: 1px solid #30363d;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .header-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .header-row input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .remove-header-button {
+            background-color: #842029;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .add-header-button {
+            background-color: #238636;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+
+        /* Styles for HTTP Method selection */
+        #httpMethodContainer {
+            margin-bottom: 15px;
+        }
+
+        #httpMethodContainer label {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        #httpMethodContainer input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        #sqlInjectionContainer {
+            display: none;
+        }
+
+        /* Styles for Cookie Management */
+        #cookieContainer {
+            display: none;
+            margin-top: 15px;
+            border: 1px solid #30363d;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .cookie-row {
+            display: flex;
+            margin-bottom: 10px;
+        }
+
+        .cookie-row input {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .remove-cookie-button {
+            background-color: #842029;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        .add-cookie-button {
+            background-color: #238636;
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
 </head>
+
 <body>
     <div id="header">
         <h1>Noodles - Official Attack Panel</h1>
@@ -347,6 +455,18 @@
         <div id="controls">
             <label for="target">Target URL (.onion or normal):</label>
             <input type="text" id="target" name="target" placeholder="http://example.com">
+
+            <div id="httpMethodContainer">
+                <label>HTTP Method:</label>
+                <label><input type="radio" name="httpMethod" value="GET" checked>GET</label>
+                <label><input type="radio" name="httpMethod" value="POST">POST</label>
+                <label><input type="radio" name="httpMethod" value="PUT">PUT</label>
+                <label><input type="radio" name="httpMethod" value="DELETE">DELETE</label>
+                <label><input type="radio" name="httpMethod" value="OPTIONS">OPTIONS</label>
+                <label><input type="radio" name="httpMethod" value="TRACE">TRACE</label>
+                <label><input type="radio" name="httpMethod" value="PATCH">PATCH</label>
+                <label><input type="radio" name="httpMethod" value="HEAD">HEAD</label>
+            </div>
 
             <label for="attackType">Attack Type:</label>
             <select id="attackType" name="attackType" onchange="toggleAttackTypeOptions()">
@@ -365,15 +485,22 @@
                 <label for="fileUpload">Defacement File:</label>
                 <input type="file" id="fileUpload" name="fileUpload">
             </div>
-            
+
             <div id="keyloggerContainer">
                 <label for="keyloggerScript">Keylogger Script URL:</label>
-                <input type="text" id="keyloggerScript" name="keyloggerScript" placeholder="http://example.com/keylogger.js">
+                <input type="text" id="keyloggerScript" name="keyloggerScript"
+                    placeholder="http://example.com/keylogger.js">
             </div>
 
             <div id="connectContainer">
                 <label for="connectPort">Connect Port:</label>
                 <input type="number" id="connectPort" name="connectPort" value="80">
+            </div>
+
+            <div id="sqlInjectionContainer">
+                <label for="sqlInjectionPayload">SQL Injection Payload:</label>
+                <textarea id="sqlInjectionPayload" name="sqlInjectionPayload" rows="4"
+                    placeholder="Example: ' OR '1'='1"></textarea>
             </div>
 
             <label for="duration">Duration (seconds):</label>
@@ -382,8 +509,9 @@
             <label for="threads">Threads (for DDoS):</label>
             <input type="number" id="threads" name="threads" value="1000">
 
-             <label for="proxyList">Proxy List (Optional, one per line):</label>
-            <textarea id="proxyList" name="proxyList" rows="4" placeholder="http://proxy1.com:8080\nhttp://proxy2.com:8080"></textarea>
+            <label for="proxyList">Proxy List (Optional, one per line):</label>
+            <textarea id="proxyList" name="proxyList" rows="4"
+                placeholder="http://proxy1.com:8080\nhttp://proxy2.com:8080"></textarea>
 
             <label for="customPayload">Custom Payload (Optional, for XSS):</label>
             <textarea id="customPayload" name="customPayload" rows="4" placeholder="<script>alert('XSS')</script>"></textarea>
@@ -392,7 +520,8 @@
             <textarea id="credentialList" name="credentialList" rows="4" placeholder="user1:pass1\nuser2:pass2"></textarea>
 
             <label for="ransomNote">Ransom Note (for Ransomware):</label>
-            <textarea id="ransomNote" name="ransomNote" rows="4" placeholder="Your files have been encrypted. Pay [AMOUNT] to [ADDRESS]"></textarea>
+            <textarea id="ransomNote" name="ransomNote" rows="4"
+                placeholder="Your files have been encrypted. Pay [AMOUNT] to [ADDRESS]"></textarea>
 
             <label for="zeroDayModule">Zero-Day Module (Optional):</label>
             <select id="zeroDayModule" name="zeroDayModule">
@@ -441,7 +570,7 @@
                     </label>
                 </div>
 
-                 <div class="advanced-option">
+                <div class="advanced-option">
                     <label for="reflectAmplification">Reflective Amplification:</label>
                     <label class="switch">
                         <input type="checkbox" id="reflectAmplification">
@@ -449,16 +578,55 @@
                     </label>
                 </div>
 
-                  <div class="advanced-option">
+                <div class="advanced-option">
                     <label for="cacheBypass">Cache Bypass:</label>
                     <label class="switch">
                         <input type="checkbox" id="cacheBypass">
                         <span class="slider round"></span>
                     </label>
                 </div>
+
+                <div class="advanced-option">
+                    <label for="maxConnections">Max Connections:</label>
+                    <input type="number" id="maxConnections" name="maxConnections" value="500">
+                </div>
+
+                <div class="advanced-option">
+                    <label for="connectionTimeout">Connection Timeout (seconds):</label>
+                    <input type="number" id="connectionTimeout" name="connectionTimeout" value="10">
+                </div>
+
+                <div class="advanced-option">
+                    <label for="rateLimit">Rate Limit (requests per second):</label>
+                    <input type="number" id="rateLimit" name="rateLimit" value="0">
+                </div>
             </div>
 
             <button onclick="initiateAttack()">Initiate Attack</button>
+
+            <button id="customHeadersToggle">Custom Headers</button>
+
+            <div id="customHeadersContainer">
+                <div id="headers">
+                    <div class="header-row">
+                        <input type="text" class="header-name" placeholder="Header Name">
+                        <input type="text" class="header-value" placeholder="Header Value">
+                        <button class="remove-header-button" onclick="removeHeader(this)">Remove</button>
+                    </div>
+                </div>
+                <button class="add-header-button" onclick="addHeader()">Add Header</button>
+            </div>
+            <button id="cookieToggle">Cookies</button>
+            <div id="cookieContainer">
+                <div id="cookies">
+                    <div class="cookie-row">
+                        <input type="text" class="cookie-name" placeholder="Cookie Name">
+                        <input type="text" class="cookie-value" placeholder="Cookie Value">
+                        <button class="remove-cookie-button" onclick="removeCookie(this)">Remove</button>
+                    </div>
+                </div>
+                <button class="add-cookie-button" onclick="addCookie()">Add Cookie</button>
+            </div>
         </div>
         <div id="logs">
             <h2>Logs:</h2>
@@ -479,7 +647,7 @@
     <script>
         async function logMessage(message) {
             const logContent = document.getElementById('logContent');
-            logContent.innerHTML += message + '\\n';
+            logContent.innerHTML += message + '\n';
             logContent.scrollTop = logContent.scrollHeight;
         }
 
@@ -488,10 +656,76 @@
             var fileUploadContainer = document.getElementById('fileUploadContainer');
             var keyloggerContainer = document.getElementById('keyloggerContainer');
             var connectContainer = document.getElementById('connectContainer');
+            var sqlInjectionContainer = document.getElementById('sqlInjectionContainer');
 
             fileUploadContainer.style.display = (attackType === 'deface') ? 'block' : 'none';
             keyloggerContainer.style.display = (attackType === 'keylogger') ? 'block' : 'none';
             connectContainer.style.display = (attackType === 'connect') ? 'block' : 'none';
+            sqlInjectionContainer.style.display = (attackType === 'sql_inject') ? 'block' : 'none';
+        }
+        function addHeader() {
+            const headersContainer = document.getElementById('headers');
+            const headerRow = document.createElement('div');
+            headerRow.className = 'header-row';
+
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.className = 'header-name';
+            nameInput.placeholder = 'Header Name';
+            headerRow.appendChild(nameInput);
+
+            const valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.className = 'header-value';
+            valueInput.placeholder = 'Header Value';
+            headerRow.appendChild(valueInput);
+
+            const removeButton = document.createElement('button');
+            removeButton.className = 'remove-header-button';
+            removeButton.textContent = 'Remove';
+            removeButton.onclick = function () {
+                removeHeader(this);
+            };
+            headerRow.appendChild(removeButton);
+
+            headersContainer.appendChild(headerRow);
+        }
+
+        function removeHeader(button) {
+            const headerRow = button.parentNode;
+            headerRow.parentNode.removeChild(headerRow);
+        }
+        function addCookie() {
+            const cookiesContainer = document.getElementById('cookies');
+            const cookieRow = document.createElement('div');
+            cookieRow.className = 'cookie-row';
+
+            const nameInput = document.createElement('input');
+            nameInput.type = 'text';
+            nameInput.className = 'cookie-name';
+            nameInput.placeholder = 'Cookie Name';
+            cookieRow.appendChild(nameInput);
+
+            const valueInput = document.createElement('input');
+            valueInput.type = 'text';
+            valueInput.className = 'cookie-value';
+            valueInput.placeholder = 'Cookie Value';
+            cookieRow.appendChild(valueInput);
+
+            const removeButton = document.createElement('button');
+            removeButton.className = 'remove-cookie-button';
+            removeButton.textContent = 'Remove';
+            removeButton.onclick = function () {
+                removeCookie(this);
+            };
+            cookieRow.appendChild(removeButton);
+
+            cookiesContainer.appendChild(cookieRow);
+        }
+
+        function removeCookie(button) {
+            const cookieRow = button.parentNode;
+            cookieRow.parentNode.removeChild(cookieRow);
         }
 
         async function initiateAttack() {
@@ -499,9 +733,9 @@
             const attackType = document.getElementById('attackType').value;
             const duration = parseInt(document.getElementById('duration').value);
             const threads = parseInt(document.getElementById('threads').value);
-            const proxyList = document.getElementById('proxyList').value.split('\\n').filter(Boolean);
+            const proxyList = document.getElementById('proxyList').value.split('\n').filter(Boolean);
             const customPayload = document.getElementById('customPayload').value;
-            const credentialList = document.getElementById('credentialList').value.split('\\n').filter(Boolean);
+            const credentialList = document.getElementById('credentialList').value.split('\n').filter(Boolean);
             const ransomNote = document.getElementById('ransomNote').value;
             const zeroDayModule = document.getElementById('zeroDayModule').value;
             const bypassProtection = document.getElementById('bypassProtection').checked;
@@ -509,11 +743,28 @@
             const sourceIpSpoofing = document.getElementById('sourceIpSpoofing').checked;
             const randomUserAgent = document.getElementById('randomUserAgent').checked;
             const torRouting = document.getElementById('torRouting').checked;
-             const reflectAmplification = document.getElementById('reflectAmplification').checked;
+            const reflectAmplification = document.getElementById('reflectAmplification').checked;
             const cacheBypass = document.getElementById('cacheBypass').checked;
             const fileUpload = document.getElementById('fileUpload').files[0];
             const keyloggerScript = document.getElementById('keyloggerScript').value;
             const connectPort = parseInt(document.getElementById('connectPort').value);
+            const sqlInjectionPayload = document.getElementById('sqlInjectionPayload').value;
+            const httpMethod = document.querySelector('input[name="httpMethod"]:checked').value;
+            const maxConnections = parseInt(document.getElementById('maxConnections').value);
+            const connectionTimeout = parseInt(document.getElementById('connectionTimeout').value);
+            const rateLimit = parseInt(document.getElementById('rateLimit').value);
+            const headerRows = document.querySelectorAll('#headers .header-row');
+            const customHeaders = Array.from(headerRows).map(row => {
+                const name = row.querySelector('.header-name').value;
+                const value = row.querySelector('.header-value').value;
+                return { name, value };
+            }).filter(header => header.name && header.value);
+            const cookieRows = document.querySelectorAll('#cookies .cookie-row');
+            const cookies = Array.from(cookieRows).map(row => {
+                const name = row.querySelector('.cookie-name').value;
+                const value = row.querySelector('.cookie-value').value;
+                return { name, value };
+            }).filter(cookie => cookie.name && cookie.value);
 
             logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads. Priority: ${priority}`);
 
@@ -532,10 +783,17 @@
                 sourceIpSpoofing,
                 randomUserAgent,
                 torRouting,
-                 reflectAmplification,
+                reflectAmplification,
                 cacheBypass,
                 keyloggerScript,
-                connectPort
+                connectPort,
+                sqlInjectionPayload,
+                httpMethod,
+                maxConnections,
+                connectionTimeout,
+                rateLimit,
+                customHeaders,
+                cookies
             };
 
             if (attackType === 'deface' && fileUpload) {
@@ -578,11 +836,11 @@
         var modal = document.getElementById("myModal");
         var span = document.getElementsByClassName("close")[0];
 
-        span.onclick = function() {
+        span.onclick = function () {
             modal.style.display = "none";
         }
 
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
             }
@@ -593,7 +851,7 @@
             modal.style.display = "block";
         }
 
-        document.getElementById('advancedOptionsToggle').addEventListener('click', function() {
+        document.getElementById('advancedOptionsToggle').addEventListener('click', function () {
             var advancedOptions = document.getElementById('advancedOptionsContainer');
             if (advancedOptions.style.display === 'none') {
                 advancedOptions.style.display = 'block';
@@ -603,7 +861,28 @@
                 this.textContent = 'Advanced Options';
             }
         });
+        document.getElementById('customHeadersToggle').addEventListener('click', function () {
+            var customHeaders = document.getElementById('customHeadersContainer');
+            if (customHeaders.style.display === 'none') {
+                customHeaders.style.display = 'block';
+                this.textContent = 'Hide Custom Headers';
+            } else {
+                customHeaders.style.display = 'none';
+                this.textContent = 'Custom Headers';
+            }
+        });
+        document.getElementById('cookieToggle').addEventListener('click', function () {
+            var cookieContainer = document.getElementById('cookieContainer');
+            if (cookieContainer.style.display === 'none') {
+                cookieContainer.style.display = 'block';
+                this.textContent = 'Hide Cookies';
+            } else {
+                cookieContainer.style.display = 'none';
+                this.textContent = 'Cookies';
+            }
+        });
     </script>
     <script src="/main.js"></script>
 </body>
+
 </html>
