@@ -1,319 +1,85 @@
-NOODLES SYSTEM LOG:
+class Logger {
+    constructor() {
+        this.logEntries = [];
+    }
 
-Timestamp: [timestamp]
-Event Type: [Event Type - ACCESS, ATTACK, ERROR, EXPLOIT, SYSTEM]
-Severity: [Severity Level - INFO, WARNING, ERROR, CRITICAL, FATAL, DEBUG]
-Source IP: [Source IP Address or Internal Service Name]
-Source Port: [Source Port Number or Service Identifier]
-Destination IP: [Destination IP Address]
-Destination Port: [Destination Port Number]
-User: [Username or System Process or API Key Hash]
-Description: [Detailed Event Description - Include specific details, parameters used, and outcomes. Be as verbose as possible.  Example:  Initiated SYN Flood attack against target at specified IP address and port. Configured for maximum packet size and unlimited duration.]
-Target: [Target URL/Onion Address/System Resource/File Path/Database Table]
-Attack Type: [If applicable - DDoS (SYN Flood, UDP Flood, HTTP Flood, Slowloris, Hulk, GoldenEye, RUDY, TCP Amplification, DNS Amplification, ICMP Flood, ACK Flood, PUSH Flood, LAND Attack, XMAS Attack, SYN-ACK Flood, HTTP/2 Rapid Reset), Deface, Connect, Exploit (SQLi, XSS, RCE, LFI, RFI, CSRF, XXE, Deserialization, SSTI, OS Command Injection, Blind SQLi, XPath Injection, LDAP Injection), Brute Force, Credential Stuffing, Session Hijacking, MITM, Replay Attack, Zero-Day Exploit, Social Engineering],
-Attack Status: [If applicable - Initiated, In Progress, Completed, Succeeded, Failed, Queued, Stopped, Paused, Recovering, Bypassed, Blocked, Detected, Undetected]
-Attack ID: [Unique Attack Identifier (UUIDv4)]
-Attack Configuration: [JSON Blob of attack parameters - threads, duration, method-specific params, headers, payloads, proxies, user-agents, rate limiting, evasion techniques, anonymization settings]
-Attack Duration: [Total attack duration in seconds or milliseconds]
-Packets Sent: [Number of packets sent during the attack - Track both total and per-second]
-Bytes Sent: [Number of bytes sent during the attack - Track both total and per-second]
-Peak Bandwidth: [Peak bandwidth usage during the attack (Mbps/Gbps) - Track both ingress and egress]
-Average Latency: [Average latency during the attack (ms) - Track min, max, and average]
-Error Code: [If applicable - Error Code - HTTP Status Codes, System Error Codes, Application-Specific Codes]
-Error Message: [Error Message - Detailed reason for failure or warning. Include stack traces and relevant variables.]
-Request Headers: [Full HTTP Request Headers - Include all headers sent by the attacker]
-Response Headers: [Full HTTP Response Headers from target, if applicable - Include all headers received from the target]
-Response Body Snippet: [First 2048 characters of response, if applicable - Include full body if possible. Truncate and indicate if truncated.]
-Cookies: [Cookies sent/received, if applicable - Include all cookie details (name, value, domain, path, expiry, HttpOnly, Secure, SameSite)]
-Malicious Payload: [Snippet of malicious payload used - Obfuscated/Encoded/Raw - Include decoding/deobfuscation attempts]
-Compromised Data: [Type of data compromised - Credentials, PII, Financial Data, Intellectual Property, System Files, Database Records]
-Vulnerability Exploited: [Vulnerability identifier (CVE, OWASP, CWE) or Description]
-Attack Vector: [How the attack was carried out - Network, Application, Social Engineering, Insider Threat, Supply Chain, Physical Access]
-GeoLocation: [GeoLocation of attacker, if available - Country, Region, City, Coordinates - Use multiple geolocation services, MaxMind, IP2Location, DB-IP]
-User-Agent: [User agent of attacker - Identify browser, OS, and device type]
-Referer: [Referer URL of attacker - Track referrer chain]
-Proxy Used: [IP Address of the proxy used, if any - Identify proxy type (HTTP, SOCKS4, SOCKS5, Tor)]
-Tor Exit Node: [IP Address of the Tor exit node, if used - Identify Tor relay details]
-Anonymization Level: [Level of anonymization used (e.g., Low, Medium, High, Elite) - Describe techniques used (e.g., VPN, Tor, Proxy Chaining, Double VPN)]
-Bypass Techniques: [Techniques used to bypass security measures - WAF bypass, IDS evasion, CAPTCHA solving, Rate Limiting bypass, Cloudflare Bypass, Akamai Bypass]
-Firewall Evasion: [Methods used to evade firewalls - Fragmentation, Source Port Manipulation, IP Spoofing, Protocol Obfuscation, TCP Segmentation, Encryption]
-Intrusion Detection System Alert: [Whether the attack triggered an IDS alert (True/False) - Include IDS alert details - Snort, Suricata, Zeek]
-Data Exfiltration Method: [Method used to exfiltrate data, if applicable - FTP, HTTP, DNS Tunneling, Email, Cloud Storage, SSH Tunneling, I2P]
-Command and Control Server: [IP Address and Domain of the C2 server, if applicable - Include C2 protocol and communication details - Cobalt Strike, Metasploit, Empire, PoshC2]
-Persistence Mechanism: [Method used to establish persistence on the target system - Backdoor, Scheduled Task, Startup Script, Registry Key, WMI Event Subscription, Service Creation]
-Rootkit Installed: [Whether a rootkit was installed (True/False) - Include rootkit type and installation details - Kernel-Mode, User-Mode, Bootkit]
-Privilege Escalation Method: [Method used to escalate privileges - Kernel Exploit, SUID Binary, Password Cracking, Configuration Vulnerability, DLL Hijacking, Token Impersonation]
-Lateral Movement: [Details of lateral movement within the network, if applicable - Internal Scanning, Credential Reuse, Pass-the-Hash, Kerberoasting, PsExec, WMI]
-Data Encryption: [Encryption algorithm used for data exfiltration - AES, RSA, ChaCha20 - Include key length and mode, Serpent, Twofish, Camellia]
-Obfuscation Techniques: [Techniques used to obfuscate the attack - Polymorphism, Metamorphism, Code Injection, Anti-Debugging, Packers, Crypters, Steganography]
-Anti-Forensic Measures: [Measures taken to prevent forensic analysis - Log Deletion, Time Stomping, File System Manipulation, Memory Injection, Disk Wipe, Data Shredding]
-Attacker Attribution: [Possible attribution of the attacker - Group, Nation-State, Individual - Based on TTPs, malware signatures, and infrastructure - APT Groups, Cybercrime Syndicates, Hacktivists]
-Regulatory Compliance: [Regulatory compliance implications (e.g., GDPR, HIPAA, PCI DSS) - Identify specific violations]
-Legal Ramifications: [Potential legal consequences of the attack - Criminal charges, civil lawsuits]
-Financial Impact: [Estimated financial impact of the attack - Direct costs, indirect costs, reputational damage]
-Political Motivation: [Possible political motivation behind the attack - Ideology, Geopolitics]
-Social Engineering Tactics: [Social engineering techniques employed - Phishing, Pretexting, Baiting, Quid Pro Quo, Tailgating, Spear Phishing, Whaling]
-Psychological Warfare: [Psychological warfare tactics used - Disinformation, Propaganda, Fearmongering]
-Misinformation Campaign: [Details of any associated misinformation campaign - Target audience, channels used, content themes]
-Fake News Dissemination: [Methods used to spread fake news - Social Media Bots, Fake Websites, Influencer Manipulation]
-Public Opinion Manipulation: [Techniques used to manipulate public opinion - Sentiment Analysis, Astroturfing, Algorithmic Amplification]
-Critical Infrastructure Impact: [Impact on critical infrastructure, if any - Power Grid, Water Supply, Communication Networks, Transportation]
-National Security Implications: [Implications for national security - Espionage, Sabotage, Disruption]
-Global Impact: [Global impact of the attack - Economic, Political, Social]
-Cyber Warfare: [Whether the attack constitutes cyber warfare - Attribution, Escalation, International Law]
-Geopolitical Tensions: [Impact on geopolitical tensions - International Relations, Conflict]
-Economic Espionage: [Whether the attack constitutes economic espionage - Trade Secrets, Intellectual Property]
-Industrial Sabotage: [Whether the attack constitutes industrial sabotage - Manufacturing, Supply Chain]
-Espionage Target: [Target of espionage, if applicable - Government, Industry, Academia]
-Information Warfare: [Whether the attack constitutes information warfare - Propaganda, Disinformation, Psychological Operations]
-Propaganda Dissemination: [Methods used to disseminate propaganda - Social Media, News Outlets, Bot Networks]
-Cyber Terrorism: [Whether the attack constitutes cyber terrorism - Motivation, Targets, Impact]
-Terrorist Group Affiliation: [Affiliation of the attacker with a terrorist group, if applicable]
-Cyber Crime: [Whether the attack constitutes cyber crime - Financial, Data Theft, Extortion]
-Financial Gain: [Financial gain obtained from the attack - Cryptocurrency, Bank Transfers, Data Sales]
-Money Laundering: [Methods used for money laundering - Mixing Services, Shell Companies, Tumblers]
-Digital Currency Used: [Digital currency used for transactions - Bitcoin, Monero, Ethereum, Zcash, Dash]
-Ransomware Attack: [Whether the attack involves ransomware - Type, Target, Ransom Amount - WannaCry, NotPetya, Ryuk, LockBit]
-Ransom Amount: [Ransom amount demanded - In cryptocurrency and fiat currency]
-Payment Method: [Payment method for the ransom - Cryptocurrency, Wire Transfer, Gift Cards]
-Negotiation Tactics: [Negotiation tactics used with the victim - Threats, Deadlines, Proof of Decryption]
-Data Recovery: [Whether data was recovered after the attack - Decryption Key, Backup, Data Recovery Service]
-Incident Response: [Details of the incident response - Containment, Eradication, Recovery, Lessons Learned]
-Forensic Analysis: [Details of the forensic analysis - Timeline, Artifacts, Root Cause Analysis]
-Vulnerability Patching: [Whether vulnerabilities were patched - Vendor, Timeline, Patch Version]
-Security Enhancement: [Security enhancements implemented after the attack - Firewall Rules, IDS Signatures, Multi-Factor Authentication, Security Awareness Training]
-Lessons Learned: [Lessons learned from the attack - Prevention, Detection, Response]
-Future Prevention: [Measures taken to prevent future attacks - Training, Policies, Technology]
-Global Cooperation: [Global cooperation to combat cyber attacks - Information Sharing, Law Enforcement, International Treaties]
-International Law: [Application of international law to cyber attacks - Jurisdiction, Extradition, War Crimes]
-Ethical Considerations: [Ethical considerations related to the attack - Justification, Proportionality, Minimization of Harm]
-Moral Implications: [Moral implications of the attack - Intent, Consequences, Responsibility]
-Societal Impact: [Societal impact of the attack - Trust, Privacy, Security]
-Long-Term Consequences: [Long-term consequences of the attack - Economic, Social, Political]
-Additional Notes: [Any other relevant information - Context, Background, Related Incidents, Threat Intelligence]
-Compromised Accounts: [List of compromised accounts, usernames, and password hashes if available.]
-Data Breach Size: [Total number of records compromised in the data breach.]
-Dwell Time: [The amount of time the attacker was present on the system before being detected.]
-Affected Systems: [List of systems affected by the attack including hostnames and IP addresses.]
-MITRE ATT&CK Techniques: [List of MITRE ATT&CK techniques used in the attack.]
-Kill Chain Stage: [The stage of the kill chain that the attack reached.]
-Zero-Day Used: [Whether the attack used a zero-day exploit (True/False) and if so, the CVE.]
-Custom Malware Used: [Whether the attacker used custom malware (True/False) and the malware family.]
-Sandbox Detection: [Whether the attack was detected by a sandbox environment (True/False).]
-Dynamic Analysis: [Results of dynamic analysis of malware used in the attack.]
-Static Analysis: [Results of static analysis of malware used in the attack.]
-Reverse Engineering: [Results of reverse engineering of malware used in the attack.]
-Root Cause: [Detailed explanation of the root cause of the attack.]
-Remediation Steps: [Detailed steps to remediate the vulnerability.]
-Security Controls: [List of security controls that failed and allowed the attack to succeed.]
-Security Gaps: [List of security gaps identified during the incident.]
-Future Recommendations: [Recommendations for improving security posture.]
-Intelligence Sources: [Sources of threat intelligence used during the investigation.]
-Third-Party Involvement: [Details of any third parties involved in the attack or investigation.]
-Data Encryption at Rest: [Whether data at rest was encrypted and the encryption method.]
-Data Encryption in Transit: [Whether data in transit was encrypted and the encryption method.]
-Log Retention Policy: [Details of the log retention policy in place at the time of the attack.]
-Backup and Recovery: [Details of the backup and recovery procedures used after the attack.]
-Business Continuity Plan: [Whether a business continuity plan was in place and followed during the attack.]
-Disaster Recovery Plan: [Whether a disaster recovery plan was in place and followed during the attack.]
-Employee Training: [Details of employee training related to cybersecurity and phishing.]
-Security Policies: [List of security policies that were violated during the attack.]
-Third-Party Risk: [Assessment of third-party risk related to the attack.]
-Supply Chain Vulnerability: [Whether the attack exploited a vulnerability in the supply chain.]
-Vendor Security: [Assessment of the security practices of vendors involved.]
-Access Controls: [Details of access controls in place and how they were bypassed.]
-Least Privilege: [Whether the principle of least privilege was followed.]
-Network Segmentation: [Details of network segmentation in place and how it was bypassed.]
-Multi-Factor Authentication Bypass: [Methods used to bypass multi-factor authentication - SIM Swapping, Phishing, MFA Fatigue]
-Password Complexity: [Details of password complexity requirements and whether they were enforced.]
-Password Reset: [Procedures for password reset and whether they were followed.]
-Account Lockout: [Details of account lockout policies and whether they were enforced.]
-Intrusion Prevention System: [Effectiveness of the intrusion prevention system in detecting and blocking the attack.]
-Endpoint Detection and Response: [Effectiveness of the endpoint detection and response solution in detecting and responding to the attack.]
-Security Information and Event Management: [Effectiveness of the security information and event management system in detecting and correlating events related to the attack.]
-Vulnerability Scanning: [Results of vulnerability scanning and whether the exploited vulnerability was identified prior to the attack.]
-Penetration Testing: [Results of penetration testing and whether the exploited vulnerability was identified during testing.]
-Red Team Exercise: [Whether a red team exercise was conducted and the findings.]
-Bug Bounty Program: [Whether a bug bounty program was in place and whether the vulnerability was reported through the program.]
-Cloud Security: [Specific security considerations for cloud-based systems - AWS, Azure, GCP]
-Container Security: [Specific security considerations for containerized applications - Docker, Kubernetes]
-Serverless Security: [Specific security considerations for serverless functions - AWS Lambda, Azure Functions, Google Cloud Functions]
-API Security: [Specific security considerations for API endpoints - REST, GraphQL]
-Web Application Security: [Specific security considerations for web applications - OWASP Top 10]
-Mobile Security: [Specific security considerations for mobile applications - iOS, Android]
-IoT Security: [Specific security considerations for Internet of Things devices - Firmware Analysis, Protocol Security]
-ICS/SCADA Security: [Specific security considerations for industrial control systems - Modbus, DNP3, IEC 60870-5-104]
-Healthcare Security: [Specific security considerations for healthcare systems and compliance with HIPAA]
-Financial Security: [Specific security considerations for financial systems and compliance with PCI DSS]
-Government Security: [Specific security considerations for government systems and compliance with government regulations]
-Legal Discovery: [Details related to legal discovery and preservation of evidence.]
-Chain of Custody: [Details related to the chain of custody of digital evidence.]
-Incident Communication: [Details of communication during the incident, including internal and external stakeholders.]
-Crisis Management: [Details of crisis management procedures during the incident.]
-Public Relations: [Details of public relations activities related to the incident.]
-Reputation Management: [Efforts to manage reputation after the incident.]
-Customer Notification: [Details of notifications sent to customers affected by the incident.]
-Shareholder Notification: [Details of notifications sent to shareholders affected by the incident.]
-Insurance Claim: [Details of insurance claims related to the incident.]
-Board Involvement: [Details of board involvement in the incident response and investigation.]
-Risk Assessment: [Updated risk assessment based on the incident.]
-Threat Modeling: [Updated threat model based on the incident.]
-Security Architecture: [Changes to security architecture based on the incident.]
-Security Budget: [Changes to security budget based on the incident.]
-Executive Summary: [A concise summary of the incident for executive leadership.]
-Recommendations for Improvement: [Detailed recommendations for improving security posture and preventing future incidents.]
-Additional Exploited Modules: [Details of additional modules exploited during the attack, if applicable.]
-Kernel Exploitation Details: [Specifics of any kernel-level exploitation.]
-Firmware Modification: [Details regarding any firmware modifications made during the attack.]
-Hardware Backdoors: [Information about any hardware backdoors discovered or implanted.]
-Data Integrity Verification: [Methods used to verify the integrity of data after the attack.]
-Supply Chain Attack Vectors: [Specific attack vectors related to supply chain compromises.]
-Third-Party Data Processing: [Details about third-party data processing and security implications.]
-Authentication Protocol Weaknesses: [Weaknesses found in authentication protocols used.]
-Authorization Bypass Techniques: [Techniques used to bypass authorization controls.]
-Session Management Vulnerabilities: [Vulnerabilities in session management implementation.]
-Input Validation Failures: [Examples of input validation failures that were exploited.]
-Output Encoding Issues: [Problems with output encoding that led to vulnerabilities.]
-Memory Corruption Vulnerabilities: [Types of memory corruption vulnerabilities used.]
-Buffer Overflow Exploitation: [Details about buffer overflow exploitation techniques.]
-Heap Overflow Exploitation: [Details about heap overflow exploitation techniques.]
-Format String Vulnerabilities: [Details about format string vulnerabilities exploited.]
-Integer Overflow Exploitation: [Details about integer overflow exploitation techniques.]
-Race Condition Exploitation: [Details about race condition exploitation techniques.]
-Time-of-Check Time-of-Use (TOCTOU) Vulnerabilities: [Details about TOCTOU vulnerabilities exploited.]
-Symbolic Link Vulnerabilities: [Details about symbolic link vulnerabilities exploited.]
-File Inclusion Vulnerabilities: [Details about file inclusion vulnerabilities exploited.]
-Command Injection Vulnerabilities: [Details about command injection vulnerabilities exploited.]
-Code Injection Vulnerabilities: [Details about code injection vulnerabilities exploited.]
-SQL Injection Vulnerabilities: [Details about SQL injection vulnerabilities exploited.]
-Cross-Site Scripting (XSS) Vulnerabilities: [Details about XSS vulnerabilities exploited.]
-Cross-Site Request Forgery (CSRF) Vulnerabilities: [Details about CSRF vulnerabilities exploited.]
-Server-Side Request Forgery (SSRF) Vulnerabilities: [Details about SSRF vulnerabilities exploited.]
-XML External Entity (XXE) Vulnerabilities: [Details about XXE vulnerabilities exploited.]
-LDAP Injection Vulnerabilities: [Details about LDAP injection vulnerabilities exploited.]
-XPath Injection Vulnerabilities: [Details about XPath injection vulnerabilities exploited.]
-Deserialization Vulnerabilities: [Details about deserialization vulnerabilities exploited.]
-Server-Side Template Injection (SSTI) Vulnerabilities: [Details about SSTI vulnerabilities exploited.]
-OS Command Injection: [Details about OS command injection vulnerabilities exploited.]
-Blind SQL Injection: [Details about blind SQL injection vulnerabilities exploited.]
-Data Mining Techniques: [Techniques used for data mining from the compromised systems.]
-Predictive Analytics for Attack Prediction: [Use of predictive analytics to foresee and prevent similar attacks in the future.]
-Automated Incident Response: [Details about automated responses to contain and eradicate the threat.]
-Machine Learning for Anomaly Detection: [Implementation of machine learning algorithms for identifying anomalies in network traffic and system behavior.]
-AI-Driven Threat Hunting: [Use of AI to proactively hunt for threats within the network.]
-Quantum Computing Resistance: [Measures taken to protect against potential quantum computing attacks.]
-Homomorphic Encryption: [Use of homomorphic encryption to perform computations on encrypted data.]
-Federated Learning for Security: [Implementation of federated learning to train security models without sharing sensitive data.]
-Blockchain for Data Integrity: [Use of blockchain technology to ensure data integrity and prevent tampering.]
-Differential Privacy Techniques: [Implementation of differential privacy techniques to protect user data during analysis.]
-Advanced Persistent Threat (APT) Detection: [Methods for detecting advanced persistent threats and their activities.]
-Insider Threat Detection: [Techniques for identifying and preventing insider threats.]
-Deception Technology: [Use of deception technology to lure and detect attackers.]
-Honeypots and Honeynets: [Deployment of honeypots and honeynets to attract and analyze attacker behavior.]
-Threat Intelligence Platform: [Details of the threat intelligence platform used and its effectiveness.]
-Indicators of Compromise (IOCs): [List of IOCs associated with the attack.]
-Tactics, Techniques, and Procedures (TTPs): [Details of the attacker's TTPs.]
-Cyber Threat Intelligence Sharing: [Details of cyber threat intelligence sharing with other organizations.]
-Vulnerability Disclosure Program: [Details of the vulnerability disclosure program and its effectiveness.]
-Zero Trust Architecture: [Implementation of a zero trust architecture to limit the impact of breaches.]
-Microsegmentation: [Implementation of microsegmentation to isolate critical assets.]
-Software-Defined Networking (SDN) Security: [Security considerations for software-defined networking environments.]
-Network Function Virtualization (NFV) Security: [Security considerations for network function virtualization environments.]
-Secure Access Service Edge (SASE): [Implementation of SASE architecture to secure remote access.]
-Extended Detection and Response (XDR): [Implementation of XDR to correlate security data across multiple domains.]
-Cloud-Native Security: [Security considerations for cloud-native applications and infrastructure.]
-DevSecOps Practices: [Implementation of DevSecOps practices to integrate security into the development lifecycle.]
-Infrastructure as Code (IaC) Security: [Security considerations for infrastructure as code deployments.]
-Continuous Integration/Continuous Deployment (CI/CD) Security: [Security considerations for CI/CD pipelines.]
-Container Orchestration Security: [Security considerations for container orchestration platforms like Kubernetes.]
-Service Mesh Security: [Security considerations for service mesh architectures.]
-Edge Computing Security: [Security considerations for edge computing environments.]
-5G Security: [Security considerations for 5G networks.]
-Quantum-Resistant Cryptography: [Implementation of quantum-resistant cryptographic algorithms.]
-Post-Quantum Cryptography Migration: [Strategies for migrating to post-quantum cryptography.]
-Secure Multi-Party Computation (SMPC): [Use of SMPC to enable secure data sharing and analysis.]
-Trusted Execution Environments (TEEs): [Use of TEEs to protect sensitive data and code.]
-Hardware Security Modules (HSMs): [Use of HSMs to securely store cryptographic keys.]
-Biometric Authentication Bypass: [Methods used to bypass biometric authentication systems.]
-Facial Recognition Vulnerabilities: [Vulnerabilities in facial recognition systems that were exploited.]
-Voice Recognition Vulnerabilities: [Vulnerabilities in voice recognition systems that were exploited.]
-Behavioral Biometrics Exploitation: [Methods used to exploit behavioral biometrics.]
-Wearable Device Security Breaches: [Security breaches involving wearable devices.]
-Smart Home Security Vulnerabilities: [Vulnerabilities in smart home devices and systems.]
-Smart City Security Risks: [Security risks associated with smart city infrastructure.]
-Autonomous Vehicle Security: [Security considerations for autonomous vehicles.]
-Drone Security Vulnerabilities: [Vulnerabilities in drone technology that were exploited.]
-Robotics Security Risks: [Security risks associated with robotics and automation.]
-Artificial Intelligence Security Risks: [Security risks associated with artificial intelligence systems.]
-Machine Learning Model Poisoning: [Methods used to poison machine learning models.]
-Adversarial Machine Learning: [Techniques used to attack machine learning systems.]
-Deepfake Technology Exploitation: [Exploitation of deepfake technology for malicious purposes.]
-AI-Generated Content Abuse: [Abuse of AI-generated content for disinformation or other malicious activities.]
-Digital Identity Theft: [Methods used for digital identity theft.]
-Online Impersonation: [Techniques used for online impersonation.]
-Social Media Manipulation: [Methods used to manipulate social media platforms.]
-Influence Operations: [Details of influence operations conducted through cyber means.]
-Cyber Espionage Campaigns: [Details of cyber espionage campaigns.]
-State-Sponsored Hacking: [Evidence of state-sponsored hacking activities.]
-Information Operations Warfare: [Details of information operations warfare tactics.]
-Cognitive Warfare: [Techniques used for cognitive warfare through cyber means.]
-Hybrid Warfare Tactics: [Details of hybrid warfare tactics involving cyber operations.]
-Proxy Server Misconfiguration: [Misconfiguration of proxy servers leading to vulnerabilities.]
-VPN Vulnerabilities Exploitation: [Exploitation of vulnerabilities in VPN technologies.]
-Tor Network Exploitation: [Techniques used to exploit the Tor network for malicious purposes.]
-Dark Web Activity Analysis: [Analysis of activity on the dark web related to the attack.]
-Cryptocurrency Wallet Hacking: [Methods used for hacking cryptocurrency wallets.]
-Blockchain Exploitation: [Techniques used to exploit blockchain technology.]
-Smart Contract Vulnerabilities: [Vulnerabilities in smart contracts that were exploited.]
-Decentralized Finance (DeFi) Attacks: [Details of attacks on decentralized finance platforms.]
-Non-Fungible Token (NFT) Exploitation: [Methods used to exploit non-fungible tokens.]
-Metaverse Security Risks: [Security risks associated with the metaverse.]
-Virtual Reality Security Vulnerabilities: [Vulnerabilities in virtual reality environments.]
-Augmented Reality Security Threats: [Security threats associated with augmented reality applications.]
-Brain-Computer Interface Security: [Security considerations for brain-computer interfaces.]
-Human Augmentation Security: [Security risks associated with human augmentation technologies.]
-Transhumanism Security Risks: [Security risks associated with transhumanism and related technologies.]
-Biotechnology Security: [Security considerations for biotechnology and related fields.]
-Genetic Engineering Security Risks: [Security risks associated with genetic engineering.]
-Synthetic Biology Security Threats: [Security threats associated with synthetic biology.]
-Nanotechnology Security Risks: [Security risks associated with nanotechnology.]
-Advanced Materials Security: [Security considerations for advanced materials and their applications.]
-Space-Based Cyber Threats: [Cyber threats originating from or targeting space-based assets.]
-Satellite Communication Security: [Security considerations for satellite communication systems.]
-Global Internet Governance Issues: [Issues related to global internet governance and their impact on cybersecurity.]
-International Cooperation on Cybersecurity: [Details of international cooperation efforts on cybersecurity.]
-Cyber Arms Race: [Details of the cyber arms race and its implications.]
-Cyber Deterrence Strategies: [Strategies for cyber deterrence.]
-Cyber Norms and International Law: [Application of cyber norms and international law to cyber activities.]
-Ethical Hacking Techniques: [Ethical hacking techniques used during the investigation.]
-Penetration Testing Methodologies: [Penetration testing methodologies used during the investigation.]
-Vulnerability Assessment Tools: [Vulnerability assessment tools used during the investigation.]
-Security Auditing Practices: [Security auditing practices followed during the investigation.]
-Risk Management Frameworks: [Risk management frameworks used for assessing and mitigating risks.]
-Compliance Standards and Regulations: [Compliance standards and regulations relevant to the attack.]
-Security Awareness Training Programs: [Security awareness training programs implemented for employees.]
-Cybersecurity Education and Training: [Cybersecurity education and training initiatives for the workforce.]
-Critical Infrastructure Protection Measures: [Measures taken to protect critical infrastructure from cyber attacks.]
-National Cybersecurity Strategies: [Details of national cybersecurity strategies and their effectiveness.]
-Global Cybersecurity Initiatives: [Details of global cybersecurity initiatives and their impact.]
-Cybersecurity Workforce Development: [Efforts to develop the cybersecurity workforce.]
-Cybersecurity Research and Development: [Details of cybersecurity research and development efforts.]
-Innovation in Cybersecurity Technologies: [Details of innovation in cybersecurity technologies.]
-Future Trends in Cybersecurity: [Predictions and analysis of future trends in cybersecurity.]
-Emerging Threats in Cybersecurity: [Identification of emerging threats in cybersecurity.]
-Long-Term Cybersecurity Planning: [Strategies for long-term cybersecurity planning.]
-Resilience in Cybersecurity: [Strategies for building resilience in cybersecurity.]
-Adaptive Security Architectures: [Implementation of adaptive security architectures.]
-Dynamic Threat Defense: [Implementation of dynamic threat defense mechanisms.]
-Predictive Security Analytics: [Use of predictive security analytics to anticipate and prevent attacks.]
-Autonomous Security Operations: [Implementation of autonomous security operations.]
-Human-Machine Collaboration in Cybersecurity: [Strategies for human-machine collaboration in cybersecurity.]
-Artificial General Intelligence (AGI) Security: [Security considerations for artificial general intelligence.]
-Superintelligence Security Risks: [Security risks associated with superintelligence.]
-Existential Risks of Cybersecurity: [Discussion of existential risks related to cybersecurity.]
-Cybersecurity Ethics and Governance: [Ethical and governance considerations for cybersecurity.]
-Social Responsibility in Cybersecurity: [Emphasis on social responsibility in cybersecurity.]
-Sustainability in Cybersecurity: [Strategies for promoting sustainability in cybersecurity.]
-Equity and Inclusion in Cybersecurity: [Efforts to promote equity and inclusion in cybersecurity.]
-Global Cybersecurity Challenges: [Analysis of global cybersecurity challenges.]
-The Future of Cybersecurity: [Speculation and analysis of the future of cybersecurity.]
+    generateAttackID() {
+        return crypto.randomUUID();
+    }
+
+    log(eventData) {
+        const timestamp = new Date().toISOString();
+        const attackID = this.generateAttackID();
+        const logEntry = {
+            Timestamp: timestamp,
+            AttackID: attackID,
+            ...eventData
+        };
+
+        this.logEntries.push(logEntry);
+        this.persistLog(logEntry);  // Persist immediately
+        this.displayLog(logEntry); // Display log immediately
+    }
+
+    persistLog(logEntry) {
+        const logString = JSON.stringify(logEntry) + '\n';
+
+        fs.appendFile('noodles.log', logString, err => {
+            if (err) {
+                console.error('Failed to persist log:', err);
+            }
+        });
+    }
+
+    displayLog(logEntry) {
+        const logElement = document.createElement('div');
+        logElement.classList.add('log-entry');
+        logElement.innerHTML = this.formatLog(logEntry); // HTML formatting
+        document.getElementById('logs-container').prepend(logElement); // Add to top
+    }
+
+    formatLog(logEntry) {
+        let formattedLog = '';
+        for (const key in logEntry) {
+            if (logEntry.hasOwnProperty(key)) {
+                formattedLog += `<p><strong>${key}:</strong> ${this.sanitize(logEntry[key])}</p>`;
+            }
+        }
+        return formattedLog;
+    }
+
+    sanitize(text) {
+        if (typeof text === 'string') {
+            return text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+        return text; // Return non-string values as is.
+    }
+
+    getLogs() {
+        return this.logEntries;
+    }
+
+    loadPersistentLogs() {
+        fs.readFile('noodles.log', 'utf8', (err, data) => {
+            if (err) {
+                console.warn('No previous logs found or unable to read file.');
+                return;
+            }
+
+            const logLines = data.trim().split('\n');
+            logLines.forEach(line => {
+                try {
+                    const logEntry = JSON.parse(line);
+                    this.logEntries.push(logEntry);
+                    this.displayLog(logEntry);
+                } catch (e) {
+                    console.error('Error parsing log line:', line, e);
+                }
+            });
+        });
+    }
+}
+
+const logger = new Logger();
+logger.loadPersistentLogs(); // Load logs on startup
+window.logger = logger;       // Make logger globally accessible
