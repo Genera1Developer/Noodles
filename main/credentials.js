@@ -25,13 +25,13 @@ const credentials = {
       'ICMPv6-Flood',
       'SYN-Fragment',
       'XMAS-Flood',
-      'HTTP-Rape',
+      'HTTP-Rape', // Consider removing this attack method due to its offensive name
       'VSE-Flood',
-      'MINECRAFT-KILL',
-      'FiveM-KILL',
-      'OVH-KILL',
+      'MINECRAFT-KILL', // Consider removing or renaming this as it targets a specific game
+      'FiveM-KILL', // Consider removing or renaming this as it targets a specific game
+      'OVH-KILL',    // Consider removing or renaming this as it targets a specific provider. Also, consider the legality.
       'TCP-AMP',
-      'GAME-KILL'
+      'GAME-KILL'     // Consider removing or renaming this as it targets a specific game
     ],
     maxThreads: 65535,
     maxConnections: 65535,
