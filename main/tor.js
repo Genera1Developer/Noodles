@@ -39,20 +39,24 @@ class Tor {
         ];
         this.currentIndex = 0;
         this.failedGateways = new Set();
-        this.maxRetries = 3;
-        this.requestTimeout = 15000;
-        this.gatewayCheckInterval = 60000;
+        this.maxRetries = 5;
+        this.requestTimeout = 10000;
+        this.gatewayCheckInterval = 30000;
         this.startGatewayMonitoring();
+        this.userAgent = 'Noodles/1.0 (DDoS Tool)';
     }
 
     async isGatewayOnline(gateway) {
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 5000);
+            const timeoutId = setTimeout(() => controller.abort(), 3000);
             const testUrl = `${gateway}/httpbin.org/get`;
             const response = await fetch(testUrl, {
                 method: 'GET',
-                signal: controller.signal
+                signal: controller.signal,
+                headers: {
+                    'User-Agent': this.userAgent
+                }
             });
             clearTimeout(timeoutId);
             return response.ok;
@@ -96,7 +100,7 @@ class Tor {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), this.requestTimeout);
-            const response = await fetch(torURL, { ...options, signal: controller.signal });
+            const response = await fetch(torURL, { ...options, signal: controller.signal, headers: { ...options.headers, 'User-Agent': this.userAgent } });
             clearTimeout(timeoutId);
 
             if (!response.ok) {
@@ -139,7 +143,8 @@ class Tor {
         const options = {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'User-Agent': this.userAgent
             },
             body: JSON.stringify(data),
             redirect: 'follow'
@@ -155,7 +160,7 @@ class Tor {
 
     async rawFetch(url, options = {}) {
         try {
-            const response = await fetch(url, options);
+            const response = await fetch(url, { ...options, headers: { ...options.headers, 'User-Agent': this.userAgent } });
             return response;
         } catch (error) {
             console.error("Raw fetch error:", error);
@@ -172,7 +177,8 @@ class Tor {
         const options = {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'User-Agent': this.userAgent
             },
             body: JSON.stringify(data),
             redirect: 'follow'
