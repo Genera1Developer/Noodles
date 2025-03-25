@@ -44,6 +44,7 @@ class Tor {
         this.gatewayCheckInterval = 30000;
         this.startGatewayMonitoring();
         this.userAgent = 'Noodles/1.0 (DDoS Tool)';
+        this.customHeaders = {};
     }
 
     async isGatewayOnline(gateway) {
@@ -55,7 +56,8 @@ class Tor {
                 method: 'GET',
                 signal: controller.signal,
                 headers: {
-                    'User-Agent': this.userAgent
+                    'User-Agent': this.userAgent,
+                    ...this.customHeaders
                 }
             });
             clearTimeout(timeoutId);
@@ -100,7 +102,8 @@ class Tor {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), this.requestTimeout);
-            const response = await fetch(torURL, { ...options, signal: controller.signal, headers: { ...options.headers, 'User-Agent': this.userAgent } });
+            const allHeaders = { ...options.headers, 'User-Agent': this.userAgent, ...this.customHeaders };
+            const response = await fetch(torURL, { ...options, signal: controller.signal, headers: allHeaders });
             clearTimeout(timeoutId);
 
             if (!response.ok) {
@@ -144,7 +147,8 @@ class Tor {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'User-Agent': this.userAgent
+                'User-Agent': this.userAgent,
+                 ...this.customHeaders
             },
             body: JSON.stringify(data),
             redirect: 'follow'
@@ -160,7 +164,8 @@ class Tor {
 
     async rawFetch(url, options = {}) {
         try {
-            const response = await fetch(url, { ...options, headers: { ...options.headers, 'User-Agent': this.userAgent } });
+            const allHeaders = { ...options.headers, 'User-Agent': this.userAgent, ...this.customHeaders };
+            const response = await fetch(url, { ...options, headers: allHeaders });
             return response;
         } catch (error) {
             console.error("Raw fetch error:", error);
@@ -178,7 +183,8 @@ class Tor {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'User-Agent': this.userAgent
+                'User-Agent': this.userAgent,
+                ...this.customHeaders
             },
             body: JSON.stringify(data),
             redirect: 'follow'
@@ -190,6 +196,10 @@ class Tor {
             console.error("Raw POST request failed:", error);
             throw error;
         }
+    }
+
+     setCustomHeaders(headers) {
+        this.customHeaders = headers;
     }
 }
 
