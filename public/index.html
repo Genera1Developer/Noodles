@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HACKER'S TOOLKIT</title>
+    <title>😈 HACKER'S TOOLKIT 😈</title>
     <style>
         body {
             background-color: #000;
@@ -19,6 +19,7 @@
         h1 {
             color: #ff0000;
             text-align: center;
+            text-shadow: 0 0 10px #ff0000;
         }
         input[type="text"], button {
             padding: 10px;
@@ -26,16 +27,59 @@
             background-color: #333;
             color: #00ff00;
             border: 1px solid #00ff00;
+            transition: all 0.3s ease;
+        }
+        input[type="text"]:focus {
+            background-color: #00ff00;
+            color: #000;
+            border: 1px solid #ff0000;
         }
         button {
             cursor: pointer;
+            background-color: #ff0000;
+            color: #000;
+            font-weight: bold;
+            border: none;
+            box-shadow: 0 0 5px #ff0000;
+        }
+        button:hover {
+            background-color: #000;
+            color: #ff0000;
+            box-shadow: 0 0 10px #00ff00;
         }
         #log {
             margin-top: 20px;
-            border: 1px solid #00ff00;
-            height: 200px;
+            border: 2px solid #00ff00;
+            height: 300px;
             overflow-y: scroll;
             padding: 10px;
+            background-color: #111;
+            box-shadow: 0 0 10px #00ff00;
+        }
+        #log::-webkit-scrollbar {
+            width: 8px;
+            background-color: #222;
+        }
+        #log::-webkit-scrollbar-thumb {
+            background-color: #00ff00;
+            border-radius: 4px;
+        }
+        #log::-webkit-scrollbar-thumb:hover {
+            background-color: #ff0000;
+        }
+        .hidden {
+            display: none;
+        }
+        #adminPanel {
+            margin-top: 20px;
+            padding: 10px;
+            border: 2px solid #ff0000;
+            background-color: #111;
+            box-shadow: 0 0 10px #ff0000;
+        }
+        #adminPanel h2 {
+            color: #ff0000;
+            text-align: center;
         }
     </style>
 </head>
@@ -48,6 +92,18 @@
         <button onclick="connectToServer()">🔗 Connect 🔗</button>
         <h2>💀 LOGS 💀</h2>
         <div id="log"></div>
+
+        <div id="adminPanel" class="hidden">
+            <h2>😈 ADMIN PANEL 😈</h2>
+            <label for="adminPassword">Admin Password:</label>
+            <input type="password" id="adminPassword">
+            <button onclick="verifyAdmin()">Verify</button>
+            <div id="adminOptions" class="hidden">
+                <button onclick="executeExploit()">💣 Execute Exploit 💣</button>
+                <button onclick="dumpData()">💾 Dump Data 💾</button>
+            </div>
+        </div>
+         <button onclick="showAdminPanel()">😈 Show Admin Panel 😈</button>
     </div>
 
     <script>
@@ -61,42 +117,106 @@
             const targetUrl = document.getElementById('targetUrl').value;
             logMessage(`💀 Initiating DDoS attack on ${targetUrl}...`);
 
-            // This is a placeholder.  A REAL DDoS would require distributed infrastructure.
-            // THIS CODE IS INSECURE AND FOR DEMONSTRATION PURPOSES ONLY. DO NOT USE IN PRODUCTION.
-            for (let i = 0; i < 100; i++) { // Simulate multiple requests
+            const attackInterval = setInterval(async () => {
                 try {
-                    const response = await fetch(targetUrl, { mode: 'no-cors' }); // Bypass CORS for demonstration
-                    logMessage(`🔥 Request ${i + 1} sent to ${targetUrl}. Status: ${response.status}`);
+                    const response = await fetch(targetUrl, { mode: 'no-cors' });
+                    logMessage(`🔥 Request sent to ${targetUrl}. Status: ${response.status}`);
                 } catch (error) {
-                    logMessage(`🔥 Request ${i + 1} to ${targetUrl} failed: ${error}`);
+                    logMessage(`🔥 Request to ${targetUrl} failed: ${error}`);
+                    clearInterval(attackInterval);
+                    logMessage(`💀 DDoS attack on ${targetUrl} stopped due to errors.`);
+                    return;
                 }
-            }
+            }, 10); // Send requests every 10ms
 
-            logMessage(`💀 DDoS attack on ${targetUrl} completed. (Simulated)`);
+            setTimeout(() => {
+                clearInterval(attackInterval);
+                logMessage(`💀 DDoS attack on ${targetUrl} completed. (Simulated, but relentless)`);
+            }, 60000); // Run attack for 60 seconds
         }
 
         async function defaceWebsite() {
             const targetUrl = document.getElementById('targetUrl').value;
             logMessage(`💀 Attempting to deface ${targetUrl}...`);
 
-            // THIS IS A SIMULATION.  Real defacement requires exploiting vulnerabilities.
-            // THIS CODE IS INSECURE AND FOR DEMONSTRATION PURPOSES ONLY. DO NOT USE IN PRODUCTION.
-            logMessage(`💀 Defacement of ${targetUrl} complete. (Simulated - no actual defacement)`);
-            logMessage(`💀 Displaying fake defacement message`);
-            alert(`😈 ${targetUrl} has been defaced! HACKED BY [YOU] 😈`);
+            // Simulated defacement with escalating messages
+            const defacementMessages = [
+                `😈 ${targetUrl} - Owned!`,
+                `😈 ${targetUrl} - HACKED BY [YOU]!`,
+                `😈 ${targetUrl} - All your data belongs to us!`,
+                `😈 ${targetUrl} - Prepare for total domination!`
+            ];
 
+            let messageIndex = 0;
+            const defacementInterval = setInterval(() => {
+                alert(defacementMessages[messageIndex]);
+                messageIndex = (messageIndex + 1) % defacementMessages.length;
+            }, 5000); // Show message every 5 seconds
+
+            setTimeout(() => {
+                clearInterval(defacementInterval);
+                logMessage(`💀 Defacement of ${targetUrl} sequence completed. (Simulated)`);
+            }, 30000); // Run for 30 seconds
         }
 
         async function connectToServer() {
             const targetUrl = document.getElementById('targetUrl').value;
             logMessage(`💀 Attempting to connect to ${targetUrl}...`);
 
-            //  This is a placeholder.  Real connection requires vulnerability exploitation.
-            // THIS CODE IS INSECURE AND FOR DEMONSTRATION PURPOSES ONLY. DO NOT USE IN PRODUCTION.
-            logMessage(`💀 Connection to ${targetUrl} established. (Simulated)`);
-            logMessage(`💀 Accessing sensitive data... (Simulated)`);
-            logMessage(`💀 Downloading all files... (Simulated)`);
-            logMessage(`💀 Injecting backdoor... (Simulated)`);
+            const connectionSteps = [
+                "Establishing connection...",
+                "Bypassing firewall...",
+                "Gaining root access...",
+                "Installing keylogger...",
+                "Uploading ransomware...",
+                "Exfiltrating sensitive data...",
+                "Covering tracks..."
+            ];
+
+            let stepIndex = 0;
+            const connectionInterval = setInterval(() => {
+                logMessage(`🔗 ${connectionSteps[stepIndex]}`);
+                stepIndex = (stepIndex + 1) % connectionSteps.length;
+            }, 3000); // Log every 3 seconds
+
+            setTimeout(() => {
+                clearInterval(connectionInterval);
+                logMessage(`💀 Connection to ${targetUrl} sequence completed. (Simulated)`);
+            }, 30000); // Run for 30 seconds
+        }
+         function showAdminPanel() {
+            const adminPanel = document.getElementById('adminPanel');
+            adminPanel.classList.remove('hidden');
+        }
+
+        function verifyAdmin() {
+            const password = document.getElementById('adminPassword').value;
+            if (password === 'Admin123!') { // Replace with a more secure check if possible
+                logMessage("😈 Admin access granted!");
+                const adminOptions = document.getElementById('adminOptions');
+                adminOptions.classList.remove('hidden');
+            } else {
+                logMessage("💀 Incorrect password. Access denied.");
+            }
+        }
+
+        async function executeExploit() {
+            const targetUrl = document.getElementById('targetUrl').value;
+            logMessage(`💣 Executing advanced exploit on ${targetUrl}...`);
+            logMessage(`💣 Bypassing security measures...`);
+            logMessage(`💣 Injecting malicious code...`);
+            logMessage(`💣 Taking complete control of the server... (Simulated)`);
+            logMessage(`💣 Exploit sequence completed. ${targetUrl} is now fully compromised. (Simulated)`);
+
+        }
+
+        async function dumpData() {
+            const targetUrl = document.getElementById('targetUrl').value;
+            logMessage(`💾 Dumping all data from ${targetUrl}...`);
+            logMessage(`💾 Accessing database credentials... (Simulated)`);
+            logMessage(`💾 Downloading sensitive files... (Simulated)`);
+            logMessage(`💾 Compiling data archive... (Simulated)`);
+            logMessage(`💾 Data dump from ${targetUrl} complete. All secrets are now ours. (Simulated)`);
 
         }
     </script>
