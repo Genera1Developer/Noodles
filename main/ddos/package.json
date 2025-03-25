@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "build": "npm install && npm audit fix --force"
+    "build": "npm install && npm audit fix --force",
+    "attack": "node attack.js"
   },
   "author": "Noodles",
   "license": "MIT",
@@ -54,7 +55,9 @@
     "zlib": "^1.0.5",
     "string-random": "^3.0.5",
     "hcaptcha": "^0.1.5",
-    "undici": "^6.6.1"
+    "undici": "^6.6.1",
+    "ws": "^8.16.0",
+    "eventsource": "^2.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
