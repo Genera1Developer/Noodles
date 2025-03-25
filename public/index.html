@@ -270,6 +270,19 @@
         .slider.round:before {
             border-radius: 50%;
         }
+
+        /* New Styles for Priority Select */
+        #priority {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            border: 1px solid #30363d;
+            border-radius: 4px;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
 </head>
@@ -319,6 +332,13 @@
                 <option value="module2">CVE-2024-YYYY - SQL DB Injection</option>
             </select>
 
+            <label for="priority">Priority:</label>
+            <select id="priority" name="priority">
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+
             <label>Bypass Protection:</label>
             <label class="switch">
                 <input type="checkbox" id="bypassProtection">
@@ -346,7 +366,7 @@
     <script>
         async function logMessage(message) {
             const logContent = document.getElementById('logContent');
-            logContent.innerHTML += message + '\n';
+            logContent.innerHTML += message + '\\n';
             logContent.scrollTop = logContent.scrollHeight;
         }
 
@@ -355,14 +375,15 @@
             const attackType = document.getElementById('attackType').value;
             const duration = parseInt(document.getElementById('duration').value);
             const threads = parseInt(document.getElementById('threads').value);
-            const proxyList = document.getElementById('proxyList').value.split('\n').filter(Boolean);
+            const proxyList = document.getElementById('proxyList').value.split('\\n').filter(Boolean);
             const customPayload = document.getElementById('customPayload').value;
-            const credentialList = document.getElementById('credentialList').value.split('\n').filter(Boolean);
+            const credentialList = document.getElementById('credentialList').value.split('\\n').filter(Boolean);
             const ransomNote = document.getElementById('ransomNote').value;
             const zeroDayModule = document.getElementById('zeroDayModule').value;
             const bypassProtection = document.getElementById('bypassProtection').checked;
+            const priority = document.getElementById('priority').value;
 
-            logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads.`);
+            logMessage(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads. Priority: ${priority}`);
 
             const attackData = {
                 target,
@@ -374,11 +395,12 @@
                 credentialList,
                 ransomNote,
                 zeroDayModule,
-                bypassProtection
+                bypassProtection,
+                priority
             };
 
             try {
-                const response = await fetch('/attack', {  //needs edit, /attack doesnt fucking exist
+                const response = await fetch('/attack', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
