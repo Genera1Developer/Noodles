@@ -27,7 +27,9 @@
     "reverse-engineer": "node reverse-engineer.js",
     "data-miner": "node data-miner.js",
     "zero-day": "node zero-day.js",
-    "persistence": "node persistence.js"
+    "persistence": "node persistence.js",
+    "microservices": "concurrently \"node ddos.js\" \"node exploit.js\" \"node deface.js\" \"node connect.js\" \"node api.js\" \"node websocket.js\" \"node logviewer.js\" \"node dashboard.js\" \"node fuzzer.js\" \"node scanner.js\" \"node botnet.js\" \"node injector.js\" \"node honeypot.js\" \"node reverse-engineer.js\" \"node data-miner.js\" \"node zero-day.js\" \"node persistence.js\"",
+    "full-setup": "npm install && npm run build && npm run chromium"
   },
   "author": "Noodles",
   "license": "MIT",
@@ -139,7 +141,10 @@
     "tshark": "^1.2.0",
     "feroxbuster": "^4.1.0",
     "gobuster": "^3.6.1",
-    "dirsearch": "^0.4.2"
+    "dirsearch": "^0.4.2",
+    "iconv-lite": "^0.6.3",
+    "detect-character-encoding": "^0.8.0",
+    "jschardet": "^3.0.2"
   },
   "devDependencies": {
     "husky": "^9.0.11",
