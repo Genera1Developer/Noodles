@@ -49,6 +49,7 @@ class Tor {
         this.isProcessingQueue = false;
         this.maxConcurrentRequests = 50;
         this.initRequestQueue();
+        this.bypassCache = true;
     }
 
     initRequestQueue() {
@@ -136,7 +137,11 @@ class Tor {
         }
 
         this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
-        const torURL = `${gateway}/${url}`;
+        let torURL = `${gateway}/${url}`;
+
+        if (this.bypassCache) {
+            torURL += (url.includes('?') ? '&' : '?') + `cacheBuster=${Date.now()}`;
+        }
 
         try {
             const controller = new AbortController();
@@ -255,9 +260,8 @@ class Tor {
 
             const serializer = new XMLSerializer();
             const defacedContent = serializer.serializeToString(doc);
-
             const options = {
-                method: 'PUT',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'text/html',
                     'User-Agent': this.userAgent,
