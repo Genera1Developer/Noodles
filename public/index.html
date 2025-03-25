@@ -49,7 +49,7 @@
             color: #aaa;
         }
 
-        #controls input, #controls select {
+        #controls input, #controls select, #controls textarea {
             display: block;
             margin-bottom: 15px;
             width: 100%;
@@ -123,7 +123,23 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #777;
         }
+
+        /* Resizable Container */
+        #container {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Make controls resizable */
+        #controls {
+            width: 350px;
+            resize: horizontal;
+            overflow: auto;
+            min-width: 250px;
+        }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsencrypt/3.3.2/jsencrypt.min.js"></script>
 </head>
 <body>
     <div id="header">
@@ -142,6 +158,7 @@
                 <option value="sql_inject">SQL Injection (Requires Vulnerability)</option>
                 <option value="xss">XSS (Requires Vulnerability)</option>
                 <option value="credential_stuffing">Credential Stuffing</option>
+                <option value="ransomware">Ransomware (Requires Access)</option>
             </select>
 
             <label for="duration">Duration (seconds):</label>
@@ -152,6 +169,15 @@
 
              <label for="proxyList">Proxy List (Optional, one per line):</label>
             <textarea id="proxyList" name="proxyList" rows="4" placeholder="http://proxy1.com:8080\nhttp://proxy2.com:8080"></textarea>
+
+            <label for="customPayload">Custom Payload (Optional, for Deface/XSS):</label>
+            <textarea id="customPayload" name="customPayload" rows="4" placeholder="<script>alert('XSS')</script>"></textarea>
+
+            <label for="credentialList">Credential List (Optional, for Credential Stuffing, user:pass per line):</label>
+            <textarea id="credentialList" name="credentialList" rows="4" placeholder="user1:pass1\nuser2:pass2"></textarea>
+
+            <label for="ransomNote">Ransom Note (for Ransomware):</label>
+            <textarea id="ransomNote" name="ransomNote" rows="4" placeholder="Your files have been encrypted. Pay [AMOUNT] to [ADDRESS]"></textarea>
 
             <button onclick="initiateAttack()">Initiate Attack</button>
         </div>
@@ -178,8 +204,23 @@
             const threads = parseInt(document.getElementById('threads').value);
             const proxyListText = document.getElementById('proxyList').value;
             const proxies = proxyListText.split('\n').filter(proxy => proxy.trim() !== '');
+            const customPayload = document.getElementById('customPayload').value;
+            const credentialListText = document.getElementById('credentialList').value;
+            const credentials = credentialListText.split('\n').filter(cred => cred.trim() !== '');
+            const ransomNote = document.getElementById('ransomNote').value;
 
             log(`Initiating ${attackType} attack on ${target} for ${duration} seconds with ${threads} threads...`);
+
+            const attackData = {
+                target: target,
+                attackType: attackType,
+                duration: duration,
+                threads: threads,
+                proxies: proxies,
+                customPayload: customPayload,
+                credentials: credentials,
+                ransomNote: ransomNote
+            };
 
             try {
                 const response = await fetch('/attack', {
@@ -187,13 +228,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({
-                        target: target,
-                        attackType: attackType,
-                        duration: duration,
-                        threads: threads,
-                        proxies: proxies
-                    })
+                    body: JSON.stringify(attackData)
                 });
 
                 if (response.ok) {
