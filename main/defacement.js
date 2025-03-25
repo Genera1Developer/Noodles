@@ -15,7 +15,7 @@
     'use strict';
 
     const defacementConfig = {
-        title: GM_getValue('title', 'HACKED!'),
+        title: GM_getValue('title', 'Noodles!'),
         message: GM_getValue('message', 'This site has been defaced. Security is an illusion.'),
         bgColor: GM_getValue('bgColor', 'black'),
         textColor: GM_getValue('textColor', 'lime'),
