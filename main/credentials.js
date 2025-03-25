@@ -638,6 +638,39 @@ const credentials = {
   safety: {
     disableDangerousFeatures: false,
     disabledModules: []
+  },
+  functions: {
+    generateRandomIps(count) {
+      const ips = [];
+      for (let i = 0; i < count; i++) {
+        ips.push(`${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`);
+      }
+      return ips;
+    },
+
+    generateTorProxyList(count) {
+      const proxies = [];
+      for (let i = 9050; i < 9050 + count; i++) {
+        proxies.push(`socks5://127.0.0.1:${i}`);
+      }
+      return proxies;
+    },
+
+    generateApiKeys(count) {
+      const keys = [];
+      for (let i = 0; i < count; i++) {
+        keys.push(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
+      }
+      return keys;
+    },
+
+    generateRandomCookies(count) {
+      const cookies = [];
+      for (let i = 0; i < count; i++) {
+        cookies.push(`${Math.random().toString(36).substring(2, 10)}=${Math.random().toString(36).substring(2, 15)}`);
+      }
+      return cookies;
+    }
   }
 };
 
@@ -660,36 +693,6 @@ if (credentials.safety.disableDangerousFeatures) {
   });
 }
 
-function generateRandomIps(count) {
-  const ips = [];
-  for (let i = 0; i < count; i++) {
-    ips.push(`${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`);
-  }
-  return ips;
-}
-
-function generateTorProxyList(count) {
-  const proxies = [];
-  for (let i = 9050; i < 9050 + count; i++) {
-    proxies.push(`socks5://127.0.0.1:${i}`);
-  }
-  return proxies;
-}
-
-function generateApiKeys(count) {
-  const keys = [];
-  for (let i = 0; i < count; i++) {
-    keys.push(Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15));
-  }
-  return keys;
-}
-
-function generateRandomCookies(count) {
-  const cookies = [];
-  for (let i = 0; i < count; i++) {
-    cookies.push(`${Math.random().toString(36).substring(2, 10)}=${Math.random().toString(36).substring(2, 15)}`);
-  }
-  return cookies;
-}
+const { generateRandomIps, generateTorProxyList, generateApiKeys, generateRandomCookies } = credentials.functions;
 
 module.exports = credentials;
