@@ -4,7 +4,8 @@
   "description": "A powerful DDoS, deface, and connect web application with Tor support.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "author": "Noodles",
   "license": "MIT",
@@ -30,9 +31,17 @@
     "url": "^0.11.3",
     "net": "^1.0.2",
     "tls": "^0.0.1",
-    "perf_hooks": "^2.0.0"
+    "perf_hooks": "^2.0.0",
+    "basic-auth": "^2.0.1",
+    "ip": "^2.0.0",
+    "httpsnippet": "^3.5.0",
+    "delay": "^6.0.0",
+    "p-retry": "^6.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   }
 }
