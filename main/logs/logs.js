@@ -62,7 +62,8 @@ class Logger {
             attackEndTime: null,
             totalAttackTime: 0,
             attackPacketLoss: 0,
-            attackReflectionEnabled: false
+            attackReflectionEnabled: false,
+            attackDuration: 0
         };
         this.latencyData = [];
         this.initializeUI();
@@ -193,19 +194,25 @@ class Logger {
         URL.revokeObjectURL(url);
     }
 
-    startAttack(target, attackType, threads, torProxy, reflectionEnabled = false) {
+    startAttack(target, attackType, threads, torProxy, duration, reflectionEnabled = false) {
         this.stats.attackStartTime = new Date().toISOString();
         this.stats.attackThreads = threads;
         this.stats.torProxyUsed = torProxy || 'None';
         this.stats.attackReflectionEnabled = reflectionEnabled;
+        this.stats.attackDuration = duration;
         this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy, reflectionEnabled);
         this.setAttackStatus('Running');
-        this.setAttackDetails(`Attack type: ${attackType}, threads: ${threads}, reflection: ${reflectionEnabled}`);
+        this.setAttackDetails(`Attack type: ${attackType}, threads: ${threads}, reflection: ${reflectionEnabled}, duration: ${duration} seconds`);
         this.setAttackProgress(0);
         this.setAttackErrorDetails('None');
+
+        this.attackTimeout = setTimeout(() => {
+            this.endAttack();
+        }, duration * 1000);
     }
 
     endAttack() {
+        clearTimeout(this.attackTimeout);
         this.stats.attackEndTime = new Date().toISOString();
         const startTime = new Date(this.stats.attackStartTime).getTime();
         const endTime = new Date(this.stats.attackEndTime).getTime();
@@ -531,7 +538,6 @@ class Logger {
 
      setAttackErrorDetails(errorDetails) {
         this.stats.attackErrorDetails = errorDetails;
-        this.displayStats();
     }
 
     setResourcesExhausted(exhausted) {
