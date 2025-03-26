@@ -8,7 +8,6 @@ https://reddit.com/submit?url=
 https://digg.com/submit?url=
 https://stumbleupon.com/submit?url=
 https://delicious.com/save?url=
-http://www.design-seeds.com/index.php/component/k2/item/610-ocean-hues
 https://trello.com/
 https://www.flickr.com/
 https://vk.com/
@@ -31,3 +30,7 @@ https://onlyfans.com/
 https://substack.com/
 https://rumble.com/
 https://odysee.com/
+https://www.youtube.com/
+https://news.ycombinator.com/
+https://www.tiktok.com/
+https://www.snapchat.com/
