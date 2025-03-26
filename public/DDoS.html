@@ -8,15 +8,7 @@
         <option value="http-flood">HTTP Flood 🔥</option>
         <option value="tcp-flood">TCP Flood</option>
         <option value="udp-flood">UDP Flood</option>
-        <option value="udp-flood-advanced">UDP Flood (Advanced)</option>
         <option value="syn-flood">SYN Flood</option>
-        <option value="slowloris">Slowloris</option>
-        <option value="ping-flood">Ping Flood (ICMP)</option>
-        <option value="ack-flood">ACK Flood</option>
-        <option value="rst-flood">RST Flood</option>
-        <option value="http-get-flood">HTTP GET Flood</option>
-        <option value="http-post-flood">HTTP POST Flood</option>
-
     </select>
 
     <label for="ddosThreads">Number of Threads:</label>
@@ -24,9 +16,6 @@
 
     <label for="ddosTime">Attack Duration (seconds):</label>
     <input type="number" id="ddosTime" value="60" min="1" max="86400" />
-
-    <label for="ddosRateLimit">Rate Limit (packets/second):</label>
-    <input type="number" id="ddosRateLimit" value="1000" min="1" max="100000" />
 
     <button id="startDDoS">Start DDoS Attack 💣</button>
 
