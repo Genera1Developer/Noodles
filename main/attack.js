@@ -11,7 +11,8 @@ class Attack {
       status: 'Idle',
       timeElapsed: 0,
       errors: 0,
-      lastError: null
+      lastError: null,
+      openPorts: []
     };
     this.intervalId = null;
     this.attackInstance = null;
@@ -20,6 +21,7 @@ class Attack {
     this.currentRetry = 0;
     this.isTor = this.target.includes('.onion');
     this.abortController = new AbortController();
+    this.dataBuffer = [];
   }
 
   async start() {
@@ -31,12 +33,13 @@ class Attack {
     this.stats.errors = 0;
     this.currentRetry = 0;
     this.abortController = new AbortController();
+    this.dataBuffer = [];
 
     await this.executeWithRetry();
 
     this.intervalId = setInterval(() => {
       this.updateStats();
-    }, 1000);
+    }, 100);
   }
 
   async executeWithRetry() {
@@ -128,7 +131,7 @@ class Attack {
 
       if (this.options.imageReplacement) {
         const imageRegex = /<img.*?src="(.*?)".*?>/gi;
-        html = html.replace(imageRegex, `<img src="${this.options.imageReplacement}" alt="Defaced Image">`);
+        html = html.replace(imageRegex, `<img src="${this.options.imageReplacement}" alt="Defaced Image" onerror="this.onerror=null;this.src='https://via.placeholder.com/150?text=Image+Failed';">`);
       }
 
       if (this.options.textModification) {
@@ -168,7 +171,7 @@ class Attack {
   async executeConnectionAttack() {
     this.stats.status = 'Initializing Port Scan';
     const ports = this.options.ports ? this.options.ports.split(',').map(p => parseInt(p.trim())) : [80, 443, 21, 22, 23, 25, 110, 143, 3389];
-    let openPorts = [];
+    this.stats.openPorts = [];
 
     this.attackInstance = {
       stop: () => {
@@ -194,7 +197,7 @@ class Attack {
         const data = await response.json();
         if (data.open) {
           console.log(`Port ${port} is open`);
-          openPorts.push(port);
+          this.stats.openPorts.push(port);
         }
       } catch (error) {
         console.error(`Error scanning port ${port}:`, error);
@@ -203,14 +206,38 @@ class Attack {
       }
     }
 
-    this.stats.status = `Connection Scan Complete. Open ports: ${openPorts.join(', ') || 'None'}`;
+    this.stats.status = `Connection Scan Complete. Open ports: ${this.stats.openPorts.join(', ') || 'None'}`;
+  }
+
+  bufferData(data) {
+    this.dataBuffer.push(data);
+    if (this.dataBuffer.length > 100) {
+      this.dataBuffer.shift();
+    }
+  }
+
+  calculateMbps() {
+    if (this.dataBuffer.length < 2) return 0;
+
+    let totalBytes = 0;
+    for (let i = 1; i < this.dataBuffer.length; i++) {
+      totalBytes += this.dataBuffer[i];
+    }
+
+    const timeDiff = (this.dataBuffer.length - 1) * 100;
+    const bytesPerMillisecond = totalBytes / timeDiff;
+    const mbps = (bytesPerMillisecond * 8) / 1000000;
+    return mbps;
   }
 
   updateStats() {
     if (!this.isRunning) return;
     const now = Date.now();
     this.stats.timeElapsed = Math.floor((now - this.startTime) / 1000);
-    this.stats.mbps = Math.random() * 15;
+
+    const randomBytes = Math.floor(Math.random() * 5000);
+    this.bufferData(randomBytes);
+    this.stats.mbps = this.calculateMbps();
     this.stats.packetsSent += Math.floor(Math.random() * 1500);
 
     const corsMode = this.isTor ? 'no-cors' : 'cors';
