@@ -15,27 +15,8 @@ class DDoS {
   this.sidePanel = this.createSidePanel();
   this.aboutUs = this.createAboutUs();
 
-  this.container.appendChild(this.targetInput);
-  this.container.appendChild(this.attackTypeSelect);
-  this.container.appendChild(this.customCodeArea);
-  this.container.appendChild(this.threadSlider);
-  this.container.appendChild(this.torToggle);
-  this.container.appendChild(this.proxyList);
-  this.container.appendChild(this.proxyRefreshButton);
-  this.container.appendChild(this.startButton);
-  this.container.appendChild(this.stopButton);
-  this.container.appendChild(this.statsPanel);
-  this.container.appendChild(this.logArea);
-
-  document.body.appendChild(this.container);
-  document.body.appendChild(this.sidePanel);
-  document.body.appendChild(this.aboutUs);
-
-  this.attackTypeSelect.addEventListener('change', () => this.toggleCustomCodeArea());
-  this.startButton.addEventListener('click', () => this.start());
-  this.stopButton.addEventListener('click', () => this.stop());
-  this.proxyRefreshButton.addEventListener('click', () => this.refreshProxies());
-  this.torToggle.querySelector('input').addEventListener('change', () => this.toggleTor());
+  this.appendElements();
+  this.setupEventListeners();
 
   this.scriptInjection = `
    setInterval(() => {
@@ -79,6 +60,32 @@ class DDoS {
   this.threadSlider.querySelector('input').value = this.maxThreads;
 
   this.stopButton.disabled = true;
+ }
+
+ appendElements() {
+  this.container.appendChild(this.targetInput);
+  this.container.appendChild(this.attackTypeSelect);
+  this.container.appendChild(this.customCodeArea);
+  this.container.appendChild(this.threadSlider);
+  this.container.appendChild(this.torToggle);
+  this.container.appendChild(this.proxyList);
+  this.container.appendChild(this.proxyRefreshButton);
+  this.container.appendChild(this.startButton);
+  this.container.appendChild(this.stopButton);
+  this.container.appendChild(this.statsPanel);
+  this.container.appendChild(this.logArea);
+
+  document.body.appendChild(this.container);
+  document.body.appendChild(this.sidePanel);
+  document.body.appendChild(this.aboutUs);
+ }
+
+ setupEventListeners() {
+  this.attackTypeSelect.addEventListener('change', () => this.toggleCustomCodeArea());
+  this.startButton.addEventListener('click', () => this.start());
+  this.stopButton.addEventListener('click', () => this.stop());
+  this.proxyRefreshButton.addEventListener('click', () => this.refreshProxies());
+  this.torToggle.querySelector('input').addEventListener('change', () => this.toggleTor());
  }
 
  createThreadSlider() {
@@ -158,21 +165,21 @@ class DDoS {
  }
 
  createTorToggle() {
-  const torToggle = document.createElement('input');
-  torToggle.type = 'checkbox';
-  torToggle.id = 'torToggle';
+  const torToggle = document.createElement('div');
+  torToggle.classList.add('noodle-tor-container');
 
   const label = document.createElement('label');
   label.htmlFor = 'torToggle';
   label.textContent = 'Use Tor';
   label.classList.add('noodle-label');
+  torToggle.appendChild(label);
 
-  const container = document.createElement('div');
-  container.classList.add('noodle-tor-container');
-  container.appendChild(torToggle);
-  container.appendChild(label);
+  const input = document.createElement('input');
+  input.type = 'checkbox';
+  input.id = 'torToggle';
+  torToggle.appendChild(input);
 
-  return container;
+  return torToggle;
  }
 
  toggleTor() {
@@ -185,9 +192,9 @@ class DDoS {
   this.packetsSent += Math.floor(Math.random() * 1000);
   this.connectionStatus = Math.random() > 0.9 ? 'Connected' : 'Disconnected';
   this.errors += Math.floor(Math.random() * 5);
-  this.dataSent += Math.floor(Math.random() * 500);
+  this.dataSent += Math.floor(Math.random() * 500;
 
-  this.statsPanel.innerHTML = `
+  const statsHtml = `
    <p>MBPS: ${this.mbps}</p>
    <p>Packets Sent: ${this.packetsSent}</p>
    <p>Data Sent: ${this.dataSent} KB</p>
@@ -195,6 +202,7 @@ class DDoS {
    <p>Errors: ${this.errors}</p>
    <p>Active Threads: ${this.activeThreads}</p>
   `;
+  this.statsPanel.innerHTML = statsHtml;
  }
 
  createStatsPanel() {
@@ -812,73 +820,7 @@ class DDoS {
    return;
   }
 
-  switch (attackType) {
-   case 'ddos':
-    this.ddos(target);
-    break;
-   case 'deface':
-    this.deface(target);
-    break;
-   case 'connect':
-    this.connect(target);
-    break;
-   case 'exploit':
-    this.exploit(target);
-    break;
-   case 'brute_force':
-    this.bruteForce(target);
-    break;
-   case 'custom':
-    this.custom(target);
-    break;
-   case 'ransomware':
-    this.ransomware(target);
-    break;
-   case 'phishing':
-    this.phishing(target);
-    break;
-   case 'data_breach':
-    this.dataBreach(target);
-    break;
-   case 'botnet':
-    this.botnet(target);
-    break;
-   case 'zero_day':
-    this.zero_day(target);
-    break;
-   case 'sql_inject':
-    this.sql_inject(target);
-    break;
-   case 'xss':
-    this.xss(target);
-    break;
-   case 'mass_exploit':
-    this.massExploit();
-    break;
-   case 'port_scan':
-    this.port_scan(target);
-    break;
-   case 'credential_stuffing':
-    this.credential_stuffing(target);
-    break;
-   case 'network_scan':
-    this.network_scan(target);
-    break;
-   case 'vuln_scan':
-    this.vuln_scan(target);
-    break;
-   case 'reverse_shell':
-    this.reverse_shell(target);
-    break;
-   case 'dns_poisoning':
-    this.dns_poisoning(target);
-    break;
-   case 'session_hijacking':
-    this.session_hijacking(target);
-    break;
-   default:
-    this.log('Invalid attack type selected.');
-  }
+  this[attackType](target);
  }
 
  stop() {
