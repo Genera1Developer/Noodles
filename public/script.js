@@ -172,6 +172,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const vulnerabilityScanButton = document.getElementById('vulnerabilityScanButton');
     const vulnerabilityScanUrlInput = document.getElementById('vulnerabilityScanUrl');
+
+    const ddosPanel = document.getElementById('ddos'); // Select DDoS panel
     // --- End Element Selectors ---
 
     // --- Attack State Variables ---
@@ -215,16 +217,35 @@ document.addEventListener('DOMContentLoaded', () => {
             updateStatsDisplay();
             return;
         }
+        let attackModule;
+        switch (attackType) {
+            case 'httpFlood':
+                attackModule = 'httpFlood';
+                break;
+            case 'tcpFlood':
+                attackModule = 'tcpFlood';
+                break;
+            case 'udpFlood':
+                attackModule = 'udpFlood';
+                break;
+            default:
+                logMessage(`Invalid attack type: ${attackType}`);
+                setStatus('Invalid Attack Type');
+                connectionStatus = 'Idle';
+                updateStatsDisplay();
+                return;
+        }
+
 
         attackInterval = setInterval(async () => {
             try {
-                const response = await fetch('/api/attack', {
+                const response = await fetch(`/api/ddos/${attackModule}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'User-Agent': getRandomUserAgent(),
                     },
-                    body: JSON.stringify({ targetUrl, attackType }),
+                    body: JSON.stringify({ targetUrl }),
                 });
 
                 const data = await response.json();
