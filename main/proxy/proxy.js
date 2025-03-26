@@ -1,1 +1,1 @@
-// This file is intentionally empty. Proxies will be handled elsewhere.
+// Proxies will be handled by the attack scripts directly.
