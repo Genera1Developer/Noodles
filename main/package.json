@@ -16,7 +16,12 @@
     "connection": "node ./main/connection/connection.js",
     "ransomware": "node ./main/ransomware/ransomware.js",
     "other": "node ./main/other/other.js",
-    "test": "jest"
+    "test": "jest",
+    "prepare-ddos": "cd main/ddos && npm install",
+    "prepare-defacement": "cd main/defacement && npm install",
+    "prepare-connection": "cd main/connection && npm install",
+    "prepare-ransomware": "cd main/ransomware && npm install",
+    "prepare-other": "cd main/other && npm install"
   },
   "keywords": [],
   "author": "Bigmancozmo",
