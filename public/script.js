@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const aboutUsContent = document.getElementById('aboutUs');
     const geoIpButton = document.getElementById('geoIpButton');
     const geoIpUrlInput = document.getElementById('geoIpUrl');
+    const customAttackButton = document.getElementById('customAttackButton');
+    const customAttackCodeInput = document.getElementById('customAttackCode');
 
     let mbps = 0;
     let packetsSent = 0;
@@ -270,6 +272,42 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusDiv.textContent = data.message;
                 logMessage(data.message);
                 logMessage(JSON.stringify(data.geoIpInfo, null, 2));
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    customAttackButton.addEventListener('click', async () => {
+        const targetUrl = targetUrlInput.value;
+        const customAttackCode = customAttackCodeInput.value;
+
+        if (!targetUrl || !customAttackCode) {
+            alert('Please enter a target URL and custom attack code.');
+            return;
+        }
+
+        statusDiv.textContent = 'Executing Custom Attack...';
+        logMessage(`Executing custom attack on ${targetUrl}`);
+
+        try {
+            const response = await fetch('/api/customAttack', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ targetUrl, customAttackCode }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
             } else {
                 statusDiv.textContent = `Error: ${data.error}`;
                 logMessage(`Error: ${data.error}`);
