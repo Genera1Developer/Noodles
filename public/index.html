@@ -4,11 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - The Ultimate Hacking Toolkit</title>
+    <title>Noodles - The Ultimate Hacking Toolkit (SIMULATION)</title>
+    <meta name="description" content="Noodles - A simulated hacking toolkit for educational and demonstration purposes only. DO NOT USE for illegal activities.">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* Basic Styling for the alert */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+
+        .alert-warning {
+            color: #856404;
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+        }
+
+        .alert-danger {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+    </style>
 </head>
 
 <body>
@@ -30,16 +52,21 @@
         </aside>
 
         <main class="main-content">
+
+            <div class="alert alert-warning" role="alert">
+                <strong>Disclaimer:</strong> This is a SIMULATION for educational purposes only. DO NOT use these tools for illegal activities.
+            </div>
+
             <section id="ddos" class="tab-content active">
-                <h2>DDoS Attacks 💥</h2>
+                <h2>DDoS Attacks 💥 (Simulation)</h2>
                 <div class="attack-form">
-                    <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                    <input type="text" id="ddos-target" placeholder="Target URL or .onion address (SIMULATION)">
                     <select id="ddos-method">
-                        <option value="http-flood">HTTP Flood</option>
-                        <option value="tcp-flood">TCP Flood</option>
-                        <option value="udp-flood">UDP Flood</option>
+                        <option value="http-flood">HTTP Flood (Simulated)</option>
+                        <option value="tcp-flood">TCP Flood (Simulated)</option>
+                        <option value="udp-flood">UDP Flood (Simulated)</option>
                     </select>
-                    <button id="ddos-start">Start Attack</button>
+                    <button id="ddos-start">Start Attack (Simulated)</button>
                 </div>
                 <div class="attack-stats">
                     <p>MBPS: <span id="ddos-mbps">0</span></p>
@@ -50,43 +77,45 @@
             </section>
 
             <section id="defacement" class="tab-content">
-                <h2>Website Defacement 💀</h2>
+                <h2>Website Defacement 💀 (Simulation)</h2>
                 <div class="defacement-form">
-                    <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
-                    <textarea id="defacement-html" placeholder="HTML Code for Defacement"></textarea>
-                    <button id="defacement-start">Start Defacement</button>
+                    <input type="text" id="defacement-target" placeholder="Target URL or .onion address (SIMULATION)">
+                    <textarea id="defacement-html" placeholder="HTML Code for Defacement (SIMULATION)"></textarea>
+                    <button id="defacement-start">Start Defacement (Simulated)</button>
                 </div>
             </section>
 
             <section id="connection" class="tab-content">
-                <h2>Unauthorized Connection 💻</h2>
+                <h2>Unauthorized Connection 💻 (Simulation)</h2>
                 <div class="connection-form">
-                    <input type="text" id="connection-target" placeholder="Target URL or .onion address">
+                    <input type="text" id="connection-target" placeholder="Target URL or .onion address (SIMULATION)">
                     <select id="connection-type">
-                        <option value="port-scan">Port Scanning</option>
-                        <option value="banner-grab">Banner Grabbing</option>
+                        <option value="port-scan">Port Scanning (Simulated)</option>
+                        <option value="banner-grab">Banner Grabbing (Simulated)</option>
                     </select>
-                    <button id="connection-start">Start Connection</button>
+                    <button id="connection-start">Start Connection (Simulated)</button>
                 </div>
             </section>
 
             <section id="ransomware" class="tab-content">
                 <h2>Ransomware Simulation 💣</h2>
-                <p>Simulate ransomware attacks (purely conceptual).</p>
+                <p>Simulate ransomware attacks (purely conceptual).  This is for educational and demonstrational purposes only.  No actual encryption or malicious activity will occur.</p>
+                <div class="alert alert-danger" role="alert">
+                    <strong>Warning:</strong> This section demonstrates the concept of ransomware.  It does not involve any actual encryption or harm to your system.
+                </div>
             </section>
 
             <section id="other" class="tab-content">
-                <h2>Other Hacking Tools 🔥</h2>
-                <p>Additional tools will be added here.</p>
+                <h2>Other Hacking Tools 🔥 (Simulation)</h2>
+                <p>Additional tools will be added here. All tools are purely for demonstration purposes only. DO NOT USE for illegal activities.</p>
             </section>
 
             <section id="about" class="tab-content">
                 <h2>About Us ⚠</h2>
                 <p>Noodles is a cutting-edge penetration testing toolkit designed to help security professionals assess
-                    and exploit vulnerabilities in systems. Our mission is to provide the most advanced and effective
-                    tools for ethical hacking, ensuring that our clients stay one step ahead of potential threats.
-                    Founded by a team of experienced cybersecurity experts, Noodles is committed to innovation and
-                    excellence in the field of cybersecurity.</p>
+                    and understand potential vulnerabilities in systems. This is a SIMULATION of such a toolkit. Our mission is to provide a learning tool for ethical hacking practices, ensuring that users understand potential threats and how to defend against them.
+                    Founded by a team interested in cybersecurity education, Noodles is committed to providing educational resources about cybersecurity.</p>
+                <p><b>Important:</b> This tool is a simulation and should not be used for any illegal or unethical activities. Use responsibly and for educational purposes only.</p>
             </section>
         </main>
     </div>
