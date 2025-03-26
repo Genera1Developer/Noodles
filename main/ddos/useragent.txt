@@ -70,3 +70,6 @@ Extermination-Bot/1.0
 Apocalypse-Harvester/1.0
 Hellfire-Crawler/1.0
 Doomsday-Spider/1.0
+Noodles-Bot/1.0
+Noodles-Crawler/1.0
+Noodles-Harvester/1.0
