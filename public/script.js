@@ -171,7 +171,7 @@ const darkWebScanButton = document.getElementById('darkWebScanButton');
 const darkWebScanInput = document.getElementById('darkWebScanInput');
 
 const vulnerabilityScanButton = document.getElementById('vulnerabilityScanButton');
-const vulnerabilityScanUrlInput = document.getElementById('vulnerabilityScanUrl');
+const vulnerabilityScanUrlInput = document.getElementById('vulnerabilityScanUrlInput');
 
 const ddosPanel = document.getElementById('ddos'); // Select DDoS panel
 // --- End Element Selectors ---
