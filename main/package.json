@@ -15,7 +15,8 @@
     "format": "prettier --write .",
     "client": "npm start --prefix client",
     "install-dependencies": "concurrently \"npm install\" \"npm install --prefix client\"",
-    "update-geoip": "node scripts/update-geoip.js"
+    "update-geoip": "node scripts/update-geoip.js",
+    "attack": "node attack.js"
   },
   "dependencies": {
     "@types/express": "^4.17.21",
