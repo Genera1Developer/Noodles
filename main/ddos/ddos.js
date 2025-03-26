@@ -21,7 +21,6 @@ class DDoS {
   this.initializeValues();
   this.setupUI();
 
-  // Optimization: Cache frequently used DOM elements
   this.threadSliderInput = this.threadSlider.querySelector('input');
   this.threadSliderValue = this.threadSlider.querySelector('.noodle-slider-value');
   this.requestRateSliderInput = this.requestRateSlider.querySelector('input');
@@ -472,7 +471,6 @@ class DDoS {
   resizeHandle.addEventListener('mousedown', startResize);
  }
 
- // Centralized error handling function
  handleAttackError(attackType, target, error) {
   this.log(`${attackType} attack on ${target} failed: ${error}`);
   this.errors++;
@@ -593,7 +591,6 @@ class DDoS {
    }
   };
 
-  // Optimization: Adjust initial thread count for faster ramp-up.
   const initialThreads = Math.min(10, this.maxThreads / 10);
   for (let i = 0; i < initialThreads; i++) {
    attackLoop();
@@ -611,7 +608,7 @@ class DDoS {
 
    if (data.error) this.errors++;
    this.packetsSent++;
-   this.dataSent += data.message.length;  // crude estimate
+   this.dataSent += data.message.length;
 
    this.mbps = this.dataSent / (Date.now() - this.attackStartTime) * 8 / 1000000
   } catch (err) {
