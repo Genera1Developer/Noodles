@@ -3,6 +3,7 @@ const app = express();
 const port = 3000;
 const path = require('path');
 const { spawn } = require('child_process');
+const fs = require('fs');
 
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -45,27 +46,26 @@ app.post('/api/ddos', async (req, res) => {
 
     try {
         let scriptPath;
-        let args;
 
         switch (type) {
             case 'http':
-                scriptPath = path.join(__dirname, 'scripts', 'ddos', 'http_flood.js');
+                scriptPath = path.join(__dirname, 'ddos', 'http_flood.js');
                 break;
             case 'tcp':
-                scriptPath = path.join(__dirname, 'scripts', 'ddos', 'tcp_flood.js');
+                scriptPath = path.join(__dirname, 'ddos', 'tcp_flood.js');
                 break;
             case 'udp':
-                scriptPath = path.join(__dirname, 'scripts', 'ddos', 'udp_flood.js');
+                scriptPath = path.join(__dirname, 'ddos', 'udp_flood.js');
                 break;
             default:
                 return res.status(400).send({ status: 'Invalid DDoS attack type' });
         }
 
-        if (!require('fs').existsSync(scriptPath)) {
+        if (!fs.existsSync(scriptPath)) {
             return res.status(500).send({ status: `${type.toUpperCase()} Flood script not found` });
         }
 
-        args = [target, duration];
+        const args = [target, duration];
         await executeCommand('node', [scriptPath, ...args]);
         res.send({ status: `DDoS attack initiated (${type}) on ${target} for ${duration} seconds` });
     } catch (error) {
@@ -86,9 +86,9 @@ app.post('/api/defacement', async (req, res) => {
     console.log(`Defacement requested: Target=${target}, Action=${action}`);
 
     try {
-        const scriptPath = path.join(__dirname, 'scripts', 'defacement', 'deface.js');
+        const scriptPath = path.join(__dirname, 'defacement', 'deface.js');
 
-        if (!require('fs').existsSync(scriptPath)) {
+        if (!fs.existsSync(scriptPath)) {
             return res.status(500).send({ status: 'Deface script not found' });
         }
 
@@ -113,24 +113,23 @@ app.post('/api/connection', async (req, res) => {
 
     try {
         let scriptPath;
-        let args;
 
         switch (type) {
             case 'portscan':
-                scriptPath = path.join(__dirname, 'scripts', 'connection', 'port_scan.js');
+                scriptPath = path.join(__dirname, 'connection', 'port_scan.js');
                 break;
             case 'bannergrab':
-                scriptPath = path.join(__dirname, 'scripts', 'connection', 'banner_grab.js');
+                scriptPath = path.join(__dirname, 'connection', 'banner_grab.js');
                 break;
             default:
                 return res.status(400).send({ status: 'Invalid connection type' });
         }
 
-        if (!require('fs').existsSync(scriptPath)) {
+        if (!fs.existsSync(scriptPath)) {
             return res.status(500).send({ status: `${type.replace('scan', ' Scan').replace('grab', ' Grab')} script not found` });
         }
 
-        args = [target];
+        const args = [target];
         await executeCommand('node', [scriptPath, ...args]);
         res.send({ status: `Connection initiated (${type}) on ${target}` });
     } catch (error) {
