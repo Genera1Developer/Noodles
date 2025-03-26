@@ -294,13 +294,11 @@ defaceButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully defaced ${defaceUrl} 💀`;
-    const errorMessage = `Failed to deface ${defaceUrl}`;
-
-    const response = await genericApiCall('deface', { defaceUrl, defaceCode }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful deface, if needed
+    try {
+        const response = await genericApiCall('deface', { defaceUrl, defaceCode }, `Successfully defaced ${defaceUrl} 💀`, `Failed to deface ${defaceUrl}`);
+    } catch (error) {
+        logMessage(`Deface operation failed: ${error.message}`);
+        setStatus(`Deface operation failed: ${error.message}`);
     }
 });
 
@@ -312,13 +310,11 @@ connectButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully connected to ${connectUrl} 💻`;
-    const errorMessage = `Failed to connect to ${connectUrl}`;
-
-    const response = await genericApiCall('connect', { connectUrl }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful connect, if needed
+    try {
+        const response = await genericApiCall('connect', { connectUrl }, `Successfully connected to ${connectUrl} 💻`, `Failed to connect to ${connectUrl}`);
+    } catch (error) {
+        logMessage(`Connect operation failed: ${error.message}`);
+        setStatus(`Connect operation failed: ${error.message}`);
     }
 });
 
@@ -330,13 +326,11 @@ ransomwareButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully sent ransomware to ${ransomwareUrl} 💀`;
-    const errorMessage = `Failed to send ransomware to ${ransomwareUrl}`;
-
-    const response = await genericApiCall('ransomware', { ransomwareUrl }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful ransomware send, if needed
+    try {
+        const response = await genericApiCall('ransomware', { ransomwareUrl }, `Successfully sent ransomware to ${ransomwareUrl} 💀`, `Failed to send ransomware to ${ransomwareUrl}`);
+    } catch (error) {
+        logMessage(`Ransomware operation failed: ${error.message}`);
+        setStatus(`Ransomware operation failed: ${error.message}`);
     }
 });
 
@@ -384,13 +378,11 @@ customAttackButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully executed custom attack on ${targetUrl} 💥`;
-    const errorMessage = `Failed to execute custom attack on ${targetUrl}`;
-
-    const response = await genericApiCall('customAttack', { targetUrl, customAttackCode }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful custom attack, if needed
+    try {
+        const response = await genericApiCall('customAttack', { targetUrl, customAttackCode }, `Successfully executed custom attack on ${targetUrl} 💥`, `Failed to execute custom attack on ${targetUrl}`);
+    } catch (error) {
+        logMessage(`Custom attack operation failed: ${error.message}`);
+        setStatus(`Custom attack operation failed: ${error.message}`);
     }
 });
 
@@ -402,13 +394,11 @@ nukeButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully NUKED ${targetUrl} 💀`;
-    const errorMessage = `Failed to NUKE ${targetUrl}`;
-
-    const response = await genericApiCall('nuke', { targetUrl }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful nuke, if needed
+    try {
+        const response = await genericApiCall('nuke', { targetUrl }, `Successfully NUKED ${targetUrl} 💀`, `Failed to NUKE ${targetUrl}`);
+    } catch (error) {
+        logMessage(`Nuke operation failed: ${error.message}`);
+        setStatus(`Nuke operation failed: ${error.message}`);
     }
 });
 
@@ -455,13 +445,11 @@ sqlInjectionButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully attempted SQL injection on ${sqlInjectionUrl} 💥`;
-    const errorMessage = `Failed to attempt SQL injection on ${sqlInjectionUrl}`;
-
-    const response = await genericApiCall('sqlInjection', { sqlInjectionUrl }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful SQL injection attempt, if needed
+    try {
+        const response = await genericApiCall('sqlInjection', { sqlInjectionUrl }, `Successfully attempted SQL injection on ${sqlInjectionUrl} 💥`, `Failed to attempt SQL injection on ${sqlInjectionUrl}`);
+    } catch (error) {
+        logMessage(`SQL Injection operation failed: ${error.message}`);
+        setStatus(`SQL Injection operation failed: ${error.message}`);
     }
 });
 
@@ -473,13 +461,11 @@ xssButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully attempted XSS on ${xssUrl} 💥`;
-    const errorMessage = `Failed to attempt XSS on ${xssUrl}`;
-
-    const response = await genericApiCall('xss', { xssUrl }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful XSS attempt, if needed
+    try {
+        const response = await genericApiCall('xss', { xssUrl }, `Successfully attempted XSS on ${xssUrl} 💥`, `Failed to attempt XSS on ${xssUrl}`);
+    } catch (error) {
+        logMessage(`XSS operation failed: ${error.message}`);
+        setStatus(`XSS operation failed: ${error.message}`);
     }
 });
 
@@ -491,13 +477,11 @@ csrfButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully attempted CSRF on ${csrfUrl} 💥`;
-    const errorMessage = `Failed to attempt CSRF on ${csrfUrl}`;
-
-    const response = await genericApiCall('csrf', { csrfUrl }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful CSRF attempt, if needed
+    try {
+        const response = await genericApiCall('csrf', { csrfUrl }, `Successfully attempted CSRF on ${csrfUrl} 💥`, `Failed to attempt CSRF on ${csrfUrl}`);
+    } catch (error) {
+        logMessage(`CSRF operation failed: ${error.message}`);
+        setStatus(`CSRF operation failed: ${error.message}`);
     }
 });
 
@@ -509,13 +493,11 @@ reverseShellButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully attempted Reverse Shell on ${reverseShellUrl} 💥`;
-    const errorMessage = `Failed to attempt Reverse Shell on ${reverseShellUrl}`;
-
-    const response = await genericApiCall('reverseShell', { reverseShellUrl }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful reverse shell attempt, if needed
+    try {
+        const response = await genericApiCall('reverseShell', { reverseShellUrl }, `Successfully attempted Reverse Shell on ${reverseShellUrl} 💥`, `Failed to attempt Reverse Shell on ${reverseShellUrl}`);
+    } catch (error) {
+        logMessage(`Reverse Shell operation failed: ${error.message}`);
+        setStatus(`Reverse Shell operation failed: ${error.message}`);
     }
 });
 
@@ -562,13 +544,11 @@ socialEngineeringButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully initiated social engineering attack on ${target} 😈`;
-    const errorMessage = `Failed to initiate social engineering attack on ${target}`;
-
-    const response = await genericApiCall('socialEngineering', { target }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful social engineering attempt, if needed
+    try {
+        const response = await genericApiCall('socialEngineering', { target }, `Successfully initiated social engineering attack on ${target} 😈`, `Failed to initiate social engineering attack on ${target}`);
+    } catch (error) {
+        logMessage(`Social Engineering operation failed: ${error.message}`);
+        setStatus(`Social Engineering operation failed: ${error.message}`);
     }
 });
 
@@ -580,13 +560,11 @@ credentialStuffingButton.addEventListener('click', async () => {
         return;
     }
 
-    const successMessage = `Successfully attempted credential stuffing on ${credentialStuffingUrl} 💥`;
-    const errorMessage = `Failed to attempt credential stuffing on ${credentialStuffingUrl}`;
-
-    const response = await genericApiCall('credentialStuffing', { credentialStuffingUrl }, successMessage, errorMessage);
-
-    if (response) {
-        // Handle specific logic after a successful credential stuffing attempt, if needed
+    try {
+        const response = await genericApiCall('credentialStuffing', { credentialStuffingUrl }, `Successfully attempted credential stuffing on ${credentialStuffingUrl} 💥`, `Failed to attempt credential stuffing on ${credentialStuffingUrl}`);
+    } catch (error) {
+        logMessage(`Credential Stuffing operation failed: ${error.message}`);
+        setStatus(`Credential Stuffing operation failed: ${error.message}`);
     }
 });
 
