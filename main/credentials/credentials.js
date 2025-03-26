@@ -762,6 +762,11 @@ const credentials = {
             `${Math.random().toString(36).substring(2, 10)}=${Math.random().toString(36).substring(2, 15)}`);
       }
       return cookies;
+    },
+
+    validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
     }
   },
   legal: {
@@ -794,6 +799,6 @@ if (credentials.safety.disableDangerousFeatures) {
   });
 }
 
-const {generateRandomIps, generateTorProxyList, generateApiKeys, generateRandomCookies} = credentials.functions;
+const {generateRandomIps, generateTorProxyList, generateApiKeys, generateRandomCookies, validateEmail} = credentials.functions;
 
 module.exports = credentials;
