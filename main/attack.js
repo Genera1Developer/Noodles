@@ -11,6 +11,7 @@ class Attack {
       mbps: 0,
       packetsSent: 0,
       status: 'Idle',
+      targetStatus: 'Unknown',
       timeElapsed: 0,
       errors: 0,
       lastError: null,
@@ -30,8 +31,8 @@ class Attack {
     });
     this.axiosTorInstance = axios.create({
       proxy: {
-        host: '127.0.0.1', // Default Tor proxy address
-        port: 9050, // Default Tor proxy port
+        host: '127.0.0.1',
+        port: 9050,
       },
       timeout: 10000,
     });
@@ -158,7 +159,7 @@ class Attack {
 
       this.stats.defacementStatus = 'Submitting Defacement';
       try {
-          const submitResponse = await fetch('/defacement', {
+          const submitResponse = await fetch('/api/defacement', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json'
@@ -210,7 +211,7 @@ class Attack {
       try {
         let response;
         const axiosClient = this.isTor ? this.axiosTorInstance : this.axiosInstance;
-        response = await axiosClient.get(`/portscan?target=${this.target}&port=${port}`, {
+        response = await axiosClient.get(`/api/portscan?target=${this.target}&port=${port}`, {
           signal: this.abortController.signal,
           timeout: 5000
         });
@@ -251,7 +252,7 @@ class Attack {
     return mbps;
   }
 
-  updateStats() {
+  async updateStats() {
     if (!this.isRunning) return;
     const now = Date.now();
     this.stats.timeElapsed = Math.floor((now - this.startTime) / 1000);
@@ -261,18 +262,17 @@ class Attack {
     this.stats.mbps = this.calculateMbps();
     this.stats.packetsSent += Math.floor(Math.random() * 1500);
 
-    const axiosClient = this.isTor ? this.axiosTorInstance : this.axiosInstance;
-    axiosClient.get(this.target, {
-        signal: this.abortController.signal,
-        timeout: 5000
-      })
-      .then(response => {
-        this.stats.status = response.status === 200 ? 'Online' : 'Unresponsive';
-      })
-      .catch((error) => {
-        this.stats.status = 'Offline';
+    try {
+        const axiosClient = this.isTor ? this.axiosTorInstance : this.axiosInstance;
+        const response = await axiosClient.get(this.target, {
+            signal: this.abortController.signal,
+            timeout: 5000
+        });
+        this.stats.targetStatus = response.status === 200 ? 'Online' : 'Unresponsive';
+    } catch (error) {
+        this.stats.targetStatus = 'Offline';
         this.handleAttackError(error);
-      });
+    }
   }
 
   handleAttackError(error) {
