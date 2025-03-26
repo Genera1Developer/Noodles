@@ -26,23 +26,19 @@ const resolveTargetIP = async (target) => {
     }
 };
 
-const updateStatisticsDisplay = () => {
-    const mbpsDisplay = document.getElementById('mbps');
-    const packetsDisplay = document.getElementById('packets');
-    const statusDisplay = document.getElementById('targetStatus');
-    const ipDisplay = document.getElementById('targetIP');
-    const durationDisplay = document.getElementById('attackDuration');
+const formatDuration = (duration) => {
+    const seconds = Math.floor((duration / 1000) % 60);
+    const minutes = Math.floor((duration / (1000 * 60)) % 60);
+    const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+};
 
-    if (mbpsDisplay) mbpsDisplay.textContent = attackStatistics.mbps.toFixed(2);
-    if (packetsDisplay) packetsDisplay.textContent = attackStatistics.packetsSent;
-    if (statusDisplay) statusDisplay.textContent = attackStatistics.targetStatus;
-    if (ipDisplay) ipDisplay.textContent = attackStatistics.targetIP;
-    if (durationDisplay) {
-        const seconds = Math.floor((attackStatistics.attackDuration / 1000) % 60);
-        const minutes = Math.floor((attackStatistics.attackDuration / (1000 * 60)) % 60);
-        const hours = Math.floor((attackStatistics.attackDuration / (1000 * 60 * 60)) % 24);
-        durationDisplay.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-    }
+const updateStatisticsDisplay = () => {
+    document.getElementById('mbps').textContent = attackStatistics.mbps.toFixed(2);
+    document.getElementById('packets').textContent = attackStatistics.packetsSent;
+    document.getElementById('targetStatus').textContent = attackStatistics.targetStatus;
+    document.getElementById('targetIP').textContent = attackStatistics.targetIP;
+    document.getElementById('attackDuration').textContent = formatDuration(attackStatistics.attackDuration);
 };
 
 const startStatistics = () => {
@@ -68,36 +64,26 @@ const updateStatistics = (mbps = 0, packets = 0, status = 'Offline', ip = 'Unkno
 
 const executeAttack = async (target, attackType, options) => {
     try {
-        if (!target) {
-            throw new Error('Target URL is required.');
-        }
+        if (!target) throw new Error('Target URL is required.');
 
         const targetIP = await resolveTargetIP(target);
         updateStatistics(0, 0, 'Starting', targetIP);
-
         startStatistics();
+
+        let attackModule;
         switch (attackType) {
-            case 'ddos':
-                if (!ddosAttack || typeof ddosAttack.execute !== 'function') {
-                    throw new Error('DDoS module is not properly configured.');
-                }
-                await ddosAttack.execute(target, options, updateStatistics);
-                break;
-            case 'deface':
-                if (!defaceSite || typeof defaceSite.execute !== 'function') {
-                    throw new Error('Deface module is not properly configured.');
-                }
-                await defaceSite.execute(target, options);
-                break;
-            case 'connection':
-                if (!connectionEstablish || typeof connectionEstablish.execute !== 'function') {
-                    throw new Error('Connection module is not properly configured.');
-                }
-                await connectionEstablish.execute(target, options);
-                break;
-            default:
-                throw new Error('Invalid attack type');
+            case 'ddos': attackModule = ddosAttack; break;
+            case 'deface': attackModule = defaceSite; break;
+            case 'connection': attackModule = connectionEstablish; break;
+            default: throw new Error('Invalid attack type');
         }
+
+        if (!attackModule || typeof attackModule.execute !== 'function') {
+            throw new Error(`${attackType} module is not properly configured.`);
+        }
+
+        await attackModule.execute(target, options, updateStatistics);
+
     } catch (error) {
         console.error('Attack execution failed:', error);
         updateStatistics(0, 0, 'Failed');
@@ -108,9 +94,7 @@ const executeAttack = async (target, attackType, options) => {
 };
 
 module.exports = {
-    init: () => {
-        console.log("Noodles Initialized.");
-    },
+    init: () => console.log("Noodles Initialized."),
     startStatistics,
     stopStatistics,
     updateStatistics,
