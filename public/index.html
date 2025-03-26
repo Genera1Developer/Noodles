@@ -27,12 +27,22 @@
         <main class="main-content">
             <section id="ddos" class="tab-content active">
                 <h2>DDoS Attack 💥</h2>
-                <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
-                <select id="ddos-method">
-                    <option value="http">HTTP Flood</option>
-                    <option value="tcp">TCP Flood</option>
-                    <option value="udp">UDP Flood</option>
-                </select>
+                <div class="form-group">
+                    <label for="ddos-target">Target URL or .onion address:</label>
+                    <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                </div>
+                <div class="form-group">
+                    <label for="ddos-method">Attack Method:</label>
+                    <select id="ddos-method">
+                        <option value="http">HTTP Flood</option>
+                        <option value="tcp">TCP Flood</option>
+                        <option value="udp">UDP Flood</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="ddos-threads">Threads:</label>
+                    <input type="number" id="ddos-threads" value="100" min="1">
+                </div>
                 <button id="ddos-start">Start DDoS</button>
                 <div class="status-box">Status: <span id="ddos-status">Idle</span></div>
                 <div class="log-box">
@@ -45,13 +55,22 @@
 
             <section id="defacement" class="tab-content">
                 <h2>Defacement 💀</h2>
-                <input type="text" id="defacement-target" placeholder="Target URL">
-                <select id="defacement-method">
-                    <option value="image">Image Replacement</option>
-                    <option value="text">Text Modification</option>
-                    <option value="html">HTML Injection</option>
-                </select>
-                <textarea id="defacement-data" placeholder="Image URL, Text, or HTML"></textarea>
+                <div class="form-group">
+                    <label for="defacement-target">Target URL:</label>
+                    <input type="text" id="defacement-target" placeholder="Target URL">
+                </div>
+                <div class="form-group">
+                    <label for="defacement-method">Defacement Method:</label>
+                    <select id="defacement-method">
+                        <option value="image">Image Replacement</option>
+                        <option value="text">Text Modification</option>
+                        <option value="html">HTML Injection</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="defacement-data">Data:</label>
+                    <textarea id="defacement-data" placeholder="Image URL, Text, or HTML"></textarea>
+                </div>
                 <button id="defacement-start">Start Defacement</button>
                 <div class="status-box">Status: <span id="defacement-status">Idle</span></div>
                 <div class="log-box">Log: <span id="defacement-log"></span></div>
@@ -59,11 +78,17 @@
 
             <section id="connection" class="tab-content">
                 <h2>Connection 💻</h2>
-                <input type="text" id="connection-target" placeholder="Target URL or IP Address">
-                <select id="connection-method">
-                    <option value="portscan">Port Scanning</option>
-                    <option value="bannergrab">Banner Grabbing</option>
-                </select>
+                 <div class="form-group">
+                    <label for="connection-target">Target URL or IP Address:</label>
+                    <input type="text" id="connection-target" placeholder="Target URL or IP Address">
+                </div>
+                <div class="form-group">
+                    <label for="connection-method">Connection Method:</label>
+                    <select id="connection-method">
+                        <option value="portscan">Port Scanning</option>
+                        <option value="bannergrab">Banner Grabbing</option>
+                    </select>
+                </div>
                 <button id="connection-start">Start Connection</button>
                 <div class="status-box">Status: <span id="connection-status">Idle</span></div>
                 <div class="log-box">Log: <span id="connection-log"></span></div>
@@ -71,9 +96,18 @@
 
              <section id="ransomware" class="tab-content">
                 <h2>Ransomware 💣</h2>
-                <input type="text" id="ransomware-target" placeholder="Target Network or System">
-                <input type="text" id="ransomware-extension" placeholder="File Extension to Encrypt">
-                <input type="text" id="ransomware-amount" placeholder="Ransom Amount (BTC)">
+                <div class="form-group">
+                    <label for="ransomware-target">Target Network or System:</label>
+                    <input type="text" id="ransomware-target" placeholder="Target Network or System">
+                </div>
+                 <div class="form-group">
+                    <label for="ransomware-extension">File Extension to Encrypt:</label>
+                    <input type="text" id="ransomware-extension" placeholder="File Extension to Encrypt">
+                </div>
+                <div class="form-group">
+                    <label for="ransomware-amount">Ransom Amount (BTC):</label>
+                    <input type="text" id="ransomware-amount" placeholder="Ransom Amount (BTC)">
+                </div>
                 <button id="ransomware-start">Start Ransomware</button>
                 <div class="status-box">Status: <span id="ransomware-status">Idle</span></div>
                 <div class="log-box">Log: <span id="ransomware-log"></span></div>
