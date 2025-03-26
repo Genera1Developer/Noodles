@@ -1,130 +1,150 @@
 <!DOCTYPE html>
- <html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Noodles</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
- </head>
- <body>
-  <div class="container">
-  <aside class="sidebar">
-  <div class="sidebar-header">
-  <img src="assets/logo.svg" alt="Noodles Logo" class="logo">
-  <h1>Noodles</h1>
-  </div>
-  <nav>
-  <ul>
-  <li><a href="#" data-tab="ddos"><i class="fas fa-skull"></i> DDoS</a></li>
-  <li><a href="#" data-tab="defacement"><i class="fas fa-paint-brush"></i> Defacement</a></li>
-  <li><a href="#" data-tab="connection"><i class="fas fa-network-wired"></i> Connection</a></li>
-  <li><a href="#" data-tab="ransomware"><i class="fas fa-lock"></i> Ransomware</a></li>
-  <li><a href="#" data-tab="about"><i class="fas fa-info-circle"></i> About Us</a></li>
-  </ul>
-  </nav>
-  </aside>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noodles</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body>
+<div class="container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="assets/logo.svg" alt="Noodles Logo" class="logo">
+            <h1>Noodles</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" data-tab="ddos"><i class="fas fa-skull"></i> DDoS</a></li>
+                <li><a href="#" data-tab="defacement"><i class="fas fa-paint-brush"></i> Defacement</a></li>
+                <li><a href="#" data-tab="connection"><i class="fas fa-network-wired"></i> Connection</a></li>
+                <li><a href="#" data-tab="ransomware"><i class="fas fa-lock"></i> Ransomware</a></li>
+                <li><a href="#" data-tab="about"><i class="fas fa-info-circle"></i> About Us</a></li>
+            </ul>
+        </nav>
+    </aside>
 
-  <main class="main-content">
-  <section id="ddos" class="tab-content active">
-  <h2>DDoS Attacks 😈</h2>
-  <div class="attack-panel">
-  <label for="ddos-target">Target URL:</label>
-  <input type="text" id="ddos-target" placeholder="http://example.com or onion address">
-  <label for="ddos-type">Attack Type:</label>
-  <select id="ddos-type">
-  <option value="tcp-flood">TCP Flood</option>
-  <option value="udp-flood">UDP Flood</option>
-  <option value="http-flood">HTTP Flood</option>
-  <option value="slowloris">Slowloris</option>
-  </select>
-  <label for="ddos-threads">Threads:</label>
-  <input type="number" id="ddos-threads" value="10" min="1">
-  <label for="ddos-time">Duration (seconds):</label>
-  <input type="number" id="ddos-time" value="30" min="1">
-  <button id="start-ddos">Start Attack 💥</button>
-  </div>
-  <div class="attack-stats">
-  <h3>Attack Statistics</h3>
-  <p>Status: <span id="ddos-status">Idle</span></p>
-  <p>MBPS: <span id="ddos-mbps">0</span></p>
-  <p>Packets Sent: <span id="ddos-packets">0</span></p>
-  <p>Connection Status: <span id="ddos-connection">Offline</span></p>
-  </div>
-  <div class="attack-logs">
-  <h3>Attack Logs</h3>
-  <textarea id="ddos-logs" readonly></textarea>
-  </div>
-  </section>
+    <main class="main-content">
+        <section id="ddos" class="tab-content active">
+            <h2>DDoS Attacks 😈</h2>
+            <div class="attack-panel">
+                <label for="ddos-target">Target URL:</label>
+                <input type="text" id="ddos-target" placeholder="http://example.com or onion address">
+                <label for="ddos-type">Attack Type:</label>
+                <select id="ddos-type">
+                    <option value="tcp-flood">TCP Flood</option>
+                    <option value="udp-flood">UDP Flood</option>
+                    <option value="http-flood">HTTP Flood</option>
+                    <option value="slowloris">Slowloris</option>
+                    <option value="syn-flood">SYN Flood</option>
+                    <option value="ping-flood">Ping Flood</option>
+                    <option value="ack-flood">ACK Flood</option>
+                    <option value="dns-amplification">DNS Amplification</option>
+                </select>
+                <label for="ddos-threads">Threads:</label>
+                <input type="number" id="ddos-threads" value="100" min="1">
+                <label for="ddos-time">Duration (seconds):</label>
+                <input type="number" id="ddos-time" value="60" min="1">
+                <button id="start-ddos">Start Attack 💥</button>
+            </div>
+            <div class="attack-stats">
+                <h3>Attack Statistics</h3>
+                <p>Status: <span id="ddos-status">Idle</span></p>
+                <p>MBPS: <span id="ddos-mbps">0</span></p>
+                <p>Packets Sent: <span id="ddos-packets">0</span></p>
+                <p>Connection Status: <span id="ddos-connection">Offline</span></p>
+            </div>
+            <div class="attack-logs">
+                <h3>Attack Logs</h3>
+                <textarea id="ddos-logs" readonly></textarea>
+            </div>
+        </section>
 
-  <section id="defacement" class="tab-content">
-  <h2>Website Defacement 😈</h2>
-  <div class="defacement-panel">
-  <label for="defacement-target">Target URL:</label>
-  <input type="text" id="defacement-target" placeholder="http://example.com">
-  <label for="defacement-message">Defacement Message:</label>
-  <textarea id="defacement-message" placeholder="You've been hacked by Noodles!"></textarea>
-  <label for="defacement-image">Image URL (Optional):</label>
-  <input type="text" id="defacement-image" placeholder="http://example.com/image.jpg">
-  <button id="start-defacement">Start Defacement 😈</button>
-  </div>
-  <div class="defacement-stats">
-  <h3>Defacement Statistics</h3>
-  <p>Status: <span id="defacement-status">Idle</span></p>
-  <p>Result: <span id="defacement-result">N/A</span></p>
-  <p>Logs:</p>
-  <textarea id="defacement-logs" readonly></textarea>
-  </div>
-  </section>
+        <section id="defacement" class="tab-content">
+            <h2>Website Defacement 😈</h2>
+            <div class="defacement-panel">
+                <label for="defacement-target">Target URL:</label>
+                <input type="text" id="defacement-target" placeholder="http://example.com">
+                <label for="defacement-message">Defacement Message:</label>
+                <textarea id="defacement-message"
+                          placeholder="You've been hacked by Noodles!"></textarea>
+                <label for="defacement-image">Image URL (Optional):</label>
+                <input type="text" id="defacement-image" placeholder="http://example.com/image.jpg">
+                <label for="defacement-script">Custom Script (Optional):</label>
+                <textarea id="defacement-script"
+                          placeholder="<script>alert('Hacked!');</script>"></textarea>
+                <button id="start-defacement">Start Defacement 😈</button>
+            </div>
+            <div class="defacement-stats">
+                <h3>Defacement Statistics</h3>
+                <p>Status: <span id="defacement-status">Idle</span></p>
+                <p>Result: <span id="defacement-result">N/A</span></p>
+                <p>Logs:</p>
+                <textarea id="defacement-logs" readonly></textarea>
+            </div>
+        </section>
 
-  <section id="connection" class="tab-content">
-  <h2>Establish Connection 😈</h2>
-  <div class="connection-panel">
-  <label for="connection-target">Target IP/URL:</label>
-  <input type="text" id="connection-target" placeholder="127.0.0.1 or http://example.com">
-  <label for="connection-port">Port:</label>
-  <input type="number" id="connection-port" value="80" min="1">
-  <button id="start-connection">Start Connection 😈</button>
-  </div>
-  <div class="connection-stats">
-  <h3>Connection Statistics</h3>
-  <p>Status: <span id="connection-status">Idle</span></p>
-  <p>Data Received: <span id="connection-data">0 bytes</span></p>
-  <p>Logs:</p>
-  <textarea id="connection-logs" readonly></textarea>
-  </div>
-  </section>
+        <section id="connection" class="tab-content">
+            <h2>Establish Connection 😈</h2>
+            <div class="connection-panel">
+                <label for="connection-target">Target IP/URL:</label>
+                <input type="text" id="connection-target" placeholder="127.0.0.1 or http://example.com">
+                <label for="connection-port">Port:</label>
+                <input type="number" id="connection-port" value="80" min="1">
+                <label for="connection-type">Connection Type:</label>
+                <select id="connection-type">
+                    <option value="tcp">TCP</option>
+                    <option value="udp">UDP</option>
+                </select>
+                <button id="start-connection">Start Connection 😈</button>
+            </div>
+            <div class="connection-stats">
+                <h3>Connection Statistics</h3>
+                <p>Status: <span id="connection-status">Idle</span></p>
+                <p>Data Received: <span id="connection-data">0 bytes</span></p>
+                <p>Logs:</p>
+                <textarea id="connection-logs" readonly></textarea>
+            </div>
+        </section>
 
-  <section id="ransomware" class="tab-content">
-  <h2>Ransomware 😈</h2>
-  <div class="ransomware-panel">
-  <label for="ransomware-target">Target Directory:</label>
-  <input type="text" id="ransomware-target" placeholder="/path/to/target">
-  <label for="ransomware-extension">File Extension to Encrypt:</label>
-  <input type="text" id="ransomware-extension" value=".txt">
-  <label for="ransomware-key">Encryption Key:</label>
-  <input type="text" id="ransomware-key" value="NoodlesKey123">
-  <label for="ransomware-message">Ransom Message:</label>
-  <textarea id="ransomware-message" placeholder="Your files have been encrypted. Send Bitcoin to this address to decrypt."></textarea>
-  <button id="start-ransomware">Start Encryption 😈</button>
-  </div>
-  <div class="ransomware-stats">
-  <h3>Ransomware Statistics</h3>
-  <p>Status: <span id="ransomware-status">Idle</span></p>
-  <p>Files Encrypted: <span id="ransomware-files">0</span></p>
-  <p>Logs:</p>
-  <textarea id="ransomware-logs" readonly></textarea>
-  </div>
-  </section>
+        <section id="ransomware" class="tab-content">
+            <h2>Ransomware 😈</h2>
+            <div class="ransomware-panel">
+                <label for="ransomware-target">Target Directory:</label>
+                <input type="text" id="ransomware-target" placeholder="/path/to/target">
+                <label for="ransomware-extension">File Extension to Encrypt:</label>
+                <input type="text" id="ransomware-extension" value=".txt">
+                <label for="ransomware-key">Encryption Key:</label>
+                <input type="text" id="ransomware-key" value="NoodlesKey123">
+                <label for="ransomware-message">Ransom Message:</label>
+                <textarea id="ransomware-message"
+                          placeholder="Your files have been encrypted. Send Bitcoin to this address to decrypt."></textarea>
+                <button id="start-ransomware">Start Encryption 😈</button>
+            </div>
+            <div class="ransomware-stats">
+                <h3>Ransomware Statistics</h3>
+                <p>Status: <span id="ransomware-status">Idle</span></p>
+                <p>Files Encrypted: <span id="ransomware-files">0</span></p>
+                <p>Logs:</p>
+                <textarea id="ransomware-logs" readonly></textarea>
+            </div>
+        </section>
 
-  <section id="about" class="tab-content">
-  <h2>About Us 😈</h2>
-  <p>Noodles is a powerful tool designed for penetration testing and security research purposes ONLY. Use responsibly. We are not responsible for your actions.</p>
-  <p>Created by: Anonymous Hackers</p>
-  <p>Version: 1.0</p>
-  </section>
-  </main>
-  </div>
-  <script src="script.js"></script>
- </body>
- </html>
+        <section id="about" class="tab-content">
+            <h2>About Us 😈</h2>
+            <p>Noodles is a powerful tool designed for penetration testing and security research purposes ONLY. Use
+                responsibly. We are not responsible for your actions.</p>
+            <p>Created by: Anonymous Hackers</p>
+            <p>Version: 2.0</p>
+            <p>Disclaimer: This tool is intended for educational and testing purposes only. Unauthorized use is
+                illegal and unethical. We are not responsible for any misuse of this tool.</p>
+        </section>
+    </main>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
