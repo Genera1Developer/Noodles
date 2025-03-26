@@ -20,7 +20,8 @@
     "prepare-defacement": "cd main/defacement && npm install",
     "prepare-connection": "cd main/connection && npm install",
     "prepare-ransomware": "cd main/ransomware && npm install",
-    "prepare-other": "cd main/other && npm install"
+    "prepare-other": "cd main/other && npm install",
+    "prepare-all": "npm run prepare-ddos && npm run prepare-defacement && npm run prepare-connection && npm run prepare-ransomware && npm run prepare-other"
   },
   "keywords": [],
   "author": "Bigmancozmo",
