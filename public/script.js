@@ -20,13 +20,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function testConnection(url) {
         try {
-            const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+
+            const response = await fetch(url, {
+                method: 'HEAD',
+                mode: 'no-cors',
+                signal: controller.signal,
+            });
+
+            clearTimeout(timeoutId);
             return response.status >= 200 && response.status < 400;
         } catch (error) {
             console.error("Connection test error:", error);
             return false;
         }
     }
+
 
     function clearStats() {
         mbps = 0;
@@ -77,6 +87,23 @@ document.addEventListener('DOMContentLoaded', () => {
             return null;
         }
     }
+
+    function getRandomUserAgent() {
+        const userAgents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.1.2 Safari/605.1.15',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
+            'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:88.0) Gecko/20100101 Firefox/88.0',
+        ];
+        return userAgents[Math.floor(Math.random() * userAgents.length)];
+    }
+
     // --- End Utility Functions ---
 
     // --- Element Selectors ---
@@ -195,6 +222,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
+                        'User-Agent': getRandomUserAgent(),
                     },
                     body: JSON.stringify({ targetUrl, attackType }),
                 });
@@ -250,8 +278,8 @@ document.addEventListener('DOMContentLoaded', () => {
             `Failed to deface ${defaceUrl}`
         );
 
-        if(result) {
-           //handle additional data returned from API if necessary
+        if (result) {
+            //handle additional data returned from API if necessary
         }
     });
 
@@ -269,9 +297,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully connected to ${connectUrl}`,
             `Failed to connect to ${connectUrl}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     ransomwareButton.addEventListener('click', async () => {
@@ -288,9 +316,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully sent ransomware to ${ransomwareUrl}`,
             `Failed to send ransomware to ${ransomwareUrl}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     geoIpButton.addEventListener('click', async () => {
@@ -328,9 +356,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully executed custom attack on ${targetUrl}`,
             `Failed to execute custom attack on ${targetUrl}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     nukeButton.addEventListener('click', async () => {
@@ -347,9 +375,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully NUKED ${targetUrl}`,
             `Failed to NUKE ${targetUrl}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     ipLookupButton.addEventListener('click', async () => {
@@ -386,9 +414,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully attempted SQL injection on ${sqlInjectionUrl}`,
             `Failed to attempt SQL injection on ${sqlInjectionUrl}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     xssButton.addEventListener('click', async () => {
@@ -405,9 +433,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully attempted XSS on ${xssUrl}`,
             `Failed to attempt XSS on ${xssUrl}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     csrfButton.addEventListener('click', async () => {
@@ -424,9 +452,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully attempted CSRF on ${csrfUrl}`,
             `Failed to attempt CSRF on ${csrfUrl}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     reverseShellButton.addEventListener('click', async () => {
@@ -443,9 +471,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully attempted Reverse Shell on ${reverseShellUrl}`,
             `Failed to attempt Reverse Shell on ${reverseShellUrl}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     portScanButton.addEventListener('click', async () => {
@@ -482,9 +510,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully initiated social engineering attack on ${target}`,
             `Failed to initiate social engineering attack on ${target}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     credentialStuffingButton.addEventListener('click', async () => {
@@ -501,9 +529,9 @@ document.addEventListener('DOMContentLoaded', () => {
             `Successfully attempted credential stuffing on ${credentialStuffingUrl}`,
             `Failed to attempt credential stuffing on ${credentialStuffingUrl}`
         );
-        if(result) {
+        if (result) {
             //handle additional data returned from API if necessary
-         }
+        }
     });
 
     dataBreachSearchButton.addEventListener('click', async () => {
@@ -584,34 +612,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showTab('aboutUs');
     });
     // --- End UI Interactions ---
-
-    // --- Side Panel Dragging --- (Consider removing this functionality for security reasons)
-    let isDragging = false;
-    let initialX, initialY;
-
-    sidePanel.addEventListener('mousedown', (e) => {
-        isDragging = true;
-        initialX = e.clientX - sidePanel.offsetLeft;
-        initialY = e.clientY - sidePanel.offsetTop;
-        sidePanel.style.cursor = 'grabbing';
-    });
-
-    document.addEventListener('mouseup', () => {
-        isDragging = false;
-        sidePanel.style.cursor = 'grab';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-        if (!isDragging) return;
-        e.preventDefault();
-
-        const newX = e.clientX - initialX;
-        const newY = e.clientY - initialY;
-
-        sidePanel.style.left = newX + 'px';
-        sidePanel.style.top = newY + 'px';
-    });
-    // --- End Side Panel Dragging ---
 
     updateStatsDisplay(); // Initial stats display
 });
