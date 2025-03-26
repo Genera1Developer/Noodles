@@ -1,1 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Defacement Tools</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="defacement-container">
+        <h1>💀 Defacement Tools 💀</h1>
 
+        <div class="target-input">
+            <label for="defacement-target">Target URL:</label>
+            <input type="text" id="defacement-target" placeholder="http://example.com or onion address">
+        </div>
+
+        <div class="defacement-options">
+            <h2>Options</h2>
+            <div class="option">
+                <label for="image-replacement">Image Replacement:</label>
+                <input type="file" id="image-replacement" accept="image/*">
+                <button onclick="replaceImage()">Replace Image 💥</button>
+            </div>
+
+            <div class="option">
+                <label for="text-modification">Text Modification:</label>
+                <input type="text" id="text-modification" placeholder="Enter text to inject">
+                <button onclick="modifyText()">Modify Text 💣</button>
+            </div>
+
+            <div class="option">
+                <label for="html-injection">HTML Injection:</label>
+                <textarea id="html-injection" placeholder="Enter HTML code"></textarea>
+                <button onclick="injectHTML()">Inject HTML 🔥</button>
+            </div>
+        </div>
+
+        <div class="defacement-status">
+            <p id="status-message">Status: Ready 💻</p>
+        </div>
+    </div>
+
+    <script>
+        function replaceImage() {
+            const targetUrl = document.getElementById('defacement-target').value;
+            const imageFile = document.getElementById('image-replacement').files[0];
+
+            if (!targetUrl || !imageFile) {
+                alert('Please enter a target URL and select an image.');
+                return;
+            }
+
+            // Placeholder for actual image replacement logic (using fetch or similar)
+            document.getElementById('status-message').textContent = `Replacing image on ${targetUrl}...`;
+            console.log(`Replacing image on ${targetUrl} with ${imageFile.name}`);
+            // Simulate success
+            setTimeout(() => {
+                document.getElementById('status-message').textContent = `Image replaced on ${targetUrl}!`;
+            }, 2000);
+        }
+
+        function modifyText() {
+            const targetUrl = document.getElementById('defacement-target').value;
+            const textToInject = document.getElementById('text-modification').value;
+
+            if (!targetUrl || !textToInject) {
+                alert('Please enter a target URL and text to inject.');
+                return;
+            }
+
+            // Placeholder for actual text modification logic
+            document.getElementById('status-message').textContent = `Modifying text on ${targetUrl}...`;
+            console.log(`Modifying text on ${targetUrl} with "${textToInject}"`);
+            // Simulate success
+            setTimeout(() => {
+                document.getElementById('status-message').textContent = `Text modified on ${targetUrl}!`;
+            }, 2000);
+        }
+
+        function injectHTML() {
+            const targetUrl = document.getElementById('defacement-target').value;
+            const htmlCode = document.getElementById('html-injection').value;
+
+            if (!targetUrl || !htmlCode) {
+                alert('Please enter a target URL and HTML code.');
+                return;
+            }
+
+            // Placeholder for actual HTML injection logic
+            document.getElementById('status-message').textContent = `Injecting HTML on ${targetUrl}...`;
+            console.log(`Injecting HTML on ${targetUrl} with "${htmlCode}"`);
+            // Simulate success
+            setTimeout(() => {
+                document.getElementById('status-message').textContent = `HTML injected on ${targetUrl}!`;
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
