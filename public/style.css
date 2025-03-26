@@ -16,6 +16,7 @@ body {
     border-right: 1px solid #333;
     transition: width 0.3s ease;
     position: relative;
+    z-index: 100;
 }
 
 .sidebar-header {
@@ -59,6 +60,9 @@ body {
     font-size: 14px;
     font-weight: 500;
     color: #bdbdbd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .sidebar nav ul li:hover {
@@ -188,7 +192,6 @@ button:hover {
     resize: vertical;
 }
 
-/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -198,7 +201,6 @@ button:hover {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     body {
         flex-direction: column;
@@ -217,7 +219,7 @@ button:hover {
     .sidebar-header {
         padding-bottom: 10px;
         margin-bottom: 10px;
-        display: none; /* Hide on smaller screens */
+        display: none;
     }
 
     .logo {
@@ -248,7 +250,6 @@ button:hover {
     }
 }
 
-/* Wider screens */
 @media (min-width: 1920px) {
     .sidebar {
         width: 320px;
@@ -291,7 +292,6 @@ button:hover {
     }
 }
 
-/* Additional Styling */
 .input-group {
     margin-bottom: 20px;
 }
@@ -376,7 +376,6 @@ button:hover {
     font-size: 14px;
 }
 
-/* Toggle Button Styles */
 .toggle-switch {
     position: relative;
     display: inline-block;
@@ -426,7 +425,6 @@ input:checked + .slider:before {
     transform: translateX(26px);
 }
 
-/* Sidebar Collapse */
 .sidebar.collapsed {
     width: 80px;
 }
@@ -454,12 +452,10 @@ input:checked + .slider:before {
     margin-left: 80px;
 }
 
-/* Resizable Textarea */
 .logs textarea {
     resize: vertical;
 }
 
-/* Sidebar Toggle Button */
 .sidebar-toggle-button {
     position: absolute;
     top: 20px;
@@ -484,7 +480,6 @@ input:checked + .slider:before {
     font-size: 20px;
 }
 
-/*Notification styling */
 .notification {
     position: fixed;
     top: 20px;
@@ -500,4 +495,71 @@ input:checked + .slider:before {
 
 .notification.show {
     opacity: 1;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #252525;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    width: 80%;
+    max-width: 600px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    color: #eee;
+}
+
+.modal-header h2 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.close-button {
+    background: none;
+    border: none;
+    color: #bbb;
+    font-size: 24px;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.close-button:hover {
+    color: #fff;
+}
+
+.modal-body {
+    color: #ddd;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.show {
+    display: block;
+}
+
+.ransomware-active {
+    background-color: #ff5252;
+}
+.hidden {
+    display: none;
 }
