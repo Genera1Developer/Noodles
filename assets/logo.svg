@@ -1,14 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64">
   <defs>
     <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#FF4136">
-        <animate attributeName="stop-color" values="#FF4136; #FF6347; #FFEB3B; #4CAF50; #2196F3; #9C27B0; #FF4136" dur="6s" repeatCount="indefinite"/>
+      <stop offset="0%" stop-color="#2ecc71">
+        <animate attributeName="stop-color" values="#2ecc71; #3498db; #9b59b6; #e74c3c; #f39c12; #2ecc71" dur="6s" repeatCount="indefinite"/>
       </stop>
-      <stop offset="100%" stop-color="#B71C1C">
-        <animate attributeName="stop-color" values="#B71C1C; #FF6347; #FFEB3B; #4CAF50; #2196F3; #9C27B0; #B71C1C" dur="6s" repeatCount="indefinite"/>
+      <stop offset="100%" stop-color="#27ae60">
+        <animate attributeName="stop-color" values="#27ae60; #3498db; #9b59b6; #e74c3c; #f39c12; #27ae60" dur="6s" repeatCount="indefinite"/>
       </stop>
     </linearGradient>
   </defs>
-  <rect x="0" y="0" width="64" height="64" fill="#1a1a1a"/>
+  <rect x="0" y="0" width="64" height="64" fill="#222"/>
   <path d="M16 16 L48 48 M48 16 L16 48 M32 8 L32 56 M8 32 L56 32" stroke="url(#gradient)" stroke-width="4" stroke-linecap="round"/>
 </svg>
