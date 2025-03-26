@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const packetsSentDisplay = document.getElementById('packets');
   const targetStatusDisplay = document.getElementById('targetStatus');
   const timeElapsedDisplay = document.getElementById('timeElapsed');
+  const aboutUsContent = document.getElementById('about-us-content');
 
   let startTime;
   let attackRunning = false;
@@ -94,13 +95,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 1000);
 
-  function loadAboutUs() {
-    fetch('about.html')
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById('about-us-content').innerHTML = data;
-      })
-      .catch(error => console.error('Error fetching about us:', error));
+  async function loadAboutUs() {
+    try {
+      const response = await fetch('about.html');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.text();
+      aboutUsContent.innerHTML = data;
+    } catch (error) {
+      console.error('Error fetching about us:', error);
+      aboutUsContent.innerHTML = '<p>Failed to load about us content.</p>';
+    }
   }
 
   function openTab(tabId) {
