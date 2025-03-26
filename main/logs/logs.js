@@ -1,5 +1,9 @@
 const fs = require('fs');
 const crypto = require('crypto');
+const dns = require('dns');
+const geoip = require('geoip-lite');
+const http = require('http');
+const https = require('https');
 
 class Logger {
     constructor() {
@@ -25,7 +29,11 @@ class Logger {
             geoip: 'Unknown',
             httpStatus: 'Unknown',
             dnsRecords: 'Unknown',
+            averageLatency: 0,
+            peakLatency: 0,
+            currentLatency: 0,
         };
+        this.latencyData = [];
         this.initializeUI();
     }
 
@@ -180,6 +188,64 @@ class Logger {
         this.displayStats();
     }
 
+    async resolveTargetInfo(target) {
+        try {
+            const geo = geoip.lookup(target);
+            if (geo) {
+                this.setGeoIP(geo.country);
+            } else {
+                this.resolveDNS(target);
+            }
+
+            this.checkHttpStatus(target);
+        } catch (error) {
+            console.error("Failed to resolve target info:", error);
+            this.stats.errors++;
+            this.displayStats();
+        }
+    }
+
+    async resolveDNS(target) {
+        dns.resolve(target, (err, addresses) => {
+            if (err) {
+                console.error('DNS resolution error:', err);
+                this.setDnsRecords('Unknown');
+                this.stats.errors++;
+                this.displayStats();
+            } else {
+                this.setDnsRecords(JSON.stringify(addresses));
+            }
+        });
+    }
+
+    async checkHttpStatus(target) {
+        const protocol = target.startsWith('https') ? https : http;
+
+        protocol.get(target, (res) => {
+            this.setHttpStatus(res.statusCode);
+        }).on('error', (e) => {
+            console.error(`Got error: ${e.message}`);
+            this.setHttpStatus('Unknown');
+            this.stats.errors++;
+            this.displayStats();
+        });
+    }
+
+    updateLatency(latency) {
+        this.latencyData.push(latency);
+
+        if (this.latencyData.length > 100) {
+            this.latencyData.shift();
+        }
+
+        const sum = this.latencyData.reduce((a, b) => a + b, 0);
+        this.stats.averageLatency = sum / this.latencyData.length || 0;
+        this.stats.peakLatency = Math.max(...this.latencyData, 0);
+        this.stats.currentLatency = latency;
+
+        this.displayStats();
+    }
+
     displayStats() {
         document.getElementById('packets-sent').textContent = this.stats.packetsSent;
         document.getElementById('mbps').textContent = (this.stats.bytesSent * 8 / 1000000).toFixed(2);
@@ -199,6 +265,9 @@ class Logger {
         document.getElementById('geoip').textContent = this.stats.geoip;
         document.getElementById('http-status').textContent = this.stats.httpStatus;
         document.getElementById('dns-records').textContent = this.stats.dnsRecords;
+        document.getElementById('average-latency').textContent = this.stats.averageLatency.toFixed(2) + ' ms';
+        document.getElementById('peak-latency').textContent = this.stats.peakLatency.toFixed(2) + ' ms';
+        document.getElementById('current-latency').textContent = this.stats.currentLatency.toFixed(2) + ' ms';
     }
 
     getStats() {
