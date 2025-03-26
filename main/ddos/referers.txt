@@ -60,3 +60,12 @@ https://api.ipify.org/
 https://checkip.amazonaws.com/
 https://www.cloudflare.com/cdn-cgi/trace
 https://ipinfo.io/ip
+https://example.com/
+https://example.org/
+https://example.net/
+https://randomwebsite.com/
+https://anotherwebsite.net/
+https://somewebsite.org/
+https://websiteexample.com/
+https://yetanotherwebsite.net/
+https://awesomewebsite.org/
