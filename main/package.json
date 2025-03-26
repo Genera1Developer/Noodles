@@ -9,7 +9,8 @@
     "build": "npm install && npm run build-client",
     "build-client": "cd public && npm install && npm run build",
     "prepare": "husky install",
-    "lint": "eslint . --ext .js"
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "Bigmancozmo",
