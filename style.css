@@ -1,0 +1,158 @@
+body {
+    font-family: sans-serif;
+    background-color: #121212;
+    color: #f0f0f0;
+    margin: 0;
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.side-panel {
+    width: 200px;
+    background-color: #212121;
+    color: #ffffff;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    overflow: hidden;
+}
+
+.side-panel:hover {
+    width: 250px;
+}
+
+.side-panel h2 {
+    margin-bottom: 20px;
+    color: #bb86fc;
+}
+
+.side-panel ul {
+    list-style: none;
+    padding: 0;
+}
+
+.side-panel li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+
+.side-panel li:hover {
+    background-color: #bb86fc;
+    color: #121212;
+}
+
+.content-area {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.attack-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #bb86fc;
+}
+
+.form-group input[type="text"],
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #424242;
+    background-color: #303030;
+    color: #f0f0f0;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group button {
+    background-color: #bb86fc;
+    color: #121212;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.form-group button:hover {
+    background-color: #6200ee;
+}
+
+/* Statistics Display */
+.statistics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.statistic-card {
+    background-color: #212121;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.statistic-card h3 {
+    color: #bb86fc;
+    margin-bottom: 5px;
+}
+
+/* About Us Page */
+.about-us {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #212121;
+    border-radius: 8px;
+}
+
+.about-us h2 {
+    color: #bb86fc;
+    margin-bottom: 15px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .side-panel {
+        width: 100%;
+        overflow: auto;
+    }
+
+    .attack-form {
+        max-width: 100%;
+        padding: 10px;
+    }
+}
