@@ -2,6 +2,7 @@ class Logger {
     constructor() {
         this.logEntries = [];
         this.maxLogSize = 100;
+        this.logFilePath = 'noodles.log';
     }
 
     generateAttackID() {
@@ -32,7 +33,7 @@ class Logger {
     persistLog(logEntry) {
         const logString = JSON.stringify(logEntry) + '\n';
 
-        fs.appendFile('noodles.log', logString, err => {
+        fs.appendFile(this.logFilePath, logString, err => {
             if (err) {
                 console.error('Failed to persist log:', err);
             }
@@ -68,7 +69,7 @@ class Logger {
     }
 
     loadPersistentLogs() {
-        fs.readFile('noodles.log', 'utf8', (err, data) => {
+        fs.readFile(this.logFilePath, 'utf8', (err, data) => {
             if (err) {
                 console.warn('No previous logs found or unable to read file.');
                 return;
@@ -90,11 +91,24 @@ class Logger {
     clearLogs() {
         this.logEntries = [];
         document.getElementById('logs-container').innerHTML = '';
-        fs.writeFile('noodles.log', '', err => {
+        fs.writeFile(this.logFilePath, '', err => {
             if (err) {
                 console.error('Failed to clear log file:', err);
             }
         });
+    }
+
+    downloadLogs() {
+        const logsString = this.logEntries.map(entry => JSON.stringify(entry)).join('\n');
+        const blob = new Blob([logsString], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'noodles_logs.txt';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     }
 }
 
@@ -104,4 +118,8 @@ window.logger = logger;
 
 document.getElementById('clear-logs-button').addEventListener('click', () => {
     logger.clearLogs();
+});
+
+document.getElementById('download-logs-button').addEventListener('click', () => {
+    logger.downloadLogs();
 });
