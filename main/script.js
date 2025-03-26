@@ -9,8 +9,14 @@ document.addEventListener('DOMContentLoaded', () => {
   const timeElapsedDisplay = document.getElementById('timeElapsed');
 
   let startTime;
+  let attackRunning = false;
 
-  attackButton.addEventListener('click', () => {
+  attackButton.addEventListener('click', async () => {
+    if (attackRunning) {
+      updateStatus('Attack in progress. Wait for it to complete.');
+      return;
+    }
+
     const target = targetInput.value;
     const attackType = attackSelect.value;
 
@@ -20,8 +26,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     startTime = new Date();
+    attackRunning = true;
     updateStatus(`Attack started: ${attackType} on ${target}`);
-    startAttack(target, attackType);
+    try {
+      await startAttack(target, attackType);
+    } finally {
+      attackRunning = false;
+    }
   });
 
   async function startAttack(target, attackType) {
@@ -75,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 1000);
 
-  // Fetch about us content
   fetch('/about.html')
     .then(response => response.text())
     .then(data => {
@@ -91,23 +101,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function openTab(tabId) {
-      // Hide all tab contents
       document.querySelectorAll('.tab-content').forEach(content => {
           content.style.display = 'none';
       });
 
-      // Remove active class from all tab buttons
       document.querySelectorAll('.tab-button').forEach(button => {
           button.classList.remove('active');
       });
 
-      // Show the selected tab content
       document.getElementById(tabId).style.display = 'block';
 
-      // Add active class to the clicked button
       document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
   }
 
-  // Open default tab on page load
   openTab('ddos');
 });
