@@ -14,6 +14,7 @@ body {
     display: flex;
     flex-direction: column;
     border-right: 1px solid #333;
+    transition: width 0.3s ease;
 }
 
 .sidebar-header {
@@ -30,16 +31,20 @@ body {
     margin-right: 15px;
     border-radius: 5px;
     background-color: #424242;
+    transition: all 0.3s ease;
 }
 
 .sidebar-header h1 {
     font-size: 20px;
     font-weight: 600;
     letter-spacing: 0.5px;
+    transition: font-size 0.3s ease;
 }
 
 .sidebar nav ul {
     list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .sidebar nav ul li {
@@ -47,7 +52,7 @@ body {
     cursor: pointer;
     display: flex;
     align-items: center;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
     border-radius: 4px;
     margin-bottom: 8px;
     font-size: 14px;
@@ -56,6 +61,7 @@ body {
 
 .sidebar nav ul li:hover {
     background-color: #333;
+    transform: translateX(3px);
 }
 
 .sidebar nav ul li i {
@@ -71,6 +77,7 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    transition: margin-left 0.3s ease;
 }
 
 .tab-content {
@@ -132,7 +139,7 @@ button {
     padding: 12px 25px;
     border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, transform 0.2s ease;
     font-size: 14px;
     font-weight: 500;
     letter-spacing: 0.3px;
@@ -140,6 +147,7 @@ button {
 
 button:hover {
     background-color: #1e88e5;
+    transform: scale(1.05);
 }
 
 .status-panel {
@@ -201,11 +209,17 @@ button:hover {
         height: auto;
         border-right: none;
         border-bottom: 1px solid #333;
+        padding: 10px;
     }
 
     .sidebar-header {
         padding-bottom: 10px;
         margin-bottom: 10px;
+        display: none; /* Hide on smaller screens */
+    }
+
+    .logo {
+        display: none;
     }
 
     .sidebar nav ul {
@@ -273,4 +287,172 @@ button:hover {
         padding: 14px 30px;
         font-size: 16px;
     }
+}
+
+/* Additional Styling */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ddd;
+    font-size: 14px;
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group select,
+.input-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #fff;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.input-group input[type="text"]:focus,
+.input-group input[type="number"]:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+    border-color: #64b5f6;
+    outline: none;
+}
+
+.attack-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.attack-option {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    border: 1px solid #555;
+}
+
+.attack-option:hover {
+    background-color: #444;
+}
+
+.attack-option.selected {
+    background-color: #64b5f6;
+    color: #121212;
+    border-color: #64b5f6;
+}
+
+.status-display {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background-color: #2a2a2a;
+    border-radius: 5px;
+    margin-bottom: 15px;
+}
+
+.status-display-item {
+    text-align: center;
+}
+
+.status-display-item h4 {
+    color: #eee;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.status-display-item p {
+    color: #bbb;
+    font-size: 14px;
+}
+
+/* Toggle Button Styles */
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #333;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #64b5f6;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #64b5f6;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Sidebar Collapse */
+.sidebar.collapsed {
+    width: 80px;
+}
+
+.sidebar.collapsed .sidebar-header h1 {
+    font-size: 0;
+    width: 0;
+    overflow: hidden;
+}
+
+.sidebar.collapsed .logo {
+    width: 50px;
+    height: 50px;
+}
+
+.sidebar.collapsed nav ul li span {
+    display: none;
+}
+
+.content {
+    transition: margin-left 0.3s ease;
+}
+
+.sidebar.collapsed ~ .content {
+    margin-left: 80px;
+}
+
+/* Resizable Textarea */
+.logs textarea {
+    resize: vertical;
 }
