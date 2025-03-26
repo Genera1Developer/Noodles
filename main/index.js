@@ -1,10 +1,10 @@
-const { ddos } = require('./ddos/ddos');
-const { deface } = require('./deface/deface');
-const { connect } = require('./tor/tor');
-const { ransomware } = require('./ransomware/ransomware');
+const ddos = require('./ddos/ddos');
+const deface = require('./deface/deface');
+const connect = require('./tor/tor');
+const ransomware = require('./ransomware/ransomware');
 
 module.exports = {
-    ddos,
+    ddos: ddos.ddosAttack,
     deface,
     connect,
     ransomware
