@@ -1,122 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles 😈</title>
+    <title>Noodles 🍜</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="icon" href="assets/noodles_logo.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-
 <body>
     <div class="container">
-        <div class="sidebar">
+        <aside class="sidebar">
             <div class="sidebar-header">
-                <img src="assets/noodles_logo.png" alt="Noodles Logo" class="logo">
-                <h1>Noodles 😈</h1>
+                <h1>Noodles 🍜</h1>
             </div>
-            <nav>
+            <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="#" data-tab="ddos"><i class="fa fa-skull"></i> DDoS</a></li>
-                    <li><a href="#" data-tab="defacement"><i class="fa fa-mask"></i> Defacement</a></li>
-                    <li><a href="#" data-tab="connection"><i class="fa fa-network-wired"></i> Connection</a></li>
-                    <li><a href="#" data-tab="ransomware"><i class="fa fa-lock"></i> Ransomware (Simulated)</a></li>
-                    <li><a href="#" data-tab="other"><i class="fa fa-wrench"></i> Other Tools</a></li>
-                    <li><a href="#" data-tab="about"><i class="fa fa-info-circle"></i> About Us</a></li>
+                    <li data-tab="ddos" class="active"><a><i class="fa fa-bomb"></i> DDoS</a></li>
+                    <li data-tab="defacement"><a><i class="fa fa-paint-brush"></i> Defacement</a></li>
+                    <li data-tab="connection"><a><i class="fa fa-network-wired"></i> Connection</a></li>
+                    <li data-tab="ransomware"><a><i class="fa fa-lock"></i> Ransomware</a></li>
+                    <li data-tab="other"><a><i class="fa fa-wrench"></i> Other Tools</a></li>
+                    <li data-tab="about"><a><i class="fa fa-info-circle"></i> About Us</a></li>
                 </ul>
             </nav>
-        </div>
-        <main class="content">
+        </aside>
+
+        <main class="main-content">
             <section id="ddos" class="tab-content active">
-                <h2>DDoS 💥</h2>
+                <h2>DDoS Attacks 💥</h2>
                 <div class="form-group">
                     <label for="ddos-target">Target URL:</label>
-                    <input type="text" id="ddos-target" placeholder="http://example.com or .onion">
+                    <input type="text" id="ddos-target" placeholder="http://example.com or onion address">
                 </div>
                 <div class="form-group">
-                    <label for="ddos-method">Method:</label>
-                    <select id="ddos-method"></select>
+                    <label for="ddos-type">Attack Type:</label>
+                    <select id="ddos-type">
+                        <option value="http-flood">HTTP Flood</option>
+                        <option value="tcp-flood">TCP Flood</option>
+                        <option value="udp-flood">UDP Flood</option>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="ddos-threads">Threads:</label>
-                    <input type="number" id="ddos-threads" value="1000" min="1">
+                    <input type="number" id="ddos-threads" value="100">
                 </div>
-                <div class="form-group">
-                    <label for="ddos-time">Time (seconds):</label>
-                    <input type="number" id="ddos-time" value="30" min="1">
+                <button id="ddos-start" class="attack-button">Start Attack</button>
+                <div class="statistics">
+                    <h3>Statistics</h3>
+                    <p>MBPS: <span id="ddos-mbps">0</span></p>
+                    <p>Packets Sent: <span id="ddos-packets">0</span></p>
+                    <p>Status: <span id="ddos-status">Offline</span></p>
+                    <p>Elapsed Time: <span id="ddos-time">0</span> seconds</p>
                 </div>
-                <button id="ddos-attack-button" class="attack-button">Start DDoS 💥</button>
             </section>
+
             <section id="defacement" class="tab-content">
-                <h2>Defacement 💀</h2>
+                <h2>Website Defacement 💀</h2>
                 <div class="form-group">
                     <label for="defacement-target">Target URL:</label>
-                    <input type="text" id="defacement-target" placeholder="http://example.com or .onion">
+                    <input type="text" id="defacement-target" placeholder="http://example.com">
                 </div>
                 <div class="form-group">
-                    <label for="defacement-payload">Payload:</label>
-                    <select id="defacement-payload"></select>
+                    <label for="defacement-type">Defacement Type:</label>
+                    <select id="defacement-type">
+                        <option value="image-replace">Image Replacement</option>
+                        <option value="text-modify">Text Modification</option>
+                        <option value="html-inject">HTML Injection</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label for="custom-payload-text">Custom Payload:</label>
-                    <textarea id="custom-payload-text" placeholder="Enter custom HTML"></textarea>
+                <div class="form-group" id="image-replace-options">
+                    <label for="image-url">Image URL:</label>
+                    <input type="text" id="image-url" placeholder="http://example.com/newimage.jpg">
                 </div>
-                <button id="defacement-attack-button" class="attack-button">Start Defacement 💀</button>
+                 <div class="form-group" id="text-modify-options">
+                    <label for="text-selector">Text Selector (CSS):</label>
+                    <input type="text" id="text-selector" placeholder="h1.title">
+                    <label for="new-text">New Text:</label>
+                    <input type="text" id="new-text" placeholder="Hacked!">
+                </div>
+                <div class="form-group" id="html-inject-options">
+                    <label for="html-code">HTML Code:</label>
+                    <textarea id="html-code" placeholder="<p>You've been hacked!</p>"></textarea>
+                </div>
+                <button id="defacement-start" class="attack-button">Start Defacement</button>
+                 <div class="statistics">
+                    <h3>Statistics</h3>
+                    <p>Status: <span id="defacement-status">Idle</span></p>
+                </div>
             </section>
+
             <section id="connection" class="tab-content">
-                <h2>Connection 💻</h2>
+                <h2>Unauthorized Connection 💻</h2>
                 <div class="form-group">
-                    <label for="connection-target">Target IP/URL:</label>
-                    <input type="text" id="connection-target" placeholder="http://example.com or .onion">
+                    <label for="connection-target">Target URL:</label>
+                    <input type="text" id="connection-target" placeholder="http://example.com or IP Address">
                 </div>
                 <div class="form-group">
-                    <label for="connection-port">Port:</label>
-                    <input type="number" id="connection-port" value="80">
+                    <label for="connection-type">Connection Type:</label>
+                    <select id="connection-type">
+                        <option value="port-scan">Port Scanning</option>
+                        <option value="banner-grab">Banner Grabbing</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label for="connection-scan-type">Scan Type:</label>
-                    <select id="connection-scan-type"></select>
+                <div class="form-group" id="port-scan-options">
+                    <label for="port-range">Port Range (e.g., 1-100):</label>
+                    <input type="text" id="port-range" placeholder="1-100">
                 </div>
-                <button id="connection-attack-button" class="attack-button">Start Connection Scan 💻</button>
+                 <div class="form-group" id="banner-grab-options">
+                    <label for="port">Port:</label>
+                    <input type="number" id="port" placeholder="80">
+                </div>
+                <button id="connection-start" class="attack-button">Start Connection</button>
+                 <div class="statistics">
+                    <h3>Statistics</h3>
+                    <p>Status: <span id="connection-status">Idle</span></p>
+                    <div id="connection-results"></div>
+                </div>
             </section>
-            <section id="ransomware" class="tab-content">
-                <h2>Ransomware (Simulated) 💣</h2>
-                <p>This is a simulated ransomware attack. No files will actually be encrypted.</p>
-                <div class="form-group">
-                    <label for="ransomware-target">Target Directory:</label>
-                    <input type="text" id="ransomware-target" placeholder="/path/to/directory">
+
+             <section id="ransomware" class="tab-content">
+                <h2>Ransomware Simulation 💣</h2>
+                <p>This section is purely conceptual and does not contain actual ransomware functionality.</p>
+                <p>Simulate or indicate ransomware-style attacks.</p>
+                <button id="ransomware-simulate" class="attack-button">Simulate Ransomware</button>
+                 <div class="statistics">
+                    <h3>Statistics</h3>
+                    <p>Status: <span id="ransomware-status">Idle</span></p>
                 </div>
-                <button id="ransomware-attack-button" class="attack-button">Simulate Ransomware 💣</button>
             </section>
+
             <section id="other" class="tab-content">
-                <h2>Other Hacking Tools 🧰</h2>
-                <ul>
-                    <li><a href="#">Port Scanner</a></li>
-                    <li><a href="#">Whois Lookup</a></li>
-                    <li><a href="#">Header Grabber</a></li>
-                    <li><a href="#">DNS Lookup</a></li>
-                </ul>
+                <h2>Other Hacking Tools 🔥</h2>
+                <p>Future location for other tools.</p>
+                 <div class="statistics">
+                    <h3>Statistics</h3>
+                    <p>Status: <span id="other-status">Idle</span></p>
+                </div>
             </section>
+
             <section id="about" class="tab-content">
-                <h2>About Us 🔥</h2>
-                <p>Noodles is a cutting-edge penetration testing tool designed for security professionals. Use responsibly.
-                </p>
-                <p>We are a team of highly skilled individuals determined to show the world it's true colors.</p>
+                <h2>About Us ⚠</h2>
+                <p>Noodles 🍜 is a cutting-edge penetration testing tool designed for cybersecurity professionals.</p>
+                <p>Our mission is to provide advanced tools for assessing and improving network security.</p>
+                <p>Use responsibly and ethically. Misuse is strictly prohibited.</p>
             </section>
-            <aside class="statistics">
-                <h3>Statistics</h3>
-                <div id="stats-mbps">MBPS: 0.00</div>
-                <div id="stats-packets">Packets Sent: 0</div>
-                <div id="stats-status">Status: Offline</div>
-                <div id="stats-time">Time Elapsed: 0s</div>
-            </aside>
         </main>
     </div>
     <script src="script.js"></script>
 </body>
-
 </html>
+content: Updated HTML structure with all sections and basic layout.
