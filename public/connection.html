@@ -109,55 +109,6 @@
             <div id="payload-results" class="results-box"></div>
         </div>
     </div>
-    <script>
-        document.getElementById('port-scan-button').addEventListener('click', function() {
-            const target = document.getElementById('port-scan-target').value;
-            const ports = document.getElementById('port-scan-ports').value;
-            fetch('/api/connection/portscan', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ target: target, ports: ports })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('port-scan-results').innerText = JSON.stringify(data, null, 2);
-            });
-        });
-
-        document.getElementById('banner-grab-button').addEventListener('click', function() {
-            const target = document.getElementById('banner-grab-target').value;
-            const port = document.getElementById('banner-grab-port').value;
-            fetch('/api/connection/bannergrab', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ target: target, port: port })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('banner-grab-results').innerText = data.banner;
-            });
-        });
-
-        document.getElementById('send-payload-button').addEventListener('click', function() {
-            const payload = document.getElementById('custom-payload').value;
-            const target = document.getElementById('payload-target').value;
-            const port = document.getElementById('payload-port').value;
-            fetch('/api/connection/sendpayload', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ target: target, port: port, payload: payload })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('payload-results').innerText = data.result;
-            });
-        });
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
