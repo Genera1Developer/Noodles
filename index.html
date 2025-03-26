@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noodles</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h1>Noodles 💻</h1>
+            </div>
+            <ul class="nav">
+                <li data-tab="ddos"><i class="fas fa-skull"></i> DDoS</li>
+                <li data-tab="defacement"><i class="fas fa-fire"></i> Defacement</li>
+                <li data-tab="connection"><i class="fas fa-network-wired"></i> Connection</li>
+                <li data-tab="ransomware"><i class="fas fa-virus"></i> Ransomware 💀</li>
+                <li data-tab="other"><i class="fas fa-toolbox"></i> Other Tools</li>
+                <li data-tab="about"><i class="fas fa-info-circle"></i> About Us</li>
+            </ul>
+        </div>
+
+        <div class="main-content">
+            <div class="tab-content" id="ddos">
+                <h2>DDoS Attacks 💥</h2>
+                <div class="form-group">
+                    <label for="targetUrl">Target URL:</label>
+                    <input type="text" id="targetUrl" placeholder="Enter URL or .onion address">
+                </div>
+                <div class="form-group">
+                    <label for="attackType">Attack Type:</label>
+                    <select id="attackType">
+                        <option value="httpFlood">HTTP Flood</option>
+                        <option value="tcpFlood">TCP Flood</option>
+                        <option value="udpFlood">UDP Flood</option>
+                    </select>
+                </div>
+                <button id="startDDoS">Start DDoS Attack</button>
+                <div class="stats">
+                    <p>MBPS: <span id="mbps">0</span></p>
+                    <p>Packets Sent: <span id="packetsSent">0</span></p>
+                    <p>Status: <span id="targetStatus">Unknown</span></p>
+                    <p>Time Elapsed: <span id="timeElapsed">0</span></p>
+                </div>
+            </div>
+
+            <div class="tab-content" id="defacement">
+                <h2>Website Defacement 🔥</h2>
+                <div class="form-group">
+                    <label for="defacementTarget">Target URL:</label>
+                    <input type="text" id="defacementTarget" placeholder="Enter URL or .onion address">
+                </div>
+                <div class="form-group">
+                    <label for="defacementType">Defacement Type:</label>
+                    <select id="defacementType">
+                        <option value="imageReplace">Image Replacement</option>
+                        <option value="textModify">Text Modification</option>
+                        <option value="htmlInject">HTML Injection</option>
+                    </select>
+                </div>
+                <div class="form-group" id="imageReplaceOptions">
+                    <label for="imageUrl">Image URL:</label>
+                    <input type="text" id="imageUrl" placeholder="Enter URL of replacement image">
+                </div>
+                <div class="form-group" id="textModifyOptions">
+                    <label for="searchText">Search Text:</label>
+                    <input type="text" id="searchText" placeholder="Text to find">
+                    <label for="replaceText">Replace Text:</label>
+                    <input type="text" id="replaceText" placeholder="Text to replace with">
+                </div>
+                <div class="form-group" id="htmlInjectOptions">
+                    <label for="htmlCode">HTML Code:</label>
+                    <textarea id="htmlCode" placeholder="Enter HTML to inject"></textarea>
+                </div>
+                <button id="startDefacement">Start Defacement</button>
+            </div>
+
+            <div class="tab-content" id="connection">
+                <h2>Unauthorized Connection ⚠</h2>
+                <div class="form-group">
+                    <label for="connectionTarget">Target URL:</label>
+                    <input type="text" id="connectionTarget" placeholder="Enter URL or .onion address">
+                </div>
+                <div class="form-group">
+                    <label for="connectionType">Connection Type:</label>
+                    <select id="connectionType">
+                        <option value="portScan">Port Scanning</option>
+                        <option value="bannerGrab">Banner Grabbing</option>
+                    </select>
+                </div>
+                <button id="startConnection">Start Connection</button>
+                <div id="connectionResults"></div>
+            </div>
+
+            <div class="tab-content" id="ransomware">
+                <h2>Ransomware Simulation 💀💣</h2>
+                <p>Simulate a ransomware attack. (Purely Conceptual)</p>
+                <button id="simulateRansomware">Simulate Attack</button>
+            </div>
+
+            <div class="tab-content" id="other">
+                <h2>Other Hacking Tools 💻</h2>
+                <p>More tools coming soon...</p>
+            </div>
+
+            <div class="tab-content" id="about">
+                <h2>About Us</h2>
+                <p>Noodles is a cutting-edge penetration testing tool designed for cybersecurity professionals. Use at your own risk.</p>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
