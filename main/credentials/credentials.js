@@ -62,7 +62,7 @@ const credentials = {
       headers: {
         'X-Forwarded-For': '',
         'X-Real-IP': '',
-        'User-Agent': 'Noodles Bot',
+        'User-Agent': 'Noodle',
         'Referer': 'https://google.com',
         'Accept-Language': 'en-US,en;q=0.9',
         'Cache-Control': 'max-age=0',
