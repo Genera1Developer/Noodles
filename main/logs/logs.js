@@ -47,10 +47,15 @@ class Logger {
             cookiesEnabled: 'Unknown',
             serverType: 'Unknown',
             contentEncoding: 'Unknown',
+            attackStatus: 'Stopped',
+            attackProgress: 0,
+            attackDetails: 'No attack running',
+            resourcesExhausted: false,
         };
         this.latencyData = [];
         this.initializeUI();
         this.startSystemMonitoring();
+        this.loadPersistentLogs();
     }
 
     generateAttackID() {
@@ -177,15 +182,21 @@ class Logger {
     }
 
     startAttack(target, attackType, threads, torProxy) {
-         this.stats.startTime = new Date().toISOString();
-         this.stats.attackThreads = threads;
-         this.stats.torProxyUsed = torProxy || 'None';
-         this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy);
+        this.stats.startTime = new Date().toISOString();
+        this.stats.attackThreads = threads;
+        this.stats.torProxyUsed = torProxy || 'None';
+        this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy);
+        this.setAttackStatus('Running');
+        this.setAttackDetails(`Attack type: ${attackType}, threads: ${threads}`);
+        this.setAttackProgress(0);
     }
 
     endAttack() {
         this.stats.endTime = new Date().toISOString();
         this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None', 0, 'None');
+        this.setAttackStatus('Stopped');
+        this.setAttackDetails('Attack finished');
+        this.setAttackProgress(100);
     }
 
     updateStats(packets, bytes, status, attackType, target, threads, torProxy) {
@@ -204,7 +215,7 @@ class Logger {
         this.displayStats();
     }
 
-   async resolveTargetInfo(target) {
+    async resolveTargetInfo(target) {
         try {
             let resolvedTarget = target;
             if (target.endsWith('.onion')) {
@@ -370,14 +381,19 @@ class Logger {
         document.getElementById('platform').textContent = this.stats.platform;
         document.getElementById('system-uptime').textContent = this.stats.systemUptime;
         document.getElementById('active-connections').textContent = this.stats.activeConnections;
-         document.getElementById('memory-total').textContent = this.stats.memoryTotal.toFixed(2) + ' MB';
+        document.getElementById('memory-total').textContent = this.stats.memoryTotal.toFixed(2) + ' MB';
         document.getElementById('load-average').textContent = this.stats.loadAverage.map(item => item.toFixed(2)).join(', ');
 
-         document.getElementById('site-title').textContent = this.stats.siteTitle;
+        document.getElementById('site-title').textContent = this.stats.siteTitle;
         document.getElementById('site-description').textContent = this.stats.siteDescription;
         document.getElementById('cookies-enabled').textContent = this.stats.cookiesEnabled;
         document.getElementById('server-type').textContent = this.stats.serverType;
         document.getElementById('content-encoding').textContent = this.stats.contentEncoding;
+
+        document.getElementById('attack-status').textContent = this.stats.attackStatus;
+        document.getElementById('attack-progress').textContent = this.stats.attackProgress + '%';
+        document.getElementById('attack-details').textContent = this.stats.attackDetails;
+        document.getElementById('resources-exhausted').textContent = this.stats.resourcesExhausted ? 'Yes' : 'No';
     }
 
     getStats() {
@@ -394,7 +410,7 @@ class Logger {
         this.displayStats();
     }
 
-     setTorConnectionStatus(status) {
+    setTorConnectionStatus(status) {
         this.stats.torConnectionStatus = status;
         this.displayStats();
     }
@@ -409,8 +425,8 @@ class Logger {
     }
 
     setHttpStatus(httpStatus) {
-         this.stats.httpStatus = httpStatus;
-         this.displayStats();
+        this.stats.httpStatus = httpStatus;
+        this.displayStats();
     }
 
     setDnsRecords(dnsRecords) {
@@ -443,6 +459,26 @@ class Logger {
         this.displayStats();
     }
 
+    setAttackStatus(status) {
+        this.stats.attackStatus = status;
+        this.displayStats();
+    }
+
+    setAttackProgress(progress) {
+        this.stats.attackProgress = progress;
+        this.displayStats();
+    }
+
+    setAttackDetails(details) {
+        this.stats.attackDetails = details;
+        this.displayStats();
+    }
+
+    setResourcesExhausted(exhausted) {
+        this.stats.resourcesExhausted = exhausted;
+        this.displayStats();
+    }
+
     initializeUI() {
         document.getElementById('clear-logs-button').addEventListener('click', () => {
             this.clearLogs();
@@ -455,5 +491,4 @@ class Logger {
 }
 
 const logger = new Logger();
-logger.loadPersistentLogs();
 window.logger = logger;
