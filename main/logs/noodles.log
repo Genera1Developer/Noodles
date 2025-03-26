@@ -17,3 +17,13 @@ Reverse shell established on high-value target. Target: bank-server.net, User: a
 Ransomware deployed and executed. Target: large-corporation.com, Status: Encrypted, Files Encrypted: 50000, Ransom Demand: 100 BTC
 Failed ransomware deployment due to advanced security measures. Target: secure-network.mil, Status: Failed, Error: "Detection and Prevention"
 Successful connection to Tor site. Target: darkweb-market.onion, Status: Success, Data Retrieved: User Credentials.
+DDoS attack initiated. Target: new-target.com, Method: SYN Flood, Packets Sent: 50000000, Status: In Progress, MBPS: 7500
+Defacement queued. Target: another-site.org, Message: "Noodles Was Here", Status: Pending
+Connection attempt to internal server. Target: internal-server.lan, User: backdoor, Status: Attempting
+Ransomware deployed. Target: small-business.net, Status: Encrypting, Files Encrypted: 12000, Ransom Demand: 10 BTC
+Updated About Us with contact email and secure drop location.
+Connection to Tor site successful. Target: secure-drop.onion, Status: Success, Data Retrieved: Payment Details.
+DDoS attack completed. Target: new-target.com, Status: Success, Downtime: 1 hour
+Defacement successful. Target: another-site.org, Status: Success, Screenshot: defacement_image.png
+Connection to internal server successful. Target: internal-server.lan, User: backdoor, Status: Connected, Access Granted
+Ransomware fully deployed. Target: small-business.net, Status: Encrypted, Files Encrypted: 12000, Ransom Demand: 10 BTC, Contacted: True
