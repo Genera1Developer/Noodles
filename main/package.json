@@ -2,23 +2,7 @@
   "name": "Noodles-js",
   "version": "5.0.0",
   "description": "Noodle Panel",
-  "author": "Noodles",
-  "license": "MIT",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js",
-    "build": "npm install && npm install --prefix client && npm run build --prefix client",
-    "prepare": "husky install",
-    "ddos": "node ddos/ddos.js",
-    "deface": "node deface/deface.js",
-    "ransom": "node ransomware/ransomware.js",
-    "format": "prettier --write .",
-    "client": "npm start --prefix client",
-    "install-dependencies": "concurrently \"npm install\" \"npm install --prefix client\"",
-    "update-geoip": "node scripts/update-geoip.js",
-    "attack": "node attack.js",
-    "queue": "node queue/queue.js",
-    "tor": "node tor/tor.js"
+
   },
   "dependencies": {
     "@types/express": "^4.17.21",
