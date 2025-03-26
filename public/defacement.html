@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Defacement Tools</title>
+    <title>💀 Defacement Tools 💀</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
+
 <body>
     <div class="defacement-container">
         <h1>💀 Defacement Tools 💀</h1>
 
         <div class="target-input">
             <label for="defacement-target">Target URL:</label>
-            <input type="text" id="defacement-target" placeholder="http://example.com or onion address">
+            <input type="text" id="defacement-target"
+                placeholder="http://example.com or onion address">
         </div>
 
         <div class="defacement-options">
@@ -39,10 +47,15 @@
         <div class="defacement-status">
             <p id="status-message">Status: Ready 💻</p>
         </div>
+
+        <div id="defacement-results" class="hidden">
+            <h2>Defacement Results</h2>
+            <iframe id="defaced-website" width="100%" height="500px"></iframe>
+        </div>
     </div>
 
     <script>
-        function replaceImage() {
+        async function replaceImage() {
             const targetUrl = document.getElementById('defacement-target').value;
             const imageFile = document.getElementById('image-replacement').files[0];
 
@@ -51,16 +64,20 @@
                 return;
             }
 
-            // Placeholder for actual image replacement logic (using fetch or similar)
             document.getElementById('status-message').textContent = `Replacing image on ${targetUrl}...`;
-            console.log(`Replacing image on ${targetUrl} with ${imageFile.name}`);
-            // Simulate success
-            setTimeout(() => {
+
+            try {
+                const imageUrl = URL.createObjectURL(imageFile);
+                await defaceWebsite(targetUrl, 'image', imageUrl);
                 document.getElementById('status-message').textContent = `Image replaced on ${targetUrl}!`;
-            }, 2000);
+                displayDefacement(targetUrl);
+            } catch (error) {
+                console.error("Defacement failed:", error);
+                document.getElementById('status-message').textContent = `Defacement failed: ${error}`;
+            }
         }
 
-        function modifyText() {
+        async function modifyText() {
             const targetUrl = document.getElementById('defacement-target').value;
             const textToInject = document.getElementById('text-modification').value;
 
@@ -69,16 +86,19 @@
                 return;
             }
 
-            // Placeholder for actual text modification logic
             document.getElementById('status-message').textContent = `Modifying text on ${targetUrl}...`;
-            console.log(`Modifying text on ${targetUrl} with "${textToInject}"`);
-            // Simulate success
-            setTimeout(() => {
+
+            try {
+                await defaceWebsite(targetUrl, 'text', textToInject);
                 document.getElementById('status-message').textContent = `Text modified on ${targetUrl}!`;
-            }, 2000);
+                displayDefacement(targetUrl);
+            } catch (error) {
+                console.error("Defacement failed:", error);
+                document.getElementById('status-message').textContent = `Defacement failed: ${error}`;
+            }
         }
 
-        function injectHTML() {
+        async function injectHTML() {
             const targetUrl = document.getElementById('defacement-target').value;
             const htmlCode = document.getElementById('html-injection').value;
 
@@ -87,14 +107,60 @@
                 return;
             }
 
-            // Placeholder for actual HTML injection logic
             document.getElementById('status-message').textContent = `Injecting HTML on ${targetUrl}...`;
-            console.log(`Injecting HTML on ${targetUrl} with "${htmlCode}"`);
-            // Simulate success
-            setTimeout(() => {
+
+            try {
+                await defaceWebsite(targetUrl, 'html', htmlCode);
                 document.getElementById('status-message').textContent = `HTML injected on ${targetUrl}!`;
-            }, 2000);
+                displayDefacement(targetUrl);
+            } catch (error) {
+                console.error("Defacement failed:", error);
+                document.getElementById('status-message').textContent = `Defacement failed: ${error}`;
+            }
         }
+
+        async function defaceWebsite(targetUrl, type, content) {
+            // Using a proxy to bypass CORS issues and simulate defacement
+            const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Replace with your own proxy server
+            const url = proxyUrl + targetUrl;
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch target: ${response.status}`);
+                }
+                let html = await response.text();
+
+                switch (type) {
+                    case 'image':
+                        html = html.replace(/<img[^>]*>/gi, `<img src="${content}" alt="Defaced Image">`);
+                        break;
+                    case 'text':
+                        html = html.replace(/<body[^>]*>[\s\S]*<\/body>/gi, `<body style="color: red; font-size: 2em;">${content}</body>`);
+                        break;
+                    case 'html':
+                        html = html.replace('</body>', `${content}</body>`);
+                        break;
+                }
+
+                // Display the defaced website in the iframe
+                const iframe = document.getElementById('defaced-website');
+                iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+                document.getElementById('defacement-results').classList.remove('hidden');
+
+            } catch (error) {
+                console.error("Error during defacement:", error);
+                throw error;
+            }
+        }
+
+        function displayDefacement(targetUrl) {
+            const defacedWebsiteFrame = document.getElementById('defaced-website');
+            defacedWebsiteFrame.src = targetUrl;
+            document.getElementById('defacement-results').classList.remove('hidden');
+        }
+
     </script>
 </body>
+
 </html>
