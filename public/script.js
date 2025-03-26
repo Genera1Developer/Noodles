@@ -24,6 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const customAttackButton = document.getElementById('customAttackButton');
     const customAttackCodeInput = document.getElementById('customAttackCode');
     const nukeButton = document.getElementById('nukeButton');
+    const ipLookupButton = document.getElementById('ipLookupButton');
+    const ipLookupInput = document.getElementById('ipLookupInput');
 
     let mbps = 0;
     let packetsSent = 0;
@@ -51,6 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function logMessage(message) {
         const logEntry = document.createElement('div');
+        logEntry.classList.add('log-entry');
         logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
         logsDiv.appendChild(logEntry);
         logsDiv.scrollTop = logsDiv.scrollHeight;
@@ -344,6 +347,42 @@ document.addEventListener('DOMContentLoaded', () => {
             if (response.ok) {
                 statusDiv.textContent = data.message;
                 logMessage(data.message);
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    ipLookupButton.addEventListener('click', async () => {
+        const ipAddress = ipLookupInput.value;
+
+        if (!ipAddress) {
+            alert('Please enter an IP address to lookup.');
+            return;
+        }
+
+        statusDiv.textContent = 'Looking up IP...';
+        logMessage(`Looking up IP address: ${ipAddress}`);
+
+        try {
+            const response = await fetch('/api/ipLookup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ipAddress }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+                logMessage(JSON.stringify(data.ipInfo, null, 2));
             } else {
                 statusDiv.textContent = `Error: ${data.error}`;
                 logMessage(`Error: ${data.error}`);
