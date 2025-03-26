@@ -1029,3 +1029,39 @@ input:valid {
         transform: rotate(360deg);
     }
 }
+.attack-log {
+    margin-top: 20px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #1a1a1a;
+    color: #ddd;
+    font-size: 14px;
+    height: 150px;
+    overflow-y: scroll;
+}
+
+.attack-log p {
+    margin-bottom: 5px;
+}
+
+.attack-log-message {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+    border-bottom: 1px solid #333;
+}
+
+.attack-log-message:last-child {
+    border-bottom: none;
+}
+
+.attack-log-timestamp {
+    color: #777;
+    font-size: 12px;
+}
+
+.attack-log-details {
+    margin-left: 10px;
+}
