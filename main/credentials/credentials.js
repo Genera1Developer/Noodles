@@ -749,8 +749,9 @@ const credentials = {
     generateApiKeys(count) {
       const keys = [];
       for (let i = 0; i < count; i++) {
-        keys.push(Math.random().toString(36).substring(2, 15) +
-                  Math.random().toString(36).substring(2, 15));
+        keys.push(
+            [...Array(30)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
+        );
       }
       return keys;
     },
@@ -759,16 +760,22 @@ const credentials = {
       const cookies = [];
       for (let i = 0; i < count; i++) {
         cookies.push(
-            `${Math.random().toString(36).substring(2, 10)}=${Math.random().toString(36).substring(2, 15)}`);
+            `${[...Array(8)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}=${[...Array(15)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')}`);
       }
       return cookies;
     },
 
     validateEmail(email) {
+      if (typeof email !== 'string') {
+        return false;
+      }
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return re.test(email);
     },
     isSafe(input) {
+      if (typeof input !== 'string') {
+        return '';
+      }
       // Basic XSS sanitization: remove script tags
       let safeInput = input.replace(/<script[^>]*>.*?<\/script>/gi, '');
       // Basic SQL injection sanitization: escape single quotes
