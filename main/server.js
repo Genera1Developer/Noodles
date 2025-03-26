@@ -5,7 +5,7 @@ const express = require('express');
  const { spawn } = require('child_process');
  
 
- app.use(express.static('public'));
+ app.use(express.static(path.join(__dirname, 'public')));
  app.use(express.json());
  
 
