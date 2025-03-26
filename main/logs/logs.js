@@ -6,6 +6,7 @@ const http = require('http');
 const https = require('https');
 const { exec } = require('child_process');
 const os = require('os');
+const tcpp = require('tcp-ping');
 
 class Logger {
     constructor() {
@@ -51,6 +52,8 @@ class Logger {
             attackProgress: 0,
             attackDetails: 'No attack running',
             resourcesExhausted: false,
+            attackTargetResolvedIP: 'Unknown',
+            attackErrorDetails: 'None',
         };
         this.latencyData = [];
         this.initializeUI();
@@ -189,6 +192,7 @@ class Logger {
         this.setAttackStatus('Running');
         this.setAttackDetails(`Attack type: ${attackType}, threads: ${threads}`);
         this.setAttackProgress(0);
+        this.setAttackErrorDetails('None');
     }
 
     endAttack() {
@@ -225,8 +229,10 @@ class Logger {
                 try {
                     const addresses = await dns.promises.resolve(target);
                     resolvedTarget = addresses[0];
+                    this.stats.attackTargetResolvedIP = resolvedTarget;
                 } catch (dnsError) {
                     console.error("DNS resolution error:", dnsError);
+                    this.setAttackErrorDetails(`DNS resolution error: ${dnsError.message}`);
                 }
             }
 
@@ -239,10 +245,13 @@ class Logger {
 
             await this.checkHttpStatus(target);
             await this.fetchWebsiteDetails(target);
+            await this.checkTcpPort(target, 80);
+            await this.checkTcpPort(target, 443);
 
         } catch (error) {
             console.error("Failed to resolve target info:", error);
             this.stats.errors++;
+            this.setAttackErrorDetails(`Failed to resolve target info: ${error.message}`);
             this.displayStats();
         }
     }
@@ -257,6 +266,7 @@ class Logger {
                 console.error(`HTTP error: ${e.message}`);
                 this.setHttpStatus('Unknown');
                 this.stats.errors++;
+                this.setAttackErrorDetails(`HTTP error: ${e.message}`);
                 this.displayStats();
                 reject(e);
             });
@@ -291,6 +301,7 @@ class Logger {
                     } catch (e) {
                         console.error('Error parsing website details:', e);
                         this.stats.errors++;
+                        this.setAttackErrorDetails(`Error parsing website details: ${e.message}`);
                         this.displayStats();
                         reject(e);
                     }
@@ -298,6 +309,7 @@ class Logger {
             }).on('error', (e) => {
                 console.error('Error fetching website details:', e);
                 this.stats.errors++;
+                this.setAttackErrorDetails(`Error fetching website details: ${e.message}`);
                 this.displayStats();
                 reject(e);
             });
@@ -347,6 +359,20 @@ class Logger {
         this.displayStats();
     }
 
+    async checkTcpPort(target, port) {
+        tcpp.probe(target, port, (err, data) => {
+            if (err) {
+                console.error(`TCP probe error on port ${port}:`, err);
+                return;
+            }
+            if (data.available) {
+                this.log({ message: `TCP Port ${port} is open on ${target}` });
+            } else {
+                this.log({ message: `TCP Port ${port} is closed on ${target}` });
+            }
+        });
+    }
+
     startSystemMonitoring() {
         setInterval(() => {
             this.updateSystemStats();
@@ -394,6 +420,8 @@ class Logger {
         document.getElementById('attack-progress').textContent = this.stats.attackProgress + '%';
         document.getElementById('attack-details').textContent = this.stats.attackDetails;
         document.getElementById('resources-exhausted').textContent = this.stats.resourcesExhausted ? 'Yes' : 'No';
+        document.getElementById('attack-target-resolved-ip').textContent = this.stats.attackTargetResolvedIP;
+        document.getElementById('attack-error-details').textContent = this.stats.attackErrorDetails;
     }
 
     getStats() {
@@ -471,6 +499,11 @@ class Logger {
 
     setAttackDetails(details) {
         this.stats.attackDetails = details;
+        this.displayStats();
+    }
+
+     setAttackErrorDetails(errorDetails) {
+        this.stats.attackErrorDetails = errorDetails;
         this.displayStats();
     }
 
