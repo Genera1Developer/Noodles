@@ -3,7 +3,6 @@ const defaceSite = require('./deface/deface');
 const torConnect = require('./tor/tor');
 const connectionEstablish = require('./connection/connection');
 const proxyGet = require('./proxy/proxy');
-const ransomwareDeploy = require('./ransomware/ransomware');
 
 module.exports = {
     ddosAttack,
@@ -11,5 +10,4 @@ module.exports = {
     torConnect,
     connectionEstablish,
     proxyGet,
-    ransomwareDeploy
 };
