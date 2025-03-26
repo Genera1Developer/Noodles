@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => { //
+document.addEventListener('DOMContentLoaded', () => {
     const attackButton = document.getElementById('attackButton');
     const targetUrlInput = document.getElementById('targetUrl');
     const attackTypeSelect = document.getElementById('attackType');
@@ -23,6 +23,7 @@ document.addEventListener('DOMContentLoaded', () => { //
     const geoIpUrlInput = document.getElementById('geoIpUrl');
     const customAttackButton = document.getElementById('customAttackButton');
     const customAttackCodeInput = document.getElementById('customAttackCode');
+    const nukeButton = document.getElementById('nukeButton');
 
     let mbps = 0;
     let packetsSent = 0;
@@ -301,6 +302,41 @@ document.addEventListener('DOMContentLoaded', () => { //
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ targetUrl, customAttackCode }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    nukeButton.addEventListener('click', async () => {
+        const targetUrl = targetUrlInput.value;
+
+        if (!targetUrl) {
+            alert('Please enter a target URL to NUKE.');
+            return;
+        }
+
+        statusDiv.textContent = 'NUKING...';
+        logMessage(`NUKING ${targetUrl}`);
+
+        try {
+            const response = await fetch('/api/nuke', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ targetUrl }),
             });
 
             const data = await response.json();
