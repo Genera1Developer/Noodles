@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles</title>
+    <title>Noodles - Your favorite hacking tool</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
     <div class="container">
         <aside class="sidebar">
@@ -15,10 +19,10 @@
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="#" data-tab="ddos"><i class="fa fa-bomb"></i> DDoS</a></li>
-                    <li><a href="#" data-tab="defacement"><i class="fa fa-skull"></i> Defacement</a></li>
-                    <li><a href="#" data-tab="connection"><i class="fa fa-link"></i> Connection</a></li>
-                    <li><a href="#" data-tab="ransomware"><i class="fa fa-exclamation-triangle"></i> Ransomware</a></li>
+                    <li><a href="#" data-tab="ddos"><i class="fa fa-skull"></i> DDoS</a></li>
+                    <li><a href="#" data-tab="defacement"><i class="fa fa-fire"></i> Defacement</a></li>
+                    <li><a href="#" data-tab="connection"><i class="fa fa-plug"></i> Connection</a></li>
+                    <li><a href="#" data-tab="ransomware"><i class="fa fa-lock"></i> Ransomware</a></li>
                     <li><a href="#" data-tab="other"><i class="fa fa-wrench"></i> Other Tools</a></li>
                     <li><a href="#" data-tab="about"><i class="fa fa-info-circle"></i> About Us</a></li>
                 </ul>
@@ -35,18 +39,18 @@
                         <option value="tcp-flood">TCP Flood</option>
                         <option value="udp-flood">UDP Flood</option>
                     </select>
-                    <button id="ddos-start">Start Attack</button>
+                    <button id="ddos-start">Start DDoS 💀</button>
                 </div>
                 <div class="attack-stats">
                     <p>MBPS: <span id="ddos-mbps">0</span></p>
                     <p>Packets Sent: <span id="ddos-packets">0</span></p>
                     <p>Target Status: <span id="ddos-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="ddos-time">0</span> seconds</p>
+                    <p>Time Elapsed: <span id="ddos-time">0</span>s</p>
                 </div>
             </section>
 
             <section id="defacement" class="tab-content">
-                <h2>Website Defacement 💀</h2>
+                <h2>Website Defacement 🔥</h2>
                 <div class="attack-form">
                     <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
                     <select id="defacement-method">
@@ -54,45 +58,43 @@
                         <option value="text-modify">Text Modification</option>
                         <option value="html-inject">HTML Injection</option>
                     </select>
-                    <button id="defacement-start">Start Defacement</button>
+                    <button id="defacement-start">Start Defacement 🔥</button>
                 </div>
             </section>
 
             <section id="connection" class="tab-content">
-                <h2>Unauthorized Connection 🔗</h2>
+                <h2>Unauthorized Connection 🔌</h2>
                 <div class="attack-form">
                     <input type="text" id="connection-target" placeholder="Target URL or .onion address">
                     <select id="connection-method">
                         <option value="port-scan">Port Scanning</option>
                         <option value="banner-grab">Banner Grabbing</option>
                     </select>
-                    <button id="connection-start">Start Connection</button>
+                    <button id="connection-start">Start Connection 🔌</button>
                 </div>
             </section>
 
-             <section id="ransomware" class="tab-content">
-                <h2>Ransomware Simulation ⚠</h2>
-                <p>This section is purely conceptual and does not perform actual ransomware attacks.</p>
-                <div class="attack-form">
-                    <input type="text" id="ransomware-target" placeholder="Target URL or .onion address">
-                    <button id="ransomware-start">Simulate Ransomware</button>
-                </div>
+            <section id="ransomware" class="tab-content">
+                <h2>Ransomware Indication 💣</h2>
+                <p>Simulate ransomware-style attacks (purely conceptual).</p>
             </section>
 
             <section id="other" class="tab-content">
-                <h2>Other Hacking Tools 🛠️</h2>
+                <h2>Other Hacking Tools 🧰</h2>
                 <p>More tools coming soon...</p>
             </section>
 
             <section id="about" class="tab-content">
                 <h2>About Us</h2>
-                <p>Noodles is a cutting-edge penetration testing tool designed for security professionals.
-                   We provide a range of tools to assess and identify vulnerabilities in web applications.
-                   Use responsibly. Misuse is not our responsibility.
+                <p>Noodles is a cutting-edge cybersecurity tool developed by a team of highly skilled (and slightly
+                    unhinged) professionals. Our mission is to provide... unique solutions to complex problems. We
+                    are based in a secure, undisclosed location, and we pride ourselves on pushing the boundaries of
+                    what's possible. Use responsibly... or don't. We don't really care.
                 </p>
             </section>
         </main>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>
