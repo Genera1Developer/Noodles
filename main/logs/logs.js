@@ -67,7 +67,11 @@ class Logger {
             attackDuration: 0,
             mbps: 0,
             attackRate: 0,
-            attackProtocol: 'TCP'
+            attackProtocol: 'TCP',
+            portScanStatus: 'Idle',
+            portScanResults: [],
+            bannerGrabbingStatus: 'Idle',
+            bannerGrabbingResults: [],
         };
         this.latencyData = [];
         this.initializeUI();
@@ -477,6 +481,25 @@ class Logger {
         document.getElementById('mbps').textContent = this.stats.mbps.toFixed(2);
         document.getElementById('attack-rate').textContent = this.stats.attackRate.toFixed(2);
         document.getElementById('attack-protocol').textContent = this.stats.attackProtocol;
+
+        document.getElementById('port-scan-status').textContent = this.stats.portScanStatus;
+        document.getElementById('banner-grabbing-status').textContent = this.stats.bannerGrabbingStatus;
+
+        const portScanResultsContainer = document.getElementById('port-scan-results');
+        portScanResultsContainer.innerHTML = '';
+        this.stats.portScanResults.forEach(result => {
+            const resultElement = document.createElement('div');
+            resultElement.textContent = `Port: ${result.port}, Status: ${result.status}`;
+            portScanResultsContainer.appendChild(resultElement);
+        });
+
+         const bannerGrabbingResultsContainer = document.getElementById('banner-grabbing-results');
+        bannerGrabbingResultsContainer.innerHTML = '';
+        this.stats.bannerGrabbingResults.forEach(result => {
+            const resultElement = document.createElement('div');
+            resultElement.textContent = `Port: ${result.port}, Banner: ${result.banner}`;
+            bannerGrabbingResultsContainer.appendChild(resultElement);
+        });
     }
 
     getStats() {
@@ -585,6 +608,26 @@ class Logger {
     }
     setAttackProtocol(attackProtocol) {
         this.stats.attackProtocol = attackProtocol;
+        this.displayStats();
+    }
+
+    setPortScanStatus(status) {
+        this.stats.portScanStatus = status;
+        this.displayStats();
+    }
+
+    setBannerGrabbingStatus(status) {
+        this.stats.bannerGrabbingStatus = status;
+        this.displayStats();
+    }
+
+    setPortScanResults(results) {
+        this.stats.portScanResults = results;
+        this.displayStats();
+    }
+
+    setBannerGrabbingResults(results) {
+        this.stats.bannerGrabbingResults = results;
         this.displayStats();
     }
 
@@ -741,6 +784,67 @@ class Logger {
                 }
             }, delay);
         }
+    }
+
+    //Connection Attacks
+    async portScan(target, startPort = 1, endPort = 100, torProxy) {
+        this.setPortScanStatus('Running');
+        this.setPortScanResults([]);
+
+        const scanResults = [];
+
+        for (let port = startPort; port <= endPort; port++) {
+            await new Promise(resolve => {
+                const socket = net.connect({
+                    host: target,
+                    port: port
+                }, () => {
+                    scanResults.push({ port: port, status: 'Open' });
+                    socket.end();
+                    resolve();
+                });
+
+                socket.on('error', () => {
+                    scanResults.push({ port: port, status: 'Closed' });
+                    resolve();
+                });
+            });
+        }
+
+        this.setPortScanStatus('Completed');
+        this.setPortScanResults(scanResults);
+    }
+
+    async bannerGrabbing(target, port = 80, torProxy) {
+        this.setBannerGrabbingStatus('Running');
+        this.setBannerGrabbingResults([]);
+
+        return new Promise((resolve, reject) => {
+            const socket = net.connect({
+                host: target,
+                port: port
+            }, () => {
+                socket.write("HEAD / HTTP/1.1\r\nHost: " + target + "\r\nConnection: close\r\n\r\n");
+            });
+
+            let banner = '';
+            socket.on('data', (data) => {
+                banner += data.toString();
+            });
+
+            socket.on('close', () => {
+                this.setBannerGrabbingStatus('Completed');
+                this.setBannerGrabbingResults([{ port: port, banner: banner }]);
+                resolve();
+            });
+
+            socket.on('error', (err) => {
+                console.error("Banner grabbing error:", err);
+                this.setBannerGrabbingStatus('Error');
+                this.setBannerGrabbingResults([{ port: port, banner: 'Error: ' + err.message }]);
+                reject(err);
+            });
+        });
     }
 }
 
