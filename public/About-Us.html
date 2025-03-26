@@ -6,9 +6,9 @@
     <title>About Us - Noodles</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #222;
-            color: #ddd;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e272e;
+            color: #f5f6fa;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,31 +18,58 @@
         }
 
         .about-container {
-            background-color: #333;
-            border-radius: 8px;
-            padding: 20px;
+            background-color: #2d3436;
+            border-radius: 12px;
+            padding: 30px;
             width: 80%;
-            max-width: 600px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            max-width: 700px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .about-container:hover {
+            transform: scale(1.03);
         }
 
         h1 {
-            color: #4CAF50;
+            color: #a29bfe;
             text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.5em;
         }
 
         p {
-            line-height: 1.6;
+            line-height: 1.7;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        strong {
+            color: #fd79a8;
+        }
+
+        em {
+            font-style: italic;
+            color: #00cec9;
+        }
+
+        .disclaimer {
+            color: #e74c3c;
+            font-weight: bold;
+            margin-top: 20px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <div class="about-container">
-        <h1>About Noodles</h1>
-        <p>Noodles is a cutting-edge penetration testing platform designed for cybersecurity professionals and network administrators. We provide a comprehensive suite of tools to assess and enhance the security posture of your systems.</p>
-        <p>Our mission is to empower users with the ability to identify vulnerabilities, simulate real-world attacks, and implement robust defense mechanisms. With Noodles, you can proactively protect your digital assets from emerging threats.</p>
-        <p><strong>Disclaimer:</strong> Noodles is intended for ethical use only. Unauthorized use of this platform against systems without explicit permission is strictly prohibited. Users are solely responsible for ensuring compliance with all applicable laws and regulations.</p>
-        <p>Noodles was founded by a group of experienced cybersecurity experts with a shared vision of creating a powerful and accessible security testing tool. We are committed to innovation and continuous improvement to stay ahead of the evolving threat landscape.</p>
+        <h1>About Noodles 😈</h1>
+        <p>Noodles is a clandestine penetration testing suite designed for discerning individuals who appreciate the art of network assessment. We offer an unparalleled array of tools to probe, evaluate, and, shall we say, <em>reconfigure</em> the security landscape of targeted systems.</p>
+        <p>Our mission is to empower users with the ability to uncover vulnerabilities, simulate advanced persistent threats, and implement... <em>alternative</em> defense strategies. With Noodles, you can proactively engage with your digital environment on a more intimate level.</p>
+        <p><strong>Important Note:</strong> Noodles is intended for experimental use only. Unauthorized activities are frowned upon. The developers assume no responsibility for actions taken by users. You are the master of your own destiny. 😈</p>
+        <p>Noodles was conceived by a collective of like-minded individuals with a shared appreciation for the finer points of cybersecurity. We are dedicated to pushing the boundaries of what is possible, and providing you with the tools to do the same.</p>
+        <p><em>"In the realm of security, knowledge is power. And power, my friend, is everything."</em></p>
+        <p class="disclaimer">Use responsibly. Or don't. We won't judge. 😉</p>
     </div>
 </body>
 </html>
