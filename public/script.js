@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => { //
     const attackButton = document.getElementById('attackButton');
     const targetUrlInput = document.getElementById('targetUrl');
     const attackTypeSelect = document.getElementById('attackType');
