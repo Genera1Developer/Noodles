@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noodles - Hacking Web Application</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="./assets/official.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
     <div class="container">
         <aside class="sidebar">
-            <div class="logo">
-                <img src="./assets/official.png" alt="Noodles Logo">
-                <h1>Noodles 💥</h1>
+            <div class="sidebar-header">
+                <h1>Noodles</h1>
             </div>
             <nav>
                 <ul>
-                    <li data-tab="ddos">DDoS 💀</li> <!-- Should be button leading to /DDoS.html -->
-                    <li data-tab="defacement">Defacement 💻</li> <!-- Should be button leading to /Defacement.html -->
-                    <li data-tab="connection">Connection 💣</li> <!-- Should be button leading to /Connection.html -->
-                    <li data-tab="other">Other 🔥</li> <!-- Should be button leading to /Other.html -->
-                    <li data-tab="about">About Us ⚠</li> <!-- Should be button leading to /About-Us.html -->
+                    <li><a href="#" data-tab="ddos"><i class="fas fa-skull-crossbones"></i> DDoS</a></li>
+                    <li><a href="#" data-tab="defacement"><i class="fas fa-paint-brush"></i> Defacement</a></li>
+                    <li><a href="#" data-tab="connection"><i class="fas fa-network-wired"></i> Connection</a></li>
+                    <li><a href="#" data-tab="about"><i class="fas fa-info-circle"></i> About Us</a></li>
+                </ul>
             </nav>
         </aside>
 
         <main class="main-content">
             <section id="ddos" class="tab-content active">
-                <h2>DDoS Attack</h2>
+                <h2>DDoS Attacks 💥</h2>
                 <div class="attack-form">
                     <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
                     <select id="ddos-type">
@@ -34,18 +37,18 @@
                         <option value="tcp">TCP Flood</option>
                         <option value="udp">UDP Flood</option>
                     </select>
-                    <button id="ddos-attack-button">Launch Attack</button>
+                    <button id="ddos-start">Start Attack 💀</button>
                 </div>
-                <div class="attack-stats">
+                <div class="statistics">
                     <p>MBPS: <span id="ddos-mbps">0</span></p>
                     <p>Packets Sent: <span id="ddos-packets">0</span></p>
-                    <p>Target Status: <span id="ddos-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="ddos-time">0</span> seconds</p>
+                    <p>Status: <span id="ddos-status">Offline</span></p>
+                    <p>Time Elapsed: <span id="ddos-time">0</span></p>
                 </div>
             </section>
 
             <section id="defacement" class="tab-content">
-                <h2>Website Defacement</h2>
+                <h2>Website Defacement 💣</h2>
                 <div class="attack-form">
                     <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
                     <select id="defacement-type">
@@ -53,33 +56,40 @@
                         <option value="text">Text Modification</option>
                         <option value="html">HTML Injection</option>
                     </select>
-                    <button id="defacement-attack-button">Launch Defacement</button>
+                    <textarea id="defacement-data" placeholder="Enter data for defacement"></textarea>
+                    <button id="defacement-start">Start Defacement 🔥</button>
+                </div>
+                <div class="statistics">
+                    <p>Status: <span id="defacement-status">Idle</span></p>
+                    <p>Time Elapsed: <span id="defacement-time">0</span></p>
                 </div>
             </section>
 
             <section id="connection" class="tab-content">
-                <h2>Unauthorized Connection</h2>
+                <h2>Unauthorized Connection 💻</h2>
                 <div class="attack-form">
                     <input type="text" id="connection-target" placeholder="Target URL or .onion address">
                     <select id="connection-type">
                         <option value="portscan">Port Scanning</option>
                         <option value="bannergrab">Banner Grabbing</option>
                     </select>
-                    <button id="connection-attack-button">Launch Connection</button>
+                    <button id="connection-start">Start Connection ⚠</button>
                 </div>
-            </section>
-
-            <section id="other" class="tab-content">
-                <h2>Other Hacking Tools</h2>
-                <p>Coming Soon...</p>
+                <div class="statistics">
+                    <p>Open Ports: <span id="connection-ports">0</span></p>
+                    <p>Time Elapsed: <span id="connection-time">0</span></p>
+                </div>
             </section>
 
             <section id="about" class="tab-content">
                 <h2>About Us</h2>
-                <p>Noodles is a cutting-edge penetration testing suite designed for cybersecurity professionals. We provide advanced tools for network analysis and vulnerability assessment. Use responsibly. 💥💀💻💣🔥⚠</p>
+                <p>Noodles is a cutting-edge web application designed for penetration testing and network security
+                    analysis. Our team of highly skilled developers and security experts are dedicated to providing the
+                    most advanced tools for assessing and mitigating cyber threats. Use responsibly. 😈</p>
             </section>
         </main>
     </div>
     <script src="script.js"></script>
 </body>
+
 </html>
