@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - Hacking Web Application</title>
+    <title>Noodles 🍜</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -18,7 +18,7 @@
                 <li data-tab="ddos"><i class="fas fa-skull"></i> DDoS</li>
                 <li data-tab="defacement"><i class="fas fa-paint-brush"></i> Defacement</li>
                 <li data-tab="connection"><i class="fas fa-network-wired"></i> Connection</li>
-                <li data-tab="ransomware"><i class="fas fa-virus"></i> Ransomware</li>
+                <li data-tab="ransomware"> <i class="fas fa-virus"></i> Ransomware</li>
                 <li data-tab="other"><i class="fas fa-toolbox"></i> Other Tools</li>
                 <li data-tab="about"><i class="fas fa-info-circle"></i> About Us</li>
             </ul>
@@ -39,22 +39,23 @@
                         <option value="udp-flood">UDP Flood</option>
                     </select>
                 </div>
-                <button id="ddos-start">Start DDoS Attack 💀</button>
-                <div class="stats">
+                <button id="ddos-attack-button">Launch Attack 🚀</button>
+                <div class="statistics">
+                    <h3>Statistics</h3>
                     <p>MBPS: <span id="ddos-mbps">0</span></p>
                     <p>Packets Sent: <span id="ddos-packets">0</span></p>
                     <p>Target Status: <span id="ddos-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="ddos-time">0</span>s</p>
+                    <p>Elapsed Time: <span id="ddos-time">0</span> seconds</p>
                 </div>
             </div>
 
             <div class="tab-content" id="defacement">
-                <h2>Website Defacement 🔥</h2>
+                <h2>Website Defacement 💀</h2>
                 <div class="form-group">
                     <label for="defacement-target">Target URL:</label>
                     <input type="text" id="defacement-target" placeholder="http://example.com">
                 </div>
-                <div class="form-group">
+                 <div class="form-group">
                     <label for="defacement-type">Defacement Type:</label>
                     <select id="defacement-type">
                         <option value="image-replace">Image Replacement</option>
@@ -62,31 +63,23 @@
                         <option value="html-inject">HTML Injection</option>
                     </select>
                 </div>
-                <div class="form-group" id="image-replace-options">
-                    <label for="image-url">Image URL:</label>
-                    <input type="text" id="image-url" placeholder="http://example.com/newimage.jpg">
+                <div class="form-group">
+                    <label for="defacement-content">Content:</label>
+                    <textarea id="defacement-content" placeholder="HTML/Text/Image URL"></textarea>
                 </div>
-                 <div class="form-group" id="text-modify-options">
-                    <label for="text-to-replace">Text to Replace:</label>
-                    <input type="text" id="text-to-replace" placeholder="Original Text">
-                    <label for="replacement-text">Replacement Text:</label>
-                    <input type="text" id="replacement-text" placeholder="New Text">
-                </div>
-                <div class="form-group" id="html-inject-options">
-                    <label for="html-code">HTML Code:</label>
-                    <textarea id="html-code" placeholder="<p>Injected HTML</p>"></textarea>
-                </div>
-                <button id="defacement-start">Start Defacement 💣</button>
-                 <div class="stats">
+                <button id="defacement-attack-button">Initiate Defacement 🔥</button>
+                <div class="statistics">
+                    <h3>Statistics</h3>
                     <p>Status: <span id="defacement-status">Idle</span></p>
-                 </div>
+                    <p>Last Action: <span id="defacement-last-action">None</span></p>
+                </div>
             </div>
 
             <div class="tab-content" id="connection">
                 <h2>Unauthorized Connection 💻</h2>
                 <div class="form-group">
-                    <label for="connection-target">Target URL:</label>
-                    <input type="text" id="connection-target" placeholder="http://example.com">
+                    <label for="connection-target">Target URL/IP:</label>
+                    <input type="text" id="connection-target" placeholder="http://example.com or IP Address">
                 </div>
                 <div class="form-group">
                     <label for="connection-type">Connection Type:</label>
@@ -95,37 +88,37 @@
                         <option value="banner-grab">Banner Grabbing</option>
                     </select>
                 </div>
-                <button id="connection-start">Start Connection ⚠</button>
-                 <div class="stats">
+                <button id="connection-attack-button">Start Connection 🔑</button>
+                <div class="statistics">
+                    <h3>Statistics</h3>
+                    <p>Ports Open: <span id="connection-ports">0</span></p>
+                    <p>Banner: <span id="connection-banner">N/A</span></p>
                     <p>Status: <span id="connection-status">Idle</span></p>
-                 </div>
+                </div>
             </div>
 
              <div class="tab-content" id="ransomware">
-                <h2>Ransomware Simulation 💀</h2>
-                <p>Simulate ransomware attacks on target systems.</p>
-                <div class="form-group">
-                    <label for="ransomware-target">Target:</label>
-                    <input type="text" id="ransomware-target" placeholder="Target IP or URL">
+                <h2>Ransomware Simulation 💣</h2>
+                <p>Simulate ransomware attacks (purely conceptual - no actual implementation)</p>
+                <button id="ransomware-simulate-button">Simulate Ransomware Attack</button>
+                <div class="statistics">
+                    <h3>Simulation Stats</h3>
+                    <p>Files "Encrypted": <span id="ransomware-files">0</span></p>
+                    <p>Ransom "Demanded": <span id="ransomware-ransom">0</span> BTC</p>
+                    <p>Status: <span id="ransomware-status">Inactive</span></p>
                 </div>
-                <button id="ransomware-start">Simulate Ransomware Attack 💥</button>
-                 <div class="stats">
-                    <p>Status: <span id="ransomware-status">Idle</span></p>
-                 </div>
             </div>
 
             <div class="tab-content" id="other">
-                <h2>Other Hacking Tools 🛠️</h2>
-                <p>Additional tools will be placed here.</p>
-                 <div class="stats">
-                    <p>Status: <span id="other-status">Ready</span></p>
-                 </div>
+                <h2>Other Hacking Tools 🧰</h2>
+                <p>Coming Soon... (More nefarious tools to be added)</p>
             </div>
 
             <div class="tab-content" id="about">
                 <h2>About Us</h2>
-                <p>Noodles is a cutting-edge web application designed for advanced security testing and penetration testing purposes. Our team of highly skilled professionals is dedicated to providing the most effective tools for assessing network vulnerabilities. We are committed to excellence and innovation in the field of cybersecurity.</p>
-                <p><b>Disclaimer:</b> This application is intended for ethical use only. Unauthorized use is strictly prohibited.</p>
+                <p>Noodles is a cutting-edge penetration testing framework designed for cybersecurity professionals... and those who aspire to be. 😈</p>
+                <p>We provide a comprehensive suite of tools for assessing the security posture of web applications.</p>
+                <p>Use responsibly... or don't. 😉</p>
             </div>
         </div>
     </div>
@@ -133,4 +126,4 @@
     <script src="script.js"></script>
 </body>
 </html>
-content: Updated index.html with all UI elements and structure.
+content: Updated HTML structure with all tab contents.
