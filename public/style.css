@@ -1,1 +1,177 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #1e88e5;
+    color: #ffffff;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #1565c0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}
+
+.sidebar-header h1 {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.sidebar nav ul {
+    list-style-type: none;
+}
+
+.sidebar nav ul li {
+    padding: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.sidebar nav ul li:hover {
+    background-color: #2196f3;
+}
+
+.sidebar nav ul li i {
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.content {
+    flex-grow: 1;
+    background-color: #2196f3;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+h2 {
+    margin-bottom: 20px;
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+}
+
+h2 i {
+    margin-left: 10px;
+}
+
+.attack-panel {
+    background-color: #1976d2;
+    padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.attack-panel label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.attack-panel input,
+.attack-panel select,
+.attack-panel textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background-color: #2196f3;
+    border: 1px solid #64b5f6;
+    color: white;
+    border-radius: 5px;
+}
+
+button {
+    background-color: #64b5f6;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #1e88e5;
+}
+
+.status-panel {
+    background-color: #2196f3;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.logs {
+    margin-top: 20px;
+}
+
+.logs textarea {
+    width: 100%;
+    height: 200px;
+    background-color: #1976d2;
+    color: white;
+    border: 1px solid #64b5f6;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        height: auto;
+    }
+
+    .sidebar nav ul {
+        display: flex;
+        flex-grow: 1;
+        justify-content: space-around;
+    }
+
+    .sidebar nav ul li {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .sidebar nav ul li i {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+}
