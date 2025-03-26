@@ -54,6 +54,8 @@ class Logger {
             resourcesExhausted: false,
             attackTargetResolvedIP: 'Unknown',
             attackErrorDetails: 'None',
+            defacementDetails: 'None',
+            ransomwareDetails: 'None',
         };
         this.latencyData = [];
         this.initializeUI();
@@ -422,6 +424,8 @@ class Logger {
         document.getElementById('resources-exhausted').textContent = this.stats.resourcesExhausted ? 'Yes' : 'No';
         document.getElementById('attack-target-resolved-ip').textContent = this.stats.attackTargetResolvedIP;
         document.getElementById('attack-error-details').textContent = this.stats.attackErrorDetails;
+        document.getElementById('defacement-details').textContent = this.stats.defacementDetails;
+        document.getElementById('ransomware-details').textContent = this.stats.ransomwareDetails;
     }
 
     getStats() {
@@ -509,6 +513,15 @@ class Logger {
 
     setResourcesExhausted(exhausted) {
         this.stats.resourcesExhausted = exhausted;
+        this.displayStats();
+    }
+    setDefacementDetails(details) {
+        this.stats.defacementDetails = details;
+        this.displayStats();
+    }
+
+    setRansomwareDetails(details) {
+        this.stats.ransomwareDetails = details;
         this.displayStats();
     }
 
