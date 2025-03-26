@@ -737,3 +737,295 @@ textarea:focus {
     outline: none;
     box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.5);
 }
+
+/* Additional Styling */
+.wide-textarea {
+    height: 200px;
+}
+
+.danger-button {
+    background-color: #f44336;
+    color: #fff;
+}
+
+.danger-button:hover {
+    background-color: #d32f2f;
+}
+
+.success-button {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.success-button:hover {
+    background-color: #388e3c;
+}
+
+.warning-button {
+    background-color: #ff9800;
+    color: #000;
+}
+
+.warning-button:hover {
+    background-color: #f57c00;
+}
+
+.info-button {
+    background-color: #03a9f4;
+    color: #fff;
+}
+
+.info-button:hover {
+    background-color: #0288d1;
+}
+
+/* Animation for Buttons */
+button {
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+/* Loading Animation */
+.loading {
+    position: relative;
+    overflow: hidden;
+}
+
+.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: loading-animation 1.5s infinite;
+}
+
+@keyframes loading-animation {
+    100% {
+        left: 100%;
+    }
+}
+
+/* Responsive Table */
+.responsive-table {
+    overflow-x: auto;
+}
+
+.responsive-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.responsive-table th,
+.responsive-table td {
+    padding: 12px 15px;
+    border: 1px solid #333;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.responsive-table th {
+    background-color: #1a1a1a;
+    color: #eee;
+}
+
+/* Focus States */
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(100, 181, 246, 0.5);
+}
+
+/* Placeholder Styles */
+input::placeholder,
+textarea::placeholder {
+    color: #777;
+    opacity: 1;
+}
+
+/* Disabled Styles */
+input:disabled,
+select:disabled,
+textarea:disabled,
+button:disabled {
+    background-color: #333;
+    color: #777;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+}
+
+/* Print Styles */
+@media print {
+    body {
+        background-color: #fff;
+        color: #000;
+    }
+
+    .sidebar,
+    .sidebar-toggle-button {
+        display: none;
+    }
+
+    .content {
+        margin-left: 0;
+        padding: 0;
+    }
+
+    .attack-panel {
+        box-shadow: none;
+    }
+
+    button {
+        display: none;
+    }
+
+    a {
+        text-decoration: none;
+        color: #000;
+    }
+}
+
+/* Validation Styles */
+input:invalid {
+    border-color: #f44336;
+}
+
+input:valid {
+    border-color: #4caf50;
+}
+
+/* Shadow on Hover */
+.hover-shadow:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Underline on Hover */
+.hover-underline:hover {
+    text-decoration: underline;
+}
+
+/* Gradient Background */
+.gradient-background {
+    background: linear-gradient(45deg, #1e88e5, #64b5f6);
+    color: #fff;
+}
+
+/* Muted Text */
+.muted-text {
+    color: #777;
+}
+
+/* Bordered Elements */
+.bordered {
+    border: 1px solid #333;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+/* Elevated Elements */
+.elevated {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Full-Width Elements */
+.full-width {
+    width: 100%;
+}
+
+/* Circular Image */
+.circular-image {
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+/* Separator Line */
+.separator {
+    border-bottom: 1px solid #333;
+    margin: 20px 0;
+}
+
+/* Fixed Header */
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #121212;
+    z-index: 100;
+    padding: 20px;
+}
+
+/* Fixed Footer */
+.fixed-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #121212;
+    z-index: 100;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Sticky Sidebar */
+.sticky-sidebar {
+    position: sticky;
+    top: 20px;
+    height: calc(100vh - 40px);
+}
+
+/* Scroll to Top Button */
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #64b5f6;
+    color: #0a0a0a;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.scroll-to-top:hover {
+    background-color: #1e88e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border-left-color: #7983ff;
+
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
