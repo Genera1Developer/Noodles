@@ -1,7 +1,7 @@
 body {
     background-color: #1e1e1e;
     color: #d4d4d4;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Roboto', sans-serif;
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -19,6 +19,20 @@ body {
     padding: 10px;
     display: flex;
     flex-direction: column;
+    transition: width 0.3s ease;
+    overflow: hidden;
+}
+
+#sidebar.collapsed {
+    width: 60px;
+}
+
+#sidebar.collapsed span {
+    display: none;
+}
+
+#sidebar.collapsed h2 {
+    display: none;
 }
 
 #sidebar h2 {
@@ -26,6 +40,8 @@ body {
     margin-bottom: 20px;
     text-align: center;
     font-size: 1.5em;
+    transition: font-size 0.3s ease;
+    white-space: nowrap;
 }
 
 #sidebar button {
@@ -38,12 +54,17 @@ body {
     cursor: pointer;
     transition: background-color 0.3s ease;
     text-align: left;
-    display: block;
+    display: flex;
+    align-items: center;
     width: 100%;
     font-size: 1em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+#sidebar button i {
+    margin-right: 8px;
 }
 
 #sidebar button:hover {
@@ -66,6 +87,7 @@ body {
     color: #fff;
     margin-bottom: 20px;
     font-size: 2em;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 #attack-panel {
@@ -74,6 +96,7 @@ body {
     padding: 20px;
     margin-bottom: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border: 1px solid #444;
 }
 
 #attack-panel label {
@@ -81,10 +104,12 @@ body {
     margin-bottom: 5px;
     color: #fff;
     font-size: 1.1em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 #attack-panel input[type="text"],
-#attack-panel select {
+#attack-panel select,
+#attack-panel input[type="number"] {
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 5px;
@@ -107,6 +132,7 @@ body {
     font-size: 1.1em;
     width: 100%;
     box-sizing: border-box;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 #attack-panel button:hover {
@@ -123,6 +149,11 @@ body {
     font-size: 0.9em;
     line-height: 1.5;
     box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+    border: 1px solid #444;
+}
+
+#logs p {
+    margin-bottom: 8px;
 }
 
 #stats {
@@ -140,12 +171,14 @@ body {
     width: 220px;
     margin-bottom: 15px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border: 1px solid #444;
 }
 
 .stat-box h3 {
     color: #fff;
     margin-bottom: 8px;
     font-size: 1.3em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .stat-box p {
@@ -160,12 +193,14 @@ body {
     color: #d4d4d4;
     line-height: 1.6;
     font-size: 1.1em;
+    border: 1px solid #444;
 }
 
 #about-us h2 {
     color: #fff;
     margin-bottom: 15px;
     font-size: 1.6em;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Resizable Styles */
@@ -217,5 +252,38 @@ body {
 
     #stats {
         flex-direction: column;
+    }
+}
+
+/* Additional Styles */
+.hidden {
+    display: none !important;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.toggle-sidebar-btn {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .toggle-sidebar-btn {
+        display: block;
     }
 }
