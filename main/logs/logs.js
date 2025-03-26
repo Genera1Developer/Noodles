@@ -4,13 +4,16 @@ const crypto = require('crypto');
 class Logger {
     constructor() {
         this.logEntries = [];
-        this.maxLogSize = 100;
+        this.maxLogSize = 200;
         this.logFilePath = 'noodles.log';
         this.stats = {
             packetsSent: 0,
             bytesSent: 0,
-            connectionStatus: 'Idle'
+            connectionStatus: 'Idle',
+            lastAttackType: 'None',
+            target: 'None'
         };
+        this.initializeUI();
     }
 
     generateAttackID() {
@@ -52,7 +55,12 @@ class Logger {
         const logElement = document.createElement('div');
         logElement.classList.add('log-entry');
         logElement.innerHTML = this.formatLog(logEntry);
-        document.getElementById('logs-container').prepend(logElement);
+        const logsContainer = document.getElementById('logs-container');
+        if (logsContainer) {
+            logsContainer.prepend(logElement);
+        } else {
+            console.warn('Logs container not found.');
+        }
     }
 
     formatLog(logEntry) {
@@ -98,7 +106,10 @@ class Logger {
 
     clearLogs() {
         this.logEntries = [];
-        document.getElementById('logs-container').innerHTML = '';
+        const logsContainer = document.getElementById('logs-container');
+        if (logsContainer) {
+            logsContainer.innerHTML = '';
+        }
         fs.writeFile(this.logFilePath, '', err => {
             if (err) {
                 console.error('Failed to clear log file:', err);
@@ -119,10 +130,12 @@ class Logger {
         URL.revokeObjectURL(url);
     }
 
-    updateStats(packets, bytes, status) {
+    updateStats(packets, bytes, status, attackType, target) {
         this.stats.packetsSent += packets;
         this.stats.bytesSent += bytes;
         this.stats.connectionStatus = status;
+        this.stats.lastAttackType = attackType;
+        this.stats.target = target;
         this.displayStats();
     }
 
@@ -130,23 +143,25 @@ class Logger {
         document.getElementById('packets-sent').textContent = this.stats.packetsSent;
         document.getElementById('mbps').textContent = (this.stats.bytesSent * 8 / 1000000).toFixed(2);
         document.getElementById('connection-status').textContent = this.stats.connectionStatus;
+        document.getElementById('last-attack-type').textContent = this.stats.lastAttackType;
+        document.getElementById('target').textContent = this.stats.target;
     }
 
     getStats() {
         return this.stats;
+    }
+
+    initializeUI() {
+        document.getElementById('clear-logs-button').addEventListener('click', () => {
+            this.clearLogs();
+        });
+
+        document.getElementById('download-logs-button').addEventListener('click', () => {
+            this.downloadLogs();
+        });
     }
 }
 
 const logger = new Logger();
 logger.loadPersistentLogs();
 window.logger = logger;
-
-document.getElementById('clear-logs-button').addEventListener('click', () => {
-    logger.clearLogs();
-});
-
-document.getElementById('download-logs-button').addEventListener('click', () => {
-    logger.downloadLogs();
-});
-
-module.exports = Logger;
