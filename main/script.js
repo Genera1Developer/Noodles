@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
       await startAttack(target, attackType);
     } finally {
       attackRunning = false;
+      updateStatus('Attack finished.');
     }
   });
 
@@ -53,6 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const attackData = await response.json();
       updateStatus(attackData.message);
       updateStatistics(attackData);
+
+      // Simulate statistics update (replace with actual data)
+      simulateStatistics();
     } catch (error) {
       updateStatus(`Error: ${error.message}`);
     }
@@ -86,33 +90,54 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 1000);
 
-  fetch('/about.html')
-    .then(response => response.text())
-    .then(data => {
-      document.getElementById('about-us-content').innerHTML = data;
-    })
-    .catch(error => console.error('Error fetching about us:', error));
-
-    document.querySelectorAll('.tab-button').forEach(button => {
-      button.addEventListener('click', function() {
-          const tab = this.getAttribute('data-tab');
-          openTab(tab);
-      });
-  });
+  function loadAboutUs() {
+    fetch('/about.html')
+      .then(response => response.text())
+      .then(data => {
+        document.getElementById('about-us-content').innerHTML = data;
+      })
+      .catch(error => console.error('Error fetching about us:', error));
+  }
 
   function openTab(tabId) {
-      document.querySelectorAll('.tab-content').forEach(content => {
-          content.style.display = 'none';
-      });
+    document.querySelectorAll('.tab-content').forEach(content => {
+      content.style.display = 'none';
+    });
 
-      document.querySelectorAll('.tab-button').forEach(button => {
-          button.classList.remove('active');
-      });
+    document.querySelectorAll('.tab-button').forEach(button => {
+      button.classList.remove('active');
+    });
 
-      document.getElementById(tabId).style.display = 'block';
+    document.getElementById(tabId).style.display = 'block';
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+  }
 
-      document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+  document.querySelectorAll('.tab-button').forEach(button => {
+    button.addEventListener('click', function() {
+      const tab = this.getAttribute('data-tab');
+      openTab(tab);
+    });
+  });
+
+  function simulateStatistics() {
+    let mbps = 0;
+    let packets = 0;
+
+    const intervalId = setInterval(() => {
+      mbps += Math.random() * 10;
+      packets += Math.floor(Math.random() * 100);
+      const targetStatus = Math.random() > 0.5 ? 'Online' : 'Offline';
+
+      mbpsDisplay.textContent = mbps.toFixed(2);
+      packetsSentDisplay.textContent = packets;
+      targetStatusDisplay.textContent = targetStatus;
+
+      if (!attackRunning) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
   }
 
   openTab('ddos');
+  loadAboutUs();
 });
