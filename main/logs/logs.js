@@ -20,7 +20,8 @@ class Logger {
             ransomwareStatus: 'Idle',
             torConnectionStatus: 'Disconnected',
             attackThreads: 0,
-            successfulConnections: 0
+            successfulConnections: 0,
+            torProxyUsed: 'None'
         };
         this.initializeUI();
     }
@@ -148,24 +149,26 @@ class Logger {
         URL.revokeObjectURL(url);
     }
 
-    startAttack(target, attackType, threads) {
+    startAttack(target, attackType, threads, torProxy) {
          this.stats.startTime = new Date().toISOString();
          this.stats.attackThreads = threads;
-         this.updateStats(0, 0, 'Attacking', attackType, target, threads);
+         this.stats.torProxyUsed = torProxy || 'None';
+         this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy);
     }
 
     endAttack() {
         this.stats.endTime = new Date().toISOString();
-        this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None', 0);
+        this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None', 0, 'None');
     }
 
-    updateStats(packets, bytes, status, attackType, target, threads) {
+    updateStats(packets, bytes, status, attackType, target, threads, torProxy) {
         this.stats.packetsSent += packets;
         this.stats.bytesSent += bytes;
         this.stats.connectionStatus = status;
         this.stats.lastAttackType = attackType;
         this.stats.target = target;
         this.stats.attackThreads = threads;
+        this.stats.torProxyUsed = torProxy || this.stats.torProxyUsed;
         this.displayStats();
     }
 
@@ -189,6 +192,7 @@ class Logger {
         document.getElementById('tor-connection-status').textContent = this.stats.torConnectionStatus;
         document.getElementById('attack-threads').textContent = this.stats.attackThreads;
         document.getElementById('successful-connections').textContent = this.stats.successfulConnections;
+        document.getElementById('tor-proxy-used').textContent = this.stats.torProxyUsed;
     }
 
     getStats() {
@@ -207,6 +211,10 @@ class Logger {
 
      setTorConnectionStatus(status) {
         this.stats.torConnectionStatus = status;
+        this.displayStats();
+    }
+    setTorProxyUsed(proxy) {
+        this.stats.torProxyUsed = proxy;
         this.displayStats();
     }
 
