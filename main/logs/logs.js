@@ -16,6 +16,8 @@ class Logger {
             startTime: null,
             endTime: null,
             errors: 0,
+            defacementStatus: 'Idle',
+            ransomwareStatus: 'Idle'
         };
         this.initializeUI();
     }
@@ -172,10 +174,22 @@ class Logger {
         document.getElementById('start-time').textContent = this.stats.startTime || 'N/A';
         document.getElementById('end-time').textContent = this.stats.endTime || 'N/A';
         document.getElementById('errors').textContent = this.stats.errors;
+        document.getElementById('defacement-status').textContent = this.stats.defacementStatus;
+        document.getElementById('ransomware-status').textContent = this.stats.ransomwareStatus;
     }
 
     getStats() {
         return this.stats;
+    }
+
+    setDefacementStatus(status) {
+        this.stats.defacementStatus = status;
+        this.displayStats();
+    }
+
+    setRansomwareStatus(status) {
+        this.stats.ransomwareStatus = status;
+        this.displayStats();
     }
 
     initializeUI() {
