@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let packetsSent = 0;
     let mbps = 0;
     let attackInterval;
+    let isAttacking = false;
 
     function logMessage(message) {
         const logEntry = document.createElement('div');
@@ -19,35 +20,51 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function performAttack(targetUrl, attackType) {
+        if (isAttacking) return;
+        isAttacking = true;
+
         try {
             statusIndicator.textContent = 'Attacking...';
             statusIndicator.className = 'status-attacking';
 
             attackInterval = setInterval(async () => {
-                const response = await fetch(`/attack?url=${targetUrl}&type=${attackType}`);
+                try {
+                    const response = await fetch(`/attack?url=${targetUrl}&type=${attackType}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ target: targetUrl, attack: attackType })
+                    });
 
-                if (response.ok) {
-                    packetsSent++;
-                    packetsSentDisplay.textContent = packetsSent;
+                    if (response.ok) {
+                        packetsSent++;
+                        packetsSentDisplay.textContent = packetsSent;
 
-                    const bandwidth = Math.random() * 10;
-                    mbps += bandwidth;
-                    mbpsDisplay.textContent = mbps.toFixed(2);
+                        const bandwidth = Math.random() * 10;
+                        mbps += bandwidth;
+                        mbpsDisplay.textContent = mbps.toFixed(2);
 
-                    logMessage(`Attack packet sent to ${targetUrl} (${attackType}) - ${bandwidth.toFixed(2)} Mbps`);
-                } else {
-                    logMessage(`Attack failed: ${response.status} ${response.statusText}`);
+                        logMessage(`Attack packet sent to ${targetUrl} (${attackType}) - ${bandwidth.toFixed(2)} Mbps`);
+                    } else {
+                        logMessage(`Attack failed: ${response.status} ${response.statusText}`);
+                        stopAttack();
+                    }
+                } catch (error) {
+                    logMessage(`Attack error: ${error.message}`);
                     stopAttack();
                 }
             }, 10);
         } catch (error) {
-            logMessage(`Attack error: ${error.message}`);
+            logMessage(`Attack initiation error: ${error.message}`);
             stopAttack();
         }
     }
 
     function stopAttack() {
         clearInterval(attackInterval);
+        isAttacking = false;
+        attackButton.textContent = 'Start Attack';
         statusIndicator.textContent = 'Idle';
         statusIndicator.className = 'status-idle';
         logMessage('Attack stopped.');
@@ -62,79 +79,50 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (statusIndicator.textContent === 'Attacking...') {
+        if (isAttacking) {
             stopAttack();
-            attackButton.textContent = 'Start Attack';
         } else {
             packetsSent = 0;
             mbps = 0;
             packetsSentDisplay.textContent = '0';
             mbpsDisplay.textContent = '0.00';
-            logArea.innerHTML = ''; 
-
+            logArea.innerHTML = '';
             attackButton.textContent = 'Stop Attack';
             performAttack(targetUrl, attackType);
         }
     });
 
-    document.getElementById('defaceButton').addEventListener('click', async () => {
-        const targetUrl = document.getElementById('targetUrl').value;
+    async function performAction(endpoint, targetUrl, actionName) {
         if (!targetUrl) {
-            logMessage('Please enter a target URL for defacement.');
+            logMessage(`Please enter a target URL for ${actionName}.`);
             return;
         }
-        logMessage(`Attempting to deface ${targetUrl}...`);
+        logMessage(`Attempting to ${actionName} ${targetUrl}...`);
         try {
-            const response = await fetch(`/deface?url=${targetUrl}`, { method: 'POST' });
+            const response = await fetch(`/${endpoint}?url=${targetUrl}`, { method: 'POST' });
             if (response.ok) {
                 const data = await response.json();
-                logMessage(`Defacement initiated. Status: ${data.status}`);
+                logMessage(`${actionName} initiated. Status: ${data.status}`);
             } else {
-                logMessage(`Defacement failed: ${response.status} ${response.statusText}`);
+                logMessage(`${actionName} failed: ${response.status} ${response.statusText}`);
             }
         } catch (error) {
-            logMessage(`Defacement error: ${error.message}`);
+            logMessage(`${actionName} error: ${error.message}`);
         }
+    }
+
+    document.getElementById('defaceButton').addEventListener('click', async () => {
+        const targetUrl = document.getElementById('targetUrl').value;
+        await performAction('deface', targetUrl, 'Defacement');
     });
 
     document.getElementById('connectButton').addEventListener('click', async () => {
-         const targetUrl = document.getElementById('targetUrl').value;
-         if (!targetUrl) {
-             logMessage('Please enter a target URL for connection.');
-             return;
-         }
-         logMessage(`Attempting to connect to ${targetUrl}...`);
-         try {
-             const response = await fetch(`/connect?url=${targetUrl}`, { method: 'POST' });
-             if (response.ok) {
-                 const data = await response.json();
-                 logMessage(`Connection initiated. Status: ${data.status}`);
-             } else {
-                 logMessage(`Connection failed: ${response.status} ${response.statusText}`);
-             }
-         } catch (error) {
-             logMessage(`Connection error: ${error.message}`);
-         }
-     });
-
-
-     document.getElementById('ransomwareButton').addEventListener('click', async () => {
         const targetUrl = document.getElementById('targetUrl').value;
-        if (!targetUrl) {
-            logMessage('Please enter a target URL for ransomware.');
-            return;
-        }
-        logMessage(`Initiating ransomware attack on ${targetUrl}...`);
-        try {
-            const response = await fetch(`/ransomware?url=${targetUrl}`, { method: 'POST' });
-            if (response.ok) {
-                const data = await response.json();
-                logMessage(`Ransomware deployed. Status: ${data.status}`);
-            } else {
-                logMessage(`Ransomware deployment failed: ${response.status} ${response.statusText}`);
-            }
-        } catch (error) {
-            logMessage(`Ransomware error: ${error.message}`);
-        }
+        await performAction('connect', targetUrl, 'Connection');
+    });
+
+    document.getElementById('ransomwareButton').addEventListener('click', async () => {
+        const targetUrl = document.getElementById('targetUrl').value;
+        await performAction('ransomware', targetUrl, 'Ransomware');
     });
 });
