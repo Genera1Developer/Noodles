@@ -1,3 +1,6 @@
+const fs = require('fs');
+const crypto = require('crypto');
+
 class Logger {
     constructor() {
         this.logEntries = [];
@@ -123,3 +126,5 @@ document.getElementById('clear-logs-button').addEventListener('click', () => {
 document.getElementById('download-logs-button').addEventListener('click', () => {
     logger.downloadLogs();
 });
+
+module.exports = Logger;
