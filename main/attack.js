@@ -9,10 +9,12 @@ class Attack {
       mbps: 0,
       packetsSent: 0,
       status: 'Idle',
-      timeElapsed: 0
+      timeElapsed: 0,
+      errors: 0
     };
     this.intervalId = null;
     this.attackInstance = null;
+    this.errorThreshold = 10;
   }
 
   async start() {
@@ -21,6 +23,7 @@ class Attack {
     this.isRunning = true;
     this.startTime = Date.now();
     this.stats.status = 'Starting';
+    this.stats.errors = 0;
 
     try {
       switch (this.type) {
@@ -115,6 +118,10 @@ class Attack {
     } catch (error) {
       console.error('Defacement failed:', error);
       this.stats.status = 'Failed';
+      this.stats.errors++;
+      if (this.stats.errors > this.errorThreshold) {
+        this.stop();
+      }
     }
   }
 
@@ -141,6 +148,11 @@ class Attack {
         }
       } catch (error) {
         console.error(`Error scanning port ${port}:`, error);
+        this.stats.errors++;
+        if (this.stats.errors > this.errorThreshold) {
+          this.stop();
+          break;
+        }
       }
     }
 
@@ -160,6 +172,10 @@ class Attack {
       })
       .catch(() => {
         this.stats.status = 'Offline';
+        this.stats.errors++;
+        if (this.stats.errors > this.errorThreshold) {
+          this.stop();
+        }
       });
   }
 
