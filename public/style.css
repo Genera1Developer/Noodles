@@ -15,6 +15,7 @@ body {
     flex-direction: column;
     border-right: 1px solid #333;
     transition: width 0.3s ease;
+    position: relative;
 }
 
 .sidebar-header {
@@ -57,17 +58,18 @@ body {
     margin-bottom: 8px;
     font-size: 14px;
     font-weight: 500;
+    color: #bdbdbd;
 }
 
 .sidebar nav ul li:hover {
     background-color: #333;
     transform: translateX(3px);
+    color: #eee;
 }
 
 .sidebar nav ul li i {
     margin-right: 12px;
     font-size: 16px;
-    color: #bdbdbd;
 }
 
 .content {
@@ -455,4 +457,47 @@ input:checked + .slider:before {
 /* Resizable Textarea */
 .logs textarea {
     resize: vertical;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle-button {
+    position: absolute;
+    top: 20px;
+    right: -20px;
+    width: 40px;
+    height: 40px;
+    background-color: #333;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-toggle-button:hover {
+    background-color: #444;
+}
+
+.sidebar-toggle-button i {
+    font-size: 20px;
+}
+
+/*Notification styling */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 5px;
+    z-index: 1000;
+    opacity: 0;
+    transition: all 0.4s ease;
+}
+
+.notification.show {
+    opacity: 1;
 }
