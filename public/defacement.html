@@ -10,6 +10,97 @@
         .hidden {
             display: none !important;
         }
+
+        .defacement-container {
+            padding: 20px;
+            background-color: #222;
+            color: #ddd;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .target-input {
+            margin-bottom: 20px;
+        }
+
+        .target-input label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .target-input input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #555;
+            background-color: #333;
+            color: #fff;
+            border-radius: 4px;
+        }
+
+        .defacement-options {
+            margin-bottom: 20px;
+        }
+
+        .defacement-options h2 {
+            margin-bottom: 10px;
+        }
+
+        .option {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #333;
+        }
+
+        .option label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .option input[type="file"],
+        .option input[type="text"],
+        .option textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #555;
+            background-color: #444;
+            color: #fff;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .option textarea {
+            height: 100px;
+        }
+
+        .option button {
+            padding: 8px 12px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .option button:hover {
+            background-color: #0056b3;
+        }
+
+        .defacement-status {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            background-color: #333;
+        }
+
+        #defacement-results {
+            background-color: #222;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+        }
     </style>
 </head>
 
@@ -136,7 +227,8 @@
                         html = html.replace(/<img[^>]*>/gi, `<img src="${content}" alt="Defaced Image">`);
                         break;
                     case 'text':
-                        html = html.replace(/<body[^>]*>[\s\S]*<\/body>/gi, `<body style="color: red; font-size: 2em;">${content}</body>`);
+                        html = html.replace(/<body[^>]*>[\s\S]*<\/body>/gi,
+                            `<body style="color: red; font-size: 2em;">${content}</body>`);
                         break;
                     case 'html':
                         html = html.replace('</body>', `${content}</body>`);
