@@ -4,6 +4,7 @@ const dns = require('dns');
 const geoip = require('geoip-lite');
 const http = require('http');
 const https = require('https');
+const { exec } = require('child_process');
 
 class Logger {
     constructor() {
@@ -32,9 +33,15 @@ class Logger {
             averageLatency: 0,
             peakLatency: 0,
             currentLatency: 0,
+            cpuUsage: 0,
+            memoryUsage: 0,
+            nodeVersion: process.version,
+            platform: process.platform,
+            systemUptime: 0,
         };
         this.latencyData = [];
         this.initializeUI();
+        this.startSystemMonitoring();
     }
 
     generateAttackID() {
@@ -246,6 +253,38 @@ class Logger {
         this.displayStats();
     }
 
+    getSystemUptime() {
+        return new Promise((resolve, reject) => {
+            exec('uptime -s', (error, stdout, stderr) => {
+                if (error) {
+                    console.error(`exec error: ${error}`);
+                    reject(error);
+                    return;
+                }
+                resolve(stdout ? stdout.trim() : stderr.trim());
+            });
+        });
+    }
+
+    async updateSystemStats() {
+        const os = require('os');
+        this.stats.cpuUsage = os.loadavg()[0];
+        this.stats.memoryUsage = process.memoryUsage().heapUsed / 1024 / 1024;
+        try {
+            const uptime = await this.getSystemUptime();
+            this.stats.systemUptime = uptime;
+        } catch (e) {
+            this.stats.systemUptime = 'Unknown';
+        }
+        this.displayStats();
+    }
+
+    startSystemMonitoring() {
+        setInterval(() => {
+            this.updateSystemStats();
+        }, 5000);
+    }
+
     displayStats() {
         document.getElementById('packets-sent').textContent = this.stats.packetsSent;
         document.getElementById('mbps').textContent = (this.stats.bytesSent * 8 / 1000000).toFixed(2);
@@ -268,6 +307,11 @@ class Logger {
         document.getElementById('average-latency').textContent = this.stats.averageLatency.toFixed(2) + ' ms';
         document.getElementById('peak-latency').textContent = this.stats.peakLatency.toFixed(2) + ' ms';
         document.getElementById('current-latency').textContent = this.stats.currentLatency.toFixed(2) + ' ms';
+         document.getElementById('cpu-usage').textContent = this.stats.cpuUsage.toFixed(2);
+        document.getElementById('memory-usage').textContent = this.stats.memoryUsage.toFixed(2) + ' MB';
+        document.getElementById('node-version').textContent = this.stats.nodeVersion;
+        document.getElementById('platform').textContent = this.stats.platform;
+        document.getElementById('system-uptime').textContent = this.stats.systemUptime;
     }
 
     getStats() {
