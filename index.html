@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noodles - Unleash the Power</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="assets/noodles_icon.ico" type="image/x-icon">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo">
+            <img src="assets/banner.gif" alt="Noodles Logo">
+            <h1>Noodles</h1>
+        </div>
+        <nav>
+            <a href="#" data-content="ddos">DDoS</a>
+            <a href="#" data-content="defacement">Defacement</a>
+            <a href="#" data-content="connection">Connection</a>
+            <a href="#" data-content="ransomware">Ransomware</a>
+            <a href="#" data-content="about">About Us</a>
+        </nav>
+    </div>
+
+    <main>
+        <section id="ddos" class="content active">
+            <h2>DDoS Attacks 😈</h2>
+            <div class="attack-panel">
+                <input type="text" id="ddos-target" placeholder="Target URL (.onion or normal)">
+                <select id="ddos-method">
+                    <option value="tcp-flood">TCP Flood</option>
+                    <option value="udp-flood">UDP Flood</option>
+                    <option value="http-flood">HTTP Flood</option>
+                    <option value="slowloris">Slowloris</option>
+                    <option value="syn-flood">SYN Flood</option>
+                </select>
+                <input type="number" id="ddos-duration" placeholder="Duration (seconds)" value="30">
+                <button id="ddos-start">Start Attack 🚀</button>
+            </div>
+            <div class="attack-stats">
+                <h3>Statistics 📊</h3>
+                <p>Status: <span id="status">Offline</span></p>
+                <p>MBPS: <span id="mbps">0</span></p>
+                <p>Packets Sent: <span id="packets">0</span></p>
+            </div>
+            <div class="attack-logs">
+                <h3>Logs 📝</h3>
+                <textarea id="logs" readonly></textarea>
+            </div>
+        </section>
+
+        <section id="defacement" class="content">
+            <h2>Defacement 🎨</h2>
+            <div class="defacement-panel">
+                <input type="text" id="defacement-target" placeholder="Target URL">
+                <textarea id="defacement-code" placeholder="HTML Defacement Code"></textarea>
+                <button id="defacement-start">Start Defacement 💥</button>
+            </div>
+            <div class="defacement-logs">
+                <h3>Logs 📝</h3>
+                <textarea id="defacement-logs" readonly></textarea>
+            </div>
+        </section>
+
+        <section id="connection" class="content">
+            <h2>Connection 🔗</h2>
+            <div class="connection-panel">
+                <input type="text" id="connection-target" placeholder="Target IP/URL">
+                <input type="number" id="connection-port" placeholder="Port">
+                <button id="connection-start">Connect 🌐</button>
+            </div>
+            <div class="connection-logs">
+                <h3>Logs 📝</h3>
+                <textarea id="connection-logs" readonly></textarea>
+            </div>
+        </section>
+
+        <section id="ransomware" class="content">
+            <h2>Ransomware 🔐</h2>
+            <div class="ransomware-panel">
+                <input type="text" id="ransomware-target" placeholder="Target Directory">
+                <input type="text" id="ransomware-extension" placeholder="File Extension to Encrypt">
+                <input type="text" id="ransomware-message" placeholder="Ransom Message">
+                <button id="ransomware-start">Start Encryption 💣</button>
+            </div>
+            <div class="ransomware-logs">
+                <h3>Logs 📝</h3>
+                <textarea id="ransomware-logs" readonly></textarea>
+            </div>
+        </section>
+
+        <section id="about" class="content">
+            <h2>About Us ℹ️</h2>
+            <p>Noodles is a cutting-edge platform designed for advanced network manipulation. We provide tools for security testing, penetration testing, and network analysis. Use responsibly. Or don't. 😈</p>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
