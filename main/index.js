@@ -12,4 +12,7 @@ module.exports = {
     ransomwareSim,
     otherTools,
     proxyHandler,
+    init: () => {
+        console.log("Noodles Initialized.");
+    }
 };
