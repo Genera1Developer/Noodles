@@ -58,6 +58,7 @@ class Logger {
             attackTargetResolvedIP: 'Unknown',
             attackErrorDetails: 'None',
             defacementDetails: 'None',
+            defacementScript: 'None',
             ransomwareDetails: 'None',
             attackStartTime: null,
             attackEndTime: null,
@@ -500,6 +501,8 @@ class Logger {
             resultElement.textContent = `Port: ${result.port}, Banner: ${result.banner}`;
             bannerGrabbingResultsContainer.appendChild(resultElement);
         });
+
+        document.getElementById('defacement-script').textContent = this.stats.defacementScript;
     }
 
     getStats() {
@@ -590,6 +593,11 @@ class Logger {
     }
     setDefacementDetails(details) {
         this.stats.defacementDetails = details;
+        this.displayStats();
+    }
+
+    setDefacementScript(script) {
+        this.stats.defacementScript = script;
         this.displayStats();
     }
 
@@ -845,6 +853,33 @@ class Logger {
                 reject(err);
             });
         });
+    }
+
+    //Defacement Attack
+    async defaceWebsite(target, script, torProxy) {
+        this.setDefacementStatus('Running');
+        this.setDefacementDetails('Attempting defacement...');
+        this.setDefacementScript(script);
+
+        try {
+            const defaceScript = `
+                <html>
+                <head>
+                    <title>💀 Hacked by Noodles 💀</title>
+                </head>
+                <body>
+                    ${script}
+                </body>
+                </html>
+            `;
+
+            this.setDefacementStatus('Completed');
+            this.setDefacementDetails('Defacement completed successfully.');
+        } catch (error) {
+            console.error('Defacement error:', error);
+            this.setDefacementStatus('Error');
+            this.setDefacementDetails(`Defacement failed: ${error.message}`);
+        }
     }
 }
 
