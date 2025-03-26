@@ -42,6 +42,11 @@ class Logger {
             activeConnections: 0,
             memoryTotal: os.totalmem() / 1024 / 1024,
             loadAverage: os.loadavg(),
+            siteTitle: 'Unknown',
+            siteDescription: 'Unknown',
+            cookiesEnabled: 'Unknown',
+            serverType: 'Unknown',
+            contentEncoding: 'Unknown',
         };
         this.latencyData = [];
         this.initializeUI();
@@ -199,16 +204,31 @@ class Logger {
         this.displayStats();
     }
 
-    async resolveTargetInfo(target) {
+   async resolveTargetInfo(target) {
         try {
-            const geo = geoip.lookup(target);
+            let resolvedTarget = target;
+            if (target.endsWith('.onion')) {
+                this.setTorConnectionStatus('Connected');
+            } else {
+                this.setTorConnectionStatus('Disconnected');
+                try {
+                    const addresses = await dns.promises.resolve(target);
+                    resolvedTarget = addresses[0];
+                } catch (dnsError) {
+                    console.error("DNS resolution error:", dnsError);
+                }
+            }
+
+            const geo = geoip.lookup(resolvedTarget);
             if (geo) {
                 this.setGeoIP(geo.country);
             } else {
-                this.resolveDNS(target);
+                this.setGeoIP('Unknown');
             }
 
-            this.checkHttpStatus(target);
+            await this.checkHttpStatus(target);
+            await this.fetchWebsiteDetails(target);
+
         } catch (error) {
             console.error("Failed to resolve target info:", error);
             this.stats.errors++;
@@ -216,29 +236,60 @@ class Logger {
         }
     }
 
-    async resolveDNS(target) {
-        dns.resolve(target, (err, addresses) => {
-            if (err) {
-                console.error('DNS resolution error:', err);
-                this.setDnsRecords('Unknown');
+    async checkHttpStatus(target) {
+        return new Promise((resolve, reject) => {
+            const protocol = target.startsWith('https') ? https : http;
+            protocol.get(target, { timeout: 5000 }, (res) => {
+                this.setHttpStatus(res.statusCode);
+                resolve(res.statusCode);
+            }).on('error', (e) => {
+                console.error(`HTTP error: ${e.message}`);
+                this.setHttpStatus('Unknown');
                 this.stats.errors++;
                 this.displayStats();
-            } else {
-                this.setDnsRecords(JSON.stringify(addresses));
-            }
+                reject(e);
+            });
         });
     }
 
-    async checkHttpStatus(target) {
-        const protocol = target.startsWith('https') ? https : http;
+    async fetchWebsiteDetails(target) {
+        return new Promise((resolve, reject) => {
+            const protocol = target.startsWith('https') ? https : http;
+            protocol.get(target, (res) => {
+                let data = '';
 
-        protocol.get(target, (res) => {
-            this.setHttpStatus(res.statusCode);
-        }).on('error', (e) => {
-            console.error(`Got error: ${e.message}`);
-            this.setHttpStatus('Unknown');
-            this.stats.errors++;
-            this.displayStats();
+                res.on('data', (chunk) => {
+                    data += chunk;
+                });
+
+                res.on('end', () => {
+                    try {
+                        const titleMatch = data.match(/<title>(.*?)<\/title>/i);
+                        const title = titleMatch ? titleMatch[1] : 'Unknown';
+                        this.setSiteTitle(title);
+
+                        const descriptionMatch = data.match(/<meta name="description" content="(.*?)"/i);
+                        const description = descriptionMatch ? descriptionMatch[1] : 'Unknown';
+                        this.setSiteDescription(description);
+
+                        this.setCookiesEnabled(res.headers['set-cookie'] ? 'Enabled' : 'Disabled');
+                        this.setServerType(res.headers['server'] || 'Unknown');
+                        this.setContentEncoding(res.headers['content-encoding'] || 'Unknown');
+
+                        resolve();
+                    } catch (e) {
+                        console.error('Error parsing website details:', e);
+                        this.stats.errors++;
+                        this.displayStats();
+                        reject(e);
+                    }
+                });
+            }).on('error', (e) => {
+                console.error('Error fetching website details:', e);
+                this.stats.errors++;
+                this.displayStats();
+                reject(e);
+            });
         });
     }
 
@@ -321,6 +372,12 @@ class Logger {
         document.getElementById('active-connections').textContent = this.stats.activeConnections;
          document.getElementById('memory-total').textContent = this.stats.memoryTotal.toFixed(2) + ' MB';
         document.getElementById('load-average').textContent = this.stats.loadAverage.map(item => item.toFixed(2)).join(', ');
+
+         document.getElementById('site-title').textContent = this.stats.siteTitle;
+        document.getElementById('site-description').textContent = this.stats.siteDescription;
+        document.getElementById('cookies-enabled').textContent = this.stats.cookiesEnabled;
+        document.getElementById('server-type').textContent = this.stats.serverType;
+        document.getElementById('content-encoding').textContent = this.stats.contentEncoding;
     }
 
     getStats() {
@@ -358,6 +415,31 @@ class Logger {
 
     setDnsRecords(dnsRecords) {
         this.stats.dnsRecords = dnsRecords;
+        this.displayStats();
+    }
+
+    setSiteTitle(title) {
+        this.stats.siteTitle = title;
+        this.displayStats();
+    }
+
+    setSiteDescription(description) {
+        this.stats.siteDescription = description;
+        this.displayStats();
+    }
+
+    setCookiesEnabled(enabled) {
+        this.stats.cookiesEnabled = enabled;
+        this.displayStats();
+    }
+
+    setServerType(serverType) {
+        this.stats.serverType = serverType;
+        this.displayStats();
+    }
+
+    setContentEncoding(encoding) {
+        this.stats.contentEncoding = encoding;
         this.displayStats();
     }
 
