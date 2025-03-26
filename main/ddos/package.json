@@ -29,7 +29,7 @@
     "data-miner": "node data-miner.js",
     "zero-day": "node zero-day.js",
     "persistence": "node persistence.js",
-    "microservices": "concurrently \"npm run api\" \"npm run websocket\" \"npm run dashboard\" \"npm run logviewer\" \"npm run ddos-layer7\" \"npm run ddos-layer4\" \"npm run deface-upload\" \"npm run connect-reverse-shell\" \"npm run ransomware-deploy\" \"npm run exploit-database\" \"npm run botnet-control\" \"npm run fuzzer-advanced\" \"npm run scanner-vulnerability\" \"npm run injector-code\" \"npm run honeypot-advanced\" \"npm run miner-cryptocurrency\" \"npm run zero-day-exploit\" \"npm run persistence-rootkit\" \"npm run tor-relay\" \"npm run evasion-sandbox\" \"npm run report-intelligence\" \"npm run admin-backdoor\"",
+    "microservices": "concurrently \"npm run api\" \"npm run websocket\" \"npm run dashboard\" \"npm run logviewer\" \"npm run ddos-layer7\" \"npm run ddos-layer4\" \"npm run deface-upload\" \"npm run connect-reverse-shell\" \"npm run ransomware-deploy\" \"npm run exploit-database\" \"npm run botnet-control\" \"npm run fuzzer-advanced\" \"npm run scanner-vulnerability\" \"npm run injector-code\" \"npm run honeypot-advanced\" \"npm run miner-cryptocurrency\" \"npm run zero-day-exploit\" \"npm run persistence-rootkit\" \"npm run tor-relay\" \"npm run evasion-sandbox\" \"npm run report-intelligence\" \"npm run admin-backdoor\" \"npm run brute-force\" \"npm run credential-stuffing\" \"npm run email-bombing\" \"npm run network-sniffer\" \"npm run packet-forging\" \"npm run privilege-escalation\" \"npm run social-engineering\" \"npm run vulnerability-scanner\"",
     "full-setup": "npm install && npm run build && npm run chromium",
     "worker": "node worker.js",
     "stress": "node stress.js",
@@ -194,7 +194,7 @@
     "traceroute": "^1.3.0",
     "ping": "^0.4.4",
     "nmap": "^0.3.0",
-    "geoip-lite": "^1.4.9",
+     "geoip-lite": "^1.4.9",
     "country-data": "^0.0.31",
     "server-destroy": "^1.1.0",
     "user-home": "^3.0.0"
