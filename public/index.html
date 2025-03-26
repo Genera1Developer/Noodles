@@ -38,7 +38,12 @@
                         <option value="http-flood">HTTP Flood</option>
                         <option value="tcp-flood">TCP Flood</option>
                         <option value="udp-flood">UDP Flood</option>
+                        <option value="syn-flood">SYN Flood</option>
+                        <option value="slowloris">Slowloris</option>
                     </select>
+                    <input type="number" id="ddos-threads" placeholder="Threads (Default: 10)" value="10">
+                    <input type="number" id="ddos-duration" placeholder="Duration (seconds, Default: 30)"
+                        value="30">
                     <button id="ddos-start">Start DDoS 💀</button>
                 </div>
                 <div class="attack-stats">
@@ -58,6 +63,7 @@
                         <option value="text-modify">Text Modification</option>
                         <option value="html-inject">HTML Injection</option>
                     </select>
+                    <textarea id="defacement-data" placeholder="Defacement Data (HTML, Text, or Image URL)"></textarea>
                     <button id="defacement-start">Start Defacement 🔥</button>
                 </div>
             </section>
@@ -70,12 +76,14 @@
                         <option value="port-scan">Port Scanning</option>
                         <option value="banner-grab">Banner Grabbing</option>
                     </select>
+                    <input type="text" id="port-range" placeholder="Port Range (e.g., 1-1000)" value="1-1000">
                     <button id="connection-start">Start Connection 🔌</button>
                 </div>
+                <div id="connection-results"></div>
             </section>
 
             <section id="ransomware" class="tab-content">
-                <h2>Ransomware Indication 💣</h2>
+                <h2>Ransomware Simulation 💣</h2>
                 <p>Simulate ransomware-style attacks (purely conceptual).</p>
             </section>
 
