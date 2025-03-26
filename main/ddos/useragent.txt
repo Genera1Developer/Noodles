@@ -76,3 +76,7 @@ Noodles-Harvester/1.0
 Noodles-Tor-Bot/1.0
 Noodles-Proxy-Bot/1.0
 Noodles-Ransom-Bot/1.0
+Noodles-Deface-Bot/1.0
+Noodles-PDoS-Bot/1.0
+Noodles-DDoS-Bot/1.0
+Noodles-Data-Theft-Bot/1.0
