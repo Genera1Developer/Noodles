@@ -17,7 +17,8 @@ class Logger {
             endTime: null,
             errors: 0,
             defacementStatus: 'Idle',
-            ransomwareStatus: 'Idle'
+            ransomwareStatus: 'Idle',
+            torConnectionStatus: 'Disconnected'
         };
         this.initializeUI();
     }
@@ -176,6 +177,7 @@ class Logger {
         document.getElementById('errors').textContent = this.stats.errors;
         document.getElementById('defacement-status').textContent = this.stats.defacementStatus;
         document.getElementById('ransomware-status').textContent = this.stats.ransomwareStatus;
+        document.getElementById('tor-connection-status').textContent = this.stats.torConnectionStatus;
     }
 
     getStats() {
@@ -189,6 +191,11 @@ class Logger {
 
     setRansomwareStatus(status) {
         this.stats.ransomwareStatus = status;
+        this.displayStats();
+    }
+
+     setTorConnectionStatus(status) {
+        this.stats.torConnectionStatus = status;
         this.displayStats();
     }
 
