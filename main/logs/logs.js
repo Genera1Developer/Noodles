@@ -12,7 +12,10 @@ class Logger {
             connectionStatus: 'Idle',
             lastAttackType: 'None',
             target: 'None',
-            attackID: 'None'
+            attackID: 'None',
+            startTime: null,
+            endTime: null,
+            errors: 0,
         };
         this.initializeUI();
     }
@@ -49,6 +52,8 @@ class Logger {
         fs.appendFile(this.logFilePath, logString, err => {
             if (err) {
                 console.error('Failed to persist log:', err);
+                this.stats.errors++;
+                this.displayStats();
             }
         });
     }
@@ -62,6 +67,8 @@ class Logger {
             logsContainer.prepend(logElement);
         } else {
             console.warn('Logs container not found.');
+            this.stats.errors++;
+            this.displayStats();
         }
     }
 
@@ -101,6 +108,8 @@ class Logger {
                     this.displayLog(logEntry);
                 } catch (e) {
                     console.error('Error parsing log line:', line, e);
+                    this.stats.errors++;
+                    this.displayStats();
                 }
             });
         });
@@ -115,6 +124,8 @@ class Logger {
         fs.writeFile(this.logFilePath, '', err => {
             if (err) {
                 console.error('Failed to clear log file:', err);
+                this.stats.errors++;
+                this.displayStats();
             }
         });
     }
@@ -130,6 +141,16 @@ class Logger {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    startAttack(target, attackType) {
+         this.stats.startTime = new Date().toISOString();
+         this.updateStats(0, 0, 'Attacking', attackType, target);
+    }
+
+    endAttack() {
+        this.stats.endTime = new Date().toISOString();
+        this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None');
     }
 
     updateStats(packets, bytes, status, attackType, target) {
@@ -148,6 +169,9 @@ class Logger {
         document.getElementById('last-attack-type').textContent = this.stats.lastAttackType;
         document.getElementById('target').textContent = this.stats.target;
         document.getElementById('attack-id').textContent = this.stats.attackID;
+        document.getElementById('start-time').textContent = this.stats.startTime || 'N/A';
+        document.getElementById('end-time').textContent = this.stats.endTime || 'N/A';
+        document.getElementById('errors').textContent = this.stats.errors;
     }
 
     getStats() {
