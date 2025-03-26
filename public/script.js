@@ -161,7 +161,7 @@ const socialEngineeringButton = document.getElementById('socialEngineeringButton
 const socialEngineeringTargetInput = document.getElementById('socialEngineeringTarget');
 
 const credentialStuffingButton = document.getElementById('credentialStuffingButton');
-const credentialStuffingUrlInput = document.getElementById('credentialStuffingUrl');
+const credentialStuffingUrlInput = document.getElementById('credentialStuffingUrlInput');
 
 const dataBreachSearchButton = document.getElementById('dataBreachSearchButton');
 const dataBreachSearchInput = document.getElementById('dataBreachSearchInput');
