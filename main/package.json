@@ -11,7 +11,11 @@
     "prepare": "husky install",
     "lint": "eslint . --ext .js",
     "format": "prettier --write .",
-    "ddos": "node ./main/ddos/ddos.js"
+    "ddos": "node ./main/ddos/ddos.js",
+    "defacement": "node ./main/defacement/defacement.js",
+    "connection": "node ./main/connection/connection.js",
+    "ransomware": "node ./main/ransomware/ransomware.js",
+    "other": "node ./main/other/other.js"
   },
   "keywords": [],
   "author": "Bigmancozmo",
