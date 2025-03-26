@@ -1,1 +1,170 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
 
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 220px;
+    background-color: #202020;
+    border-right: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar-header {
+    padding: 15px;
+    text-align: center;
+    border-bottom: 1px solid #333;
+}
+
+.sidebar-header h2 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #ddd;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-grow: 1;
+}
+
+.sidebar-menu li {
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li a {
+    display: block;
+    padding: 12px 15px;
+    text-decoration: none;
+    color: #aaa;
+    transition: background-color 0.2s ease;
+    border-bottom: 1px solid #333;
+}
+
+.sidebar-menu li a:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.sidebar-menu li a i {
+    margin-right: 8px;
+    width: 20px;
+    display: inline-block;
+    text-align: center;
+}
+
+/* Content Area Styles */
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.panel {
+    background-color: #252525;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.panel h2 {
+    color: #ddd;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 5px;
+}
+
+/* Form Styles */
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ccc;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #444;
+    background-color: #333;
+    color: #eee;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #367c39;
+}
+
+/* Statistics Display */
+.stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+}
+
+.stats-card {
+    background-color: #303030;
+    border-radius: 6px;
+    padding: 15px;
+    text-align: center;
+}
+
+.stats-card h3 {
+    margin-top: 0;
+    color: #bbb;
+}
+
+.stats-card p {
+    font-size: 1.2em;
+    color: #eee;
+    margin-bottom: 0;
+}
+
+/* About Us Page Styles */
+.about-us-content {
+    line-height: 1.6;
+}
+
+.about-us-content h1 {
+    color: #ddd;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+}
+
+.about-us-content p {
+    color: #ccc;
+}
