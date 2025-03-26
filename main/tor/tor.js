@@ -1,4 +1,4 @@
-class Tor {
+class Tor { //
     constructor() {
         this.gateways = [
             "https://onion.city",
