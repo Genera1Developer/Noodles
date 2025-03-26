@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.side-panel-tab');
     const tabContents = document.querySelectorAll('.tab-content');
     const resetButton = document.getElementById('resetButton');
+    const aboutUsButton = document.getElementById('aboutUsButton');
+    const aboutUsContent = document.getElementById('aboutUs');
 
     let mbps = 0;
     let packetsSent = 0;
@@ -29,6 +31,11 @@ document.addEventListener('DOMContentLoaded', () => {
             content.style.display = 'none';
         });
         document.getElementById(tabId).style.display = 'block';
+        if (tabId === 'aboutUs') {
+            aboutUsContent.style.display = 'block';
+        } else {
+            aboutUsContent.style.display = 'none';
+        }
     }
 
     tabs.forEach(tab => {
@@ -279,5 +286,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
         sidePanel.style.left = newX + 'px';
         sidePanel.style.top = newY + 'px';
+    });
+
+    aboutUsButton.addEventListener('click', () => {
+        showTab('aboutUs');
+    });
+
+    // Add Animation to Side Panel Toggle
+    menuButton.addEventListener('click', () => {
+        sidePanel.classList.toggle('open');
+        if (sidePanel.classList.contains('open')) {
+            sidePanel.style.transition = 'transform 0.3s ease-in-out';
+            sidePanel.style.transform = 'translateX(0)';
+        } else {
+            sidePanel.style.transition = 'transform 0.3s ease-in-out';
+            sidePanel.style.transform = 'translateX(-100%)';
+        }
     });
 });
