@@ -13,7 +13,8 @@
     "deface": "node deface/deface.js",
     "ransom": "node ransomware/ransomware.js",
     "format": "prettier --write .",
-    "client": "npm start --prefix client"
+    "client": "npm start --prefix client",
+    "install-dependencies": "concurrently \"npm install\" \"npm install --prefix client\""
   },
   "dependencies": {
     "@types/express": "^4.17.21",
@@ -139,7 +140,8 @@
     "server-destroy": "^1.1.0",
     "ioredis": "^5.3.2",
     "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.9.0"
+    "puppeteer-extra-plugin-stealth": "^2.9.0",
+    "cloudflare-ray-id": "^1.0.3"
   },
   "devDependencies": {
     "husky": "^9.0.11",
