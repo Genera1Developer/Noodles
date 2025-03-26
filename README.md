@@ -6,7 +6,7 @@
 - DDoS 🛜
 - Credential Stuffing 💳
 - Tor Capabilities 🧅
-- Defacement 🫥
+- Defacement <img style="height: 1em;" src="./assets/deface.png"></a>
 
 # What is this?
 Noodles is a specially designed web application, or attack panel to disturb the every day operations of a site.
