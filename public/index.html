@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - Your favorite hacking tool</title>
+    <title>Noodles - The Ultimate Hacking Toolkit</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
@@ -19,12 +19,12 @@
             </div>
             <nav class="sidebar-nav">
                 <ul>
-                    <li><a href="#" data-tab="ddos"><i class="fa fa-skull"></i> DDoS</a></li>
-                    <li><a href="#" data-tab="defacement"><i class="fa fa-fire"></i> Defacement</a></li>
-                    <li><a href="#" data-tab="connection"><i class="fa fa-plug"></i> Connection</a></li>
-                    <li><a href="#" data-tab="ransomware"><i class="fa fa-lock"></i> Ransomware</a></li>
-                    <li><a href="#" data-tab="other"><i class="fa fa-wrench"></i> Other Tools</a></li>
-                    <li><a href="#" data-tab="about"><i class="fa fa-info-circle"></i> About Us</a></li>
+                    <li data-tab="ddos"><i class="fas fa-skull"></i> DDoS</li>
+                    <li data-tab="defacement"><i class="fas fa-paint-brush"></i> Defacement</li>
+                    <li data-tab="connection"><i class="fas fa-network-wired"></i> Connection</li>
+                    <li data-tab="ransomware"><i class="fas fa-virus"></i> Ransomware</li>
+                    <li data-tab="other"><i class="fas fa-wrench"></i> Other Tools</li>
+                    <li data-tab="about"><i class="fas fa-info-circle"></i> About Us</li>
                 </ul>
             </nav>
         </aside>
@@ -38,67 +38,55 @@
                         <option value="http-flood">HTTP Flood</option>
                         <option value="tcp-flood">TCP Flood</option>
                         <option value="udp-flood">UDP Flood</option>
-                        <option value="syn-flood">SYN Flood</option>
-                        <option value="slowloris">Slowloris</option>
                     </select>
-                    <input type="number" id="ddos-threads" placeholder="Threads (Default: 10)" value="10">
-                    <input type="number" id="ddos-duration" placeholder="Duration (seconds, Default: 30)"
-                        value="30">
-                    <button id="ddos-start">Start DDoS 💀</button>
+                    <button id="ddos-start">Start Attack</button>
                 </div>
                 <div class="attack-stats">
                     <p>MBPS: <span id="ddos-mbps">0</span></p>
                     <p>Packets Sent: <span id="ddos-packets">0</span></p>
                     <p>Target Status: <span id="ddos-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="ddos-time">0</span>s</p>
+                    <p>Elapsed Time: <span id="ddos-time">0</span> seconds</p>
                 </div>
             </section>
 
             <section id="defacement" class="tab-content">
-                <h2>Website Defacement 🔥</h2>
-                <div class="attack-form">
+                <h2>Website Defacement 💀</h2>
+                <div class="defacement-form">
                     <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
-                    <select id="defacement-method">
-                        <option value="image-replace">Image Replacement</option>
-                        <option value="text-modify">Text Modification</option>
-                        <option value="html-inject">HTML Injection</option>
-                    </select>
-                    <textarea id="defacement-data" placeholder="Defacement Data (HTML, Text, or Image URL)"></textarea>
-                    <button id="defacement-start">Start Defacement 🔥</button>
+                    <textarea id="defacement-html" placeholder="HTML Code for Defacement"></textarea>
+                    <button id="defacement-start">Start Defacement</button>
                 </div>
             </section>
 
             <section id="connection" class="tab-content">
-                <h2>Unauthorized Connection 🔌</h2>
-                <div class="attack-form">
+                <h2>Unauthorized Connection 💻</h2>
+                <div class="connection-form">
                     <input type="text" id="connection-target" placeholder="Target URL or .onion address">
-                    <select id="connection-method">
+                    <select id="connection-type">
                         <option value="port-scan">Port Scanning</option>
                         <option value="banner-grab">Banner Grabbing</option>
                     </select>
-                    <input type="text" id="port-range" placeholder="Port Range (e.g., 1-1000)" value="1-1000">
-                    <button id="connection-start">Start Connection 🔌</button>
+                    <button id="connection-start">Start Connection</button>
                 </div>
-                <div id="connection-results"></div>
             </section>
 
             <section id="ransomware" class="tab-content">
                 <h2>Ransomware Simulation 💣</h2>
-                <p>Simulate ransomware-style attacks (purely conceptual).</p>
+                <p>Simulate ransomware attacks (purely conceptual).</p>
             </section>
 
             <section id="other" class="tab-content">
-                <h2>Other Hacking Tools 🧰</h2>
-                <p>More tools coming soon...</p>
+                <h2>Other Hacking Tools 🔥</h2>
+                <p>Additional tools will be added here.</p>
             </section>
 
             <section id="about" class="tab-content">
-                <h2>About Us</h2>
-                <p>Noodles is a cutting-edge cybersecurity tool developed by a team of highly skilled (and slightly
-                    unhinged) professionals. Our mission is to provide... unique solutions to complex problems. We
-                    are based in a secure, undisclosed location, and we pride ourselves on pushing the boundaries of
-                    what's possible. Use responsibly... or don't. We don't really care.
-                </p>
+                <h2>About Us ⚠</h2>
+                <p>Noodles is a cutting-edge penetration testing toolkit designed to help security professionals assess
+                    and exploit vulnerabilities in systems. Our mission is to provide the most advanced and effective
+                    tools for ethical hacking, ensuring that our clients stay one step ahead of potential threats.
+                    Founded by a team of experienced cybersecurity experts, Noodles is committed to innovation and
+                    excellence in the field of cybersecurity.</p>
             </section>
         </main>
     </div>
