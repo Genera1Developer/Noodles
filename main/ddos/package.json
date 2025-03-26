@@ -196,8 +196,7 @@
     "nmap": "^0.3.0",
      "geoip-lite": "^1.4.9",
     "country-data": "^0.0.31",
-    "server-destroy": "^1.1.0",
-    "user-home": "^3.0.0"
+    "server-destroy": "^1.1.0"
   },
   "devDependencies": {
     "husky": "^9.0.11",
