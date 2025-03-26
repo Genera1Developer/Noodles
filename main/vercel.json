@@ -3,10 +3,10 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/$1"
+      "dest": "/public/$1"
     }
   ],
   "rewrites": [
-    { "source": "/public/(.*)", "destination": "/$1" }
+    { "source": "/(.*)", "destination": "/public/$1" }
   ]
 }
