@@ -7,6 +7,8 @@ const https = require('https');
 const { exec } = require('child_process');
 const os = require('os');
 const tcpp = require('tcp-ping');
+const net = require('net');
+const tls = require('tls');
 
 class Logger {
     constructor() {
@@ -56,6 +58,11 @@ class Logger {
             attackErrorDetails: 'None',
             defacementDetails: 'None',
             ransomwareDetails: 'None',
+            attackStartTime: null,
+            attackEndTime: null,
+            totalAttackTime: 0,
+            attackPacketLoss: 0,
+            attackReflectionEnabled: false
         };
         this.latencyData = [];
         this.initializeUI();
@@ -186,26 +193,31 @@ class Logger {
         URL.revokeObjectURL(url);
     }
 
-    startAttack(target, attackType, threads, torProxy) {
-        this.stats.startTime = new Date().toISOString();
+    startAttack(target, attackType, threads, torProxy, reflectionEnabled = false) {
+        this.stats.attackStartTime = new Date().toISOString();
         this.stats.attackThreads = threads;
         this.stats.torProxyUsed = torProxy || 'None';
-        this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy);
+        this.stats.attackReflectionEnabled = reflectionEnabled;
+        this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy, reflectionEnabled);
         this.setAttackStatus('Running');
-        this.setAttackDetails(`Attack type: ${attackType}, threads: ${threads}`);
+        this.setAttackDetails(`Attack type: ${attackType}, threads: ${threads}, reflection: ${reflectionEnabled}`);
         this.setAttackProgress(0);
         this.setAttackErrorDetails('None');
     }
 
     endAttack() {
-        this.stats.endTime = new Date().toISOString();
+        this.stats.attackEndTime = new Date().toISOString();
+        const startTime = new Date(this.stats.attackStartTime).getTime();
+        const endTime = new Date(this.stats.attackEndTime).getTime();
+        this.stats.totalAttackTime = (endTime - startTime) / 1000;
+
         this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None', 0, 'None');
         this.setAttackStatus('Stopped');
-        this.setAttackDetails('Attack finished');
+        this.setAttackDetails(`Attack finished in ${this.stats.totalAttackTime} seconds`);
         this.setAttackProgress(100);
     }
 
-    updateStats(packets, bytes, status, attackType, target, threads, torProxy) {
+    updateStats(packets, bytes, status, attackType, target, threads, torProxy, reflectionEnabled = false) {
         this.stats.packetsSent += packets;
         this.stats.bytesSent += bytes;
         this.stats.connectionStatus = status;
@@ -213,11 +225,17 @@ class Logger {
         this.stats.target = target;
         this.stats.attackThreads = threads;
         this.stats.torProxyUsed = torProxy || this.stats.torProxyUsed;
+        this.stats.attackReflectionEnabled = reflectionEnabled;
         this.displayStats();
     }
 
     incrementSuccessfulConnections() {
         this.stats.successfulConnections++;
+        this.displayStats();
+    }
+
+    updatePacketLoss(packetLoss) {
+        this.stats.attackPacketLoss = packetLoss;
         this.displayStats();
     }
 
@@ -426,6 +444,11 @@ class Logger {
         document.getElementById('attack-error-details').textContent = this.stats.attackErrorDetails;
         document.getElementById('defacement-details').textContent = this.stats.defacementDetails;
         document.getElementById('ransomware-details').textContent = this.stats.ransomwareDetails;
+        document.getElementById('attack-start-time').textContent = this.stats.attackStartTime || 'N/A';
+        document.getElementById('attack-end-time').textContent = this.stats.attackEndTime || 'N/A';
+        document.getElementById('total-attack-time').textContent = this.stats.totalAttackTime.toFixed(2) + ' s';
+        document.getElementById('attack-packet-loss').textContent = this.stats.attackPacketLoss.toFixed(2) + '%';
+        document.getElementById('attack-reflection-enabled').textContent = this.stats.attackReflectionEnabled ? 'Yes' : 'No';
     }
 
     getStats() {
