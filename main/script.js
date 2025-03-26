@@ -55,8 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
       updateStatus(attackData.message);
       updateStatistics(attackData);
 
-      // Simulate statistics update (replace with actual data)
-      simulateStatistics();
+      simulateStatistics(attackData.mbps, attackData.packetsSent, attackData.targetStatus);
     } catch (error) {
       updateStatus(`Error: ${error.message}`);
     }
@@ -91,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 1000);
 
   function loadAboutUs() {
-    fetch('/about.html')
+    fetch('about.html')
       .then(response => response.text())
       .then(data => {
         document.getElementById('about-us-content').innerHTML = data;
@@ -119,14 +118,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  function simulateStatistics() {
-    let mbps = 0;
-    let packets = 0;
+  function simulateStatistics(initialMbps, initialPackets, initialTargetStatus) {
+    let mbps = initialMbps || 0;
+    let packets = initialPackets || 0;
+    let targetStatus = initialTargetStatus || 'Unknown';
 
     const intervalId = setInterval(() => {
-      mbps += Math.random() * 10;
-      packets += Math.floor(Math.random() * 100);
-      const targetStatus = Math.random() > 0.5 ? 'Online' : 'Offline';
+      mbps += Math.random() * 5;
+      packets += Math.floor(Math.random() * 50);
+
+      const statusOptions = ['Online', 'Offline', 'Unresponsive'];
+      targetStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
 
       mbpsDisplay.textContent = mbps.toFixed(2);
       packetsSentDisplay.textContent = packets;
@@ -135,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!attackRunning) {
         clearInterval(intervalId);
       }
-    }, 1000);
+    }, 500);
   }
 
   openTab('ddos');
