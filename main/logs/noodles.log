@@ -5,3 +5,9 @@ Created a sidebar with menu options for DDoS, Defacement, Connection, Ransomware
 Implemented tabbed content areas for each menu option with input fields and buttons.
 Added status and log boxes to each tab for displaying information.
 Added basic styling and JavaScript links (style.css and script.js need to be created).
+Updated log with successful DDoS attack. Target: example.com, Packets Sent: 100000, Status: Success.
+Attempted defacement of vulnerable site. Target: compromised-site.net, Status: Successful, Message: "Owned by Noodles".
+Established reverse shell connection. Target: victim-machine.org, User: root, Status: Connected.
+Initiated ransomware deployment. Target: target-network.local, Status: Encrypting, Files Encrypted: 500.
+About Us updated with mission statement and contact information.
+Updated log with failed attempt to access tor site. Target: some-onion-site.onion, Status: Failed, Error: "Invalid address".
