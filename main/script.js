@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let startTime;
   let attackRunning = false;
+  let statisticsInterval;
 
   attackButton.addEventListener('click', async () => {
     if (attackRunning) {
@@ -28,11 +29,15 @@ document.addEventListener('DOMContentLoaded', () => {
     startTime = new Date();
     attackRunning = true;
     updateStatus(`Attack started: ${attackType} on ${target}`);
+
     try {
       await startAttack(target, attackType);
+    } catch (error) {
+      updateStatus(`Error: ${error.message}`);
     } finally {
       attackRunning = false;
       updateStatus('Attack finished.');
+      clearInterval(statisticsInterval);
     }
   });
 
@@ -123,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let packets = initialPackets || 0;
     let targetStatus = initialTargetStatus || 'Unknown';
 
-    const intervalId = setInterval(() => {
+    statisticsInterval = setInterval(() => {
       mbps += Math.random() * 5;
       packets += Math.floor(Math.random() * 50);
 
@@ -135,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
       targetStatusDisplay.textContent = targetStatus;
 
       if (!attackRunning) {
-        clearInterval(intervalId);
+        clearInterval(statisticsInterval);
       }
     }, 500);
   }
