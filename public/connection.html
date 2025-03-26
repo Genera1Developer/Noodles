@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connection Tools</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <div class="connection-container">
@@ -23,6 +24,15 @@
             <input type="text" id="banner-grab-port" placeholder="Port (e.g., 80)">
             <button id="banner-grab-button">Grab Banner</button>
             <div id="banner-grab-results" class="results-box"></div>
+        </div>
+
+        <div class="tool-box">
+            <h2>Custom Payload 💣</h2>
+            <textarea id="custom-payload" placeholder="Enter custom payload here"></textarea>
+            <input type="text" id="payload-target" placeholder="Target IP Address or URL">
+            <input type="text" id="payload-port" placeholder="Port (e.g., 8080)">
+            <button id="send-payload-button">Send Payload</button>
+            <div id="payload-results" class="results-box"></div>
         </div>
     </div>
     <script src="script.js"></script>
