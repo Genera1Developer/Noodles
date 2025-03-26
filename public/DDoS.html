@@ -1,1 +1,26 @@
+<div class="tab-content" id="ddos">
+    <h2>DDoS Attack Configuration 💥</h2>
+    <label for="ddosTarget">Target URL (.onion supported):</label>
+    <input type="text" id="ddosTarget" placeholder="http://example.com or onion address" />
 
+    <label for="ddosType">Attack Type:</label>
+    <select id="ddosType">
+        <option value="http-flood">HTTP Flood 🔥</option>
+        <option value="tcp-flood">TCP Flood</option>
+        <option value="udp-flood">UDP Flood</option>
+    </select>
+
+    <label for="ddosThreads">Number of Threads:</label>
+    <input type="number" id="ddosThreads" value="10" min="1" max="1000" />
+
+    <label for="ddosTime">Attack Duration (seconds):</label>
+    <input type="number" id="ddosTime" value="30" min="1" max="3600" />
+
+    <button id="startDDoS">Start DDoS Attack 💣</button>
+
+    <h3>Statistics 📊</h3>
+    <p>MBPS: <span id="ddosMBPS">0</span></p>
+    <p>Packets Sent: <span id="ddosPackets">0</span></p>
+    <p>Target Status: <span id="ddosStatus">Unknown</span></p>
+    <p>Time Elapsed: <span id="ddosTimeElapsed">0</span> seconds</p>
+</div>
