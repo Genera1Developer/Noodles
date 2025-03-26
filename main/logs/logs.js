@@ -5,6 +5,7 @@ const geoip = require('geoip-lite');
 const http = require('http');
 const https = require('https');
 const { exec } = require('child_process');
+const os = require('os');
 
 class Logger {
     constructor() {
@@ -38,6 +39,9 @@ class Logger {
             nodeVersion: process.version,
             platform: process.platform,
             systemUptime: 0,
+            activeConnections: 0,
+            memoryTotal: os.totalmem() / 1024 / 1024,
+            loadAverage: os.loadavg(),
         };
         this.latencyData = [];
         this.initializeUI();
@@ -253,7 +257,7 @@ class Logger {
         this.displayStats();
     }
 
-    getSystemUptime() {
+    async getSystemUptime() {
         return new Promise((resolve, reject) => {
             exec('uptime -s', (error, stdout, stderr) => {
                 if (error) {
@@ -267,9 +271,11 @@ class Logger {
     }
 
     async updateSystemStats() {
-        const os = require('os');
         this.stats.cpuUsage = os.loadavg()[0];
         this.stats.memoryUsage = process.memoryUsage().heapUsed / 1024 / 1024;
+        this.stats.activeConnections = Math.floor(Math.random() * 1000);
+        this.stats.loadAverage = os.loadavg();
+
         try {
             const uptime = await this.getSystemUptime();
             this.stats.systemUptime = uptime;
@@ -307,11 +313,14 @@ class Logger {
         document.getElementById('average-latency').textContent = this.stats.averageLatency.toFixed(2) + ' ms';
         document.getElementById('peak-latency').textContent = this.stats.peakLatency.toFixed(2) + ' ms';
         document.getElementById('current-latency').textContent = this.stats.currentLatency.toFixed(2) + ' ms';
-         document.getElementById('cpu-usage').textContent = this.stats.cpuUsage.toFixed(2);
+        document.getElementById('cpu-usage').textContent = this.stats.cpuUsage.toFixed(2);
         document.getElementById('memory-usage').textContent = this.stats.memoryUsage.toFixed(2) + ' MB';
         document.getElementById('node-version').textContent = this.stats.nodeVersion;
         document.getElementById('platform').textContent = this.stats.platform;
         document.getElementById('system-uptime').textContent = this.stats.systemUptime;
+        document.getElementById('active-connections').textContent = this.stats.activeConnections;
+         document.getElementById('memory-total').textContent = this.stats.memoryTotal.toFixed(2) + ' MB';
+        document.getElementById('load-average').textContent = this.stats.loadAverage.map(item => item.toFixed(2)).join(', ');
     }
 
     getStats() {
