@@ -32,11 +32,14 @@
                     <option value="udp">UDP Flood</option>
                     <option value="syn">SYN Flood</option>
                 </select>
+                <input type="number" id="ddosThreads" placeholder="Threads (Default: 10)" value="10">
+                <input type="number" id="ddosTimeLimit" placeholder="Time Limit (seconds, Default: 30)" value="30">
                 <button id="startDDoS">Start DDoS</button>
                 <div class="status-box">
                     <p>Status: <span id="ddosStatus">Idle</span></p>
                     <p>MBPS: <span id="ddosMBPS">0</span></p>
                     <p>Packets Sent: <span id="ddosPackets">0</span></p>
+                    <p>Target Status: <span id="ddosTargetStatus">Unknown</span></p>
                     <p>Time Elapsed: <span id="ddosTime">0</span>s</p>
                 </div>
                 <div class="log-box" id="ddosLog">
@@ -69,9 +72,11 @@
                     <option value="portscan">Port Scanning</option>
                     <option value="bannergrab">Banner Grabbing</option>
                 </select>
+                <input type="text" id="portRange" placeholder="Port Range (e.g., 1-100)" value="1-100">
                 <button id="startConnection">Start Connection</button>
                  <div class="status-box">
                     <p>Status: <span id="connectionStatus">Idle</span></p>
+                    <p>Open Ports: <span id="openPorts">None</span></p>
                 </div>
                 <div class="log-box" id="connectionLog">
                     <h3>Log</h3>
@@ -93,8 +98,8 @@
 
             <div class="tab-content" id="about">
                 <h2>About Us 🔥</h2>
-                <p>Noodles is a cutting-edge penetration testing suite designed for cybersecurity professionals. We provide advanced tools for network analysis, vulnerability assessment, and responsible disclosure.</p>
-                <p>Our team is composed of experienced security researchers and developers dedicated to improving the security landscape.</p>
+                <p>Noodles is a cutting-edge penetration testing suite designed for cybersecurity professionals and enthusiasts. We provide advanced tools for network analysis, vulnerability assessment, and ethical hacking practices. Use responsibly.</p>
+                <p>Our team is composed of experienced security researchers and developers dedicated to improving the security landscape and providing powerful tools.</p>
                 <p>Contact: noodles@example.com</p>
             </div>
         </div>
