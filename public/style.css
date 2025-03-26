@@ -312,3 +312,127 @@ button:hover {
 html {
     scrollbar-color: #555 #2D2D2D;
 }
+
+/* Really good possibly CSS
+ :root {
+            --primary-bg: #0f1729;
+            --secondary-bg: #1a2747;
+            --accent-color: #4a90e2;
+            --text-color: #e0e6f7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--secondary-bg);
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.2);
+        }
+
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--accent-color);
+        }
+
+        .nav {
+            list-style-type: none;
+        }
+
+        .nav li {
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav li:hover {
+            background-color: rgba(74, 144, 226, 0.2);
+        }
+
+        .nav li i {
+            margin-right: 10px;
+            color: var(--accent-color);
+        }
+
+        .content {
+            flex-grow: 1;
+            padding: 30px;
+            background-color: var(--primary-bg);
+            overflow-y: auto;
+        }
+
+        .page {
+            background-color: var(--secondary-bg);
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .page h2 {
+            color: var(--accent-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            background-color: #233048;
+            border: 1px solid #344562;
+            color: var(--text-color);
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #3a7bd5;
+        }
+
+        .stats {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            background-color: var(--secondary-bg);
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .stats p {
+            display: flex;
+            justify-content: space-between;
+            color: #8f9bad;
+        }
+*/
