@@ -11,7 +11,8 @@ class Logger {
             bytesSent: 0,
             connectionStatus: 'Idle',
             lastAttackType: 'None',
-            target: 'None'
+            target: 'None',
+            attackID: 'None'
         };
         this.initializeUI();
     }
@@ -23,6 +24,7 @@ class Logger {
     log(eventData) {
         const timestamp = new Date().toISOString();
         const attackID = this.generateAttackID();
+        this.stats.attackID = attackID;
         const logEntry = {
             Timestamp: timestamp,
             AttackID: attackID,
@@ -145,6 +147,7 @@ class Logger {
         document.getElementById('connection-status').textContent = this.stats.connectionStatus;
         document.getElementById('last-attack-type').textContent = this.stats.lastAttackType;
         document.getElementById('target').textContent = this.stats.target;
+        document.getElementById('attack-id').textContent = this.stats.attackID;
     }
 
     getStats() {
