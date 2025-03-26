@@ -1,111 +1,131 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - Your Cyber Toolkit</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
+ <html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noodles - Cyber Operations Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+ </head>
+ <body>
+  <div class="container">
+  <aside class="sidebar">
+  <div class="sidebar-header">
+  <img src="assets/banner.gif" alt="Noodles Logo" class="logo">
+  <h1>Noodles</h1>
+  </div>
+  <nav>
+  <ul>
+  <li><a href="#" data-tab="ddos"><i class="fas fa-skull"></i> DDoS</a></li>
+  <li><a href="#" data-tab="defacement"><i class="fas fa-mask"></i> Defacement</a></li>
+  <li><a href="#" data-tab="connection"><i class="fas fa-network-wired"></i> Connection</a></li>
+  <li><a href="#" data-tab="ransomware"><i class="fas fa-virus"></i> Ransomware</a></li>
+  <li><a href="#" data-tab="about"><i class="fas fa-info-circle"></i> About Us</a></li>
+  </ul>
+  </nav>
+  </aside>
 
-    <div class="sidebar">
-        <div class="logo">Noodles</div>
-        <ul class="menu">
-            <li data-tab="ddos"><i class="fa fa-skull"></i> DDoS</li>
-            <li data-tab="defacement"><i class="fa fa-paint-brush"></i> Defacement</li>
-            <li data-tab="connection"><i class="fa fa-network-wired"></i> Connection</li>
-            <li data-tab="ransomware"><i class="fa fa-lock"></i> Ransomware</li>
-            <li data-tab="about"><i class="fa fa-info-circle"></i> About Us</li>
-        </ul>
-    </div>
+  <main class="main-content">
+  <section id="ddos" class="tab-content active">
+  <h2>DDoS Attacks <i class="fas fa-skull"></i></h2>
+  <div class="attack-panel">
+  <div class="input-group">
+  <label for="targetUrl">Target URL:</label>
+  <input type="text" id="targetUrl" placeholder="http://example.com or onion address">
+  </div>
+  <div class="input-group">
+  <label for="attackType">Attack Type:</label>
+  <select id="attackType">
+  <option value="tcp_flood">TCP Flood</option>
+  <option value="udp_flood">UDP Flood</option>
+  <option value="http_flood">HTTP Flood</option>
+  <option value="slowloris">Slowloris</option>
+  </select>
+  </div>
+  <div class="input-group">
+  <label for="duration">Duration (seconds):</label>
+  <input type="number" id="duration" value="30">
+  </div>
+  <button id="startDDoS">Start Attack <i class="fas fa-play"></i></button>
+  </div>
+  <div class="attack-stats">
+  <h3>Attack Statistics</h3>
+  <p>Status: <span id="status">Idle</span></p>
+  <p>MBPS: <span id="mbps">0</span></p>
+  <p>Packets Sent: <span id="packets">0</span></p>
+  </div>
+  <div class="attack-logs">
+  <h3>Logs</h3>
+  <textarea id="logs" readonly></textarea>
+  </div>
+  </section>
 
-    <div class="main-content">
-        <header>
-            <h1>Noodles - Cyber Solutions</h1>
-        </header>
+  <section id="defacement" class="tab-content">
+  <h2>Defacement <i class="fas fa-mask"></i></h2>
+  <div class="defacement-panel">
+  <div class="input-group">
+  <label for="defacementUrl">Target URL:</label>
+  <input type="text" id="defacementUrl" placeholder="http://example.com">
+  </div>
+  <div class="input-group">
+  <label for="defacementContent">Defacement Content (HTML):</label>
+  <textarea id="defacementContent" placeholder="<h1>Hacked!</h1>"></textarea>
+  </div>
+  <button id="startDefacement">Start Defacement <i class="fas fa-play"></i></button>
+  </div>
+  <div class="defacement-logs">
+  <h3>Logs</h3>
+  <textarea id="defacementLogs" readonly></textarea>
+  </div>
+  </section>
 
-        <section id="ddos" class="tab-content active">
-            <h2>DDoS Attacks <i class="fa fa-skull"></i></h2>
-            <div class="attack-panel">
-                <label for="ddos-target">Target URL:</label>
-                <input type="text" id="ddos-target" placeholder="Enter URL or .onion address">
-                <label for="ddos-type">Attack Type:</label>
-                <select id="ddos-type">
-                    <option value="syn-flood">SYN Flood</option>
-                    <option value="http-flood">HTTP Flood</option>
-                    <option value="udp-flood">UDP Flood</option>
-                    <option value="slowloris">Slowloris</option>
-                </select>
-                <label for="ddos-threads">Threads:</label>
-                <input type="number" id="ddos-threads" value="100" min="1">
-                <button id="start-ddos">Start Attack</button>
-            </div>
-            <div class="attack-stats">
-                <h3>Statistics</h3>
-                <p>Status: <span id="ddos-status">Idle</span></p>
-                <p>MBPS: <span id="ddos-mbps">0</span></p>
-                <p>Packets Sent: <span id="ddos-packets">0</span></p>
-            </div>
-            <div class="logs">
-                <h3>Logs</h3>
-                <textarea id="ddos-logs" readonly></textarea>
-            </div>
-        </section>
+  <section id="connection" class="tab-content">
+  <h2>Connection <i class="fas fa-network-wired"></i></h2>
+  <div class="connection-panel">
+  <div class="input-group">
+  <label for="connectionUrl">Target URL/IP:</label>
+  <input type="text" id="connectionUrl" placeholder="http://example.com or IP Address">
+  </div>
+  <div class="input-group">
+  <label for="connectionPort">Port:</label>
+  <input type="number" id="connectionPort" value="80">
+  </div>
+  <button id="testConnection">Test Connection <i class="fas fa-check-circle"></i></button>
+  </div>
+  <div class="connection-status">
+  <h3>Connection Status</h3>
+  <p>Status: <span id="connectionStatus">Not Tested</span></p>
+  <textarea id="connectionLogs" readonly></textarea>
+  </div>
+  </section>
 
-        <section id="defacement" class="tab-content">
-            <h2>Defacement <i class="fa fa-paint-brush"></i></h2>
-            <div class="attack-panel">
-                <label for="defacement-target">Target URL:</label>
-                <input type="text" id="defacement-target" placeholder="Enter URL">
-                <label for="defacement-page-content">Page Content (HTML):</label>
-                <textarea id="defacement-page-content" placeholder="Enter HTML to inject"></textarea>
-                <button id="start-defacement">Start Defacement</button>
-            </div>
-             <div class="logs">
-                <h3>Logs</h3>
-                <textarea id="defacement-logs" readonly></textarea>
-            </div>
-        </section>
+  <section id="ransomware" class="tab-content">
+  <h2>Ransomware <i class="fas fa-virus"></i></h2>
+  <div class="ransomware-panel">
+  <p>This feature is under development. Use with extreme caution.</p>
+  <div class="input-group">
+  <label for="ransomwareTarget">Target Directory:</label>
+  <input type="text" id="ransomwareTarget" placeholder="/path/to/target">
+  </div>
+  <div class="input-group">
+  <label for="encryptionKey">Encryption Key:</label>
+  <input type="text" id="encryptionKey" placeholder="Enter a strong encryption key">
+  </div>
+  <button id="startRansomware">Start Encryption <i class="fas fa-lock"></i></button>
+  </div>
+  <div class="ransomware-logs">
+  <h3>Logs</h3>
+  <textarea id="ransomwareLogs" readonly></textarea>
+  </div>
+  </section>
 
-        <section id="connection" class="tab-content">
-            <h2>Connection <i class="fa fa-network-wired"></i></h2>
-             <div class="attack-panel">
-                <label for="connection-target">Target IP/URL:</label>
-                <input type="text" id="connection-target" placeholder="Enter IP or URL">
-                <label for="connection-port">Port:</label>
-                <input type="number" id="connection-port" value="80" min="1" max="65535">
-                <button id="start-connection">Establish Connection</button>
-            </div>
-             <div class="logs">
-                <h3>Logs</h3>
-                <textarea id="connection-logs" readonly></textarea>
-            </div>
-        </section>
-
-         <section id="ransomware" class="tab-content">
-            <h2>Ransomware <i class="fa fa-lock"></i></h2>
-            <div class="attack-panel">
-                <label for="ransomware-target">Target Directory:</label>
-                <input type="text" id="ransomware-target" placeholder="Enter Directory Path">
-                <label for="ransomware-message">Ransom Message:</label>
-                <textarea id="ransomware-message" placeholder="Enter Ransom Message"></textarea>
-                <label for="ransomware-key">Decryption Key:</label>
-                <input type="text" id="ransomware-key" placeholder="Enter Decryption Key">
-                <button id="start-ransomware">Encrypt Files</button>
-            </div>
-             <div class="logs">
-                <h3>Logs</h3>
-                <textarea id="ransomware-logs" readonly></textarea>
-            </div>
-        </section>
-
-        <section id="about" class="tab-content">
-            <h2>About Us <i class="fa fa-info-circle"></i></h2>
-            <p>Noodles is a powerful cyber toolkit designed for advanced users. Use with caution.</p>
-        </section>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+  <section id="about" class="tab-content">
+  <h2>About Us <i class="fas fa-info-circle"></i></h2>
+  <p>Noodles is a cutting-edge cyber operations platform designed for advanced network testing and security assessments.  We provide tools for penetration testing, vulnerability analysis, and network defense. Use responsibly.</p>
+  <p>Disclaimer: This platform is intended for authorized use only. Unauthorized use is strictly prohibited.</p>
+  </section>
+  </main>
+  </div>
+  <script src="script.js"></script>
+ </body>
+ </html>
