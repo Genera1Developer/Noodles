@@ -20,6 +20,13 @@ class DDoS {
   this.setupEventListeners();
   this.initializeValues();
   this.setupUI();
+
+  // Optimization: Cache frequently used DOM elements
+  this.threadSliderInput = this.threadSlider.querySelector('input');
+  this.threadSliderValue = this.threadSlider.querySelector('.noodle-slider-value');
+  this.requestRateSliderInput = this.requestRateSlider.querySelector('input');
+  this.requestRateSliderValue = this.requestRateSlider.querySelector('.noodle-slider-value');
+  this.torToggleInput = this.torToggle.querySelector('input');
  }
 
  initializeValues() {
@@ -52,9 +59,12 @@ class DDoS {
   this.autoFillTarget();
   this.populateProxyList();
 
-  this.threadSlider.querySelector('input').value = this.maxThreads;
-  this.requestRateSlider.querySelector('input').value = this.requestRate;
+  this.threadSliderInput.value = this.maxThreads;
+  this.requestRateSliderInput.value = this.requestRate;
   this.stopButton.disabled = true;
+
+  this.threadSliderValue.textContent = this.maxThreads;
+  this.requestRateSliderValue.textContent = this.requestRate;
 
   this.statsInterval = setInterval(() => this.updateStats(), 1000);
  }
@@ -87,17 +97,16 @@ class DDoS {
   this.startButton.addEventListener('click', () => this.start());
   this.stopButton.addEventListener('click', () => this.stop());
   this.proxyRefreshButton.addEventListener('click', () => this.refreshProxies());
-  this.torToggle.querySelector('input').addEventListener('change', () => this.toggleTor());
+  this.torToggleInput.addEventListener('change', () => this.toggleTor());
 
-  // Event listener for slider input changes
-  this.threadSlider.querySelector('input').addEventListener('input', () => {
-   this.maxThreads = parseInt(this.threadSlider.querySelector('input').value);
-   this.threadSlider.querySelector('.noodle-slider-value').textContent = this.maxThreads;
+  this.threadSliderInput.addEventListener('input', () => {
+   this.maxThreads = parseInt(this.threadSliderInput.value);
+   this.threadSliderValue.textContent = this.maxThreads;
   });
 
-  this.requestRateSlider.querySelector('input').addEventListener('input', () => {
-   this.requestRate = parseInt(this.requestRateSlider.querySelector('input').value);
-   this.requestRateSlider.querySelector('.noodle-slider-value').textContent = this.requestRate;
+  this.requestRateSliderInput.addEventListener('input', () => {
+   this.requestRate = parseInt(this.requestRateSliderInput.value);
+   this.requestRateSliderValue.textContent = this.requestRate;
   });
  }
 
@@ -122,7 +131,6 @@ class DDoS {
   valueDisplay.textContent = '50';
   valueDisplay.classList.add('noodle-slider-value');
   sliderContainer.appendChild(valueDisplay);
-
 
   return sliderContainer;
  }
@@ -217,14 +225,11 @@ class DDoS {
  }
 
  toggleTor() {
-  this.isTorEnabled = this.torToggle.querySelector('input').checked;
+  this.isTorEnabled = this.torToggleInput.checked;
   this.log(`Tor usage: ${this.isTorEnabled ? 'Enabled' : 'Disabled'}`);
  }
 
  updateStats() {
-  // Removed random value generation, use real attack stats here
-  // Replace with actual calculated values during the attack
-
   let elapsedTime = 0;
   if (this.attackStartTime) {
    elapsedTime = Math.floor((Date.now() - this.attackStartTime) / 1000);
@@ -467,6 +472,12 @@ class DDoS {
   resizeHandle.addEventListener('mousedown', startResize);
  }
 
+ // Centralized error handling function
+ handleAttackError(attackType, target, error) {
+  this.log(`${attackType} attack on ${target} failed: ${error}`);
+  this.errors++;
+ }
+
  async exploit(target) {
   this.log(`Attempting to exploit ${target}...`);
   try {
@@ -477,8 +488,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Exploit failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Exploit', target, error);
   }
  }
 
@@ -492,8 +502,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Mass exploit failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Mass exploit', 'all targets', error);
   }
  }
 
@@ -507,8 +516,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Deface failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Deface', target, error);
   }
  }
 
@@ -522,8 +530,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Connection failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Connect', target, error);
   }
  }
 
@@ -537,8 +544,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Brute force attack failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Brute force', target, error);
   }
  }
 
@@ -587,7 +593,9 @@ class DDoS {
    }
   };
 
-  for (let i = 0; i < Math.min(5, this.maxThreads / 10); i++) {
+  // Optimization: Adjust initial thread count for faster ramp-up.
+  const initialThreads = Math.min(10, this.maxThreads / 10);
+  for (let i = 0; i < initialThreads; i++) {
    attackLoop();
   }
  }
@@ -600,20 +608,14 @@ class DDoS {
     method: 'POST'
    });
    const data = await response.json();
-   // Remove excessive logging to improve performance.
-   // this.log(data.message);
 
    if (data.error) this.errors++;
    this.packetsSent++;
+   this.dataSent += data.message.length;  // crude estimate
 
-   // Calculate the size of the data sent (crude estimate)
-   this.dataSent += data.message.length;
-
-   // update MBPS
    this.mbps = this.dataSent / (Date.now() - this.attackStartTime) * 8 / 1000000
   } catch (err) {
-   this.log(`DDoS attack failed: ${err}`);
-   this.errors++;
+   this.handleAttackError('DDoS', target, err);
   }
  }
 
@@ -627,8 +629,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Ransomware attack simulation failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Ransomware', target, error);
   }
  }
 
@@ -647,8 +648,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Custom code execution failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Custom code', target, error);
   }
  }
 
@@ -662,8 +662,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Phishing attack simulation failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Phishing', target, error);
   }
  }
 
@@ -677,8 +676,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Data breach simulation failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Data breach', target, error);
   }
  }
 
@@ -692,8 +690,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Botnet connection failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Botnet', target, error);
   }
  }
 
@@ -707,8 +704,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Zero-day exploit failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Zero-day', target, error);
   }
  }
 
@@ -722,8 +718,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`SQL injection failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('SQL injection', target, error);
   }
  }
 
@@ -737,8 +732,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`XSS attack failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('XSS', target, error);
   }
  }
 
@@ -752,8 +746,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Port scan failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Port scan', target, error);
   }
  }
 
@@ -767,8 +760,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Credential stuffing attack failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Credential stuffing', target, error);
   }
  }
 
@@ -782,8 +774,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Network scan failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Network scan', target, error);
   }
  }
 
@@ -797,8 +788,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Vulnerability scan failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Vulnerability scan', target, error);
   }
  }
 
@@ -812,8 +802,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Reverse shell failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Reverse shell', target, error);
   }
  }
 
@@ -827,8 +816,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`DNS poisoning failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('DNS poisoning', target, error);
   }
  }
 
@@ -842,8 +830,7 @@ class DDoS {
    this.log(data.message);
    if (data.error) this.errors++;
   } catch (error) {
-   this.log(`Session hijacking failed: ${error}`);
-   this.errors++;
+   this.handleAttackError('Session hijacking', target, error);
   }
  }
 
