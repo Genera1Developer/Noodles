@@ -21,7 +21,10 @@ class Logger {
             torConnectionStatus: 'Disconnected',
             attackThreads: 0,
             successfulConnections: 0,
-            torProxyUsed: 'None'
+            torProxyUsed: 'None',
+            geoip: 'Unknown',
+            httpStatus: 'Unknown',
+            dnsRecords: 'Unknown',
         };
         this.initializeUI();
     }
@@ -193,6 +196,9 @@ class Logger {
         document.getElementById('attack-threads').textContent = this.stats.attackThreads;
         document.getElementById('successful-connections').textContent = this.stats.successfulConnections;
         document.getElementById('tor-proxy-used').textContent = this.stats.torProxyUsed;
+        document.getElementById('geoip').textContent = this.stats.geoip;
+        document.getElementById('http-status').textContent = this.stats.httpStatus;
+        document.getElementById('dns-records').textContent = this.stats.dnsRecords;
     }
 
     getStats() {
@@ -215,6 +221,21 @@ class Logger {
     }
     setTorProxyUsed(proxy) {
         this.stats.torProxyUsed = proxy;
+        this.displayStats();
+    }
+
+    setGeoIP(geoip) {
+        this.stats.geoip = geoip;
+        this.displayStats();
+    }
+
+    setHttpStatus(httpStatus) {
+         this.stats.httpStatus = httpStatus;
+         this.displayStats();
+    }
+
+    setDnsRecords(dnsRecords) {
+        this.stats.dnsRecords = dnsRecords;
         this.displayStats();
     }
 
