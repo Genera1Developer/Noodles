@@ -234,7 +234,6 @@
                         break;
                 }
 
-                // Display the defaced website in the iframe
                 const iframe = document.getElementById('defaced-website');
                 iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
                 document.getElementById('defacement-results').classList.remove('hidden');
