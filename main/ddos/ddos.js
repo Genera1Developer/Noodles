@@ -52,7 +52,7 @@ class DDoS {
   this.running = false;
   this.maxThreads = 100;
   this.target = '';
-  this.attackTimeout = null; // Add attackTimeout property
+  this.attackTimeout = null;
  }
 
  setupUI() {
@@ -61,7 +61,6 @@ class DDoS {
   this.setupTheme();
   this.toggleCustomCodeArea();
   this.autoFillTarget();
-  //this.populateProxyList();
 
   this.threadSliderInput.value = this.maxThreads;
   this.requestRateSliderInput.value = this.requestRate;
