@@ -40,8 +40,8 @@ class DDoS {
   this.errors = 0;
   this.dataSent = 0;
   this.activeThreads = 0;
+  this.attackStartTime = null;
 
-  // Store the interval ID so we can clear it later
   this.statsInterval = setInterval(() => this.updateStats(), 1000);
 
   this.isTorEnabled = false;
@@ -179,13 +179,19 @@ class DDoS {
  }
 
  updateStats() {
-  // Using more realistic, but still somewhat randomized stats
   const mbpsChange = (Math.random() * 20 - 10);
-  this.mbps = Math.max(0, this.mbps + mbpsChange); // Fluctuate MBPS
+  this.mbps = Math.max(0, this.mbps + mbpsChange);
   this.packetsSent += Math.floor(Math.random() * (this.activeThreads * 5));
   this.connectionStatus = this.activeThreads > 0 ? 'Attacking' : (this.running ? 'Stopping' : 'Idle');
-  this.errors += Math.floor(Math.random() * (this.activeThreads / 10)); // Errors scale with threads
-  this.dataSent += Math.floor(this.mbps * 125); // Approximate data sent in KB (MBPS * 125)
+  this.errors += Math.floor(Math.random() * (this.activeThreads / 10));
+  this.dataSent += Math.floor(this.mbps * 125);
+
+  let elapsedTime = 0;
+  if (this.attackStartTime) {
+   elapsedTime = Math.floor((Date.now() - this.attackStartTime) / 1000);
+  }
+  const minutes = Math.floor(elapsedTime / 60);
+  const seconds = elapsedTime % 60;
 
   const statsHtml = `
    <p>MBPS: ${this.mbps.toFixed(2)}</p>
@@ -194,6 +200,7 @@ class DDoS {
    <p>Connection Status: ${this.connectionStatus}</p>
    <p>Errors: ${this.errors}</p>
    <p>Active Threads: ${this.activeThreads}</p>
+   <p>Time Elapsed: ${minutes}m ${seconds}s</p>
   `;
   this.statsPanel.innerHTML = statsHtml;
  }
@@ -280,19 +287,19 @@ class DDoS {
   sidePanel.classList.add('noodle-side-panel');
 
   const menuItems = [{
-   name: 'DDoS',
+   name: 'DDoS 💥',
    action: () => this.setAttackType('ddos')
   }, {
-   name: 'Deface',
+   name: 'Deface 💀',
    action: () => this.setAttackType('deface')
   }, {
-   name: 'Connection',
+   name: 'Connection 💻',
    action: () => this.setAttackType('connect')
   }, {
-   name: 'Ransomware',
+   name: 'Ransomware 💣',
    action: () => this.setAttackType('ransomware')
   }, {
-   name: 'Port Scan',
+   name: 'Port Scan ⚠',
    action: () => this.setAttackType('port_scan')
   }, {
    name: 'Credential Stuffing',
@@ -335,8 +342,9 @@ class DDoS {
 
   aboutUs.innerHTML = `
    <h2>About Noodles</h2>
-   <p>Noodles is a powerful web application designed for penetration testing and network analysis. Use responsibly.</p>
-   <p>Created by: Anonymous</p>
+   <p>Noodles is a cutting-edge penetration testing tool designed to expose vulnerabilities and push the limits of network security. It is intended solely for authorized security assessments. Misuse of this tool is strictly prohibited. </p>
+   <p>Created by: Anonymous Group</p>
+   <p>Disclaimer: This tool is provided for educational and ethical testing purposes only. The developers are not responsible for any misuse or damage caused by this tool.</p>
    <button id="close-about-us" class="noodle-button">Close</button>
   `;
 
@@ -419,8 +427,6 @@ class DDoS {
 
   resizeHandle.addEventListener('mousedown', startResize);
  }
-
- // Attack methods (These are mostly simulations, and some are potentially dangerous if implemented without proper security measures on the server-side)
 
  async exploit(target) {
   this.log(`Attempting to exploit ${target}...`);
@@ -508,6 +514,7 @@ class DDoS {
   this.running = true;
   this.startButton.disabled = true;
   this.stopButton.disabled = false;
+  this.attackStartTime = Date.now();
 
   const attackLoop = async () => {
    if (!this.running) {
@@ -527,13 +534,12 @@ class DDoS {
       }
      });
    } else {
-    await new Promise(resolve => setTimeout(resolve, 10)); // Use promise-based timeout
+    await new Promise(resolve => setTimeout(resolve, 10));
     attackLoop();
    }
   };
 
-  // Launch a few initial threads
-  for (let i = 0; i < Math.min(5, this.maxThreads / 10); i++) { // limit initial threads
+  for (let i = 0; i < Math.min(5, this.maxThreads / 10); i++) {
    attackLoop();
   }
  }
@@ -830,10 +836,7 @@ class DDoS {
   this.log('Stopping attack...');
   this.startButton.disabled = false;
   this.stopButton.disabled = true;
-  clearInterval(this.statsInterval); // Correctly clear the stats interval
-  this.statsInterval = setInterval(() => this.updateStats(), 1000); // Restart the stats interval
-
-  // Reset active threads when stopping attack.
+  this.attackStartTime = null;
   this.activeThreads = 0;
  }
 
