@@ -26,6 +26,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const nukeButton = document.getElementById('nukeButton');
     const ipLookupButton = document.getElementById('ipLookupButton');
     const ipLookupInput = document.getElementById('ipLookupInput');
+    const sqlInjectionButton = document.getElementById('sqlInjectionButton');
+    const sqlInjectionUrlInput = document.getElementById('sqlInjectionUrl');
+    const xssButton = document.getElementById('xssButton');
+    const xssUrlInput = document.getElementById('xssUrl');
+    const csrfButton = document.getElementById('csrfButton');
+    const csrfUrlInput = document.getElementById('csrfUrl');
+    const reverseShellButton = document.getElementById('reverseShellButton');
+    const reverseShellUrlInput = document.getElementById('reverseShellUrl');
+    const portScanButton = document.getElementById('portScanButton');
+    const portScanUrlInput = document.getElementById('portScanUrl');
+    const socialEngineeringButton = document.getElementById('socialEngineeringButton');
+    const socialEngineeringTargetInput = document.getElementById('socialEngineeringTarget');
+    const credentialStuffingButton = document.getElementById('credentialStuffingButton');
+    const credentialStuffingUrlInput = document.getElementById('credentialStuffingUrl');
+    const dataBreachSearchButton = document.getElementById('dataBreachSearchButton');
+    const dataBreachSearchInput = document.getElementById('dataBreachSearchInput');
+    const darkWebScanButton = document.getElementById('darkWebScanButton');
+    const darkWebScanInput = document.getElementById('darkWebScanInput');
+    const vulnerabilityScanButton = document.getElementById('vulnerabilityScanButton');
+    const vulnerabilityScanUrlInput = document.getElementById('vulnerabilityScanUrl');
 
     let mbps = 0;
     let packetsSent = 0;
@@ -383,6 +403,360 @@ document.addEventListener('DOMContentLoaded', () => {
                 statusDiv.textContent = data.message;
                 logMessage(data.message);
                 logMessage(JSON.stringify(data.ipInfo, null, 2));
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    sqlInjectionButton.addEventListener('click', async () => {
+        const sqlInjectionUrl = sqlInjectionUrlInput.value;
+
+        if (!sqlInjectionUrl) {
+            alert('Please enter a URL to attempt SQL injection on.');
+            return;
+        }
+
+        statusDiv.textContent = 'Attempting SQL Injection...';
+        logMessage(`Attempting SQL injection on ${sqlInjectionUrl}`);
+
+        try {
+            const response = await fetch('/api/sqlInjection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sqlInjectionUrl }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    xssButton.addEventListener('click', async () => {
+        const xssUrl = xssUrlInput.value;
+
+        if (!xssUrl) {
+            alert('Please enter a URL to attempt XSS on.');
+            return;
+        }
+
+        statusDiv.textContent = 'Attempting XSS...';
+        logMessage(`Attempting XSS on ${xssUrl}`);
+
+        try {
+            const response = await fetch('/api/xss', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ xssUrl }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    csrfButton.addEventListener('click', async () => {
+        const csrfUrl = csrfUrlInput.value;
+
+        if (!csrfUrl) {
+            alert('Please enter a URL to attempt CSRF on.');
+            return;
+        }
+
+        statusDiv.textContent = 'Attempting CSRF...';
+        logMessage(`Attempting CSRF on ${csrfUrl}`);
+
+        try {
+            const response = await fetch('/api/csrf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ csrfUrl }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    reverseShellButton.addEventListener('click', async () => {
+        const reverseShellUrl = reverseShellUrlInput.value;
+
+        if (!reverseShellUrl) {
+            alert('Please enter a URL to attempt Reverse Shell on.');
+            return;
+        }
+
+        statusDiv.textContent = 'Attempting Reverse Shell...';
+        logMessage(`Attempting Reverse Shell on ${reverseShellUrl}`);
+
+        try {
+            const response = await fetch('/api/reverseShell', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ reverseShellUrl }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    portScanButton.addEventListener('click', async () => {
+        const portScanUrl = portScanUrlInput.value;
+
+        if (!portScanUrl) {
+            alert('Please enter a URL to scan ports on.');
+            return;
+        }
+
+        statusDiv.textContent = 'Scanning Ports...';
+        logMessage(`Scanning ports on ${portScanUrl}`);
+
+        try {
+            const response = await fetch('/api/portScan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ portScanUrl }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+                logMessage(JSON.stringify(data.openPorts, null, 2));
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    socialEngineeringButton.addEventListener('click', async () => {
+        const target = socialEngineeringTargetInput.value;
+
+        if (!target) {
+            alert('Please enter a target for social engineering.');
+            return;
+        }
+
+        statusDiv.textContent = 'Initiating Social Engineering...';
+        logMessage(`Initiating social engineering attack on ${target}`);
+
+        try {
+            const response = await fetch('/api/socialEngineering', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ target }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+   credentialStuffingButton.addEventListener('click', async () => {
+        const credentialStuffingUrl = credentialStuffingUrlInput.value;
+
+        if (!credentialStuffingUrl) {
+            alert('Please enter a URL to attempt credential stuffing on.');
+            return;
+        }
+
+        statusDiv.textContent = 'Attempting Credential Stuffing...';
+        logMessage(`Attempting credential stuffing on ${credentialStuffingUrl}`);
+
+        try {
+            const response = await fetch('/api/credentialStuffing', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ credentialStuffingUrl }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    dataBreachSearchButton.addEventListener('click', async () => {
+        const searchTerm = dataBreachSearchInput.value;
+
+        if (!searchTerm) {
+            alert('Please enter a search term to look for in data breaches.');
+            return;
+        }
+
+        statusDiv.textContent = 'Searching Data Breaches...';
+        logMessage(`Searching for ${searchTerm} in data breaches`);
+
+        try {
+            const response = await fetch('/api/dataBreachSearch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ searchTerm }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+                logMessage(JSON.stringify(data.results, null, 2));
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    darkWebScanButton.addEventListener('click', async () => {
+        const searchTerm = darkWebScanInput.value;
+
+        if (!searchTerm) {
+            alert('Please enter a search term to scan the dark web for.');
+            return;
+        }
+
+        statusDiv.textContent = 'Scanning Dark Web...';
+        logMessage(`Scanning the dark web for ${searchTerm}`);
+
+        try {
+            const response = await fetch('/api/darkWebScan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ searchTerm }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+                logMessage(JSON.stringify(data.results, null, 2));
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
+    vulnerabilityScanButton.addEventListener('click', async () => {
+        const vulnerabilityScanUrl = vulnerabilityScanUrlInput.value;
+
+        if (!vulnerabilityScanUrl) {
+            alert('Please enter a URL to scan for vulnerabilities.');
+            return;
+        }
+
+        statusDiv.textContent = 'Scanning for Vulnerabilities...';
+        logMessage(`Scanning ${vulnerabilityScanUrl} for vulnerabilities`);
+
+        try {
+            const response = await fetch('/api/vulnerabilityScan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ vulnerabilityScanUrl }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+                logMessage(JSON.stringify(data.vulnerabilities, null, 2));
             } else {
                 statusDiv.textContent = `Error: ${data.error}`;
                 logMessage(`Error: ${data.error}`);
