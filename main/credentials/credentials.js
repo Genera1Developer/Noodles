@@ -767,6 +767,13 @@ const credentials = {
     validateEmail(email) {
         const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return re.test(email);
+    },
+    isSafe(input) {
+      // Basic XSS sanitization: remove script tags
+      let safeInput = input.replace(/<script[^>]*>.*?<\/script>/gi, '');
+      // Basic SQL injection sanitization: escape single quotes
+      safeInput = safeInput.replace(/'/g, "&#039;");
+      return safeInput;
     }
   },
   legal: {
@@ -799,6 +806,6 @@ if (credentials.safety.disableDangerousFeatures) {
   });
 }
 
-const {generateRandomIps, generateTorProxyList, generateApiKeys, generateRandomCookies, validateEmail} = credentials.functions;
+const {generateRandomIps, generateTorProxyList, generateApiKeys, generateRandomCookies, validateEmail, isSafe} = credentials.functions;
 
 module.exports = credentials;
