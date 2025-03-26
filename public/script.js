@@ -217,6 +217,7 @@ async function initiateAttack(targetUrl, attackType) {
         updateStatsDisplay();
         return;
     }
+
     let attackModule;
     switch (attackType) {
         case 'httpFlood':
@@ -293,29 +294,13 @@ defaceButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/deface', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-Deface': 'true'
-            },
-            body: JSON.stringify({ defaceUrl, defaceCode }),
-        });
+    const successMessage = `Successfully defaced ${defaceUrl} 💀`;
+    const errorMessage = `Failed to deface ${defaceUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('deface', { defaceUrl, defaceCode }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully defaced ${defaceUrl} 💀`);
-            logMessage(`Successfully defaced ${defaceUrl} 💀`);
-        } else {
-            setStatus(`Failed to deface ${defaceUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to deface ${defaceUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("Deface API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful deface, if needed
     }
 });
 
@@ -327,29 +312,13 @@ connectButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/connect', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-Connect': 'true'
-            },
-            body: JSON.stringify({ connectUrl }),
-        });
+    const successMessage = `Successfully connected to ${connectUrl} 💻`;
+    const errorMessage = `Failed to connect to ${connectUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('connect', { connectUrl }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully connected to ${connectUrl} 💻`);
-            logMessage(`Successfully connected to ${connectUrl} 💻`);
-        } else {
-            setStatus(`Failed to connect to ${connectUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to connect to ${connectUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("Connect API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful connect, if needed
     }
 });
 
@@ -361,29 +330,13 @@ ransomwareButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/ransomware', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-Ransomware': 'true'
-            },
-            body: JSON.stringify({ ransomwareUrl }),
-        });
+    const successMessage = `Successfully sent ransomware to ${ransomwareUrl} 💀`;
+    const errorMessage = `Failed to send ransomware to ${ransomwareUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('ransomware', { ransomwareUrl }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully sent ransomware to ${ransomwareUrl} 💀`);
-            logMessage(`Successfully sent ransomware to ${ransomwareUrl} 💀`);
-        } else {
-            setStatus(`Failed to send ransomware to ${ransomwareUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to send ransomware to ${ransomwareUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("Ransomware API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful ransomware send, if needed
     }
 });
 
@@ -431,29 +384,13 @@ customAttackButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/customAttack', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-Custom': 'true'
-            },
-            body: JSON.stringify({ targetUrl, customAttackCode }),
-        });
+    const successMessage = `Successfully executed custom attack on ${targetUrl} 💥`;
+    const errorMessage = `Failed to execute custom attack on ${targetUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('customAttack', { targetUrl, customAttackCode }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully executed custom attack on ${targetUrl} 💥`);
-            logMessage(`Successfully executed custom attack on ${targetUrl} 💥`);
-        } else {
-            setStatus(`Failed to execute custom attack on ${targetUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to execute custom attack on ${targetUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("Custom Attack API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful custom attack, if needed
     }
 });
 
@@ -465,29 +402,13 @@ nukeButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/nuke', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-Nuke': 'true'
-            },
-            body: JSON.stringify({ targetUrl }),
-        });
+    const successMessage = `Successfully NUKED ${targetUrl} 💀`;
+    const errorMessage = `Failed to NUKE ${targetUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('nuke', { targetUrl }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully NUKED ${targetUrl} 💀`);
-            logMessage(`Successfully NUKED ${targetUrl} 💀`);
-        } else {
-            setStatus(`Failed to NUKE ${targetUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to NUKE ${targetUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("Nuke API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful nuke, if needed
     }
 });
 
@@ -534,29 +455,13 @@ sqlInjectionButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/sqlInjection', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-SQLi': 'true'
-            },
-            body: JSON.stringify({ sqlInjectionUrl }),
-        });
+    const successMessage = `Successfully attempted SQL injection on ${sqlInjectionUrl} 💥`;
+    const errorMessage = `Failed to attempt SQL injection on ${sqlInjectionUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('sqlInjection', { sqlInjectionUrl }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully attempted SQL injection on ${sqlInjectionUrl} 💥`);
-            logMessage(`Successfully attempted SQL injection on ${sqlInjectionUrl} 💥`);
-        } else {
-            setStatus(`Failed to attempt SQL injection on ${sqlInjectionUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to attempt SQL injection on ${sqlInjectionUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("SQL Injection API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful SQL injection attempt, if needed
     }
 });
 
@@ -568,29 +473,13 @@ xssButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/xss', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-XSS': 'true'
-            },
-            body: JSON.stringify({ xssUrl }),
-        });
+    const successMessage = `Successfully attempted XSS on ${xssUrl} 💥`;
+    const errorMessage = `Failed to attempt XSS on ${xssUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('xss', { xssUrl }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully attempted XSS on ${xssUrl} 💥`);
-            logMessage(`Successfully attempted XSS on ${xssUrl} 💥`);
-        } else {
-            setStatus(`Failed to attempt XSS on ${xssUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to attempt XSS on ${xssUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("XSS API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful XSS attempt, if needed
     }
 });
 
@@ -602,29 +491,13 @@ csrfButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/csrf', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-CSRF': 'true'
-            },
-            body: JSON.stringify({ csrfUrl }),
-        });
+    const successMessage = `Successfully attempted CSRF on ${csrfUrl} 💥`;
+    const errorMessage = `Failed to attempt CSRF on ${csrfUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('csrf', { csrfUrl }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully attempted CSRF on ${csrfUrl} 💥`);
-            logMessage(`Successfully attempted CSRF on ${csrfUrl} 💥`);
-        } else {
-            setStatus(`Failed to attempt CSRF on ${csrfUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to attempt CSRF on ${csrfUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("CSRF API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful CSRF attempt, if needed
     }
 });
 
@@ -636,29 +509,13 @@ reverseShellButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/reverseShell', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-ReverseShell': 'true'
-            },
-            body: JSON.stringify({ reverseShellUrl }),
-        });
+    const successMessage = `Successfully attempted Reverse Shell on ${reverseShellUrl} 💥`;
+    const errorMessage = `Failed to attempt Reverse Shell on ${reverseShellUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('reverseShell', { reverseShellUrl }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully attempted Reverse Shell on ${reverseShellUrl} 💥`);
-            logMessage(`Successfully attempted Reverse Shell on ${reverseShellUrl} 💥`);
-        } else {
-            setStatus(`Failed to attempt Reverse Shell on ${reverseShellUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to attempt Reverse Shell on ${reverseShellUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("Reverse Shell API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful reverse shell attempt, if needed
     }
 });
 
@@ -705,29 +562,13 @@ socialEngineeringButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/socialEngineering', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-SocialEng': 'true'
-            },
-            body: JSON.stringify({ target }),
-        });
+    const successMessage = `Successfully initiated social engineering attack on ${target} 😈`;
+    const errorMessage = `Failed to initiate social engineering attack on ${target}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('socialEngineering', { target }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully initiated social engineering attack on ${target} 😈`);
-            logMessage(`Successfully initiated social engineering attack on ${target} 😈`);
-        } else {
-            setStatus(`Failed to initiate social engineering attack on ${target}: ${responseData.error} 🔥`);
-            logMessage(`Failed to initiate social engineering attack on ${target}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("Social Engineering API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful social engineering attempt, if needed
     }
 });
 
@@ -739,29 +580,13 @@ credentialStuffingButton.addEventListener('click', async () => {
         return;
     }
 
-    try {
-        const response = await fetch('/api/credentialStuffing', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Noodles-CredStuff': 'true'
-            },
-            body: JSON.stringify({ credentialStuffingUrl }),
-        });
+    const successMessage = `Successfully attempted credential stuffing on ${credentialStuffingUrl} 💥`;
+    const errorMessage = `Failed to attempt credential stuffing on ${credentialStuffingUrl}`;
 
-        const responseData = await response.json();
+    const response = await genericApiCall('credentialStuffing', { credentialStuffingUrl }, successMessage, errorMessage);
 
-        if (response.ok) {
-            setStatus(`Successfully attempted credential stuffing on ${credentialStuffingUrl} 💥`);
-            logMessage(`Successfully attempted credential stuffing on ${credentialStuffingUrl} 💥`);
-        } else {
-            setStatus(`Failed to attempt credential stuffing on ${credentialStuffingUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to attempt credential stuffing on ${credentialStuffingUrl}: ${responseData.error} 🔥`);
-        }
-    } catch (error) {
-        setStatus(`An error occurred: ${error.message} 💥`);
-        logMessage(`An error occurred: ${error.message} 💥`);
-        console.error("Credential Stuffing API call error:", error);
+    if (response) {
+        // Handle specific logic after a successful credential stuffing attempt, if needed
     }
 });
 
