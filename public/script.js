@@ -63,24 +63,22 @@ async function genericApiCall(endpoint, data, successMessage, errorMessage) {
             body: JSON.stringify(data),
         });
 
-        const responseData = await response.json();
-
-        if (response.ok) {
-            setStatus(successMessage);
-            logMessage(successMessage);
-            if (responseData.message) {
-                logMessage(responseData.message);
-            }
-            return responseData;
-
-        } else {
-            setStatus(errorMessage || `Error: ${responseData.error}`);
-            logMessage(errorMessage || `Error: ${responseData.error}`);
-            return null;
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
         }
+
+        const responseData = await response.json();
+        setStatus(successMessage);
+        logMessage(successMessage);
+        if (responseData.message) {
+            logMessage(responseData.message);
+        }
+        return responseData;
+
     } catch (error) {
-        setStatus(`An error occurred: ${error.message}`);
-        logMessage(`An error occurred: ${error.message}`);
+        setStatus(errorMessage || `An error occurred: ${error.message}`);
+        logMessage(errorMessage || `An error occurred: ${error.message}`);
         console.error("API call error:", error);
         return null;
     }
@@ -249,18 +247,18 @@ async function initiateAttack(targetUrl, attackType) {
                 body: JSON.stringify({ targetUrl }),
             });
 
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+            }
+
             const data = await response.json();
 
-            if (response.ok) {
-                mbps += data.mbps;
-                packetsSent += data.packetsSent;
-                updateStatsDisplay();
-                logMessage(data.message);
-            } else {
-                logMessage(`Attack failed: ${data.error} 🔥`);
-                resetAttackState();
-                setStatus('Attack Failed 🔥');
-            }
+            mbps += data.mbps;
+            packetsSent += data.packetsSent;
+            updateStatsDisplay();
+            logMessage(data.message);
+
         } catch (error) {
             logMessage(`An error occurred during the attack: ${error.message} 💥`);
             resetAttackState();
@@ -354,16 +352,17 @@ geoIpButton.addEventListener('click', async () => {
             body: JSON.stringify({ geoIpUrl }),
         });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
         const responseData = await response.json();
 
-        if (response.ok) {
-            setStatus(`Successfully retrieved GeoIP information for ${geoIpUrl} 🌍`);
-            logMessage(`Successfully retrieved GeoIP information for ${geoIpUrl} 🌍`);
-            logMessage(JSON.stringify(responseData.geoIpInfo, null, 2));
-        } else {
-            setStatus(`Failed to retrieve GeoIP information for ${geoIpUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to retrieve GeoIP information for ${geoIpUrl}: ${responseData.error} 🔥`);
-        }
+        setStatus(`Successfully retrieved GeoIP information for ${geoIpUrl} 🌍`);
+        logMessage(`Successfully retrieved GeoIP information for ${geoIpUrl} 🌍`);
+        logMessage(JSON.stringify(responseData.geoIpInfo, null, 2));
+
     } catch (error) {
         setStatus(`An error occurred: ${error.message} 💥`);
         logMessage(`An error occurred: ${error.message} 💥`);
@@ -422,16 +421,17 @@ ipLookupButton.addEventListener('click', async () => {
             body: JSON.stringify({ ipAddress }),
         });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
         const responseData = await response.json();
 
-        if (response.ok) {
-            setStatus(`Successfully looked up IP address: ${ipAddress} 🌍`);
-            logMessage(`Successfully looked up IP address: ${ipAddress} 🌍`);
-            logMessage(JSON.stringify(responseData.ipInfo, null, 2));
-        } else {
-            setStatus(`Failed to lookup IP address: ${ipAddress}: ${responseData.error} 🔥`);
-            logMessage(`Failed to lookup IP address: ${ipAddress}: ${responseData.error} 🔥`);
-        }
+        setStatus(`Successfully looked up IP address: ${ipAddress} 🌍`);
+        logMessage(`Successfully looked up IP address: ${ipAddress} 🌍`);
+        logMessage(JSON.stringify(responseData.ipInfo, null, 2));
+
     } catch (error) {
         setStatus(`An error occurred: ${error.message} 💥`);
         logMessage(`An error occurred: ${error.message} 💥`);
@@ -521,16 +521,17 @@ portScanButton.addEventListener('click', async () => {
             body: JSON.stringify({ portScanUrl }),
         });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
         const responseData = await response.json();
 
-        if (response.ok) {
-            setStatus(`Successfully scanned ports on ${portScanUrl} 💥`);
-            logMessage(`Successfully scanned ports on ${portScanUrl} 💥`);
-            logMessage(JSON.stringify(responseData.openPorts, null, 2));
-        } else {
-            setStatus(`Failed to scan ports on ${portScanUrl}: ${responseData.error} 🔥`);
-            logMessage(`Failed to scan ports on ${portScanUrl}: ${responseData.error} 🔥`);
-        }
+        setStatus(`Successfully scanned ports on ${portScanUrl} 💥`);
+        logMessage(`Successfully scanned ports on ${portScanUrl} 💥`);
+        logMessage(JSON.stringify(responseData.openPorts, null, 2));
+
     } catch (error) {
         setStatus(`An error occurred: ${error.message} 💥`);
         logMessage(`An error occurred: ${error.message} 💥`);
@@ -588,16 +589,17 @@ dataBreachSearchButton.addEventListener('click', async () => {
             body: JSON.stringify({ searchTerm }),
         });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
         const responseData = await response.json();
 
-        if (response.ok) {
-            setStatus(`Successfully searched for ${searchTerm} in data breaches 💥`);
-            logMessage(`Successfully searched for ${searchTerm} in data breaches 💥`);
-            logMessage(JSON.stringify(responseData.results, null, 2));
-        } else {
-            setStatus(`Failed to search for ${searchTerm} in data breaches: ${responseData.error} 🔥`);
-            logMessage(`Failed to search for ${searchTerm} in data breaches: ${responseData.error} 🔥`);
-        }
+        setStatus(`Successfully searched for ${searchTerm} in data breaches 💥`);
+        logMessage(`Successfully searched for ${searchTerm} in data breaches 💥`);
+        logMessage(JSON.stringify(responseData.results, null, 2));
+
     } catch (error) {
         setStatus(`An error occurred: ${error.message} 💥`);
         logMessage(`An error occurred: ${error.message} 💥`);
@@ -623,16 +625,17 @@ darkWebScanButton.addEventListener('click', async () => {
             body: JSON.stringify({ searchTerm }),
         });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
         const responseData = await response.json();
 
-        if (response.ok) {
-            setStatus(`Successfully scanned the dark web for ${searchTerm} 💀`);
-            logMessage(`Successfully scanned the dark web for ${searchTerm} 💀`);
-            logMessage(JSON.stringify(responseData.results, null, 2));
-        } else {
-            setStatus(`Failed to scan the dark web for ${searchTerm}: ${responseData.error} 🔥`);
-            logMessage(`Failed to scan the dark web for ${searchTerm}: ${responseData.error} 🔥`);
-        }
+        setStatus(`Successfully scanned the dark web for ${searchTerm} 💀`);
+        logMessage(`Successfully scanned the dark web for ${searchTerm} 💀`);
+        logMessage(JSON.stringify(responseData.results, null, 2));
+
     } catch (error) {
         setStatus(`An error occurred: ${error.message} 💥`);
         logMessage(`An error occurred: ${error.message} 💥`);
@@ -658,16 +661,17 @@ vulnerabilityScanButton.addEventListener('click', async () => {
             body: JSON.stringify({ vulnerabilityScanUrl }),
         });
 
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
         const responseData = await response.json();
 
-        if (response.ok) {
-            setStatus(`Successfully scanned ${vulnerabilityScanUrl} for vulnerabilities 💥`);
-            logMessage(`Successfully scanned ${vulnerabilityScanUrl} for vulnerabilities 💥`);
-            logMessage(JSON.stringify(responseData.vulnerabilities, null, 2));
-        } else {
-            setStatus(`Failed to scan ${vulnerabilityScanUrl} for vulnerabilities: ${responseData.error} 🔥`);
-            logMessage(`Failed to scan ${vulnerabilityScanUrl} for vulnerabilities: ${responseData.error} 🔥`);
-        }
+        setStatus(`Successfully scanned ${vulnerabilityScanUrl} for vulnerabilities 💥`);
+        logMessage(`Successfully scanned ${vulnerabilityScanUrl} for vulnerabilities 💥`);
+        logMessage(JSON.stringify(responseData.vulnerabilities, null, 2));
+
     } catch (error) {
         setStatus(`An error occurred: ${error.message} 💥`);
         logMessage(`An error occurred: ${error.message} 💥`);
