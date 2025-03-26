@@ -138,6 +138,7 @@ const customAttackButton = document.getElementById('customAttackButton');
 const customAttackCodeInput = document.getElementById('customAttackCode');
 
 const nukeButton = document.getElementById('nukeButton');
+const nukeUrlInput = document.getElementById('nukeUrl');
 
 const ipLookupButton = document.getElementById('ipLookupButton');
 const ipLookupInput = document.getElementById('ipLookupInput');
@@ -457,7 +458,7 @@ customAttackButton.addEventListener('click', async () => {
 });
 
 nukeButton.addEventListener('click', async () => {
-    const targetUrl = targetUrlInput.value;
+    const targetUrl = nukeUrlInput.value;
 
     if (!targetUrl) {
         alert('Please enter a target URL to NUKE. 💻');
