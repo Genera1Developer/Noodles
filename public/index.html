@@ -3,98 +3,99 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Noodles - Unleash the Power</title>
+  <title>Noodles - Cyber Solutions</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
  </head>
  <body>
   <div class="container">
-  <aside class="sidebar">
-  <div class="sidebar-header">
-  <img src="assets/banner.gif" alt="Noodles Logo" class="logo">
-  <h1>Noodles</h1>
-  </div>
-  <nav>
-  <ul>
-  <li><a href="#" data-tab="ddos"><i class="fas fa-skull"></i> DDoS</a></li>
-  <li><a href="#" data-tab="defacement"><i class="fas fa-paint-brush"></i> Defacement</a></li>
-  <li><a href="#" data-tab="connection"><i class="fas fa-network-wired"></i> Connection</a></li>
-  <li><a href="#" data-tab="ransomware"><i class="fas fa-lock"></i> Ransomware</a></li>
-  <li><a href="#" data-tab="about"><i class="fas fa-info-circle"></i> About Us</a></li>
-  </ul>
-  </nav>
-  </aside>
-  <main class="main-content">
-  <section id="ddos" class="tab-content active">
-  <h2><i class="fas fa-skull"></i> DDoS Attack</h2>
-  <div class="attack-form">
-  <input type="text" id="ddos-target" placeholder="Target URL (http:// or .onion)">
-  <select id="ddos-method">
-  <option value="tcp-flood">TCP Flood</option>
-  <option value="udp-flood">UDP Flood</option>
-  <option value="http-flood">HTTP Flood</option>
-  <option value="slowloris">Slowloris</option>
-  </select>
-  <input type="number" id="ddos-threads" placeholder="Threads (Default: 100)" value="100">
-  <button id="start-ddos">Launch Attack <i class="fas fa-rocket"></i></button>
-  </div>
-  <div class="attack-stats">
-  <p>Status: <span id="ddos-status">Idle</span></p>
-  <p>MBPS: <span id="ddos-mbps">0</span></p>
-  <p>Packets Sent: <span id="ddos-packets">0</span></p>
-  <p>Connection Status: <span id="ddos-connection">Unknown</span></p>
-  </div>
-  <div class="attack-logs">
-  <h3>Logs:</h3>
-  <textarea id="ddos-logs" readonly></textarea>
-  </div>
-  </section>
+   <aside class="sidebar">
+    <div class="logo">
+     <img src="assets/logo.svg" alt="Noodles Logo">
+     <h1>Noodles</h1>
+    </div>
+    <nav>
+     <a href="#" data-tab="ddos">DDoS Attacks</a>
+     <a href="#" data-tab="defacement">Defacement</a>
+     <a href="#" data-tab="connection">Connection</a>
+     <a href="#" data-tab="ransomware">Ransomware</a>
+     <a href="#" data-tab="about">About Us</a>
+    </nav>
+   </aside>
 
-  <section id="defacement" class="tab-content">
-  <h2><i class="fas fa-paint-brush"></i> Website Defacement</h2>
-  <div class="defacement-form">
-  <input type="text" id="defacement-target" placeholder="Target URL (http://)">
-  <textarea id="defacement-payload" placeholder="HTML Payload"></textarea>
-  <button id="start-defacement">Initiate Defacement <i class="fas fa-code"></i></button>
-  </div>
-  <div class="defacement-logs">
-  <h3>Logs:</h3>
-  <textarea id="defacement-logs" readonly></textarea>
-  </div>
-  </section>
+   <main class="main-content">
+    <section id="ddos" class="tab-content active">
+     <h2>DDoS Attack Panel</h2>
+     <div class="attack-form">
+      <input type="text" id="ddos-target" placeholder="Target URL (http:// or .onion)">
+      <select id="ddos-method">
+       <option value="tcp-flood">TCP Flood</option>
+       <option value="udp-flood">UDP Flood</option>
+       <option value="http-flood">HTTP Flood</option>
+       <option value="slowloris">Slowloris</option>
+      </select>
+      <input type="number" id="ddos-threads" placeholder="Threads (default 100)" value="100">
+      <input type="number" id="ddos-time" placeholder="Time (seconds, default 30)" value="30">
+      <button id="start-ddos">Start Attack</button>
+     </div>
+     <div class="attack-stats">
+      <p>Status: <span id="ddos-status">Idle</span></p>
+      <p>MBPS: <span id="ddos-mbps">0.00</span></p>
+      <p>Packets Sent: <span id="ddos-packets">0</span></p>
+      <p>Connection Status: <span id="ddos-connection">Unknown</span></p>
+     </div>
+     <div class="attack-logs">
+      <h3>Logs</h3>
+      <textarea id="ddos-logs" readonly></textarea>
+     </div>
+    </section>
 
-  <section id="connection" class="tab-content">
-  <h2><i class="fas fa-network-wired"></i> Establish Connection</h2>
-  <div class="connection-form">
-  <input type="text" id="connection-target" placeholder="Target IP Address">
-  <input type="number" id="connection-port" placeholder="Target Port" value="80">
-  <button id="start-connection">Connect <i class="fas fa-plug"></i></button>
-  </div>
-  <div class="connection-logs">
-  <h3>Logs:</h3>
-  <textarea id="connection-logs" readonly></textarea>
-  </div>
-  </section>
+    <section id="defacement" class="tab-content">
+     <h2>Defacement Panel</h2>
+     <div class="defacement-form">
+      <input type="text" id="defacement-target" placeholder="Target URL (http:// or .onion)">
+      <textarea id="defacement-html" placeholder="Defacement HTML Code"></textarea>
+      <button id="start-defacement">Start Defacement</button>
+     </div>
+     <div class="defacement-logs">
+      <h3>Logs</h3>
+      <textarea id="defacement-logs" readonly></textarea>
+     </div>
+    </section>
 
-  <section id="ransomware" class="tab-content">
-  <h2><i class="fas fa-lock"></i> Ransomware Deployment</h2>
-  <div class="ransomware-form">
-  <input type="text" id="ransomware-target" placeholder="Target Machine IP Address">
-  <textarea id="ransomware-message" placeholder="Ransom Message"></textarea>
-  <button id="deploy-ransomware">Deploy Ransomware <i class="fas fa-virus"></i></button>
-  </div>
-  <div class="ransomware-logs">
-  <h3>Logs:</h3>
-  <textarea id="ransomware-logs" readonly></textarea>
-  </div>
-  </section>
+    <section id="connection" class="tab-content">
+     <h2>Connection Panel</h2>
+     <div class="connection-form">
+      <input type="text" id="connection-target" placeholder="Target IP or URL (http:// or .onion)">
+      <input type="number" id="connection-port" placeholder="Port (default 80)" value="80">
+      <button id="start-connection">Start Connection</button>
+     </div>
+     <div class="connection-logs">
+      <h3>Logs</h3>
+      <textarea id="connection-logs" readonly></textarea>
+     </div>
+    </section>
 
-  <section id="about" class="tab-content">
-  <h2><i class="fas fa-info-circle"></i> About Noodles</h2>
-  <p>Noodles is a powerful penetration testing tool designed for security professionals.</p>
-  <p>Use responsibly. Misuse is not condoned.</p>
-  </section>
-  </main>
+    <section id="ransomware" class="tab-content">
+     <h2>Ransomware Panel</h2>
+     <div class="ransomware-form">
+      <input type="text" id="ransomware-target" placeholder="Target Email or System ID">
+      <input type="text" id="ransomware-amount" placeholder="Ransom Amount (BTC)">
+      <textarea id="ransomware-message" placeholder="Ransom Message"></textarea>
+      <button id="start-ransomware">Start Ransomware</button>
+     </div>
+     <div class="ransomware-logs">
+      <h3>Logs</h3>
+      <textarea id="ransomware-logs" readonly></textarea>
+     </div>
+    </section>
+
+    <section id="about" class="tab-content">
+     <h2>About Us</h2>
+     <p>Noodles is a cutting-edge cyber solutions platform designed for advanced network manipulation and security testing. Our tools provide comprehensive capabilities for penetration testing, vulnerability assessment, and network stress testing.</p>
+     <p>Disclaimer: This platform is intended for ethical use only. Unauthorized use is strictly prohibited.</p>
+    </section>
+   </main>
   </div>
   <script src="script.js"></script>
  </body>
