@@ -1,9 +1,8 @@
-const ddosAttack = require('./ddos/ddos');
-const defaceSite = require('./deface/deface');
-const connectionEstablish = require('./connection/connection');
-const ransomwareSim = require('./ransomware/ransomware');
-const otherTools = require('./other/other');
-const proxyHandler = require('./proxy/proxy');
+const ddosAttack = require('./main/ddos/ddos.js');
+const defaceSite = require('./main/deface/deface.js');
+const connectionEstablish = require('./main/tor/tor.js');
+const ransomwareSim = require('./main/ransomware/ransomware.js');
+const proxyHandler = require('./main/proxy/proxy.js');
 
 const attackStatistics = {
     mbps: 0,
