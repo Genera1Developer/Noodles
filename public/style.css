@@ -23,6 +23,7 @@ body {
     overflow: hidden;
     position: relative;
     z-index: 1000;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar.collapsed {
@@ -129,6 +130,11 @@ body {
     padding: 25px;
     margin-bottom: 30px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease-in-out;
+}
+
+.panel:hover {
+    transform: scale(1.02);
 }
 
 .panel h2 {
@@ -161,7 +167,7 @@ textarea {
     border-radius: 6px;
     box-sizing: border-box;
     font-size: 1em;
-    transition: border-color 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 input[type="text"]:focus,
@@ -170,6 +176,7 @@ select:focus,
 textarea:focus {
     border-color: #64748b;
     outline: none;
+    box-shadow: 0 0 8px rgba(100, 116, 139, 0.5);
 }
 
 button {
@@ -179,12 +186,20 @@ button {
     border: none;
     border-radius: 7px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
     font-size: 1.1em;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 button:hover {
     background-color: #4f46e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 /* Statistics */
@@ -200,6 +215,11 @@ button:hover {
     padding: 22px;
     text-align: center;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease-in-out;
+}
+
+.stats-card:hover {
+    transform: scale(1.05);
 }
 
 .stats-card h3 {
@@ -264,11 +284,12 @@ button:hover {
     border-radius: 6px;
     cursor: pointer;
     margin-top: 25px;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .close-button:hover {
     background-color: #b91c1c;
+    transform: scale(1.05);
 }
 
 /* Tabs */
@@ -320,4 +341,41 @@ button:hover {
 /* Scrollbar (Firefox) */
 html {
     scrollbar-color: #475569 #1e293b;
+}
+
+/* Footer */
+.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #1e293b;
+    color: #94a3b8;
+    border-top: 1px solid #334155;
+    font-size: 0.9em;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        position: static;
+    }
+
+    .sidebar.collapsed {
+        width: 0;
+    }
+
+    #sidebar-toggle {
+        display: none;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    .stats {
+        grid-template-columns: 1fr;
+    }
 }
