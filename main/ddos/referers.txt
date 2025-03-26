@@ -1,3 +1,4 @@
+|
 https://www.google.com/search?q=
 https://www.bing.com/search?q=
 https://www.facebook.com/l.php?u=
@@ -277,8 +278,8 @@ https://www.zora.co/
 https://www.royal.io/
 https://www.ourzora.com/
 https://www.ninjatune.net/
-https://www.warp sound.com/
-https://www.arpeggi labs.com/
+https://www.warpsound.com/
+https://www.arpeggilabs.com/
 https://www.stableaudio.com/
 https://www.harmonai.org/
 https://www.mubert.com/
@@ -288,12 +289,12 @@ https://www.izotope.com/
 https://www.landr.com/
 https://www.emastered.com/
 https://www.wearepush.com/
-https://www.route note.com/
-https://www.distro kid.com/
-https://www.cd baby.com/
+https://www.routenote.com/
+https://www.distrokid.com/
+https://www.cdbaby.com/
 https://www.tunecore.com/
 https://www.reverbnation.com/
-https://www.band camp.com/
+https://www.bandcamp.com/
 https://www.soundcloud.com/
 https://www.spotify.com/
 https://www.apple.com/music/
@@ -337,16 +338,16 @@ https://www.kanopy.com/
 https://www.hoopladigital.com/
 https://www.criterionchannel.com/
 https://www.mubi.com/
-https://www.film movement plus.com/
+https://www.filmmovementplus.com/
 https://www.guidedoc.tv/
 https://www.docsville.com/
-https://www.curiosity stream.com/
-https://www.snag films.com/
-https://www.top documentary films.com/
-https://www.free documentary.org/
+https://www.curiositystream.com/
+https://www.snagfilms.com/
+https://www.topdocumentaryfilms.com/
+https://www.freedocumentary.org/
 https://www.archive.org/details/movies
-https://www.public domain movies.net/
-https://www.classic cinema online.com/
+https://www.publicdomainmovies.net/
+https://www.classiccinemaonline.com/
 https://www.fbi.gov/
 https://www.cia.gov/
 https://www.interpol.int/
@@ -367,7 +368,7 @@ https://www.sisde.it/
 https://www.aise.it/
 https://www.adnsi.ro/
 https://www.fsb.ru/
-https://www.s vr.gov.ru/
+https://www.svr.gov.ru/
 https://www.kgb.by/
 https://www.kgb.kg/
 https://www.mss.gov.cn/
