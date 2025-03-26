@@ -1,115 +1,107 @@
 <!DOCTYPE html>
- <html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Noodles 🍜</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-  integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
-  crossorigin="anonymous" referrerpolicy="no-referrer" />
- </head>
- <body>
- 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noodles 🍜</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+          integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"/>
+</head>
+<body>
 
-  <div class="sidebar">
-  <div class="logo">
-  <img src="assets/logo.png" alt="Noodles Logo" class="logo-img">
-  <span class="logo-text">Noodles 🍜</span>
-  </div>
-  <ul class="nav">
-  <li>
-  <a href="#" data-tab="ddos">
-  <i class="fas fa-skull-crossbones"></i> DDoS
-  </a>
-  </li>
-  <li>
-  <a href="#" data-tab="defacement">
-  <i class="fas fa-mask"></i> Defacement
-  </a>
-  </li>
-  <li>
-  <a href="#" data-tab="connection">
-  <i class="fas fa-network-wired"></i> Connection
-  </a>
-  </li>
-  <li>
-  <a href="#" data-tab="other">
-  <i class="fas fa-toolbox"></i> Other Tools
-  </a>
-  </li>
-  <li>
-  <a href="#" data-tab="about">
-  <i class="fas fa-info-circle"></i> About Us
-  </a>
-  </li>
-  </ul>
-  </div>
- 
+<div class="sidebar">
+    <div class="logo">
+        <img src="assets/logo.png" alt="Noodles Logo" class="logo-img">
+        <span class="logo-text">Noodles 🍜</span>
+    </div>
+    <ul class="nav">
+        <li>
+            <a href="#" data-tab="ddos">
+                <i class="fas fa-skull-crossbones"></i> DDoS
+            </a>
+        </li>
+        <li>
+            <a href="#" data-tab="defacement">
+                <i class="fas fa-mask"></i> Defacement
+            </a>
+        </li>
+        <li>
+            <a href="#" data-tab="connection">
+                <i class="fas fa-network-wired"></i> Connection
+            </a>
+        </li>
+        <li>
+            <a href="#" data-tab="other">
+                <i class="fas fa-toolbox"></i> Other Tools
+            </a>
+        </li>
+        <li>
+            <a href="#" data-tab="about">
+                <i class="fas fa-info-circle"></i> About Us
+            </a>
+        </li>
+    </ul>
+</div>
 
-  <div class="main-content">
-  <div class="header">
-  <h1>Noodles - The Ethical Hacking Tool 💻</h1>
-  </div>
- 
+<div class="main-content">
+    <div class="header">
+        <h1>Noodles - The Cutting-Edge Hacking Tool 💻</h1>
+    </div>
 
-  <div class="tab-content" id="ddos">
-  <h2>DDoS Attack 💥</h2>
-  <input type="text" id="ddosTarget" placeholder="Target URL or .onion address">
-  <select id="ddosAttackType">
-  <option value="http">HTTP Flood</option>
-  <option value="tcp">TCP Flood</option>
-  <option value="udp">UDP Flood</option>
-  </select>
-  <button id="startDDoS">Start DDoS 💣</button>
-  <div class="statistics">
-  <p>MBPS: <span id="mbps">0</span></p>
-  <p>Packets Sent: <span id="packets">0</span></p>
-  <p>Target Status: <span id="targetStatus">Unknown</span></p>
-  <p>Time Elapsed: <span id="elapsedTime">0</span></p>
-  </div>
-  </div>
- 
+    <div class="tab-content" id="ddos">
+        <h2>DDoS Attack 💥</h2>
+        <input type="text" id="ddosTarget" placeholder="Target URL or .onion address">
+        <select id="ddosAttackType">
+            <option value="http">HTTP Flood</option>
+            <option value="tcp">TCP Flood</option>
+            <option value="udp">UDP Flood</option>
+        </select>
+        <button id="startDDoS">Start DDoS 💣</button>
+        <div class="statistics">
+            <p>MBPS: <span id="mbps">0</span></p>
+            <p>Packets Sent: <span id="packets">0</span></p>
+            <p>Target Status: <span id="targetStatus">Unknown</span></p>
+            <p>Time Elapsed: <span id="elapsedTime">0</span></p>
+        </div>
+    </div>
 
-  <div class="tab-content" id="defacement">
-  <h2>Website Defacement 💀</h2>
-  <input type="text" id="defacementTarget" placeholder="Target URL or .onion address">
-  <select id="defacementType">
-  <option value="image">Image Replacement</option>
-  <option value="text">Text Modification</option>
-  <option value="html">HTML Injection</option>
-  </select>
-  <textarea id="defacementContent" placeholder="Defacement Content"></textarea>
-  <button id="startDefacement">Start Defacement 🔥</button>
-  </div>
- 
+    <div class="tab-content" id="defacement">
+        <h2>Website Defacement 💀</h2>
+        <input type="text" id="defacementTarget" placeholder="Target URL or .onion address">
+        <select id="defacementType">
+            <option value="image">Image Replacement</option>
+            <option value="text">Text Modification</option>
+            <option value="html">HTML Injection</option>
+        </select>
+        <textarea id="defacementContent" placeholder="Defacement Content"></textarea>
+        <button id="startDefacement">Start Defacement 🔥</button>
+    </div>
 
-  <div class="tab-content" id="connection">
-  <h2>Unauthorized Connection ⚠</h2>
-  <input type="text" id="connectionTarget" placeholder="Target URL or .onion address">
-  <select id="connectionType">
-  <option value="portscan">Port Scanning</option>
-  <option value="bannergrab">Banner Grabbing</option>
-  </select>
-  <button id="startConnection">Start Connection</button>
-  <div id="connectionResults"></div>
-  </div>
- 
+    <div class="tab-content" id="connection">
+        <h2>Unauthorized Connection ⚠</h2>
+        <input type="text" id="connectionTarget" placeholder="Target URL or .onion address">
+        <select id="connectionType">
+            <option value="portscan">Port Scanning</option>
+            <option value="bannergrab">Banner Grabbing</option>
+        </select>
+        <button id="startConnection">Start Connection</button>
+        <div id="connectionResults"></div>
+    </div>
 
-  <div class="tab-content" id="other">
-  <h2>Other Hacking Tools</h2>
-  <p>Coming soon... ⏳</p>
-  </div>
- 
+    <div class="tab-content" id="other">
+        <h2>Other Hacking Tools</h2>
+        <p>Coming soon... ⏳</p>
+    </div>
 
-  <div class="tab-content" id="about">
-  <h2>About Us</h2>
-  <p>Noodles is a cutting-edge cybersecurity tool developed by a collective of highly skilled (and slightly unhinged)
-  hackers. Our mission is to expose vulnerabilities and wreak havoc... ethically, of course. 😈</p>
-  </div>
-  </div>
- 
+    <div class="tab-content" id="about">
+        <h2>About Us</h2>
+        <p>Noodles is a cutting-edge cybersecurity tool developed by a collective of highly skilled (and slightly unhinged)
+            hackers. Our mission is to expose vulnerabilities and wreak havoc... ethically, of course. 😈</p>
+    </div>
+</div>
 
-  <script src="script.js"></script>
- </body>
- </html>
+<script src="script.js"></script>
+</body>
+</html>
