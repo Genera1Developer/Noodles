@@ -2,9 +2,11 @@
   "name": "Noodles-js",
   "version": "5.0.0",
   "description": "Noodle Panel",
-  "
   "author": "Noodles",
   "license": "MIT",
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "@types/express": "^4.17.21",
     "axios": "^1.6.7",
