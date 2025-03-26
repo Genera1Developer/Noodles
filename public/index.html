@@ -36,7 +36,11 @@
                         <option value="http-flood">HTTP Flood</option>
                         <option value="tcp-flood">TCP Flood</option>
                         <option value="udp-flood">UDP Flood</option>
+                        <option value="slowloris">Slowloris</option>
+                        <option value="syn-flood">SYN Flood</option>
                     </select>
+                    <input type="number" id="ddos-duration" placeholder="Duration (seconds)" value="30">
+                    <input type="number" id="ddos-threads" placeholder="Threads" value="100">
                     <button id="ddos-start">Start DDoS 💣</button>
                 </div>
                 <div class="stats">
