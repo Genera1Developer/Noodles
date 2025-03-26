@@ -1,76 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const attackButton = document.getElementById('attackButton');
-    const targetUrlInput = document.getElementById('targetUrl');
-    const attackTypeSelect = document.getElementById('attackType');
-    const statusDiv = document.getElementById('status');
-    const logsDiv = document.getElementById('logs');
-    const statsDiv = document.getElementById('stats');
-    const defaceButton = document.getElementById('defaceButton');
-    const defaceUrlInput = document.getElementById('defaceUrl');
-    const defaceCodeInput = document.getElementById('defaceCode');
-    const connectButton = document.getElementById('connectButton');
-    const connectUrlInput = document.getElementById('connectUrl');
-    const ransomwareButton = document.getElementById('ransomwareButton');
-    const ransomwareUrlInput = document.getElementById('ransomwareUrl');
-    const sidePanel = document.querySelector('.side-panel');
-    const menuButton = document.getElementById('menuButton');
-    const tabs = document.querySelectorAll('.side-panel-tab');
-    const tabContents = document.querySelectorAll('.tab-content');
-    const resetButton = document.getElementById('resetButton');
-    const aboutUsButton = document.getElementById('aboutUsButton');
-    const aboutUsContent = document.getElementById('aboutUs');
-    const geoIpButton = document.getElementById('geoIpButton');
-    const geoIpUrlInput = document.getElementById('geoIpUrl');
-    const customAttackButton = document.getElementById('customAttackButton');
-    const customAttackCodeInput = document.getElementById('customAttackCode');
-    const nukeButton = document.getElementById('nukeButton');
-    const ipLookupButton = document.getElementById('ipLookupButton');
-    const ipLookupInput = document.getElementById('ipLookupInput');
-    const sqlInjectionButton = document.getElementById('sqlInjectionButton');
-    const sqlInjectionUrlInput = document.getElementById('sqlInjectionUrl');
-    const xssButton = document.getElementById('xssButton');
-    const xssUrlInput = document.getElementById('xssUrl');
-    const csrfButton = document.getElementById('csrfButton');
-    const csrfUrlInput = document.getElementById('csrfUrl');
-    const reverseShellButton = document.getElementById('reverseShellButton');
-    const reverseShellUrlInput = document.getElementById('reverseShellUrl');
-    const portScanButton = document.getElementById('portScanButton');
-    const portScanUrlInput = document.getElementById('portScanUrl');
-    const socialEngineeringButton = document.getElementById('socialEngineeringButton');
-    const socialEngineeringTargetInput = document.getElementById('socialEngineeringTarget');
-    const credentialStuffingButton = document.getElementById('credentialStuffingButton');
-    const credentialStuffingUrlInput = document.getElementById('credentialStuffingUrl');
-    const dataBreachSearchButton = document.getElementById('dataBreachSearchButton');
-    const dataBreachSearchInput = document.getElementById('dataBreachSearchInput');
-    const darkWebScanButton = document.getElementById('darkWebScanButton');
-    const darkWebScanInput = document.getElementById('darkWebScanInput');
-    const vulnerabilityScanButton = document.getElementById('vulnerabilityScanButton');
-    const vulnerabilityScanUrlInput = document.getElementById('vulnerabilityScanUrl');
-
-    let mbps = 0;
-    let packetsSent = 0;
-    let connectionStatus = 'Idle';
-    let attackInterval;
-    let startTime;
-    let isSidePanelOpen = false;
-
-    function showTab(tabId) {
-        tabContents.forEach(content => {
-            content.style.display = 'none';
-        });
-        document.getElementById(tabId).style.display = 'block';
-        aboutUsContent.style.display = tabId === 'aboutUs' ? 'block' : 'none';
-    }
-
-    tabs.forEach(tab => {
-        tab.addEventListener('click', (event) => {
-            const tabId = event.target.dataset.tab;
-            showTab(tabId);
-        });
-    });
-
-    showTab('ddos');
-
+    // --- Utility Functions ---
     function logMessage(message) {
         const logEntry = document.createElement('div');
         logEntry.classList.add('log-entry');
@@ -94,20 +23,167 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(url, { method: 'HEAD', mode: 'no-cors' });
             return response.status >= 200 && response.status < 400;
         } catch (error) {
+            console.error("Connection test error:", error);
             return false;
         }
     }
 
+    function clearStats() {
+        mbps = 0;
+        packetsSent = 0;
+    }
+
+    function setStatus(message) {
+        statusDiv.textContent = message;
+    }
+
+    function resetAttackState() {
+        clearInterval(attackInterval);
+        clearStats();
+        connectionStatus = 'Idle';
+        setStatus('Idle');
+        updateStatsDisplay();
+    }
+
+    async function genericApiCall(endpoint, data, successMessage, errorMessage) {
+        try {
+            const response = await fetch(`/api/${endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(successMessage);
+                logMessage(successMessage);
+                if (responseData.message) {
+                    logMessage(responseData.message);
+                }
+                return responseData;
+
+            } else {
+                setStatus(errorMessage || `Error: ${responseData.error}`);
+                logMessage(errorMessage || `Error: ${responseData.error}`);
+                return null;
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("API call error:", error);
+            return null;
+        }
+    }
+    // --- End Utility Functions ---
+
+    // --- Element Selectors ---
+    const attackButton = document.getElementById('attackButton');
+    const targetUrlInput = document.getElementById('targetUrl');
+    const attackTypeSelect = document.getElementById('attackType');
+    const statusDiv = document.getElementById('status');
+    const logsDiv = document.getElementById('logs');
+    const statsDiv = document.getElementById('stats');
+
+    const defaceButton = document.getElementById('defaceButton');
+    const defaceUrlInput = document.getElementById('defaceUrl');
+    const defaceCodeInput = document.getElementById('defaceCode');
+
+    const connectButton = document.getElementById('connectButton');
+    const connectUrlInput = document.getElementById('connectUrl');
+
+    const ransomwareButton = document.getElementById('ransomwareButton');
+    const ransomwareUrlInput = document.getElementById('ransomwareUrl');
+
+    const sidePanel = document.querySelector('.side-panel');
+    const menuButton = document.getElementById('menuButton');
+    const tabs = document.querySelectorAll('.side-panel-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const resetButton = document.getElementById('resetButton');
+    const aboutUsButton = document.getElementById('aboutUsButton');
+    const aboutUsContent = document.getElementById('aboutUs');
+
+    const geoIpButton = document.getElementById('geoIpButton');
+    const geoIpUrlInput = document.getElementById('geoIpUrl');
+
+    const customAttackButton = document.getElementById('customAttackButton');
+    const customAttackCodeInput = document.getElementById('customAttackCode');
+
+    const nukeButton = document.getElementById('nukeButton');
+
+    const ipLookupButton = document.getElementById('ipLookupButton');
+    const ipLookupInput = document.getElementById('ipLookupInput');
+
+    const sqlInjectionButton = document.getElementById('sqlInjectionButton');
+    const sqlInjectionUrlInput = document.getElementById('sqlInjectionUrl');
+
+    const xssButton = document.getElementById('xssButton');
+    const xssUrlInput = document.getElementById('xssUrl');
+
+    const csrfButton = document.getElementById('csrfButton');
+    const csrfUrlInput = document.getElementById('csrfUrl');
+
+    const reverseShellButton = document.getElementById('reverseShellButton');
+    const reverseShellUrlInput = document.getElementById('reverseShellUrl');
+
+    const portScanButton = document.getElementById('portScanButton');
+    const portScanUrlInput = document.getElementById('portScanUrl');
+
+    const socialEngineeringButton = document.getElementById('socialEngineeringButton');
+    const socialEngineeringTargetInput = document.getElementById('socialEngineeringTarget');
+
+    const credentialStuffingButton = document.getElementById('credentialStuffingButton');
+    const credentialStuffingUrlInput = document.getElementById('credentialStuffingUrl');
+
+    const dataBreachSearchButton = document.getElementById('dataBreachSearchButton');
+    const dataBreachSearchInput = document.getElementById('dataBreachSearchInput');
+
+    const darkWebScanButton = document.getElementById('darkWebScanButton');
+    const darkWebScanInput = document.getElementById('darkWebScanInput');
+
+    const vulnerabilityScanButton = document.getElementById('vulnerabilityScanButton');
+    const vulnerabilityScanUrlInput = document.getElementById('vulnerabilityScanUrl');
+    // --- End Element Selectors ---
+
+    // --- Attack State Variables ---
+    let mbps = 0;
+    let packetsSent = 0;
+    let connectionStatus = 'Idle';
+    let attackInterval;
+    let startTime;
+    let isSidePanelOpen = false;
+    // --- End Attack State Variables ---
+
+    // --- Tab Management ---
+    function showTab(tabId) {
+        tabContents.forEach(content => content.style.display = 'none');
+        document.getElementById(tabId).style.display = 'block';
+        aboutUsContent.style.display = tabId === 'aboutUs' ? 'block' : 'none';
+    }
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', (event) => {
+            const tabId = event.target.dataset.tab;
+            showTab(tabId);
+        });
+    });
+
+    showTab('ddos'); // Default tab
+    // --- End Tab Management ---
+
+    // --- Attack Functions ---
     async function initiateAttack(targetUrl, attackType) {
         connectionStatus = 'Attacking';
-        statusDiv.textContent = 'Attacking...';
+        setStatus('Attacking...');
         logMessage(`Initiating ${attackType} attack on ${targetUrl}`);
         startTime = Date.now();
 
         const isReachable = await testConnection(targetUrl);
         if (!isReachable) {
             logMessage(`Target ${targetUrl} is unreachable. Attack aborted.`);
-            statusDiv.textContent = 'Target Unreachable';
+            setStatus('Target Unreachable');
             connectionStatus = 'Idle';
             updateStatsDisplay();
             return;
@@ -132,17 +208,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     logMessage(data.message);
                 } else {
                     logMessage(`Attack failed: ${data.error}`);
-                    clearInterval(attackInterval);
-                    connectionStatus = 'Idle';
-                    statusDiv.textContent = 'Attack Failed';
-                    updateStatsDisplay();
+                    resetAttackState();
+                    setStatus('Attack Failed');
                 }
             } catch (error) {
                 logMessage(`An error occurred during the attack: ${error.message}`);
-                clearInterval(attackInterval);
-                connectionStatus = 'Idle';
-                statusDiv.textContent = 'Attack Error';
-                updateStatsDisplay();
+                resetAttackState();
+                setStatus('Attack Error');
             }
         }, 200);
     }
@@ -156,14 +228,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        clearInterval(attackInterval);
-        mbps = 0;
-        packetsSent = 0;
-        updateStatsDisplay();
-
+        resetAttackState();
         initiateAttack(targetUrl, attackType);
     });
+    // --- End Attack Functions ---
 
+    // --- Feature Implementations ---
     defaceButton.addEventListener('click', async () => {
         const defaceUrl = defaceUrlInput.value;
         const defaceCode = defaceCodeInput.value;
@@ -173,30 +243,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Defacing...';
-        logMessage(`Attempting to deface ${defaceUrl}`);
+        const result = await genericApiCall(
+            'deface',
+            { defaceUrl, defaceCode },
+            `Successfully defaced ${defaceUrl}`,
+            `Failed to deface ${defaceUrl}`
+        );
 
-        try {
-            const response = await fetch('/api/deface', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ defaceUrl, defaceCode }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
+        if(result) {
+           //handle additional data returned from API if necessary
         }
     });
 
@@ -208,31 +263,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Connecting...';
-        logMessage(`Attempting to connect to ${connectUrl}`);
-
-        try {
-            const response = await fetch('/api/connect', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ connectUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'connect',
+            { connectUrl },
+            `Successfully connected to ${connectUrl}`,
+            `Failed to connect to ${connectUrl}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
     ransomwareButton.addEventListener('click', async () => {
@@ -243,31 +282,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = "Sending Ransomware...";
-        logMessage(`Attempting to send ransomware to ${ransomwareUrl}`);
-
-        try {
-            const response = await fetch('/api/ransomware', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ ransomwareUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'ransomware',
+            { ransomwareUrl },
+            `Successfully sent ransomware to ${ransomwareUrl}`,
+            `Failed to send ransomware to ${ransomwareUrl}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
     geoIpButton.addEventListener('click', async () => {
@@ -278,31 +301,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Getting GeoIP Info...';
-        logMessage(`Getting GeoIP information for ${geoIpUrl}`);
+        const result = await genericApiCall(
+            'geoip',
+            { geoIpUrl },
+            `Successfully retrieved GeoIP information for ${geoIpUrl}`,
+            `Failed to retrieve GeoIP information for ${geoIpUrl}`
+        );
 
-        try {
-            const response = await fetch('/api/geoip', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ geoIpUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-                logMessage(JSON.stringify(data.geoIpInfo, null, 2));
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
+        if (result && result.geoIpInfo) {
+            logMessage(JSON.stringify(result.geoIpInfo, null, 2));
         }
     });
 
@@ -315,31 +322,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Executing Custom Attack...';
-        logMessage(`Executing custom attack on ${targetUrl}`);
-
-        try {
-            const response = await fetch('/api/customAttack', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ targetUrl, customAttackCode }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'customAttack',
+            { targetUrl, customAttackCode },
+            `Successfully executed custom attack on ${targetUrl}`,
+            `Failed to execute custom attack on ${targetUrl}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
     nukeButton.addEventListener('click', async () => {
@@ -350,31 +341,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'NUKING...';
-        logMessage(`NUKING ${targetUrl}`);
-
-        try {
-            const response = await fetch('/api/nuke', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ targetUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'nuke',
+            { targetUrl },
+            `Successfully NUKED ${targetUrl}`,
+            `Failed to NUKE ${targetUrl}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
     ipLookupButton.addEventListener('click', async () => {
@@ -385,31 +360,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Looking up IP...';
-        logMessage(`Looking up IP address: ${ipAddress}`);
+        const result = await genericApiCall(
+            'ipLookup',
+            { ipAddress },
+            `Successfully looked up IP address: ${ipAddress}`,
+            `Failed to lookup IP address: ${ipAddress}`
+        );
 
-        try {
-            const response = await fetch('/api/ipLookup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ ipAddress }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-                logMessage(JSON.stringify(data.ipInfo, null, 2));
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
+        if (result && result.ipInfo) {
+            logMessage(JSON.stringify(result.ipInfo, null, 2));
         }
     });
 
@@ -421,31 +380,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Attempting SQL Injection...';
-        logMessage(`Attempting SQL injection on ${sqlInjectionUrl}`);
-
-        try {
-            const response = await fetch('/api/sqlInjection', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ sqlInjectionUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'sqlInjection',
+            { sqlInjectionUrl },
+            `Successfully attempted SQL injection on ${sqlInjectionUrl}`,
+            `Failed to attempt SQL injection on ${sqlInjectionUrl}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
     xssButton.addEventListener('click', async () => {
@@ -456,31 +399,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Attempting XSS...';
-        logMessage(`Attempting XSS on ${xssUrl}`);
-
-        try {
-            const response = await fetch('/api/xss', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ xssUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'xss',
+            { xssUrl },
+            `Successfully attempted XSS on ${xssUrl}`,
+            `Failed to attempt XSS on ${xssUrl}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
     csrfButton.addEventListener('click', async () => {
@@ -491,31 +418,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Attempting CSRF...';
-        logMessage(`Attempting CSRF on ${csrfUrl}`);
-
-        try {
-            const response = await fetch('/api/csrf', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ csrfUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'csrf',
+            { csrfUrl },
+            `Successfully attempted CSRF on ${csrfUrl}`,
+            `Failed to attempt CSRF on ${csrfUrl}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
     reverseShellButton.addEventListener('click', async () => {
@@ -526,31 +437,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Attempting Reverse Shell...';
-        logMessage(`Attempting Reverse Shell on ${reverseShellUrl}`);
-
-        try {
-            const response = await fetch('/api/reverseShell', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ reverseShellUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'reverseShell',
+            { reverseShellUrl },
+            `Successfully attempted Reverse Shell on ${reverseShellUrl}`,
+            `Failed to attempt Reverse Shell on ${reverseShellUrl}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
     portScanButton.addEventListener('click', async () => {
@@ -561,31 +456,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Scanning Ports...';
-        logMessage(`Scanning ports on ${portScanUrl}`);
+        const result = await genericApiCall(
+            'portScan',
+            { portScanUrl },
+            `Successfully scanned ports on ${portScanUrl}`,
+            `Failed to scan ports on ${portScanUrl}`
+        );
 
-        try {
-            const response = await fetch('/api/portScan', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ portScanUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-                logMessage(JSON.stringify(data.openPorts, null, 2));
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
+        if (result && result.openPorts) {
+            logMessage(JSON.stringify(result.openPorts, null, 2));
         }
     });
 
@@ -597,34 +476,18 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Initiating Social Engineering...';
-        logMessage(`Initiating social engineering attack on ${target}`);
-
-        try {
-            const response = await fetch('/api/socialEngineering', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ target }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'socialEngineering',
+            { target },
+            `Successfully initiated social engineering attack on ${target}`,
+            `Failed to initiate social engineering attack on ${target}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
-   credentialStuffingButton.addEventListener('click', async () => {
+    credentialStuffingButton.addEventListener('click', async () => {
         const credentialStuffingUrl = credentialStuffingUrlInput.value;
 
         if (!credentialStuffingUrl) {
@@ -632,31 +495,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Attempting Credential Stuffing...';
-        logMessage(`Attempting credential stuffing on ${credentialStuffingUrl}`);
-
-        try {
-            const response = await fetch('/api/credentialStuffing', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ credentialStuffingUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
-        }
+        const result = await genericApiCall(
+            'credentialStuffing',
+            { credentialStuffingUrl },
+            `Successfully attempted credential stuffing on ${credentialStuffingUrl}`,
+            `Failed to attempt credential stuffing on ${credentialStuffingUrl}`
+        );
+        if(result) {
+            //handle additional data returned from API if necessary
+         }
     });
 
     dataBreachSearchButton.addEventListener('click', async () => {
@@ -667,31 +514,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Searching Data Breaches...';
-        logMessage(`Searching for ${searchTerm} in data breaches`);
+        const result = await genericApiCall(
+            'dataBreachSearch',
+            { searchTerm },
+            `Successfully searched for ${searchTerm} in data breaches`,
+            `Failed to search for ${searchTerm} in data breaches`
+        );
 
-        try {
-            const response = await fetch('/api/dataBreachSearch', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ searchTerm }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-                logMessage(JSON.stringify(data.results, null, 2));
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
+        if (result && result.results) {
+            logMessage(JSON.stringify(result.results, null, 2));
         }
     });
 
@@ -703,31 +534,15 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Scanning Dark Web...';
-        logMessage(`Scanning the dark web for ${searchTerm}`);
+        const result = await genericApiCall(
+            'darkWebScan',
+            { searchTerm },
+            `Successfully scanned the dark web for ${searchTerm}`,
+            `Failed to scan the dark web for ${searchTerm}`
+        );
 
-        try {
-            const response = await fetch('/api/darkWebScan', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ searchTerm }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-                logMessage(JSON.stringify(data.results, null, 2));
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
+        if (result && result.results) {
+            logMessage(JSON.stringify(result.results, null, 2));
         }
     });
 
@@ -739,52 +554,38 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        statusDiv.textContent = 'Scanning for Vulnerabilities...';
-        logMessage(`Scanning ${vulnerabilityScanUrl} for vulnerabilities`);
+        const result = await genericApiCall(
+            'vulnerabilityScan',
+            { vulnerabilityScanUrl },
+            `Successfully scanned ${vulnerabilityScanUrl} for vulnerabilities`,
+            `Failed to scan ${vulnerabilityScanUrl} for vulnerabilities`
+        );
 
-        try {
-            const response = await fetch('/api/vulnerabilityScan', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ vulnerabilityScanUrl }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                statusDiv.textContent = data.message;
-                logMessage(data.message);
-                logMessage(JSON.stringify(data.vulnerabilities, null, 2));
-            } else {
-                statusDiv.textContent = `Error: ${data.error}`;
-                logMessage(`Error: ${data.error}`);
-            }
-        } catch (error) {
-            statusDiv.textContent = `An error occurred: ${error.message}`;
-            logMessage(`An error occurred: ${error.message}`);
+        if (result && result.vulnerabilities) {
+            logMessage(JSON.stringify(result.vulnerabilities, null, 2));
         }
     });
+    // --- End Feature Implementations ---
 
+    // --- UI Interactions ---
     menuButton.addEventListener('click', () => {
         sidePanel.classList.toggle('open');
         isSidePanelOpen = !isSidePanelOpen;
+        sidePanel.style.transition = 'transform 0.3s ease-in-out';
         sidePanel.style.transform = isSidePanelOpen ? 'translateX(0)' : 'translateX(-100%)';
     });
 
     resetButton.addEventListener('click', () => {
-        clearInterval(attackInterval);
-        mbps = 0;
-        packetsSent = 0;
-        connectionStatus = 'Idle';
-        statusDiv.textContent = 'Idle';
+        resetAttackState();
         logMessage('Attack stopped.');
-        updateStatsDisplay();
     });
 
-    updateStatsDisplay();
+    aboutUsButton.addEventListener('click', () => {
+        showTab('aboutUs');
+    });
+    // --- End UI Interactions ---
 
+    // --- Side Panel Dragging --- (Consider removing this functionality for security reasons)
     let isDragging = false;
     let initialX, initialY;
 
@@ -810,15 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sidePanel.style.left = newX + 'px';
         sidePanel.style.top = newY + 'px';
     });
+    // --- End Side Panel Dragging ---
 
-    aboutUsButton.addEventListener('click', () => {
-        showTab('aboutUs');
-    });
-
-    menuButton.addEventListener('click', () => {
-        sidePanel.classList.toggle('open');
-        isSidePanelOpen = !isSidePanelOpen;
-        sidePanel.style.transition = 'transform 0.3s ease-in-out';
-        sidePanel.style.transform = isSidePanelOpen ? 'translateX(0)' : 'translateX(-100%)';
-    });
+    updateStatsDisplay(); // Initial stats display
 });
