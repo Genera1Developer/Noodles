@@ -253,4 +253,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     updateStatsDisplay();
+
+    // Drag and Drop Functionality
+    let isDragging = false;
+    let initialX, initialY;
+
+    sidePanel.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        initialX = e.clientX - sidePanel.offsetLeft;
+        initialY = e.clientY - sidePanel.offsetTop;
+        sidePanel.style.cursor = 'grabbing';
+    });
+
+    document.addEventListener('mouseup', () => {
+        isDragging = false;
+        sidePanel.style.cursor = 'grab';
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+
+        const newX = e.clientX - initialX;
+        const newY = e.clientY - initialY;
+
+        sidePanel.style.left = newX + 'px';
+        sidePanel.style.top = newY + 'px';
+    });
 });
