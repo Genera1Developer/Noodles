@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Noodles</title>
+    <title>About Us - Noodles 😈</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Arial', sans-serif;
             background-color: #1e272e;
             color: #f5f6fa;
             margin: 0;
@@ -20,28 +20,32 @@
         .about-container {
             background-color: #2d3436;
             border-radius: 12px;
-            padding: 30px;
-            width: 80%;
-            max-width: 700px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
+            padding: 40px;
+            width: 85%;
+            max-width: 800px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
             transition: transform 0.3s ease-in-out;
+            opacity: 0.95;
         }
 
         .about-container:hover {
-            transform: scale(1.03);
+            transform: scale(1.02);
         }
 
         h1 {
             color: #a29bfe;
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 2.5em;
+            margin-bottom: 25px;
+            font-size: 2.8em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
         }
 
         p {
-            line-height: 1.7;
-            font-size: 1.1em;
-            margin-bottom: 15px;
+            line-height: 1.8;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            text-align: justify;
+            hyphens: auto;
         }
 
         strong {
@@ -56,20 +60,99 @@
         .disclaimer {
             color: #e74c3c;
             font-weight: bold;
-            margin-top: 20px;
+            margin-top: 30px;
             text-align: center;
+            font-size: 1.1em;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+        }
+
+        .team-members {
+            margin-top: 40px;
+        }
+
+        .team-members h2 {
+            color: #a29bfe;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2em;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .team-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+        }
+
+        .team-list li {
+            background-color: #353b48;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            width: 250px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .team-list li:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-list li img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 15px;
+            border: 3px solid #6c5ce7;
+        }
+
+        .team-list li h3 {
+            color: #f5f6fa;
+            font-size: 1.4em;
+            margin-bottom: 8px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+        }
+
+        .team-list li p {
+            font-size: 1em;
+            line-height: 1.6;
+            color: #dcdde1;
         }
     </style>
 </head>
 <body>
     <div class="about-container">
         <h1>About Noodles 😈</h1>
-        <p>Noodles is a clandestine penetration testing suite designed for discerning individuals who appreciate the art of network assessment. We offer an unparalleled array of tools to probe, evaluate, and, shall we say, <em>reconfigure</em> the security landscape of targeted systems.</p>
-        <p>Our mission is to empower users with the ability to uncover vulnerabilities, simulate advanced persistent threats, and implement... <em>alternative</em> defense strategies. With Noodles, you can proactively engage with your digital environment on a more intimate level.</p>
-        <p><strong>Important Note:</strong> Noodles is intended for experimental use only. Unauthorized activities are frowned upon. The developers assume no responsibility for actions taken by users. You are the master of your own destiny. 😈</p>
-        <p>Noodles was conceived by a collective of like-minded individuals with a shared appreciation for the finer points of cybersecurity. We are dedicated to pushing the boundaries of what is possible, and providing you with the tools to do the same.</p>
-        <p><em>"In the realm of security, knowledge is power. And power, my friend, is everything."</em></p>
-        <p class="disclaimer">Use responsibly. Or don't. We won't judge. 😉</p>
+        <p>Noodles is a highly sophisticated penetration testing suite crafted for individuals with a refined appreciation for the darker arts of network assessment. We deliver an unmatched arsenal of tools to dissect, evaluate, and, let's say, <em>strategically optimize</em> the security posture of targeted infrastructures.</p>
+        <p>Our core objective is to empower users with the ability to expose critical vulnerabilities, simulate advanced threat actors, and implement... <em>non-conventional</em> defensive methodologies. Noodles enables you to proactively engage with your digital environment on a profoundly intimate level.</p>
+        <p><strong>Important Note:</strong> Noodles is designed exclusively for advanced experimental deployment. Unauthorized activities are strictly prohibited. The developers disclaim all responsibility for actions executed by users. You are the architect of your own reality. 😈</p>
+        <p>Noodles was brought into existence by a cabal of like-minded visionaries with a mutual passion for the esoteric realms of cybersecurity. We are steadfastly committed to redefining the boundaries of possibility and equipping you with the tools to transcend those boundaries.</p>
+        <p><em>"In the theater of security, absolute knowledge is absolute power. And absolute power, as you know, is everything."</em></p>
+        <div class="team-members">
+            <h2>Our Elite Team</h2>
+            <ul class="team-list">
+                <li>
+                    <img src="https://thispersondoesnotexist.com/image" alt="John Doe">
+                    <h3>John "ZeroCool" Doe</h3>
+                    <p>Lead Architect &amp; Exploit Specialist. Masters in Computer Exploitation from MIT (unofficially).</p>
+                </li>
+                <li>
+                    <img src="https://thispersondoesnotexist.com/image" alt="Jane Smith">
+                    <h3>Jane "FireWall" Smith</h3>
+                    <p>Chief Security Strategist &amp; Social Engineering Expert. PhD in Applied Deception from Oxford.</p>
+                </li>
+                <li>
+                    <img src="https://thispersondoesnotexist.com/image" alt="Alex Johnson">
+                    <h3>Alex "RootK1t" Johnson</h3>
+                    <p>Kernel Hacker &amp; System Administrator. Self-taught guru with a penchant for breaking things.</p>
+                </li>
+            </ul>
+        </div>
+        <p class="disclaimer">Engage responsibly. Or don't. We operate in the shadows. 😉</p>
     </div>
 </body>
 </html>
