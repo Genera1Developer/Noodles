@@ -132,7 +132,9 @@
     "geoip-lite": "^1.4.9",
     "country-data": "^0.0.31",
     "server-destroy": "^1.1.0",
-    "ioredis": "^5.3.2"
+    "ioredis": "^5.3.2",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.9.0"
   },
   "devDependencies": {
     "husky": "^9.0.11",
