@@ -789,8 +789,10 @@ const credentials = {
 if (credentials.safety.disableDangerousFeatures) {
   credentials.safety.disabledModules.forEach(moduleName => {
     if (credentials[moduleName]) {
-      console.warn(
-          `[SECURITY] Disabling potentially dangerous module: ${moduleName}`);
+      if (credentials.settings.logLevel === 'debug'){
+          console.warn(
+              `[SECURITY] Disabling potentially dangerous module: ${moduleName}`);
+      }
       for (const key in credentials[moduleName]) {
         if (typeof credentials[moduleName][key] === 'boolean') {
           credentials[moduleName][key] = false;
