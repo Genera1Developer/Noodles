@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+ <html lang="en">
+ <head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Noodles - Unleash the Power</title>
+     <link rel="stylesheet" href="style.css">
+     <link rel="icon" href="assets/noodles_logo.png" type="image/x-icon">
+ </head>
+ <body>
+ 
+     <div class="sidebar">
+         <img src="assets/noodles_logo.png" alt="Noodles Logo" class="logo">
+         <a href="#" data-tab="ddos">DDoS 💥</a>
+         <a href="#" data-tab="defacement">Defacement 😈</a>
+         <a href="#" data-tab="connection">Connection 🔗</a>
+         <a href="#" data-tab="ransomware">Ransomware 💰</a>
+         <a href="#" data-tab="about">About Us ℹ️</a>
+     </div>
+ 
+     <div class="content">
+         <div class="tab-content" id="ddos">
+             <h2>DDoS Attack Panel</h2>
+             <input type="text" id="ddosTarget" placeholder="Target URL (.onion or normal)">
+             <select id="ddosMethod">
+                 <option value="tcpFlood">TCP Flood</option>
+                 <option value="udpFlood">UDP Flood</option>
+                 <option value="httpFlood">HTTP Flood</option>
+                 <option value="slowloris">Slowloris</option>
+                 <option value="synFlood">SYN Flood</option>
+             </select>
+             <input type="number" id="ddosThreads" placeholder="Threads" value="100">
+             <button id="startDDoS">Start Attack</button>
+             <div class="status-box">
+                 <p>Status: <span id="ddosStatus">Idle</span></p>
+                 <p>MBPS: <span id="ddosMBPS">0</span></p>
+                 <p>Packets Sent: <span id="ddosPackets">0</span></p>
+                 <p>Connection Status: <span id="ddosConnection">Offline</span></p>
+             </div>
+         </div>
+ 
+         <div class="tab-content" id="defacement">
+             <h2>Defacement Panel</h2>
+             <input type="text" id="defacementTarget" placeholder="Target URL">
+             <textarea id="defacementContent" placeholder="HTML Content"></textarea>
+             <button id="startDefacement">Start Defacement</button>
+             <div class="status-box">
+                 <p>Status: <span id="defacementStatus">Idle</span></p>
+             </div>
+         </div>
+ 
+         <div class="tab-content" id="connection">
+             <h2>Connection Panel</h2>
+             <input type="text" id="connectionTarget" placeholder="Target IP/URL">
+             <input type="number" id="connectionPort" placeholder="Port" value="80">
+             <button id="startConnection">Connect</button>
+             <div class="status-box">
+                 <p>Status: <span id="connectionStatus">Idle</span></p>
+                 <p>Data Received: <span id="connectionData">0</span></p>
+             </div>
+         </div>
+ 
+         <div class="tab-content" id="ransomware">
+             <h2>Ransomware Panel</h2>
+             <input type="text" id="ransomwareTarget" placeholder="Target Directory">
+             <input type="text" id="ransomwareExtension" placeholder="File Extension" value=".encrypted">
+             <textarea id="ransomwareMessage" placeholder="Ransom Message"></textarea>
+             <button id="startRansomware">Start Encryption</button>
+             <div class="status-box">
+                 <p>Status: <span id="ransomwareStatus">Idle</span></p>
+                 <p>Files Encrypted: <span id="ransomwareFiles">0</span></p>
+             </div>
+         </div>
+ 
+         <div class="tab-content" id="about">
+             <h2>About Us</h2>
+             <p>Noodles - Unleash the Power. We provide cutting-edge tools for network analysis and security testing. Use responsibly.</p>
+         </div>
+ 
+         <div class="logs">
+             <h3>Logs</h3>
+             <div id="logOutput"></div>
+         </div>
+     </div>
+ 
+     <script src="script.js"></script>
+ </body>
+ </html>
