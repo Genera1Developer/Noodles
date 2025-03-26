@@ -6,6 +6,7 @@
   <title>Noodles - Unleash the Chaos</title>
   <link rel="stylesheet" href="style.css">
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
  </head>
  <body>
   <div class="container">
@@ -27,7 +28,7 @@
 
    <main class="main-content">
     <section id="ddos" class="tab-content active">
-     <h2>DDoS Attack 😈</h2>
+     <h2>DDoS Attack</h2>
      <div class="attack-panel">
       <label for="ddos-target">Target URL:</label>
       <input type="text" id="ddos-target" placeholder="Enter URL or .onion address">
@@ -38,6 +39,8 @@
        <option value="http-flood">HTTP Flood</option>
        <option value="slowloris">Slowloris</option>
        <option value="syn-flood">SYN Flood</option>
+       <option value="icmp-flood">ICMP Flood</option>
+       <option value="pod-attack">PoD Attack</option>
       </select>
       <label for="ddos-threads">Threads:</label>
       <input type="number" id="ddos-threads" value="100" min="1">
@@ -49,6 +52,7 @@
        <p>Status: <span id="ddos-status">Idle</span></p>
        <p>MBPS: <span id="ddos-mbps">0</span></p>
        <p>Packets Sent: <span id="ddos-packets">0</span></p>
+       <p>Connection Status: <span id="ddos-connection">Unknown</span></p>
       </div>
       <div class="logs">
        <h3>Logs</h3>
@@ -58,7 +62,7 @@
     </section>
 
     <section id="defacement" class="tab-content">
-     <h2>Website Defacement 🎭</h2>
+     <h2>Website Defacement</h2>
      <div class="attack-panel">
       <label for="defacement-target">Target URL:</label>
       <input type="text" id="defacement-target" placeholder="Enter URL">
@@ -78,7 +82,7 @@
     </section>
 
     <section id="connection" class="tab-content">
-     <h2>Connection 🔗</h2>
+     <h2>Connection</h2>
      <div class="attack-panel">
       <label for="connection-target">Target IP/URL:</label>
       <input type="text" id="connection-target" placeholder="Enter IP Address or URL">
@@ -98,12 +102,14 @@
     </section>
 
     <section id="ransomware" class="tab-content">
-     <h2>Ransomware 💰</h2>
+     <h2>Ransomware</h2>
      <div class="attack-panel">
       <label for="ransomware-target">Target Directory:</label>
       <input type="text" id="ransomware-target" placeholder="Enter Directory Path">
       <label for="ransomware-message">Ransom Message:</label>
       <textarea id="ransomware-message">Your files have been encrypted. Send BTC to [ADDRESS] to get the decryption key.</textarea>
+      <label for="ransomware-extension">File Extension:</label>
+      <input type="text" id="ransomware-extension" value=".noodles" placeholder=".noodles">
       <button id="ransomware-start">Start Encryption</button>
       <div class="statistics">
        <h3>Statistics</h3>
@@ -125,7 +131,6 @@
     </section>
    </main>
   </div>
-  <script src="https://kit.fontawesome.com/YOUR_FONT_AWESOME_KIT.js" crossorigin="anonymous"></script>
   <script src="script.js"></script>
  </body>
  </html>
