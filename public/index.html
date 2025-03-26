@@ -33,6 +33,7 @@
                         <option value="tcp-flood">TCP Flood</option>
                         <option value="udp-flood">UDP Flood</option>
                     </select>
+                    <input type="number" id="ddos-threads" placeholder="Threads" value="10" min="1">
                     <button id="ddos-start">Start DDoS 🔥</button>
                 </div>
                 <div class="attack-stats">
@@ -52,6 +53,7 @@
                         <option value="text-modify">Text Modification</option>
                         <option value="html-inject">HTML Injection</option>
                     </select>
+                    <textarea id="defacement-data" placeholder="Defacement Data (Image URL, Text, or HTML)"></textarea>
                     <button id="defacement-start">Start Defacement 🔥</button>
                 </div>
             </section>
@@ -64,6 +66,7 @@
                         <option value="port-scan">Port Scanning</option>
                         <option value="banner-grab">Banner Grabbing</option>
                     </select>
+                    <input type="text" id="connection-ports" placeholder="Ports (e.g., 80,443,8080)" value="80,443">
                     <button id="connection-start">Start Connection 🔥</button>
                 </div>
             </section>
@@ -76,6 +79,7 @@
             <section id="about" class="tab-content">
                 <h2>About Us</h2>
                 <p>Noodles is a cutting-edge penetration testing tool designed for advanced network analysis and security assessments. Our mission is to provide powerful tools for identifying vulnerabilities and ensuring robust security measures. Use responsibly. 💥</p>
+                <p>Disclaimer: This tool is intended for ethical use only. Unauthorized use is strictly prohibited.</p>
             </section>
         </main>
     </div>
