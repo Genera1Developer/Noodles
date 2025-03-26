@@ -19,23 +19,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetButton = document.getElementById('resetButton');
     const aboutUsButton = document.getElementById('aboutUsButton');
     const aboutUsContent = document.getElementById('aboutUs');
+    const geoIpButton = document.getElementById('geoIpButton');
+    const geoIpUrlInput = document.getElementById('geoIpUrl');
 
     let mbps = 0;
     let packetsSent = 0;
     let connectionStatus = 'Idle';
     let attackInterval;
     let startTime;
+    let isSidePanelOpen = false;
 
     function showTab(tabId) {
         tabContents.forEach(content => {
             content.style.display = 'none';
         });
         document.getElementById(tabId).style.display = 'block';
-        if (tabId === 'aboutUs') {
-            aboutUsContent.style.display = 'block';
-        } else {
-            aboutUsContent.style.display = 'none';
-        }
+        aboutUsContent.style.display = tabId === 'aboutUs' ? 'block' : 'none';
     }
 
     tabs.forEach(tab => {
@@ -245,8 +244,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    geoIpButton.addEventListener('click', async () => {
+        const geoIpUrl = geoIpUrlInput.value;
+
+        if (!geoIpUrl) {
+            alert('Please enter a URL to get GeoIP information from.');
+            return;
+        }
+
+        statusDiv.textContent = 'Getting GeoIP Info...';
+        logMessage(`Getting GeoIP information for ${geoIpUrl}`);
+
+        try {
+            const response = await fetch('/api/geoip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ geoIpUrl }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDiv.textContent = data.message;
+                logMessage(data.message);
+                logMessage(JSON.stringify(data.geoIpInfo, null, 2));
+            } else {
+                statusDiv.textContent = `Error: ${data.error}`;
+                logMessage(`Error: ${data.error}`);
+            }
+        } catch (error) {
+            statusDiv.textContent = `An error occurred: ${error.message}`;
+            logMessage(`An error occurred: ${error.message}`);
+        }
+    });
+
     menuButton.addEventListener('click', () => {
         sidePanel.classList.toggle('open');
+        isSidePanelOpen = !isSidePanelOpen;
+        sidePanel.style.transform = isSidePanelOpen ? 'translateX(0)' : 'translateX(-100%)';
     });
 
     resetButton.addEventListener('click', () => {
@@ -261,7 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateStatsDisplay();
 
-    // Drag and Drop Functionality
     let isDragging = false;
     let initialX, initialY;
 
@@ -292,15 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
         showTab('aboutUs');
     });
 
-    // Add Animation to Side Panel Toggle
     menuButton.addEventListener('click', () => {
         sidePanel.classList.toggle('open');
-        if (sidePanel.classList.contains('open')) {
-            sidePanel.style.transition = 'transform 0.3s ease-in-out';
-            sidePanel.style.transform = 'translateX(0)';
-        } else {
-            sidePanel.style.transition = 'transform 0.3s ease-in-out';
-            sidePanel.style.transform = 'translateX(-100%)';
-        }
+        isSidePanelOpen = !isSidePanelOpen;
+        sidePanel.style.transition = 'transform 0.3s ease-in-out';
+        sidePanel.style.transform = isSidePanelOpen ? 'translateX(0)' : 'translateX(-100%)';
     });
 });
