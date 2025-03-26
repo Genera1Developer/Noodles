@@ -5,15 +5,15 @@
       <stop offset="100%" stop-color="#32CD32"/>
     </linearGradient>
     <filter id="hackerGlow">
-      <feGaussianBlur stdDeviation="7" result="coloredBlur"/>
+      <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
       <feMerge>
         <feMergeNode in="coloredBlur"/>
         <feMergeNode in="SourceGraphic"/>
       </feMerge>
     </filter>
   </defs>
-  <rect x="0" y="0" width="64" height="64" fill="#1E1E1E"/>
-  <path d="M16 16 L48 48 M48 16 L16 48" stroke="url(#hackerGradient)" stroke-width="7" stroke-linecap="round" filter="url(#hackerGlow)"/>
-  <path d="M32 8 L32 56 M8 32 L56 32" stroke="url(#hackerGradient)" stroke-width="7" stroke-linecap="round" filter="url(#hackerGlow)"/>
-  <circle cx="32" cy="32" r="24" fill="none" stroke="#555" stroke-width="4" opacity="0.8"/>
+  <rect x="0" y="0" width="64" height="64" fill="#222"/>
+  <path d="M16 16 L48 48 M48 16 L16 48" stroke="url(#hackerGradient)" stroke-width="6" stroke-linecap="round" filter="url(#hackerGlow)"/>
+  <path d="M32 8 L32 56 M8 32 L56 32" stroke="url(#hackerGradient)" stroke-width="6" stroke-linecap="round" filter="url(#hackerGlow)"/>
+  <circle cx="32" cy="32" r="24" fill="none" stroke="#444" stroke-width="3" opacity="0.7"/>
 </svg>
