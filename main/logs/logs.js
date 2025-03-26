@@ -1,6 +1,7 @@
 class Logger {
     constructor() {
         this.logEntries = [];
+        this.maxLogSize = 100;
     }
 
     generateAttackID() {
@@ -17,8 +18,15 @@ class Logger {
         };
 
         this.logEntries.push(logEntry);
-        this.persistLog(logEntry);  // Persist immediately
-        this.displayLog(logEntry); // Display log immediately
+        this.trimLogs();
+        this.persistLog(logEntry);
+        this.displayLog(logEntry);
+    }
+
+    trimLogs() {
+        if (this.logEntries.length > this.maxLogSize) {
+            this.logEntries = this.logEntries.slice(this.logEntries.length - this.maxLogSize);
+        }
     }
 
     persistLog(logEntry) {
@@ -34,8 +42,8 @@ class Logger {
     displayLog(logEntry) {
         const logElement = document.createElement('div');
         logElement.classList.add('log-entry');
-        logElement.innerHTML = this.formatLog(logEntry); // HTML formatting
-        document.getElementById('logs-container').prepend(logElement); // Add to top
+        logElement.innerHTML = this.formatLog(logEntry);
+        document.getElementById('logs-container').prepend(logElement);
     }
 
     formatLog(logEntry) {
@@ -52,7 +60,7 @@ class Logger {
         if (typeof text === 'string') {
             return text.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         }
-        return text; // Return non-string values as is.
+        return text;
     }
 
     getLogs() {
@@ -78,8 +86,22 @@ class Logger {
             });
         });
     }
+
+    clearLogs() {
+        this.logEntries = [];
+        document.getElementById('logs-container').innerHTML = '';
+        fs.writeFile('noodles.log', '', err => {
+            if (err) {
+                console.error('Failed to clear log file:', err);
+            }
+        });
+    }
 }
 
 const logger = new Logger();
-logger.loadPersistentLogs(); // Load logs on startup
-window.logger = logger;       // Make logger globally accessible
+logger.loadPersistentLogs();
+window.logger = logger;
+
+document.getElementById('clear-logs-button').addEventListener('click', () => {
+    logger.clearLogs();
+});
