@@ -1,1 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connection Tools</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="connection-container">
+        <h1>Connection Tools 💻</h1>
+        <div class="tool-box">
+            <h2>Port Scanner 💥</h2>
+            <input type="text" id="port-scan-target" placeholder="Target IP Address">
+            <input type="text" id="port-scan-ports" placeholder="Ports (e.g., 21,22,80,443)">
+            <button id="port-scan-button">Scan Ports</button>
+            <div id="port-scan-results" class="results-box"></div>
+        </div>
 
+        <div class="tool-box">
+            <h2>Banner Grabbing 💀</h2>
+            <input type="text" id="banner-grab-target" placeholder="Target IP Address or URL">
+            <input type="text" id="banner-grab-port" placeholder="Port (e.g., 80)">
+            <button id="banner-grab-button">Grab Banner</button>
+            <div id="banner-grab-results" class="results-box"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
