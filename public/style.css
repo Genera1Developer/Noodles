@@ -563,3 +563,393 @@ input:checked + .slider:before {
 .hidden {
     display: none;
 }
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+/* Transitions and Animations */
+.sidebar, .content {
+    transition: all 0.3s ease;
+}
+
+button {
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    background-color: #1e88e5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Improved Input Styles */
+input[type="text"],
+input[type="number"],
+select,
+textarea {
+    border: 1px solid #444;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus,
+textarea:focus {
+    border-color: #64b5f6;
+    box-shadow: 0 0 5px rgba(100, 181, 246, 0.5);
+}
+
+/* Attack Options Hover Effect */
+.attack-option:hover {
+    background-color: #444;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* Collapsed Sidebar Styles */
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar.collapsed .sidebar-header h1 {
+    display: none;
+}
+
+.sidebar.collapsed .logo {
+    width: 40px;
+    height: 40px;
+}
+
+.sidebar.collapsed nav ul li span {
+    display: none;
+}
+
+.sidebar.collapsed nav ul li {
+    padding: 10px;
+}
+
+.content {
+    margin-left: 280px;
+}
+
+.sidebar.collapsed ~ .content {
+    margin-left: 60px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 240px;
+    }
+
+    .content {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+
+    .attack-panel {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
+        flex-direction: row;
+        align-items: center;
+        height: auto;
+        border-right: none;
+        border-bottom: 1px solid #333;
+        padding: 10px;
+    }
+
+    .sidebar-header {
+        display: none;
+    }
+
+    .logo {
+        display: none;
+    }
+
+    .sidebar nav ul {
+        display: flex;
+        flex-grow: 1;
+        justify-content: space-around;
+    }
+
+    .sidebar nav ul li {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 0;
+    }
+
+    .sidebar nav ul li i {
+        margin-right: 0;
+        margin-bottom: 5px;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    .sidebar.collapsed {
+        width: 100%;
+    }
+
+    .sidebar.collapsed ~ .content {
+        margin-left: 0;
+    }
+}
+
+/* Modern Tooltip */
+[data-tooltip] {
+    position: relative;
+    cursor: pointer;
+}
+
+[data-tooltip]:before,
+[data-tooltip]:after {
+    position: absolute;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+[data-tooltip]:before {
+    content: attr(data-tooltip);
+    text-align: center;
+    min-width: 3em;
+    max-width: 21em;
+    padding: 0.5em 1em;
+    border-radius: 3px;
+    font-size: 12px;
+    background: #333;
+    color: #fff;
+    z-index: 1001;
+}
+
+[data-tooltip]:after {
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    z-index: 1002;
+}
+
+[data-tooltip]:not([data-tooltip-location="bottom"]):before {
+    margin-bottom: 9px;
+}
+
+[data-tooltip]:not([data-tooltip-location="bottom"]):after {
+    border-top-color: #333;
+    border-bottom: none;
+}
+
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Positioning Tooltips */
+[data-tooltip-location="bottom"]:before {
+    margin-top: 9px;
+}
+
+[data-tooltip-location="bottom"]:after {
+    border-bottom-color: #333;
+    border-top: none;
+}
+
+[data-tooltip-location="left"]:before,
+[data-tooltip-location="right"]:before {
+    margin-top: -0.5em;
+}
+
+[data-tooltip-location="left"]:after,
+[data-tooltip-location="right"]:after {
+    margin-top: -0.5em;
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+}
+
+[data-tooltip-location="top"]:before {
+    bottom: 100%;
+    left: 50%;
+    margin-left: -50%;
+}
+
+[data-tooltip-location="top"]:after {
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+}
+
+[data-tooltip-location="right"]:before {
+    left: 100%;
+    top: 50%;
+    margin-left: 9px;
+}
+
+[data-tooltip-location="right"]:after {
+    left: 100%;
+    top: 50%;
+    margin-left: 3px;
+    border-left-color: #333;
+    border-right: none;
+}
+
+[data-tooltip-location="left"]:before {
+    right: 100%;
+    top: 50%;
+    margin-right: 9px;
+}
+
+[data-tooltip-location="left"]:after {
+    right: 100%;
+    top: 50%;
+    margin-right: 3px;
+    border-right-color: #333;
+    border-left: none;
+}
+
+/* Dark Mode Tweaks */
+body {
+    background-color: #0a0a0a;
+    color: #e0e0e0;
+}
+
+.sidebar {
+    background-color: #141414;
+    border-right: 1px solid #222;
+}
+
+.content {
+    background-color: #121212;
+}
+
+.attack-panel {
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.attack-panel input,
+.attack-panel select,
+.attack-panel textarea {
+    background-color: #252525;
+    border: 1px solid #444;
+}
+
+.status-panel {
+    background-color: #1e1e1e;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.logs textarea {
+    background-color: #252525;
+    border: 1px solid #444;
+}
+
+/* Focus States */
+button:focus,
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(100, 181, 246, 0.5); /* Subtle focus glow */
+}
+
+/* Enhanced Attack Options */
+.attack-option {
+    background-color: #252525;
+    border: 1px solid #444;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.attack-option:hover {
+    background-color: #333;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.attack-option.selected {
+    background-color: #64b5f6;
+    color: #0a0a0a;
+    border-color: #64b5f6;
+    box-shadow: 0 3px 6px rgba(100, 181, 246, 0.5);
+}
+
+.status-display {
+    background-color: #1a1a1a;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.status-display-item h4 {
+    color: #f0f0f0;
+}
+
+.status-display-item p {
+    color: #9e9e9e;
+}
+
+/* Toggle Switch */
+.slider {
+    background-color: #252525;
+}
+
+input:checked + .slider {
+    background-color: #64b5f6;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #64b5f6;
+}
+
+/* Sidebar Toggle Button */
+.sidebar-toggle-button {
+    background-color: #252525;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-toggle-button:hover {
+    background-color: #333;
+}
+
+/* Notification */
+.notification {
+    background-color: #43a047;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Modal */
+.modal-content {
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Close Button */
+.close-button:hover {
+    color: #ddd;
+}
