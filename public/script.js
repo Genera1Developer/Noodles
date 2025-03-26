@@ -36,7 +36,6 @@ async function testConnection(url) {
     }
 }
 
-
 function clearStats() {
     mbps = 0;
     packetsSent = 0;
