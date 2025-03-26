@@ -1,9 +1,9 @@
-const ddos = require('./ddos/ddos');
-const deface = require('./deface/deface');
-const tor = require('./tor/tor');
-const ransomware = require('./ransomware/ransomware');
-const connection = require('./connection/connection');
-const proxy = require('./proxy/proxy');
+const ddos = require('./main/ddos/ddos.js');
+const deface = require('./main/deface/deface.js');
+const tor = require('./main/tor/tor.js');
+const ransomware = require('./main/ransomware/ransomware.js');
+const connection = require('.main/connection/connection.js');
+const proxy = require('./main/proxy/proxy.js');
 
 module.exports = {
     ddosAttack: ddos.ddosAttack,
