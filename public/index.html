@@ -1,74 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - Cyber Warfare Suite 💥</title>
+    <title>Noodles 💥</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
-    <div class="sidebar">
-        <h1>Noodles 💻</h1>
-        <button data-tab="ddos">DDoS 💣</button>
-        <button data-tab="defacement">Defacement 💀</button>
-        <button data-tab="connection">Connection 🔥</button>
-        <button data-tab="other">Other Tools ⚠</button>
-        <button data-tab="about">About Us</button>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1>Noodles 💥</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" data-tab="ddos"><i class="fas fa-skull"></i> DDoS</a></li>
+                    <li><a href="#" data-tab="defacement"><i class="fas fa-fire"></i> Defacement</a></li>
+                    <li><a href="#" data-tab="connection"><i class="fas fa-project-diagram"></i> Connection</a></li>
+                    <li><a href="#" data-tab="about"><i class="fas fa-info-circle"></i> About Us</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main class="main-content">
+            <section id="ddos" class="tab-content active">
+                <h2>DDoS 💀</h2>
+                <div class="attack-form">
+                    <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                    <select id="ddos-method">
+                        <option value="http">HTTP Flood</option>
+                        <option value="tcp">TCP Flood</option>
+                        <option value="udp">UDP Flood</option>
+                    </select>
+                    <button id="ddos-start">Start Attack 🔥</button>
+                </div>
+                <div class="attack-stats">
+                    <p>MBPS: <span id="ddos-mbps">0</span></p>
+                    <p>Packets Sent: <span id="ddos-packets">0</span></p>
+                    <p>Target Status: <span id="ddos-status">Unknown</span></p>
+                    <p>Time Elapsed: <span id="ddos-time">0</span>s</p>
+                </div>
+            </section>
+
+            <section id="defacement" class="tab-content">
+                <h2>Defacement 🔥</h2>
+                <div class="attack-form">
+                    <input type="text" id="defacement-target" placeholder="Target URL">
+                    <select id="defacement-method">
+                        <option value="image">Image Replacement</option>
+                        <option value="text">Text Modification</option>
+                        <option value="html">HTML Injection</option>
+                    </select>
+                    <button id="defacement-start">Start Defacement 💣</button>
+                </div>
+            </section>
+
+            <section id="connection" class="tab-content">
+                <h2>Connection 💻</h2>
+                <div class="attack-form">
+                    <input type="text" id="connection-target" placeholder="Target URL or IP Address">
+                    <select id="connection-method">
+                        <option value="portscan">Port Scanning</option>
+                        <option value="bannergrab">Banner Grabbing</option>
+                    </select>
+                    <button id="connection-start">Start Connection 💥</button>
+                </div>
+            </section>
+
+            <section id="about" class="tab-content">
+                <h2>About Us</h2>
+                <p>Noodles is a cutting-edge penetration testing tool designed for security professionals. Use it responsibly. Or don't. We don't care. 😈</p>
+                <p>Created by: The ShadowCoders</p>
+            </section>
+        </main>
     </div>
-
-    <div class="content">
-        <section id="ddos" class="tab-content active">
-            <h2>DDoS Attack</h2>
-            <input type="text" id="ddosTarget" placeholder="Target URL or .onion address">
-            <select id="ddosType">
-                <option value="http">HTTP Flood</option>
-                <option value="tcp">TCP Flood</option>
-                <option value="udp">UDP Flood</option>
-            </select>
-            <button id="startDDoS">Start DDoS Attack</button>
-        </section>
-
-        <section id="defacement" class="tab-content">
-            <h2>Website Defacement</h2>
-            <input type="text" id="defacementTarget" placeholder="Target URL or .onion address">
-            <select id="defacementType">
-                <option value="image">Image Replacement</option>
-                <option value="text">Text Modification</option>
-                <option value="html">HTML Injection</option>
-            </select>
-            <textarea id="defacementPayload" placeholder="Defacement Payload"></textarea>
-            <button id="startDefacement">Start Defacement</button>
-        </section>
-
-        <section id="connection" class="tab-content">
-            <h2>Unauthorized Connection</h2>
-            <input type="text" id="connectionTarget" placeholder="Target URL or .onion address">
-            <select id="connectionType">
-                <option value="portscan">Port Scanning</option>
-                <option value="bannergrab">Banner Grabbing</option>
-            </select>
-            <button id="startConnection">Start Connection</button>
-        </section>
-
-        <section id="other" class="tab-content">
-            <h2>Other Hacking Tools</h2>
-            <p>Coming soon... 💥💀🔥⚠</p>
-        </section>
-
-        <section id="about" class="tab-content">
-            <h2>About Us</h2>
-            <p>Noodles is a cutting-edge cyber warfare suite designed for penetration testing and security research. Use responsibly. 💥</p>
-        </section>
-
-        <div class="statistics">
-            <h3>Statistics</h3>
-            <p>MBPS: <span id="mbps">0</span></p>
-            <p>Packets Sent: <span id="packetsSent">0</span></p>
-            <p>Target Status: <span id="targetStatus">Unknown</span></p>
-            <p>Time Elapsed: <span id="timeElapsed">0</span>s</p>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
+
 </html>
