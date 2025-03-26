@@ -1,8 +1,11 @@
-// main JS file for main/ to group everything together
-// script.js is the main JS file for public/
-
-const { ddos } = require('/ddos/ddos.js');
+const { ddos } = require('./ddos/ddos');
+const { deface } = require('./deface/deface');
+const { connect } = require('./connect/connect');
+const { ransomware } = require('./ransomware/ransomware');
 
 module.exports = {
-    ddos
+    ddos,
+    deface,
+    connect,
+    ransomware
 };
