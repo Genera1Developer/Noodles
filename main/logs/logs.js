@@ -6,6 +6,11 @@ class Logger {
         this.logEntries = [];
         this.maxLogSize = 100;
         this.logFilePath = 'noodles.log';
+        this.stats = {
+            packetsSent: 0,
+            bytesSent: 0,
+            connectionStatus: 'Idle'
+        };
     }
 
     generateAttackID() {
@@ -112,6 +117,23 @@ class Logger {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    updateStats(packets, bytes, status) {
+        this.stats.packetsSent += packets;
+        this.stats.bytesSent += bytes;
+        this.stats.connectionStatus = status;
+        this.displayStats();
+    }
+
+    displayStats() {
+        document.getElementById('packets-sent').textContent = this.stats.packetsSent;
+        document.getElementById('mbps').textContent = (this.stats.bytesSent * 8 / 1000000).toFixed(2);
+        document.getElementById('connection-status').textContent = this.stats.connectionStatus;
+    }
+
+    getStats() {
+        return this.stats;
     }
 }
 
