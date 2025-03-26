@@ -63,7 +63,8 @@ class Logger {
             totalAttackTime: 0,
             attackPacketLoss: 0,
             attackReflectionEnabled: false,
-            attackDuration: 0
+            attackDuration: 0,
+            mbps: 0
         };
         this.latencyData = [];
         this.initializeUI();
@@ -200,7 +201,7 @@ class Logger {
         this.stats.torProxyUsed = torProxy || 'None';
         this.stats.attackReflectionEnabled = reflectionEnabled;
         this.stats.attackDuration = duration;
-        this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy, reflectionEnabled);
+        this.updateStats(0, 0, 'Attacking', attackType, target, threads, torProxy, reflectionEnabled, 0);
         this.setAttackStatus('Running');
         this.setAttackDetails(`Attack type: ${attackType}, threads: ${threads}, reflection: ${reflectionEnabled}, duration: ${duration} seconds`);
         this.setAttackProgress(0);
@@ -218,13 +219,13 @@ class Logger {
         const endTime = new Date(this.stats.attackEndTime).getTime();
         this.stats.totalAttackTime = (endTime - startTime) / 1000;
 
-        this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None', 0, 'None');
+        this.updateStats(this.stats.packetsSent, this.stats.bytesSent, 'Idle', 'None', 'None', 0, 'None', false, 0);
         this.setAttackStatus('Stopped');
         this.setAttackDetails(`Attack finished in ${this.stats.totalAttackTime} seconds`);
         this.setAttackProgress(100);
     }
 
-    updateStats(packets, bytes, status, attackType, target, threads, torProxy, reflectionEnabled = false) {
+    updateStats(packets, bytes, status, attackType, target, threads, torProxy, reflectionEnabled = false, mbps = 0) {
         this.stats.packetsSent += packets;
         this.stats.bytesSent += bytes;
         this.stats.connectionStatus = status;
@@ -233,6 +234,7 @@ class Logger {
         this.stats.attackThreads = threads;
         this.stats.torProxyUsed = torProxy || this.stats.torProxyUsed;
         this.stats.attackReflectionEnabled = reflectionEnabled;
+        this.stats.mbps = mbps;
         this.displayStats();
     }
 
@@ -408,7 +410,7 @@ class Logger {
 
     displayStats() {
         document.getElementById('packets-sent').textContent = this.stats.packetsSent;
-        document.getElementById('mbps').textContent = (this.stats.bytesSent * 8 / 1000000).toFixed(2);
+        document.getElementById('mbps').textContent = this.stats.mbps.toFixed(2);
         document.getElementById('connection-status').textContent = this.stats.connectionStatus;
         document.getElementById('last-attack-type').textContent = this.stats.lastAttackType;
         document.getElementById('target').textContent = this.stats.target;
@@ -456,6 +458,7 @@ class Logger {
         document.getElementById('total-attack-time').textContent = this.stats.totalAttackTime.toFixed(2) + ' s';
         document.getElementById('attack-packet-loss').textContent = this.stats.attackPacketLoss.toFixed(2) + '%';
         document.getElementById('attack-reflection-enabled').textContent = this.stats.attackReflectionEnabled ? 'Yes' : 'No';
+        document.getElementById('mbps').textContent = this.stats.mbps.toFixed(2);
     }
 
     getStats() {
@@ -551,6 +554,11 @@ class Logger {
 
     setRansomwareDetails(details) {
         this.stats.ransomwareDetails = details;
+        this.displayStats();
+    }
+
+    setMbps(mbps) {
+        this.stats.mbps = mbps;
         this.displayStats();
     }
 
