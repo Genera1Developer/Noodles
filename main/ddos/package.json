@@ -2,12 +2,12 @@
   "name": "noodles-ddos",
   "version": "5.0.0",
   "description": "😈Noodles: Unleash Chaos - DDoS, Deface, Connect, Ransomware & More. Cutting-edge attack vectors, zero-day exploits, custom Chromium build, kernel-level access. No responsibility for misuse. Features REST API, Websocket, advanced logging, intrusion detection, real-time attack monitoring, self-updating exploit DB, distributed worker support, advanced evasion. Includes cryptocurrency miner, admin backdoor, rootkit persistence.😈",
-  "main": "ddos.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node ddos.js",
-    "dev": "nodemon ddos.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
     "build": "npm install && npm audit fix --force",
-    "attack": "node ddos.js",
+    "attack": "node attack.js",
     "prepare": "husky install",
     "exploit": "node exploit.js",
     "chromium": "node chromium-setup.js",
@@ -64,7 +64,14 @@
     "packet-forging": "node packet-forging.js",
     "privilege-escalation": "node privilege-escalation.js",
     "social-engineering": "node social-engineering.js",
-    "vulnerability-scanner": "node vulnerability-scanner.js"
+    "vulnerability-scanner": "node vulnerability-scanner.js",
+    "update-dependencies": "npm update",
+    "upgrade-dependencies": "npm install --save-dev npm-upgrade && npm-upgrade",
+    "security-audit": "npm audit",
+    "debug-api": "node --inspect api.js",
+    "debug-websocket": "node --inspect websocket.js",
+    "docker-build": "docker build -t noodles:latest .",
+    "docker-run": "docker run -p 3000:3000 noodles:latest"
   },
   "author": "Noodles😈",
   "license": "MIT",
@@ -183,7 +190,14 @@
     "phantomjs-prebuilt": "^2.1.16",
     "tor": "^0.3.1",
     "bufferutil": "^4.0.8",
-    "utf-8-validate": "^6.0.3"
+    "utf-8-validate": "^6.0.3",
+    "traceroute": "^1.3.0",
+    "ping": "^0.4.4",
+    "nmap": "^0.3.0",
+    "geoip-lite": "^1.4.9",
+    "country-data": "^0.0.31",
+    "server-destroy": "^1.1.0",
+    "user-home": "^3.0.0"
   },
   "devDependencies": {
     "husky": "^9.0.11",
