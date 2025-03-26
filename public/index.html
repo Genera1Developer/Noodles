@@ -3,89 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - Cyber Arsenal 💻💥</title>
+    <title>Noodles 🍜</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 </head>
 <body>
+
     <div class="container">
+
         <aside class="sidebar">
-            <div class="logo">
-                <img src="assets/logo.svg" alt="Noodles Logo">
-                <h1>Noodles</h1>
+            <div class="sidebar-header">
+                <h1>Noodles 🍜</h1>
             </div>
-            <nav>
+            <nav class="sidebar-nav">
                 <ul>
                     <li data-tab="ddos">💥 DDoS</li>
                     <li data-tab="defacement">💀 Defacement</li>
-                    <li data-tab="connection">🔗 Connection</li>
-                    <li data-tab="ransomware">⚠ Ransomware (Concept)</li>
-                    <li data-tab="about">ℹ About Us</li>
+                    <li data-tab="connection">💻 Connection</li>
+                    <li data-tab="ransomware">💣 Ransomware</li>
+                    <li data-tab="other">🔥 Other Tools</li>
+                    <li data-tab="about">⚠ About Us</li>
                 </ul>
             </nav>
         </aside>
 
         <main class="main-content">
             <section id="ddos" class="tab-content active">
-                <h2>DDoS Attacks 💥</h2>
-                <div class="attack-form">
-                    <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
-                    <select id="ddos-type">
-                        <option value="http-flood">HTTP Flood</option>
-                        <option value="tcp-flood">TCP Flood</option>
-                        <option value="udp-flood">UDP Flood</option>
-                    </select>
-                    <button id="ddos-start">Launch Attack 🔥</button>
-                </div>
-                <div class="attack-stats">
+                <h2>DDoS Attack</h2>
+                <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                <select id="ddos-method">
+                    <option value="http">HTTP Flood</option>
+                    <option value="tcp">TCP Flood</option>
+                    <option value="udp">UDP Flood</option>
+                </select>
+                <button id="ddos-start">Start DDoS Attack</button>
+                <div class="stats">
                     <p>MBPS: <span id="ddos-mbps">0</span></p>
                     <p>Packets Sent: <span id="ddos-packets">0</span></p>
-                    <p>Target Status: <span id="ddos-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="ddos-time">0</span>s</p>
+                    <p>Status: <span id="ddos-status">Offline</span></p>
+                    <p>Time Elapsed: <span id="ddos-time">0</span></p>
                 </div>
             </section>
 
             <section id="defacement" class="tab-content">
-                <h2>Website Defacement 💀</h2>
-                <div class="attack-form">
-                    <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
-                    <select id="defacement-type">
-                        <option value="image-replace">Image Replacement</option>
-                        <option value="text-modify">Text Modification</option>
-                        <option value="html-inject">HTML Injection</option>
-                    </select>
-                    <textarea id="defacement-payload" placeholder="Payload (e.g., new HTML, text, or image URL)"></textarea>
-                    <button id="defacement-start">Initiate Defacement 🔥</button>
-                </div>
+                <h2>Defacement Attack</h2>
+                <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
+                <select id="defacement-method">
+                    <option value="image">Image Replacement</option>
+                    <option value="text">Text Modification</option>
+                    <option value="html">HTML Injection</option>
+                </select>
+                <button id="defacement-start">Start Defacement</button>
             </section>
 
             <section id="connection" class="tab-content">
-                <h2>Unauthorized Connection 🔗</h2>
-                <div class="attack-form">
-                    <input type="text" id="connection-target" placeholder="Target URL or .onion address">
-                    <select id="connection-type">
-                        <option value="port-scan">Port Scanning</option>
-                        <option value="banner-grab">Banner Grabbing</option>
-                    </select>
-                    <button id="connection-start">Establish Connection 🔥</button>
-                </div>
-                <div id="connection-results"></div>
+                <h2>Connection Attack</h2>
+                <input type="text" id="connection-target" placeholder="Target URL or .onion address">
+                <select id="connection-method">
+                    <option value="portscan">Port Scanning</option>
+                    <option value="bannergrab">Banner Grabbing</option>
+                </select>
+                <button id="connection-start">Start Connection Attack</button>
             </section>
 
             <section id="ransomware" class="tab-content">
-                <h2>Ransomware (Concept) ⚠</h2>
-                <p>This section is purely conceptual and does not perform actual ransomware activities.</p>
-                <p>Imagine the possibilities... 😈</p>
+                <h2>Ransomware Simulation</h2>
+                <p>Simulate ransomware attacks (purely conceptual).</p>
+            </section>
+
+            <section id="other" class="tab-content">
+                <h2>Other Hacking Tools</h2>
+                <p>Coming soon...</p>
             </section>
 
             <section id="about" class="tab-content">
-                <h2>About Us ℹ</h2>
-                <p>Noodles is a cutting-edge penetration testing tool designed for cybersecurity professionals.</p>
-                <p>Our mission is to provide advanced tools for assessing and improving network security. 💣</p>
-                <p>We are dedicated to pushing the boundaries of what's possible in the world of cyber warfare. 💻</p>
+                <h2>About Us</h2>
+                <p>Noodles is a cutting-edge penetration testing tool designed for assessing the security vulnerabilities of web applications. Our team of highly skilled security experts are dedicated to providing innovative solutions for identifying and exploiting weaknesses in target systems. Use responsibly... or don't. 😈</p>
             </section>
         </main>
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
+content: Updated HTML structure with all sections and basic styling
