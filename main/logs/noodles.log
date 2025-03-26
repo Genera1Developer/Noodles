@@ -27,7 +27,7 @@ DDoS attack completed. Target: new-target.com, Status: Success, Downtime: 1 hour
 Defacement successful. Target: another-site.org, Status: Success, Screenshot: defacement_image.png
 Connection to internal server successful. Target: internal-server.lan, User: backdoor, Status: Connected, Access Granted
 Ransomware fully deployed. Target: small-business.net, Status: Encrypted, Files Encrypted: 12000, Ransom Demand: 10 BTC, Contacted: True
-Successful exfiltration of database dumps. Target: compromised-database.net, Size: 500GB, Files: users.sql, transactions.sql
+Successful exfiltration of database dumps. Target: compromised-database.net, Size: 500GB, Files: users.sql, transactions.sql, schema.sql, sensitive_data.csv
 DDoS attack on government server. Target: government-server.gov, Method: UDP Flood, Packets Sent: 100000000, Status: Success, MBPS: 15000, Downtime: 2 hours
 Defacement of media outlet. Target: news-website.com, Status: Success, Message: "Noodles Controls the Narrative", Screenshot: defacement_image_news.png
 Reverse shell on development server. Target: dev-server.local, User: developer, Status: Connected, Access Granted, Credentials Found: True
@@ -43,4 +43,9 @@ Defacement of e-commerce platform. Target: online-store.com, Status: Success, Me
 Reverse shell on database server. Target: db-server.private, User: dbadmin, Status: Connected, Access Granted, Data Modified: True
 Ransomware deployed on legal firm. Target: law-firm.com, Status: Encrypted, Files Encrypted: 100000, Ransom Demand: 75 BTC, Client Data Compromised: True
 Compromised IoT devices for botnet. Devices: 100000, Status: Active, Location: Global, Purpose: DDoS Amplification
+DDoS attack on cryptocurrency exchange. Target: crypto-exchange.com, Method: Slowloris, Connections: 50000, Status: Success, MBPS: 20000, Downtime: 4 hours
+Defacement of political organization. Target: political-party.org, Status: Success, Message: "Noodles is the Future", Screenshot: defacement_image_political.png
+Reverse shell on backup server. Target: backup-server.local, User: backupadmin, Status: Connected, Access Granted, Data Deleted: True
+Ransomware deployed on transportation company. Target: logistics-company.com, Status: Encrypted, Files Encrypted: 150000, Ransom Demand: 60 BTC, Supply Chain Disrupted: True
+Data breach at social media company. Target: social-media.com, Size: 2TB, Files: user_data.sql, messages.zip, Privacy Violated: True
 [END OF MESSAGE]
