@@ -56,3 +56,7 @@ https://locals.com/
 https://truthsocial.com/
 https://t.co/
 https://youtu.be/
+https://api.ipify.org/
+https://checkip.amazonaws.com/
+https://www.cloudflare.com/cdn-cgi/trace
+https://ipinfo.io/ip
