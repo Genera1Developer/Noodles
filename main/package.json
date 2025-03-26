@@ -16,7 +16,8 @@
     "client": "npm start --prefix client",
     "install-dependencies": "concurrently \"npm install\" \"npm install --prefix client\"",
     "update-geoip": "node scripts/update-geoip.js",
-    "attack": "node attack.js"
+    "attack": "node attack.js",
+    "queue": "node queue/queue.js"
   },
   "dependencies": {
     "@types/express": "^4.17.21",
