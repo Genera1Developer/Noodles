@@ -5,11 +5,12 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    height: 100vh;
 }
 
 .container {
     display: flex;
-    height: 100vh;
+    height: 100%;
 }
 
 /* Sidebar */
@@ -351,8 +352,6 @@ html {
     color: #94a3b8;
     border-top: 1px solid #334155;
     font-size: 0.9em;
-    position: absolute;
-    bottom: 0;
     width: 100%;
 }
 
@@ -378,4 +377,91 @@ html {
     .stats {
         grid-template-columns: 1fr;
     }
+}
+
+/* New Styles */
+.attack-form {
+    margin-bottom: 20px;
+}
+
+.attack-form label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.attack-form input[type="text"],
+.attack-form input[type="number"],
+.attack-form select,
+.attack-form textarea {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
+    border: 1px solid #475569;
+    background-color: #334155;
+    color: #e2e8f0;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.attack-form button {
+    background-color: #6366f1;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.attack-form button:hover {
+    background-color: #4f46e5;
+}
+
+.status-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+}
+
+.status-online {
+    background-color: #22c55e; /* Green */
+}
+
+.status-offline {
+    background-color: #ef4444; /* Red */
+}
+
+.status-unresponsive {
+    background-color: #f59e0b; /* Yellow */
+}
+
+.attack-options {
+    margin-bottom: 20px;
+}
+
+.attack-options label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.attack-options select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #475569;
+    background-color: #334155;
+    color: #e2e8f0;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+#connection-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+#connection-content li {
+    margin-bottom: 10px;
 }
