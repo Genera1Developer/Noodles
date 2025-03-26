@@ -113,7 +113,7 @@ const credentials = {
       'political':
           '<body bgcolor="black"><center><h1 style="color:yellow;">FREEDOM</h1><p style="color:white;">The truth will prevail.</p></center></body>',
       'nsfw':
-          '<body bgcolor="black"><center><img src="https://example.com/nsfw.gif" alt="NSFW Image"><p style="color:white;">Get Noodled!</p></center></body>',
+          '<body bgcolor="black"><center><img src="https://example.com/nsfw.gif" alt="NSFW Image"><p style="color:white;">Get Noodled!</p></center></body>', // REPLACE WITH SOMETHING IN ./assets
       'rickroll':
           '<body bgcolor="black"><center><iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" title="Rickroll Video" frameborder="0" allowfullscreen></iframe></center></body>',
       'custom':
@@ -194,7 +194,7 @@ const credentials = {
     logFormat: 'json',
     remoteSyslog: {
       enabled: false,
-      host: 'syslog.example.com',
+      host: 'syslog.example.com', // nothing preset
       port: 514,
       protocol: 'UDP',
       tlsEnabled: false,
@@ -257,12 +257,12 @@ const credentials = {
   },
   apiKeys: [],
   honeypotIps: [],
-  proxyCheckUrl: 'http://example.com',
+  proxyCheckUrl: 'http://example.com', //nothing preset
   autoUpdate: false,
   errorReporting: false,
   debugMode: false,
-  exploitDatabaseUrl: 'http://example.com/exploits.json',
-  backupServerUrl: 'http://backup.example.com',
+  exploitDatabaseUrl: 'http://example.com/exploits.json', //nothing preset
+  backupServerUrl: 'http://backup.example.com',//nothing preset
   rateLimit: {
     requestsPerMinute: 960,
     burstLimit: 1600,
@@ -272,7 +272,7 @@ const credentials = {
     ipWhitelist: ['127.0.0.1', '::1'],
     ipBlacklist: ['192.168.0.100', '10.0.0.0/8'],
   },
-  geoIpLookupUrl: 'http://example.com/geoip',
+  geoIpLookupUrl: 'http://example.com/geoip', //nothing preset
   signature: 'Noodles v1.0',
   autoBan: {
     enabled: true,
@@ -282,7 +282,7 @@ const credentials = {
     blacklistIps: ['192.168.0.100', '10.0.0.0/8'],
     logBannedIps: true,
     notifyAdmin: true,
-    adminEmail: 'admin@example.com',
+    adminEmail: 'admin@example.com', //nothing preset
   },
   security: {
     xssProtection: true,
@@ -311,17 +311,17 @@ const credentials = {
       emailAlerts: false,
       emailConfig: {
         service: 'gmail',
-        auth: {user: 'monitoring@example.com', pass: 'monitoringPassword'},
-        to: 'admin@example.com',
+        auth: {user: 'monitoring@example.com', pass: 'monitoringPassword'}, //nothing preset
+        to: 'admin@example.com', //nothing preset
       },
       smsAlerts: false,
       webhookAlerts: false,
-      webhookUrl: 'http://example.com/alerts',
+      webhookUrl: 'http://example.com/alerts', //nothing preset
       slackAlerts: false,
-      slackWebhookUrl: 'http://slack.example.com/webhook',
+      slackWebhookUrl: 'http://slack.example.com/webhook', //nothing preset
     },
     logToFile: true,
-    logFilePath: './logs/monitoring.log',
+    logFilePath: './main/logs/noodle.log',
     prometheusExporter: true,
     prometheusPort: 9090,
   },
@@ -352,7 +352,7 @@ const credentials = {
   spam: {
     email: {
       enabled: false,
-      smtpServer: 'smtp.example.com',
+      smtpServer: 'smtp.example.com', //nothing preset
       smtpPort: 587,
       username: 'spam@example.com',
       password: 'spamPassword',
@@ -370,7 +370,7 @@ const credentials = {
     sms: {
       enabled: false,
       apiEndpoint: 'https://sms.example.com/send',
-      apiKey: 'SMS_API_KEY',
+      apiKey: 'SMS_API_KEY', //nothing preset
       rateLimit: 400,
       spoofNumber: true,
       messageTemplates: [
@@ -382,7 +382,7 @@ const credentials = {
     },
     socialMedia: {
       enabled: false,
-      apiKeys: {
+      apiKeys: { //nothing preset
         twitter: 'TWITTER_API_KEY',
         facebook: 'FACEBOOK_API_KEY',
         instagram: 'INSTAGRAM_API_KEY',
@@ -399,7 +399,7 @@ const credentials = {
     },
     pushNotifications: {
       enabled: false,
-      apiKey: 'PUSH_API_KEY',
+      apiKey: 'PUSH_API_KEY', //nothing preset
       rateLimit: 200,
       notificationTemplates: [
         'Noodles Alert!',
