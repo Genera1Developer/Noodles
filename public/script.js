@@ -271,15 +271,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'deface',
-            { defaceUrl, defaceCode },
-            `Successfully defaced ${defaceUrl}`,
-            `Failed to deface ${defaceUrl}`
-        );
+        try {
+            const response = await fetch('/api/deface', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ defaceUrl, defaceCode }),
+            });
 
-        if (result) {
-            //handle additional data returned from API if necessary
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully defaced ${defaceUrl}`);
+                logMessage(`Successfully defaced ${defaceUrl}`);
+            } else {
+                setStatus(`Failed to deface ${defaceUrl}: ${responseData.error}`);
+                logMessage(`Failed to deface ${defaceUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Deface API call error:", error);
         }
     });
 
@@ -291,14 +304,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'connect',
-            { connectUrl },
-            `Successfully connected to ${connectUrl}`,
-            `Failed to connect to ${connectUrl}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/connect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ connectUrl }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully connected to ${connectUrl}`);
+                logMessage(`Successfully connected to ${connectUrl}`);
+            } else {
+                setStatus(`Failed to connect to ${connectUrl}: ${responseData.error}`);
+                logMessage(`Failed to connect to ${connectUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Connect API call error:", error);
         }
     });
 
@@ -310,14 +337,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'ransomware',
-            { ransomwareUrl },
-            `Successfully sent ransomware to ${ransomwareUrl}`,
-            `Failed to send ransomware to ${ransomwareUrl}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/ransomware', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ransomwareUrl }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully sent ransomware to ${ransomwareUrl}`);
+                logMessage(`Successfully sent ransomware to ${ransomwareUrl}`);
+            } else {
+                setStatus(`Failed to send ransomware to ${ransomwareUrl}: ${responseData.error}`);
+                logMessage(`Failed to send ransomware to ${ransomwareUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Ransomware API call error:", error);
         }
     });
 
@@ -329,15 +370,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'geoip',
-            { geoIpUrl },
-            `Successfully retrieved GeoIP information for ${geoIpUrl}`,
-            `Failed to retrieve GeoIP information for ${geoIpUrl}`
-        );
+        try {
+            const response = await fetch('/api/geoip', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ geoIpUrl }),
+            });
 
-        if (result && result.geoIpInfo) {
-            logMessage(JSON.stringify(result.geoIpInfo, null, 2));
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully retrieved GeoIP information for ${geoIpUrl}`);
+                logMessage(`Successfully retrieved GeoIP information for ${geoIpUrl}`);
+                logMessage(JSON.stringify(responseData.geoIpInfo, null, 2));
+            } else {
+                setStatus(`Failed to retrieve GeoIP information for ${geoIpUrl}: ${responseData.error}`);
+                logMessage(`Failed to retrieve GeoIP information for ${geoIpUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("GeoIP API call error:", error);
         }
     });
 
@@ -350,14 +405,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'customAttack',
-            { targetUrl, customAttackCode },
-            `Successfully executed custom attack on ${targetUrl}`,
-            `Failed to execute custom attack on ${targetUrl}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/customAttack', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ targetUrl, customAttackCode }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully executed custom attack on ${targetUrl}`);
+                logMessage(`Successfully executed custom attack on ${targetUrl}`);
+            } else {
+                setStatus(`Failed to execute custom attack on ${targetUrl}: ${responseData.error}`);
+                logMessage(`Failed to execute custom attack on ${targetUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Custom Attack API call error:", error);
         }
     });
 
@@ -369,14 +438,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'nuke',
-            { targetUrl },
-            `Successfully NUKED ${targetUrl}`,
-            `Failed to NUKE ${targetUrl}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/nuke', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ targetUrl }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully NUKED ${targetUrl}`);
+                logMessage(`Successfully NUKED ${targetUrl}`);
+            } else {
+                setStatus(`Failed to NUKE ${targetUrl}: ${responseData.error}`);
+                logMessage(`Failed to NUKE ${targetUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Nuke API call error:", error);
         }
     });
 
@@ -388,15 +471,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'ipLookup',
-            { ipAddress },
-            `Successfully looked up IP address: ${ipAddress}`,
-            `Failed to lookup IP address: ${ipAddress}`
-        );
+        try {
+            const response = await fetch('/api/ipLookup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ipAddress }),
+            });
 
-        if (result && result.ipInfo) {
-            logMessage(JSON.stringify(result.ipInfo, null, 2));
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully looked up IP address: ${ipAddress}`);
+                logMessage(`Successfully looked up IP address: ${ipAddress}`);
+                logMessage(JSON.stringify(responseData.ipInfo, null, 2));
+            } else {
+                setStatus(`Failed to lookup IP address: ${ipAddress}: ${responseData.error}`);
+                logMessage(`Failed to lookup IP address: ${ipAddress}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("IP Lookup API call error:", error);
         }
     });
 
@@ -408,14 +505,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'sqlInjection',
-            { sqlInjectionUrl },
-            `Successfully attempted SQL injection on ${sqlInjectionUrl}`,
-            `Failed to attempt SQL injection on ${sqlInjectionUrl}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/sqlInjection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ sqlInjectionUrl }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully attempted SQL injection on ${sqlInjectionUrl}`);
+                logMessage(`Successfully attempted SQL injection on ${sqlInjectionUrl}`);
+            } else {
+                setStatus(`Failed to attempt SQL injection on ${sqlInjectionUrl}: ${responseData.error}`);
+                logMessage(`Failed to attempt SQL injection on ${sqlInjectionUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("SQL Injection API call error:", error);
         }
     });
 
@@ -427,14 +538,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'xss',
-            { xssUrl },
-            `Successfully attempted XSS on ${xssUrl}`,
-            `Failed to attempt XSS on ${xssUrl}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/xss', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ xssUrl }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully attempted XSS on ${xssUrl}`);
+                logMessage(`Successfully attempted XSS on ${xssUrl}`);
+            } else {
+                setStatus(`Failed to attempt XSS on ${xssUrl}: ${responseData.error}`);
+                logMessage(`Failed to attempt XSS on ${xssUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("XSS API call error:", error);
         }
     });
 
@@ -446,14 +571,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'csrf',
-            { csrfUrl },
-            `Successfully attempted CSRF on ${csrfUrl}`,
-            `Failed to attempt CSRF on ${csrfUrl}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/csrf', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ csrfUrl }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully attempted CSRF on ${csrfUrl}`);
+                logMessage(`Successfully attempted CSRF on ${csrfUrl}`);
+            } else {
+                setStatus(`Failed to attempt CSRF on ${csrfUrl}: ${responseData.error}`);
+                logMessage(`Failed to attempt CSRF on ${csrfUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("CSRF API call error:", error);
         }
     });
 
@@ -465,14 +604,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'reverseShell',
-            { reverseShellUrl },
-            `Successfully attempted Reverse Shell on ${reverseShellUrl}`,
-            `Failed to attempt Reverse Shell on ${reverseShellUrl}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/reverseShell', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ reverseShellUrl }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully attempted Reverse Shell on ${reverseShellUrl}`);
+                logMessage(`Successfully attempted Reverse Shell on ${reverseShellUrl}`);
+            } else {
+                setStatus(`Failed to attempt Reverse Shell on ${reverseShellUrl}: ${responseData.error}`);
+                logMessage(`Failed to attempt Reverse Shell on ${reverseShellUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Reverse Shell API call error:", error);
         }
     });
 
@@ -484,15 +637,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'portScan',
-            { portScanUrl },
-            `Successfully scanned ports on ${portScanUrl}`,
-            `Failed to scan ports on ${portScanUrl}`
-        );
+        try {
+            const response = await fetch('/api/portScan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ portScanUrl }),
+            });
 
-        if (result && result.openPorts) {
-            logMessage(JSON.stringify(result.openPorts, null, 2));
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully scanned ports on ${portScanUrl}`);
+                logMessage(`Successfully scanned ports on ${portScanUrl}`);
+                logMessage(JSON.stringify(responseData.openPorts, null, 2));
+            } else {
+                setStatus(`Failed to scan ports on ${portScanUrl}: ${responseData.error}`);
+                logMessage(`Failed to scan ports on ${portScanUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Port Scan API call error:", error);
         }
     });
 
@@ -504,14 +671,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'socialEngineering',
-            { target },
-            `Successfully initiated social engineering attack on ${target}`,
-            `Failed to initiate social engineering attack on ${target}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/socialEngineering', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ target }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully initiated social engineering attack on ${target}`);
+                logMessage(`Successfully initiated social engineering attack on ${target}`);
+            } else {
+                setStatus(`Failed to initiate social engineering attack on ${target}: ${responseData.error}`);
+                logMessage(`Failed to initiate social engineering attack on ${target}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Social Engineering API call error:", error);
         }
     });
 
@@ -523,14 +704,28 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'credentialStuffing',
-            { credentialStuffingUrl },
-            `Successfully attempted credential stuffing on ${credentialStuffingUrl}`,
-            `Failed to attempt credential stuffing on ${credentialStuffingUrl}`
-        );
-        if (result) {
-            //handle additional data returned from API if necessary
+        try {
+            const response = await fetch('/api/credentialStuffing', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ credentialStuffingUrl }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully attempted credential stuffing on ${credentialStuffingUrl}`);
+                logMessage(`Successfully attempted credential stuffing on ${credentialStuffingUrl}`);
+            } else {
+                setStatus(`Failed to attempt credential stuffing on ${credentialStuffingUrl}: ${responseData.error}`);
+                logMessage(`Failed to attempt credential stuffing on ${credentialStuffingUrl}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Credential Stuffing API call error:", error);
         }
     });
 
@@ -542,15 +737,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'dataBreachSearch',
-            { searchTerm },
-            `Successfully searched for ${searchTerm} in data breaches`,
-            `Failed to search for ${searchTerm} in data breaches`
-        );
+        try {
+            const response = await fetch('/api/dataBreachSearch', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ searchTerm }),
+            });
 
-        if (result && result.results) {
-            logMessage(JSON.stringify(result.results, null, 2));
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully searched for ${searchTerm} in data breaches`);
+                logMessage(`Successfully searched for ${searchTerm} in data breaches`);
+                logMessage(JSON.stringify(responseData.results, null, 2));
+            } else {
+                setStatus(`Failed to search for ${searchTerm} in data breaches: ${responseData.error}`);
+                logMessage(`Failed to search for ${searchTerm} in data breaches: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Data Breach Search API call error:", error);
         }
     });
 
@@ -562,15 +771,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'darkWebScan',
-            { searchTerm },
-            `Successfully scanned the dark web for ${searchTerm}`,
-            `Failed to scan the dark web for ${searchTerm}`
-        );
+        try {
+            const response = await fetch('/api/darkWebScan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ searchTerm }),
+            });
 
-        if (result && result.results) {
-            logMessage(JSON.stringify(result.results, null, 2));
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully scanned the dark web for ${searchTerm}`);
+                logMessage(`Successfully scanned the dark web for ${searchTerm}`);
+                logMessage(JSON.stringify(responseData.results, null, 2));
+            } else {
+                setStatus(`Failed to scan the dark web for ${searchTerm}: ${responseData.error}`);
+                logMessage(`Failed to scan the dark web for ${searchTerm}: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Dark Web Scan API call error:", error);
         }
     });
 
@@ -582,15 +805,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const result = await genericApiCall(
-            'vulnerabilityScan',
-            { vulnerabilityScanUrl },
-            `Successfully scanned ${vulnerabilityScanUrl} for vulnerabilities`,
-            `Failed to scan ${vulnerabilityScanUrl} for vulnerabilities`
-        );
+        try {
+            const response = await fetch('/api/vulnerabilityScan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ vulnerabilityScanUrl }),
+            });
 
-        if (result && result.vulnerabilities) {
-            logMessage(JSON.stringify(result.vulnerabilities, null, 2));
+            const responseData = await response.json();
+
+            if (response.ok) {
+                setStatus(`Successfully scanned ${vulnerabilityScanUrl} for vulnerabilities`);
+                logMessage(`Successfully scanned ${vulnerabilityScanUrl} for vulnerabilities`);
+                logMessage(JSON.stringify(responseData.vulnerabilities, null, 2));
+            } else {
+                setStatus(`Failed to scan ${vulnerabilityScanUrl} for vulnerabilities: ${responseData.error}`);
+                logMessage(`Failed to scan ${vulnerabilityScanUrl} for vulnerabilities: ${responseData.error}`);
+            }
+        } catch (error) {
+            setStatus(`An error occurred: ${error.message}`);
+            logMessage(`An error occurred: ${error.message}`);
+            console.error("Vulnerability Scan API call error:", error);
         }
     });
     // --- End Feature Implementations ---
