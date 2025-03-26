@@ -229,30 +229,6 @@ async function initiateAttack(targetUrl, attackType) {
         case 'udpFlood':
             attackModule = 'udpFlood';
             break;
-        case 'synFlood':
-            attackModule = 'synFlood';
-            break;
-        case 'slowloris':
-            attackModule = 'slowloris';
-            break;
-        case 'pingFlood':
-            attackModule = 'pingFlood';
-            break;
-        case 'ackFlood':
-            attackModule = 'ackFlood';
-            break;
-        case 'pushFlood':
-            attackModule = 'pushFlood';
-            break;
-        case 'finFlood':
-            attackModule = 'finFlood';
-            break;
-        case 'rstFlood':
-            attackModule = 'rstFlood';
-            break;
-        case 'urgFlood':
-            attackModule = 'urgFlood';
-            break;
         default:
             logMessage(`Invalid attack type: ${attackType} 💣`);
             setStatus('Invalid Attack Type 💣');
