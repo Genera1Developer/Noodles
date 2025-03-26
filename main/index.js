@@ -1,9 +1,6 @@
-const ddosAttack = require('./main/ddos/ddos');
-const defaceSite = require('./main/deface/deface');
-const connectionEstablish = require('./main/connection/connection');
-const ransomwareSim = require('./main/ransomware/ransomware');
-const proxyHandler = require('./main/proxy/proxy');
-const otherTools = require('./main/other/other');
+const ddosAttack = require('./ddos/ddos');
+const defaceSite = require('./deface/deface');
+const connectionEstablish = require('./connection/connection');
 
 const attackStatistics = {
     mbps: 0,
@@ -98,18 +95,6 @@ const executeAttack = async (target, attackType, options) => {
                 }
                 await connectionEstablish.execute(target, options);
                 break;
-            case 'ransomware':
-                if (!ransomwareSim || typeof ransomwareSim.execute !== 'function') {
-                    throw new Error('Ransomware module is not properly configured.');
-                }
-                await ransomwareSim.execute(target, options);
-                break;
-            case 'other':
-                if (!otherTools || typeof otherTools.execute !== 'function') {
-                    throw new Error('Other tools module is not properly configured.');
-                }
-                await otherTools.execute(target, options);
-                break;
             default:
                 throw new Error('Invalid attack type');
         }
@@ -123,12 +108,6 @@ const executeAttack = async (target, attackType, options) => {
 };
 
 module.exports = {
-    ddosAttack,
-    defaceSite,
-    connectionEstablish,
-    ransomwareSim,
-    otherTools,
-    proxyHandler,
     init: () => {
         console.log("Noodles Initialized.");
     },
