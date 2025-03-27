@@ -40,3 +40,12 @@
           with:
             name: retire-results
             path: retire-results.json
+        - name: Archive production artifacts
+          uses: actions/upload-artifact@v3
+          with:
+            name: production-files
+            path: |
+              public/
+              main/
+              style.css
+            retention-days: 5
