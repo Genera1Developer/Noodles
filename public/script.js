@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const timeElapsedDisplay = document.getElementById('timeElapsed');
     const tabs = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
+    let statsInterval;
 
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
@@ -61,9 +62,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } else {
                 statusDisplay.textContent = `Attack failed: ${data.error || 'Unknown error'}`;
+                clearInterval(statsInterval);
             }
         } catch (error) {
             statusDisplay.textContent = `Error initiating attack: ${error.message}`;
+            clearInterval(statsInterval);
         }
     });
 
@@ -78,11 +81,15 @@ document.addEventListener('DOMContentLoaded', () => {
             timeElapsedDisplay.textContent = `Time Elapsed: ${data.timeElapsed || 0}s`;
         } catch (error) {
             console.error("Error fetching stats:", error);
+            clearInterval(statsInterval);
         }
     }
 
     function startStatsUpdates(target) {
-        setInterval(() => {
+        if (statsInterval) {
+            clearInterval(statsInterval);
+        }
+        statsInterval = setInterval(() => {
             updateStats(target);
         }, 1000);
     }
