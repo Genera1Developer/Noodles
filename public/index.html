@@ -7,58 +7,57 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
     <div class="container">
-        <div class="side-panel">
-            <h1>Noodles</h1>
-            <button onclick="showTab('ddos')">DDoS</button>
-            <button onclick="showTab('defacement')">Defacement</button>
-            <button onclick="showTab('connection')">Connection</button>
-            <button onclick="showTab('credential')">Credential Stuffing</button>
-            <button onclick="showTab('about')">About Us</button>
-        </div>
+        <aside class="side-panel">
+            <nav>
+                <button data-tab="ddos">DDoS</button>
+                <button data-tab="defacement">Defacement</button>
+                <button data-tab="connection">Connection</button>
+                <button data-tab="credential">Credential Stuffing</button>
+                <button data-tab="about">About Us</button>
+            </nav>
+        </aside>
 
-        <div class="main-content">
-            <div id="ddos" class="tab-content">
+        <main class="main-content">
+            <section id="ddos" class="tab-content active">
                 <h2>DDoS Attack</h2>
-                <input type="text" id="ddosTarget" placeholder="Target URL or .onion address">
-                <button onclick="startDDoS()">Start DDoS Attack</button>
+                <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                <button id="start-ddos">Initiate DDoS Attack</button>
                 <div class="stats">
                     <p>MBPS: <span id="mbps">0</span></p>
-                    <p>Packets Sent: <span id="packets">0</span></p>
-                    <p>Target Status: <span id="status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="time">0</span></p>
+                    <p>Packets Sent: <span id="packets-sent">0</span></p>
+                    <p>Target Status: <span id="target-status">Unknown</span></p>
+                    <p>Time Elapsed: <span id="time-elapsed">0</span></p>
                 </div>
-            </div>
+            </section>
 
-            <div id="defacement" class="tab-content" style="display:none;">
+            <section id="defacement" class="tab-content">
                 <h2>Website Defacement</h2>
-                <input type="text" id="defacementTarget" placeholder="Target URL">
-                <textarea id="defacementContent" placeholder="Defacement HTML Content"></textarea>
-                <button onclick="startDefacement()">Start Defacement</button>
-            </div>
+                <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
+                <textarea id="defacement-payload" placeholder="Defacement HTML Payload"></textarea>
+                <button id="start-defacement">Initiate Defacement</button>
+            </section>
 
-            <div id="connection" class="tab-content" style="display:none;">
-                <h2>Establish Connection</h2>
-                <input type="text" id="connectionTarget" placeholder="Target IP Address or Hostname">
-                <input type="number" id="connectionPort" placeholder="Port">
-                <button onclick="establishConnection()">Establish Connection</button>
-            </div>
+            <section id="connection" class="tab-content">
+                <h2>Connection</h2>
+                <input type="text" id="connection-target" placeholder="Target IP Address or URL">
+                <input type="number" id="connection-port" placeholder="Port">
+                <button id="start-connection">Establish Connection</button>
+            </section>
 
-            <div id="credential" class="tab-content" style="display:none;">
+             <section id="credential" class="tab-content">
                 <h2>Credential Stuffing</h2>
-                <input type="text" id="credentialTarget" placeholder="Target URL">
-                <textarea id="credentialList" placeholder="Username:Password List"></textarea>
-                <button onclick="startCredentialStuffing()">Start Credential Stuffing</button>
-            </div>
+                <input type="text" id="credential-target" placeholder="Target Login URL">
+                <textarea id="credential-list" placeholder="Username:Password List"></textarea>
+                <button id="start-credential">Start Credential Stuffing</button>
+            </section>
 
-            <div id="about" class="tab-content" style="display:none;">
+            <section id="about" class="tab-content">
                 <h2>About Us</h2>
-                <p>Noodles is a powerful web application for security testing and penetration testing. Use responsibly.</p>
-            </div>
-        </div>
+                <p>Noodles is a powerful web application designed for security testing and ethical hacking purposes. Use responsibly.</p>
+            </section>
+        </main>
     </div>
-
     <script src="script.js"></script>
 </body>
 </html>
