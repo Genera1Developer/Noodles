@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
+      "src": "public/package.json",
       "use": "@vercel/node@latest"
     },
     {
@@ -17,6 +17,6 @@
     }
   ],
   "functions": {
-    "main/hello.js": { "memory": 128, "maxDuration": 5 }
+    "public/main/hello.js": { "memory": 128, "maxDuration": 5 }
   }
 }
