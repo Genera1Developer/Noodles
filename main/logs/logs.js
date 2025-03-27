@@ -119,6 +119,10 @@ class Logger {
     }
 
     displayLog(logEntry) {
+        if (typeof document === 'undefined') {
+            console.log('Running in non-browser environment, skipping DOM updates.');
+            return;
+        }
         const logElement = document.createElement('div');
         logElement.classList.add('log-entry');
         logElement.innerHTML = this.formatLog(logEntry);
@@ -177,9 +181,11 @@ class Logger {
 
     clearLogs() {
         this.logEntries = [];
-        const logsContainer = document.getElementById('logs-container');
-        if (logsContainer) {
-            logsContainer.innerHTML = '';
+        if (typeof document !== 'undefined') {
+            const logsContainer = document.getElementById('logs-container');
+            if (logsContainer) {
+                logsContainer.innerHTML = '';
+            }
         }
         fs.writeFile(this.logFilePath, '', err => {
             if (err) {
@@ -222,12 +228,21 @@ class Logger {
             this.endAttack();
         }, duration * 1000);
 
-        if (attackType === 'HTTP Flood') {
-            this.httpFlood(target, threads, duration, attackRate, torProxy);
-        } else if (attackType === 'TCP Flood') {
-            this.tcpFlood(target, threads, duration, attackRate, torProxy);
-        } else if (attackType === 'UDP Flood') {
-            this.udpFlood(target, threads, duration, attackRate, reflectionEnabled, torProxy);
+        switch (attackType) {
+            case 'HTTP Flood':
+                this.httpFlood(target, threads, duration, attackRate, torProxy);
+                break;
+            case 'TCP Flood':
+                this.tcpFlood(target, threads, duration, attackRate, torProxy);
+                break;
+            case 'UDP Flood':
+                this.udpFlood(target, threads, duration, attackRate, reflectionEnabled, torProxy);
+                break;
+            default:
+                console.warn(`Unknown attack type: ${attackType}`);
+                this.setAttackErrorDetails(`Unknown attack type: ${attackType}`);
+                this.setAttackStatus('Error');
+                break;
         }
     }
 
@@ -431,6 +446,10 @@ class Logger {
     }
 
     displayStats() {
+        if (typeof document === 'undefined') {
+            console.log('Running in non-browser environment, skipping DOM updates.');
+            return;
+        }
         document.getElementById('packets-sent').textContent = this.stats.packetsSent;
         document.getElementById('mbps').textContent = this.stats.mbps.toFixed(2);
         document.getElementById('connection-status').textContent = this.stats.connectionStatus;
@@ -488,22 +507,27 @@ class Logger {
         document.getElementById('banner-grabbing-status').textContent = this.stats.bannerGrabbingStatus;
 
         const portScanResultsContainer = document.getElementById('port-scan-results');
-        portScanResultsContainer.innerHTML = '';
-        this.stats.portScanResults.forEach(result => {
-            const resultElement = document.createElement('div');
-            resultElement.textContent = `Port: ${result.port}, Status: ${result.status}`;
-            portScanResultsContainer.appendChild(resultElement);
-        });
+        if (portScanResultsContainer) {
+            portScanResultsContainer.innerHTML = '';
+            this.stats.portScanResults.forEach(result => {
+                const resultElement = document.createElement('div');
+                resultElement.textContent = `Port: ${result.port}, Status: ${result.status}`;
+                portScanResultsContainer.appendChild(resultElement);
+            });
+        }
 
-         const bannerGrabbingResultsContainer = document.getElementById('banner-grabbing-results');
-        bannerGrabbingResultsContainer.innerHTML = '';
-        this.stats.bannerGrabbingResults.forEach(result => {
-            const resultElement = document.createElement('div');
-            resultElement.textContent = `Port: ${result.port}, Banner: ${result.banner}`;
-            bannerGrabbingResultsContainer.appendChild(resultElement);
-        });
-
-        document.getElementById('defacement-script').textContent = this.stats.defacementScript;
+        const bannerGrabbingResultsContainer = document.getElementById('banner-grabbing-results');
+        if (bannerGrabbingResultsContainer) {
+            bannerGrabbingResultsContainer.innerHTML = '';
+            this.stats.bannerGrabbingResults.forEach(result => {
+                const resultElement = document.createElement('div');
+                resultElement.textContent = `Port: ${result.port}, Banner: ${result.banner}`;
+                bannerGrabbingResultsContainer.appendChild(resultElement);
+            });
+        }
+        if(document.getElementById('defacement-script')) {
+            document.getElementById('defacement-script').textContent = this.stats.defacementScript;
+        }
     }
 
     getStats() {
@@ -641,16 +665,28 @@ class Logger {
     }
 
     initializeUI() {
-        document.getElementById('clear-logs-button').addEventListener('click', () => {
-            this.clearLogs();
-        });
+        if (typeof document !== 'undefined') {
+            const clearLogsButton = document.getElementById('clear-logs-button');
+            if (clearLogsButton) {
+                clearLogsButton.addEventListener('click', () => {
+                    this.clearLogs();
+                });
+            } else {
+                console.warn('Clear logs button not found.');
+            }
 
-        document.getElementById('download-logs-button').addEventListener('click', () => {
-            this.downloadLogs();
-        });
+            const downloadLogsButton = document.getElementById('download-logs-button');
+            if (downloadLogsButton) {
+                downloadLogsButton.addEventListener('click', () => {
+                    this.downloadLogs();
+                });
+            } else {
+                console.warn('Download logs button not found.');
+            }
+        } else {
+            console.log('Running in non-browser environment, skipping UI initialization.');
+        }
     }
-
-    //ATTACKS
 
     async httpFlood(target, threads, duration, attackRate, torProxy) {
         if (!target.startsWith('http://') && !target.startsWith('https://')) {
@@ -758,7 +794,6 @@ class Logger {
         }
     }
 
-    //Connection Attacks
     async portScan(target, startPort = 1, endPort = 100, torProxy) {
         this.setPortScanStatus('Running');
         this.setPortScanResults([]);
@@ -772,7 +807,7 @@ class Logger {
                     port: port
                 }, () => {
                     scanResults.push({ port: port, status: 'Open' });
-                    socket.end();
+                    socket.destroy();
                     resolve();
                 });
 
@@ -788,7 +823,7 @@ class Logger {
     }
 
     async bannerGrabbing(target, port = 80, torProxy) {
-        this.setBannerGrabbingStatus('Running');
+       this.setBannerGrabbingStatus('Running');
         this.setBannerGrabbingResults([]);
 
         return new Promise((resolve, reject) => {
@@ -819,7 +854,6 @@ class Logger {
         });
     }
 
-    //Defacement Attack
     async defaceWebsite(target, script, torProxy) {
         this.setDefacementStatus('Running');
         this.setDefacementDetails('Attempting defacement...');
@@ -847,5 +881,12 @@ class Logger {
     }
 }
 
-const logger = new Logger();
-window.logger = logger;
+let logger;
+if (typeof window !== 'undefined') {
+    logger = new Logger();
+    window.logger = logger;
+} else {
+    logger = new Logger();
+    global.logger = logger;
+}
+module.exports = logger;
