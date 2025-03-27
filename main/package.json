@@ -1,14 +1,18 @@
 {
-  "name": "noodles",
+  "name": "my-app",
   "version": "1.0.0",
-  "description": "A sophisticated hacking web application.",
-  "main": "main/server.js",
+  "description": "A simple application",
+  "main": "index.js",
   "scripts": {
-    "start": "node main/server.js"
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "You",
+  "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "socket.io": "^4.1.3",
-    "node-fetch": "^2.6.1"
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
   }
 }
