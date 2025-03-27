@@ -3,9 +3,9 @@ body {
     font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #333;
-    color: #ddd;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    background-color: #282c34; /* Dark Grey */
+    color: #abb2bf; /* Grey */
+    overflow-x: hidden;
 }
 
 .container {
@@ -16,10 +16,11 @@ body {
 /* Sidebar Styles */
 .sidebar {
     width: 220px;
-    background-color: #222;
+    background-color: #3e4451; /* Dark Blue-Grey */
     padding: 20px;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
-    z-index: 100; /* Ensure it's above content */
+    z-index: 100;
+    flex-shrink: 0; /* Prevent shrinking */
 }
 
 .sidebar-header {
@@ -29,7 +30,7 @@ body {
 
 .sidebar-header h1 {
     font-size: 1.5em;
-    color: #98c379;
+    color: #61af69; /* Dark Green */
     margin: 0;
 }
 
@@ -47,7 +48,7 @@ body {
     display: block;
     width: 100%;
     padding: 10px;
-    background-color: #444;
+    background-color: #44475a; /* Dark Blue-Grey */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -58,8 +59,8 @@ body {
 
 .nav li button:hover,
 .nav li button.active {
-    background-color: #98c379;
-    color: #222;
+    background-color: #61af69; /* Dark Green */
+    color: #282c34; /* Dark Grey */
 }
 
 /* Content Styles */
@@ -67,7 +68,7 @@ body {
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
-    background-color: #444;
+    background-color: #282c34; /* Dark Grey */
 }
 
 .tab-content {
@@ -92,7 +93,7 @@ body {
 .input-group label {
     display: block;
     margin-bottom: 5px;
-    color: #98c379;
+    color: #61af69; /* Dark Green */
 }
 
 .input-group input[type="text"],
@@ -103,8 +104,8 @@ body {
     padding: 8px;
     border: 1px solid #555;
     border-radius: 4px;
-    background-color: #333;
-    color: #ddd;
+    background-color: #3e4451; /* Dark Blue-Grey */
+    color: #abb2bf; /* Grey */
     box-sizing: border-box;
 }
 
@@ -116,7 +117,7 @@ body {
 /* Button Styles */
 button {
     padding: 10px 20px;
-    background-color: #555;
+    background-color: #44475a; /* Dark Blue-Grey */
     color: #fff;
     border: none;
     border-radius: 5px;
@@ -125,8 +126,8 @@ button {
 }
 
 button:hover {
-    background-color: #98c379;
-    color: #222;
+    background-color: #61af69; /* Dark Green */
+    color: #282c34; /* Dark Grey */
 }
 
 /* Status, Log, Stats Styles */
@@ -135,7 +136,7 @@ button:hover {
 .stats-box {
     margin-top: 20px;
     padding: 15px;
-    background-color: #222;
+    background-color: #3e4451; /* Dark Blue-Grey */
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
@@ -144,7 +145,7 @@ button:hover {
 .log-box h3,
 .stats-box h3 {
     margin-top: 0;
-    color: #98c379;
+    color: #61af69; /* Dark Green */
     margin-bottom: 10px;
 }
 
@@ -159,8 +160,8 @@ button:hover {
     padding: 8px;
     border: 1px solid #555;
     border-radius: 4px;
-    background-color: #333;
-    color: #ddd;
+    background-color: #3e4451; /* Dark Blue-Grey */
+    color: #abb2bf; /* Grey */
     box-sizing: border-box;
     resize: vertical;
 }
@@ -196,6 +197,65 @@ button:hover {
 
 /* Hide Scrollbar */
 ::-webkit-scrollbar {
-    width: 0;  /* Remove scrollbar space */
-    background: transparent;  /* Optional: make scrollbar invisible */
+    width: 0;
+    background: transparent;
+}
+
+/* Additional Styles for Compactness and Resizability */
+body,
+input,
+button,
+textarea,
+select {
+    font-size: 14px;
+}
+
+.sidebar {
+    width: 200px;
+    padding: 15px;
+}
+
+.sidebar-header h1 {
+    font-size: 1.3em;
+}
+
+.nav li button {
+    padding: 8px;
+    font-size: 0.9em;
+}
+
+.content {
+    padding: 15px;
+}
+
+.input-group label {
+    font-size: 0.9em;
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group select,
+.input-group textarea {
+    padding: 6px;
+}
+
+button {
+    padding: 8px 16px;
+    font-size: 0.9em;
+}
+
+.status-box,
+.log-box,
+.stats-box {
+    padding: 10px;
+}
+
+.status-box h3,
+.log-box h3,
+.stats-box h3 {
+    font-size: 1em;
+}
+
+.log-box textarea {
+    height: 120px;
 }
