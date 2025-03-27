@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connection Status</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        .panel {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        .connected {
+            color: green;
+        }
+
+        .disconnected {
+            color: red;
+        }
+
+        #last-updated {
+            font-size: 0.8em;
+            color: #777;
+        }
+    </style>
 </head>
 <body>
     <div class="panel">
@@ -13,46 +36,45 @@
         <p id="last-updated">Last Updated: N/A</p>
     </div>
 
-    <script src="script.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             updateConnectionStatus();
             setInterval(updateConnectionStatus, 5000);
         });
 
-        function updateConnectionStatus() {
-            fetch('main/connection-status.php')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    const connectionMessage = document.getElementById('connection-message');
-                    const lastUpdated = document.getElementById('last-updated');
+        async function updateConnectionStatus() {
+            try {
+                const response = await fetch('main/connection-status.php');
 
-                    if (data.isConnected) {
-                        connectionMessage.textContent = 'Connected!';
-                        connectionMessage.classList.remove('disconnected');
-                        connectionMessage.classList.add('connected');
-                    } else {
-                        connectionMessage.textContent = 'Disconnected!';
-                        connectionMessage.classList.remove('connected');
-                        connectionMessage.classList.add('disconnected');
-                    }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
 
-                    lastUpdated.textContent = `Last Updated: ${new Date().toLocaleString()}`;
-                })
-                .catch(error => {
-                    console.error('Error fetching connection status:', error);
-                    const connectionMessage = document.getElementById('connection-message');
-                    const lastUpdated = document.getElementById('last-updated');
-                    connectionMessage.textContent = 'Error checking connection.';
+                const data = await response.json();
+                const connectionMessage = document.getElementById('connection-message');
+                const lastUpdated = document.getElementById('last-updated');
+
+                if (data.isConnected) {
+                    connectionMessage.textContent = 'Connected!';
+                    connectionMessage.classList.remove('disconnected');
+                    connectionMessage.classList.add('connected');
+                } else {
+                    connectionMessage.textContent = 'Disconnected!';
                     connectionMessage.classList.remove('connected');
                     connectionMessage.classList.add('disconnected');
-                    lastUpdated.textContent = `Last Updated: ${new Date().toLocaleString()}`;
-                });
+                }
+
+                lastUpdated.textContent = `Last Updated: ${new Date().toLocaleString()}`;
+
+            } catch (error) {
+                console.error('Error fetching connection status:', error);
+                const connectionMessage = document.getElementById('connection-message');
+                const lastUpdated = document.getElementById('last-updated');
+                connectionMessage.textContent = 'Error checking connection.';
+                connectionMessage.classList.remove('connected');
+                connectionMessage.classList.add('disconnected');
+                lastUpdated.textContent = `Last Updated: ${new Date().toLocaleString()}`;
+            }
         }
     </script>
 </body>
