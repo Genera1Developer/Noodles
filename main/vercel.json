@@ -11,6 +11,12 @@
   ],
   "headers": [
     {
+      "source": "/(.*\\.(js|css|html|txt|json|ico|png|jpg|jpeg|gif|svg))$",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
+    },
+    {
       "source": "/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
