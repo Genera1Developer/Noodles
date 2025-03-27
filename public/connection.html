@@ -96,7 +96,7 @@
 
                 const data = await response.json();
 
-                if (data.isConnected) {
+                if (data.connected) {
                     connectionMessage.textContent = 'Connected!';
                     connectionMessage.classList.remove('disconnected', 'loading');
                     connectionMessage.classList.add('connected');
