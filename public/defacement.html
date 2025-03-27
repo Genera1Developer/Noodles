@@ -1,18 +1,18 @@
 <div class="tab-content" id="defacement">
     <h2>Defacement</h2>
-    <p class="alert alert-warning"><strong>Warning:</strong> This tool should only be used on systems you own or have explicit permission to test. Unauthorized defacement is illegal and unethical.</p>
+    <p class="alert alert-warning"><strong>Warning:</strong> This tool should only be used on systems you own or have explicit permission to test. Unauthorized defacement is illegal and unethical. Misuse of this tool can have serious legal consequences.</p>
 
     <form id="defacement-form">
         <div class="form-group">
             <label for="defacement-url">Target URL:</label>
             <input type="url" class="form-control" id="defacement-url" placeholder="http://example.com" required>
-            <small class="form-text text-muted">The URL of the website you want to deface.</small>
+            <small class="form-text text-muted">The URL of the website you want to deface (Requires CORS configuration on the target website.  Generally does not work without it.)</small>
         </div>
 
         <div class="form-group">
             <label for="defacement-script">Defacement Script URL:</label>
             <input type="url" class="form-control" id="defacement-script" placeholder="http://example.com/deface.js" required>
-            <small class="form-text text-muted">The URL of the JavaScript file containing the defacement code.</small>
+            <small class="form-text text-muted">The URL of the JavaScript file containing the defacement code.  Make sure this script is served with the correct CORS headers.</small>
         </div>
 
         <button type="button" class="btn btn-danger" onclick="startDefacement()">Start Defacement</button>
