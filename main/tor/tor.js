@@ -213,7 +213,7 @@ class Tor {
 
             if (!response.ok) {
                 this.log(`Gateway ${gateway} returned status: ${response.status}`, 'warn');
-                this.blacklistGateway(gateway); // Blacklist immediately on non-OK status
+                this.blacklistGateway(gateway);
                 return false;
             }
 
