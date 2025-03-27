@@ -28,7 +28,6 @@ function slowloris(target, numSockets, statsCallback) {
         path = parsedTarget.pathname || "/";
         protocol = parsedTarget.protocol === 'https:' ? 'wss://' : 'ws://';
 
-
         if (!numSockets || numSockets <= 0) {
             numSockets = 200;
         }
