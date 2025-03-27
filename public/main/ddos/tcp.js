@@ -1,4 +1,3 @@
-|
 import net from 'net';
 
 async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCallback = null) {
