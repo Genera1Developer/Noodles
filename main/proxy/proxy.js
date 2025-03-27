@@ -21,7 +21,7 @@ async function connectViaProxy(targetUrl, proxyUrl) {
       path: parsedTarget.pathname + parsedTarget.search,
       method: 'GET',
       headers: {
-        'User-Agent': 'Noodles/1.0 (😈)',
+        'User-Agent': 'Noodles/1.6.6',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.5',
         'Accept-Encoding': 'gzip, deflate, br',
