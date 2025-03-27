@@ -4,7 +4,7 @@
       <stop offset="0%" stop-color="#00FA9A"/>
       <stop offset="100%" stop-color="#32CD32"/>
     </linearGradient>
-    <filter id="hackerGlow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+    <filter id="hackerGlow" x="-20%" y="-20%" width="140%" height="140%" filterUnits="objectBoundingBox" color-interpolation-filters="sRGB">
       <feGaussianBlur stdDeviation="3" in="SourceAlpha" result="blur"/>
       <feFlood flood-color="#00FF7F" flood-opacity="0.5" result="flood"/>
       <feComposite in2="blur" operator="in" in="flood" result="composite1"/>
