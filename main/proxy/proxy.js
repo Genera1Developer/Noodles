@@ -12,15 +12,15 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
 
     if (parsedProxy.protocol.startsWith('socks')) {
       agent = new SocksProxyAgent(proxyUrl);
-    } else if (parsedProxy.protocol.startsWith('http')) {
-      const proxyAuth = parsedProxy.username && parsedProxy.password ?
-        `${parsedProxy.username}:${parsedProxy.password}@` : '';
-
-      const proxyURLForAgent = `${parsedProxy.protocol}//${proxyAuth}${parsedProxy.hostname}:${parsedProxy.port}`;
-      agent = new SocksProxyAgent(proxyURLForAgent);
-
     } else {
-      throw new Error('Unsupported proxy protocol: ' + parsedProxy.protocol);
+      let proxyOptions = {
+        protocol: parsedProxy.protocol,
+        hostname: parsedProxy.hostname,
+        port: parsedProxy.port,
+        userId: parsedProxy.username,
+        password: parsedProxy.password,
+      };
+      agent = new SocksProxyAgent(proxyOptions);
     }
 
     const defaultHeaders = {
