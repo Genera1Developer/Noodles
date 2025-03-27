@@ -15,7 +15,8 @@ const attackStatistics = {
     targetIP: 'Unknown',
     attackDuration: 0,
     startTime: null,
-    intervalId: null
+    intervalId: null,
+    endTime: null
 };
 
 const resolveTargetIP = async (target) => {
@@ -33,6 +34,7 @@ const resolveTargetIP = async (target) => {
 };
 
 const formatDuration = (duration) => {
+    if (!duration) return "00:00:00";
     const seconds = Math.floor((duration / 1000) % 60);
     const minutes = Math.floor((duration / (1000 * 60)) % 60);
     const hours = Math.floor((duration / (1000 * 60 * 60)) % 24);
@@ -45,10 +47,21 @@ const updateStatisticsDisplay = () => {
     document.getElementById('targetStatus').textContent = attackStatistics.targetStatus;
     document.getElementById('targetIP').textContent = attackStatistics.targetIP;
     document.getElementById('attackDuration').textContent = formatDuration(attackStatistics.attackDuration);
+
+    const endTimeDisplay = document.getElementById('endTime');
+    if (attackStatistics.endTime) {
+        endTimeDisplay.textContent = new Date(attackStatistics.endTime).toLocaleTimeString();
+    } else {
+        endTimeDisplay.textContent = 'N/A';
+    }
 };
 
 const startStatistics = () => {
     attackStatistics.startTime = Date.now();
+    attackStatistics.endTime = null;
+    if (attackStatistics.intervalId) {
+        clearInterval(attackStatistics.intervalId);
+    }
     attackStatistics.intervalId = setInterval(() => {
         attackStatistics.attackDuration = Date.now() - attackStatistics.startTime;
         updateStatisticsDisplay();
@@ -56,8 +69,12 @@ const startStatistics = () => {
 };
 
 const stopStatistics = () => {
-    clearInterval(attackStatistics.intervalId);
-    attackStatistics.intervalId = null;
+    if (attackStatistics.intervalId) {
+        clearInterval(attackStatistics.intervalId);
+        attackStatistics.intervalId = null;
+    }
+    attackStatistics.endTime = Date.now();
+    updateStatisticsDisplay();
 };
 
 const updateStatistics = (mbps = 0, packets = 0, status = 'Offline', ip = 'Unknown') => {
@@ -68,9 +85,26 @@ const updateStatistics = (mbps = 0, packets = 0, status = 'Offline', ip = 'Unkno
     updateStatisticsDisplay();
 };
 
+const resetStatistics = () => {
+    attackStatistics.mbps = 0;
+    attackStatistics.packetsSent = 0;
+    attackStatistics.targetStatus = 'Offline';
+    attackStatistics.targetIP = 'Unknown';
+    attackStatistics.attackDuration = 0;
+    attackStatistics.startTime = null;
+    attackStatistics.endTime = null;
+    updateStatisticsDisplay();
+};
+
 const executeAttack = async (target, attackType, options) => {
+    if (attackStatistics.intervalId) {
+        alert("An attack is already in progress. Please stop it before starting a new one.");
+        return;
+    }
+
     try {
         if (!target) throw new Error('Target URL is required.');
+        resetStatistics();
 
         const targetIP = await resolveTargetIP(target);
         updateStatistics(0, 0, 'Starting', targetIP);
@@ -118,7 +152,7 @@ const executeAttack = async (target, attackType, options) => {
     } catch (error) {
         console.error('Attack execution failed:', error);
         updateStatistics(0, 0, 'Failed');
-        throw error;
+        alert(`Attack failed: ${error.message}`);
     } finally {
         stopStatistics();
     }
@@ -130,5 +164,6 @@ module.exports = {
     stopStatistics,
     updateStatistics,
     updateStatisticsDisplay,
-    executeAttack
+    executeAttack,
+    resetStatistics
 };
