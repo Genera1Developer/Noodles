@@ -65,7 +65,6 @@
         - name: Run custom security scan
           run: |
             echo "Running custom security scan..."
-            # Example: grep for potential secrets in the public directory
             grep -rE "(password|api_key|secret)" public/ || true
             echo "Custom security scan completed."
         - name: Archive production artifacts
