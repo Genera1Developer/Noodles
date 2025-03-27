@@ -11,47 +11,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let attackStartTime;
   let attackInterval;
+  let packetsSent = 0;
 
-  function updateStatistics(mbps, packetsSent, status) {
+  function updateStatistics(mbps, status) {
     mbpsDisplay.textContent = `MBPS: ${mbps}`;
     packetsSentDisplay.textContent = `Packets Sent: ${packetsSent}`;
     connectionStatusDisplay.textContent = `Status: ${status}`;
   }
 
-  function startAttack(target, attackType) {
+  function simulateAttack(target, attackType) {
     attackStartTime = Date.now();
+    packetsSent = 0;
+    connectionStatusDisplay.textContent = 'Status: Online';
+
     attackInterval = setInterval(() => {
       const elapsedTime = Math.floor((Date.now() - attackStartTime) / 1000);
       timeElapsedDisplay.textContent = `Time Elapsed: ${elapsedTime}s`;
-    }, 1000);
+      packetsSent += 100;
+      const mbps = Math.random() * 10 + 5;
 
-    fetch('main/attack.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ target: target, attackType: attackType }),
-    })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then(data => {
-        console.log('Attack started:', data);
-        updateStatistics(data.mbps, data.packetsSent, 'Online');
-      })
-      .catch(error => {
-        console.error('Error starting attack:', error);
-        updateStatistics(0, 0, 'Offline');
-      });
+      updateStatistics(mbps.toFixed(2), 'Online');
+    }, 100);
+
+    setTimeout(() => {
+      clearInterval(attackInterval);
+      connectionStatusDisplay.textContent = 'Status: Offline';
+      timeElapsedDisplay.textContent = `Time Elapsed: ${Math.floor((Date.now() - attackStartTime) / 1000)}s`;
+    }, 10000);
   }
 
   attackButton.addEventListener('click', () => {
     const target = targetInput.value;
     const attackType = attackTypeSelect.value;
-    startAttack(target, attackType);
+    simulateAttack(target, attackType);
   });
 
   tabs.forEach(tab => {
