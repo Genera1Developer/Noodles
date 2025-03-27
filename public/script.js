@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       timeElapsedDisplay.textContent = `Time Elapsed: ${elapsedTime}s`;
     }, 1000);
 
-    fetch('/main/attack', {
+    fetch('main/attack.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -67,66 +67,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelector('.tab-button[data-tab="ddos"]').click();
 });
-content: [Brief description of changes]
-
-edit filepath: public/index.html
-content: <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - Hacking Web Application</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <aside class="side-panel">
-            <nav>
-                <button class="tab-button" data-tab="ddos">DDoS</button>
-                <button class="tab-button" data-tab="defacement">Defacement</button>
-                <button class="tab-button" data-tab="connection">Connection</button>
-                <button class="tab-button" data-tab="credential">Credential</button>
-                <button class="tab-button" data-tab="about">About Us</button>
-            </nav>
-        </aside>
-        <main class="main-content">
-            <section id="ddos" class="tab-content active">
-                <h2>DDoS Attack</h2>
-                <div class="attack-controls">
-                    <input type="text" id="targetUrl" placeholder="Target URL (e.g., http://example.com)">
-                    <select id="attackType">
-                        <option value="udp">UDP Flood</option>
-                        <option value="tcp">TCP Flood</option>
-                        <option value="http">HTTP Flood</option>
-                    </select>
-                    <button id="attackButton">Start Attack</button>
-                </div>
-                <div class="statistics">
-                    <p id="mbps">MBPS: 0</p>
-                    <p id="packetsSent">Packets Sent: 0</p>
-                    <p id="connectionStatus">Status: Offline</p>
-                    <p id="timeElapsed">Time Elapsed: 0s</p>
-                </div>
-            </section>
-            <section id="defacement" class="tab-content">
-                <h2>Website Defacement</h2>
-                <p>Defacement tools and options will be placed here.</p>
-            </section>
-            <section id="connection" class="tab-content">
-                <h2>Connection</h2>
-                <p>Connection tools and options will be placed here.</p>
-            </section>
-            <section id="credential" class="tab-content">
-                <h2>Credential Stuffing</h2>
-                <p>Credential stuffing tools and options will be placed here.</p>
-            </section>
-            <section id="about" class="tab-content">
-                <h2>About Us</h2>
-                <p>Noodles is a cutting-edge web application designed for advanced security testing and research.
-                </p>
-            </section>
-        </main>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
