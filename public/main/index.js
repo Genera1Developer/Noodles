@@ -29,9 +29,9 @@ function handleCommandExecution(command, res, operation) {
 }
 
 // Construct paths relative to the current file
-const ddosScriptPath = path.join(__dirname, 'ddos', 'ddos.py');
-const defacementScriptPath = path.join(__dirname, 'defacement', 'defacement.py');
-const connectionScriptPath = path.join(__dirname, 'connection', 'connection.py');
+const ddosScriptPath = path.join(__dirname, 'ddos.py');
+const defacementScriptPath = path.join(__dirname, 'defacement.py');
+const connectionScriptPath = path.join(__dirname, 'connection.py');
 
 // DDoS route
 if (fs.existsSync(ddosScriptPath)) {
