@@ -1,16 +1,17 @@
 body {
-    font-family: monospace;
+    font-family: Arial, sans-serif;
     background-color: #121212;
-    color: #f0f0f0;
+    color: #eee;
     margin: 0;
+    padding: 0;
     overflow: hidden;
 }
 
 #main-container {
     position: absolute;
-    top: 50px;
-    left: 50px;
-    background-color: #292929;
+    top: 10px;
+    left: 10px;
+    background-color: #202020;
     border: 1px solid #333;
     padding: 10px;
     width: 600px;
@@ -22,9 +23,9 @@ body {
 
 .noodle-container {
     position: absolute;
-    top: 50px;
-    left: 50px;
-    background-color: #292929;
+    top: 10px;
+    left: 10px;
+    background-color: #202020;
     border: 1px solid #333;
     padding: 10px;
     width: 600px;
@@ -34,71 +35,30 @@ body {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
-.noodle-input, .noodle-button, .noodle-select, .noodle-log {
-    margin-bottom: 10px;
-    padding: 8px;
-    border: 1px solid #555;
-    background-color: #444;
-    color: #f0f0f0;
-    width: 95%;
-    box-sizing: border-box;
-}
-
-.noodle-button {
-    cursor: pointer;
-    background-color: #3a7d3a;
-    color: white;
-    border: none;
-}
-
-.noodle-button:disabled {
-    background-color: #777;
-    cursor: not-allowed;
-}
-
-.noodle-log {
-    height: 100px;
-    overflow-y: scroll;
-    font-family: monospace;
-    font-size: 12px;
-}
-
-.noodle-stats {
-    border: 1px solid #555;
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #333;
-}
-
-.noodle-stats p {
-    margin: 5px 0;
-}
-
 .noodle-side-panel {
     position: fixed;
     top: 0;
     right: 0;
-    width: 200px;
+    width: 150px;
     height: 100%;
-    background-color: #1e1e1e;
-    border-left: 1px solid #333;
+    background-color: #252525;
+    color: #eee;
     padding: 20px;
-    box-shadow: -4px 0px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
 }
 
 .noodle-menu-item {
     padding: 10px;
-    margin-bottom: 10px;
-    background-color: #292929;
-    color: #f0f0f0;
-    cursor: pointer;
+    margin-bottom: 5px;
+    background-color: #333;
     border-radius: 5px;
-    transition: background-color 0.3s;
-    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .noodle-menu-item:hover {
-    background-color: #3a7d3a;
+    background-color: #444;
 }
 
 .noodle-about-us {
@@ -106,25 +66,66 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #292929;
-    color: #f0f0f0;
+    background-color: #303030;
+    color: #eee;
     padding: 20px;
-    border: 1px solid #333;
+    border: 1px solid #444;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 1001;
     display: none;
-    width: 50%;
-    max-width: 600px;
+    width: 500px;
+    text-align: center;
 }
 
-.noodle-about-us h2 {
-    margin-top: 0;
-    color: #3a7d3a;
+.noodle-input {
+    width: 95%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #eee;
+    border-radius: 4px;
+}
+
+.noodle-button {
+    padding: 8px 12px;
+    margin: 5px 0;
+    border: none;
+    background-color: #3a7f5a;
+    color: #eee;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.noodle-button:hover {
+    background-color: #4caf50;
+}
+
+.noodle-log {
+    width: 95%;
+    height: 100px;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #eee;
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.noodle-stats {
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #eee;
+    border-radius: 4px;
 }
 
 .noodle-dark-theme {
     background-color: #121212;
-    color: #f0f0f0;
+    color: #eee;
 }
 
 .noodle-drag-handle {
@@ -132,7 +133,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 20px;
+    height: 10px;
     background-color: rgba(0, 0, 0, 0.2);
     cursor: move;
 }
@@ -141,52 +142,63 @@ body {
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 20px;
-    height: 20px;
+    width: 10px;
+    height: 10px;
     background-color: rgba(0, 0, 0, 0.2);
-    cursor: se-resize;
+    cursor: nwse-resize;
+}
+
+.noodle-custom-code {
+    height: 80px;
+    resize: vertical;
+}
+
+.noodle-slider-container {
+    display: flex;
+    align-items: center;
+    margin: 5px 0;
+}
+
+.noodle-label {
+    margin-right: 10px;
+    color: #eee;
+}
+
+.noodle-slider {
+    flex: 1;
+    height: 5px;
+    background: #444;
+    outline: none;
+    opacity: 0.7;
+    transition: opacity .2s;
+}
+
+.noodle-slider:hover {
+    opacity: 1;
+}
+
+.noodle-slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #3a7f5a;
+    cursor: pointer;
+}
+
+.noodle-slider-value {
+    margin-left: 10px;
+    width: 30px;
+    text-align: center;
+    color: #eee;
 }
 
 .noodle-tor-container {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
+    margin: 5px 0;
 }
 
 .noodle-tor-container label {
     margin-right: 10px;
-}
-
-.noodle-slider-container {
-    margin-bottom: 10px;
-}
-
-.noodle-slider {
-    width: 80%;
-}
-
-.noodle-slider-value {
-    margin-left: 10px;
-}
-
-#close-about-us {
-    margin-top: 10px;
-}
-
-.noodle-menu-button {
-    padding: 10px;
-    margin-bottom: 10px;
-    background-color: #292929;
-    color: #f0f0f0;
-    cursor: pointer;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    text-align: center;
-    border: none;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.noodle-menu-button:hover {
-    background-color: #3a7d3a;
+    color: #eee;
 }
