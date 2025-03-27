@@ -154,5 +154,6 @@
     "build": "esbuild public/script.js --bundle --outfile=public/bundle.js --format=iife",
     "start": "node main/server.js",
     "debug": "node --inspect main/server.js"
-  }
+  },
+  "main": "main/server.js"
 }
