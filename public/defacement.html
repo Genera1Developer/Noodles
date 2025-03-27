@@ -7,15 +7,26 @@
     <title>💀 Defacement Tools 💀</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        .hidden {
-            display: none !important;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #111;
+            color: #ddd;
+            margin: 0;
+            padding: 0;
         }
 
         .defacement-container {
+            width: 80%;
+            margin: 20px auto;
             padding: 20px;
             background-color: #222;
-            color: #ddd;
             border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #ddd;
+            text-align: center;
             margin-bottom: 20px;
         }
 
@@ -26,6 +37,7 @@
         .target-input label {
             display: block;
             margin-bottom: 5px;
+            color: #aaa;
         }
 
         .target-input input[type="text"] {
@@ -35,6 +47,7 @@
             background-color: #333;
             color: #fff;
             border-radius: 4px;
+            box-sizing: border-box;
         }
 
         .defacement-options {
@@ -43,6 +56,7 @@
 
         .defacement-options h2 {
             margin-bottom: 10px;
+            color: #aaa;
         }
 
         .option {
@@ -56,6 +70,7 @@
         .option label {
             display: block;
             margin-bottom: 5px;
+            color: #aaa;
         }
 
         .option input[type="file"],
@@ -68,6 +83,7 @@
             color: #fff;
             border-radius: 4px;
             margin-bottom: 10px;
+            box-sizing: border-box;
         }
 
         .option textarea {
@@ -81,6 +97,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         .option button:hover {
@@ -93,6 +110,7 @@
             border: 1px solid #555;
             border-radius: 4px;
             background-color: #333;
+            color: #fff;
         }
 
         #defacement-results {
@@ -100,6 +118,14 @@
             border: 1px solid #555;
             border-radius: 5px;
             padding: 10px;
+        }
+
+        #defaced-website {
+            border: none;
+        }
+
+        .hidden {
+            display: none !important;
         }
     </style>
 </head>
@@ -110,8 +136,7 @@
 
         <div class="target-input">
             <label for="defacement-target">Target URL:</label>
-            <input type="text" id="defacement-target"
-                placeholder="http://example.com or onion address">
+            <input type="text" id="defacement-target" placeholder="http://example.com or onion address">
         </div>
 
         <div class="defacement-options">
@@ -161,7 +186,7 @@
                 const imageUrl = URL.createObjectURL(imageFile);
                 await defaceWebsite(targetUrl, 'image', imageUrl);
                 document.getElementById('status-message').textContent = `Image replaced on ${targetUrl}!`;
-                displayDefacement(targetUrl);
+                displayDefacement();
             } catch (error) {
                 console.error("Defacement failed:", error);
                 document.getElementById('status-message').textContent = `Defacement failed: ${error}`;
@@ -182,7 +207,7 @@
             try {
                 await defaceWebsite(targetUrl, 'text', textToInject);
                 document.getElementById('status-message').textContent = `Text modified on ${targetUrl}!`;
-                displayDefacement(targetUrl);
+                displayDefacement();
             } catch (error) {
                 console.error("Defacement failed:", error);
                 document.getElementById('status-message').textContent = `Defacement failed: ${error}`;
@@ -203,7 +228,7 @@
             try {
                 await defaceWebsite(targetUrl, 'html', htmlCode);
                 document.getElementById('status-message').textContent = `HTML injected on ${targetUrl}!`;
-                displayDefacement(targetUrl);
+                displayDefacement();
             } catch (error) {
                 console.error("Defacement failed:", error);
                 document.getElementById('status-message').textContent = `Defacement failed: ${error}`;
@@ -211,15 +236,8 @@
         }
 
         async function defaceWebsite(targetUrl, type, content) {
-            const proxyUrl = 'https://curse-nw68.vercel.app/api/window.js?q='; // curse proxy
-            const url = proxyUrl + targetUrl;
-
             try {
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch target: ${response.status}`);
-                }
-                let html = await response.text();
+                let html = await fetchContent(targetUrl);
 
                 switch (type) {
                     case 'image':
@@ -234,9 +252,7 @@
                         break;
                 }
 
-                const iframe = document.getElementById('defaced-website');
-                iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
-                document.getElementById('defacement-results').classList.remove('hidden');
+                displayInIframe(html);
 
             } catch (error) {
                 console.error("Error during defacement:", error);
@@ -244,9 +260,22 @@
             }
         }
 
-        function displayDefacement(targetUrl) {
-            const defacedWebsiteFrame = document.getElementById('defaced-website');
-            defacedWebsiteFrame.src = targetUrl;
+        async function fetchContent(targetUrl) {
+            const proxyUrl = '/api/proxy?url=' + encodeURIComponent(targetUrl);
+            const response = await fetch(proxyUrl);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch target: ${response.status}`);
+            }
+            return await response.text();
+        }
+
+        function displayInIframe(html) {
+            const iframe = document.getElementById('defaced-website');
+            iframe.src = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+            document.getElementById('defacement-results').classList.remove('hidden');
+        }
+
+        function displayDefacement() {
             document.getElementById('defacement-results').classList.remove('hidden');
         }
 
