@@ -12,6 +12,22 @@
     {
       "src": "script.js",
       "use": "@vercel/static"
+    },
+    {
+      "src": "main/api/ddos.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "main/api/defacement.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "main/api/connection.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "main/api/credential.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -19,13 +35,29 @@
       "src": "/",
       "dest": "/index.html"
     },
-     {
+    {
       "src": "/styles.css",
       "dest": "/styles.css"
     },
     {
       "src": "/script.js",
       "dest": "/script.js"
+    },
+    {
+      "src": "/api/ddos",
+      "dest": "main/api/ddos.js"
+    },
+    {
+      "src": "/api/defacement",
+      "dest": "main/api/defacement.js"
+    },
+    {
+      "src": "/api/connection",
+      "dest": "main/api/connection.js"
+    },
+    {
+      "src": "/api/credential",
+      "dest": "main/api/credential.js"
     }
   ]
 }
