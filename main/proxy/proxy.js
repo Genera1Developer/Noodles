@@ -46,8 +46,10 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
     let agent = null;
     if (parsedProxy.protocol.startsWith('socks')) {
       agent = new SocksProxyAgent(proxyUrl);
-    } else {
+    } else if (parsedProxy.protocol.startsWith('http')) {
       agent = new http.Agent(proxyOptions);
+    } else {
+      throw new Error('Unsupported proxy protocol: ' + parsedProxy.protocol);
     }
 
     options.agent = agent;
