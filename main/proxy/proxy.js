@@ -7,12 +7,19 @@ async function connectViaProxy(targetUrl, proxyUrl) {
     const parsedTarget = new URL(targetUrl);
     const parsedProxy = new URL(proxyUrl);
 
+    const proxyOptions = {
+      protocol: parsedProxy.protocol,
+      hostname: parsedProxy.hostname,
+      port: parsedProxy.port,
+      userId: parsedProxy.username,
+      password: parsedProxy.password
+    };
+
     const options = {
       hostname: parsedTarget.hostname,
       port: parsedTarget.port || (parsedTarget.protocol === 'https:' ? 443 : 80),
       path: parsedTarget.pathname + parsedTarget.search,
       method: 'GET',
-      agent: parsedProxy.protocol.startsWith('socks') ? new SocksProxyAgent(proxyUrl) : undefined,
       headers: {
         'User-Agent': 'Noodles/1.0 (😈)',
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
@@ -23,8 +30,10 @@ async function connectViaProxy(targetUrl, proxyUrl) {
       },
     };
 
-    if (!options.agent && parsedProxy.protocol.startsWith('http')) {
-        options.agent = new http.Agent({ proxy: parsedProxy });
+    if (parsedProxy.protocol.startsWith('socks')) {
+      options.agent = new SocksProxyAgent(proxyUrl);
+    } else if (parsedProxy.protocol.startsWith('http')) {
+      options.agent = new http.Agent(proxyOptions);
     }
 
     const protocol = parsedTarget.protocol === 'https:' ? https : http;
@@ -32,7 +41,6 @@ async function connectViaProxy(targetUrl, proxyUrl) {
     return new Promise((resolve, reject) => {
       const req = protocol.request(options, (res) => {
         let data = '';
-
         res.on('data', (chunk) => {
           data += chunk;
         });
@@ -41,13 +49,17 @@ async function connectViaProxy(targetUrl, proxyUrl) {
           resolve({
             statusCode: res.statusCode,
             headers: res.headers,
-            data: data,
+            data,
           });
         });
       });
 
       req.on('error', (error) => {
         reject(error);
+      });
+
+      req.setTimeout(10000, () => {
+        req.destroy(new Error('Request timeout'));
       });
 
       req.end();
