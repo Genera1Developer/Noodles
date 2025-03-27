@@ -41,13 +41,13 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/public/$1"
+      "dest": "public/$1"
     }
   ],
   "rewrites": [
     {
       "source": "/",
-      "destination": "/index.html"
+      "destination": "/public/index.html"
     }
   ]
 }
