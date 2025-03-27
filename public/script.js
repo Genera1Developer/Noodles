@@ -1,180 +1,74 @@
-// script.js
-
-// Function to handle form submission and initiate attack
-async function initiateAttack(event) {
-    event.preventDefault();
-
-    const target = document.getElementById('target').value;
-    const attackType = document.getElementById('attackType').value;
-    const duration = parseInt(document.getElementById('duration').value);
-    const threads = parseInt(document.getElementById('threads').value);
-    const port = parseInt(document.getElementById('port').value);
-
-
-    if (!target) {
-        alert('Please enter a target URL or .onion address.');
-        return;
-    }
-
-    // Basic input validation (expand as needed)
-    if (isNaN(duration) || duration <= 0) {
-        alert('Please enter a valid duration in seconds.');
-        return;
-    }
-
-    if (isNaN(threads) || threads <= 0) {
-        alert('Please enter a valid number of threads.');
-        return;
-    }
-
-    if (isNaN(port) || port <= 0 || port > 65535) {
-        alert('Please enter a valid port number (1-65535).');
-        return;
-    }
-
-
-    // Call the appropriate attack function based on the selected attackType
-    switch (attackType) {
-        case 'tcpFlood':
-            await startTcpFlood(target, port, threads, duration);
-            break;
-        case 'httpFlood':
-            await startHttpFlood(target, threads, duration);
-            break;
-        // Add cases for other attack types as needed
-        default:
-            alert('Invalid attack type selected.');
-            return;
-    }
-}
-
-// Function to start the TCP flood attack
-async function startTcpFlood(target, port, threads, duration) {
-    // Construct the URL for the API endpoint
-    const url = `/main/tcpFlood?target=${encodeURIComponent(target)}&port=${port}&threads=${threads}&duration=${duration}`;
-
-    try {
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error from server:', errorText);
-            alert(`Attack failed: ${errorText}`); // Display the error message to the user
-            return;
-        }
-
-        const data = await response.json();
-        console.log('Attack started:', data);
-        // Handle success - maybe update the UI to show the attack is running
-        alert('TCP Flood attack started successfully!');
-        startStatusUpdates(target); // Start polling for status updates
-    } catch (error) {
-        console.error('Error starting attack:', error);
-        alert(`Error starting attack: ${error.message}`);
-    }
-}
-
-async function startHttpFlood(target, threads, duration) {
-    // Construct the URL for the API endpoint
-    const url = `/main/httpFlood?target=${encodeURIComponent(target)}&threads=${threads}&duration=${duration}`;
-
-    try {
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error('Error from server:', errorText);
-            alert(`Attack failed: ${errorText}`); // Display the error message to the user
-            return;
-        }
-
-        const data = await response.json();
-        console.log('Attack started:', data);
-        // Handle success - maybe update the UI to show the attack is running
-        alert('HTTP Flood attack started successfully!');
-        startStatusUpdates(target); // Start polling for status updates
-    } catch (error) {
-        console.error('Error starting attack:', error);
-        alert(`Error starting attack: ${error.message}`);
-    }
-}
-
-
-// Function to poll for status updates
-async function getAttackStatus(target) {
-    const url = `/main/attackStatus?target=${encodeURIComponent(target)}`;
-
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            console.error('Error fetching attack status:', response.statusText);
-            return null;
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching attack status:', error);
-        return null;
-    }
-}
-
-// Function to update the UI with status information
-function updateStatus(status) {
-    document.getElementById('mbps').innerText = status.mbps || 'N/A';
-    document.getElementById('packetsSent').innerText = status.packetsSent || 'N/A';
-    document.getElementById('connectionStatus').innerText = status.connectionStatus || 'N/A';
-    document.getElementById('attackDuration').innerText = status.attackDuration || 'N/A';
-}
-
-// Function to start periodic status updates
-function startStatusUpdates(target) {
-    const intervalId = setInterval(async () => {
-        const status = await getAttackStatus(target);
-        if (status) {
-            updateStatus(status);
-        } else {
-            clearInterval(intervalId);
-            console.log('Stopping status updates.');
-        }
-    }, 2000); // Update every 2 seconds
-}
-
-
-// Add event listener to the form
 document.addEventListener('DOMContentLoaded', () => {
-    const attackForm = document.getElementById('attackForm');
-    if (attackForm) {
-        attackForm.addEventListener('submit', initiateAttack);
-    } else {
-        console.error('Attack form not found.');
+  const targetInput = document.getElementById('targetInput');
+  const attackTypeSelect = document.getElementById('attackType');
+  const attackButton = document.getElementById('attackButton');
+  const mbpsDisplay = document.getElementById('mbps');
+  const packetsSentDisplay = document.getElementById('packetsSent');
+  const targetStatusDisplay = document.getElementById('targetStatus');
+  const timeElapsedDisplay = document.getElementById('timeElapsed');
+  const sidePanel = document.querySelector('.side-panel');
+  const navLinks = document.querySelectorAll('.nav-link');
+  const tabContents = document.querySelectorAll('.tab-content');
+  let attackStartTime;
+  let attackInterval;
+
+  const updateStats = (data) => {
+    mbpsDisplay.textContent = data.mbps.toFixed(2);
+    packetsSentDisplay.textContent = data.packetsSent;
+    targetStatusDisplay.textContent = data.targetStatus;
+  };
+
+  const startAttack = async (target, attackType) => {
+    attackStartTime = Date.now();
+    attackInterval = setInterval(() => {
+      const elapsedTime = Math.floor((Date.now() - attackStartTime) / 1000);
+      timeElapsedDisplay.textContent = elapsedTime;
+    }, 1000);
+
+    try {
+      const response = await fetch(`/main/${attackType}.js`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ target: target, duration: 60, intensity: 100 }) // Fixed duration and intensity
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        updateStats(data);
+        clearInterval(attackInterval);
+      } else {
+        console.error('Attack failed:', response.status);
+        clearInterval(attackInterval);
+      }
+    } catch (error) {
+      console.error('Error during attack:', error);
+      clearInterval(attackInterval);
     }
+  };
 
-    // Initial setup of navigation tabs
-    setupNavigationTabs();
-});
+  attackButton.addEventListener('click', () => {
+    const target = targetInput.value;
+    const attackType = attackTypeSelect.value;
+    startAttack(target, attackType);
+  });
 
+  navLinks.forEach(link => {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      const target = link.getAttribute('data-target');
 
-// Function to handle navigation tabs
-function setupNavigationTabs() {
-    const tabs = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
+      tabContents.forEach(content => {
+        content.classList.remove('active');
+      });
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', (event) => {
-            // Deactivate all tabs and hide all content
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
+      navLinks.forEach(navLink => {
+        navLink.classList.remove('active');
+      });
 
-            // Activate the clicked tab and show its content
-            const tabId = event.target.getAttribute('data-tab');
-            event.target.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-        });
+      document.getElementById(target).classList.add('active');
+      link.classList.add('active');
     });
-
-    // Optionally, activate the first tab by default
-    if (tabs.length > 0) {
-        tabs[0].classList.add('active');
-        tabContents[0].classList.add('active');
-    }
-}
+  });
+});
