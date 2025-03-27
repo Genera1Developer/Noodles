@@ -8,13 +8,14 @@
     <style>
         body {
             font-family: sans-serif;
-            background-color: #f4f4f4;
+            background-color: #1e1e1e;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            color: #ddd;
         }
 
         .panel {
@@ -22,15 +23,15 @@
             width: 90%;
             margin: 20px auto;
             padding: 30px;
-            border: 1px solid #ddd;
+            border: 1px solid #333;
             border-radius: 8px;
-            background-color: #fff;
+            background-color: #282828;
             text-align: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
         h1 {
-            color: #333;
+            color: #ddd;
             margin-bottom: 20px;
         }
 
@@ -41,20 +42,19 @@
         }
 
         .connected {
-            color: green;
+            color: #00ff7f;
         }
 
         .disconnected {
-            color: red;
+            color: #ff4500;
         }
 
         #last-updated {
             font-size: 0.9em;
-            color: #777;
+            color: #aaa;
             margin-top: 15px;
         }
 
-        /* Optional: Add a loading indicator */
         .loading::after {
             content: '...';
             animation: dots 1s steps(5, end) infinite;
@@ -87,7 +87,7 @@
 
             try {
                 const response = await fetch('main/connection-status.php', {
-                    cache: 'no-cache' // Add no-cache to prevent caching
+                    cache: 'no-cache'
                 });
 
                 if (!response.ok) {
@@ -115,7 +115,7 @@
                 connectionMessage.classList.add('disconnected');
                 lastUpdated.textContent = `Last Updated: ${new Date().toLocaleString()}`;
             } finally {
-                connectionMessage.classList.remove('loading'); // Ensure loading class is removed
+                connectionMessage.classList.remove('loading');
             }
         }
     </script>
