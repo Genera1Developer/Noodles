@@ -14,7 +14,6 @@ class Tor {
             "https://onion.si",
             "https://onion.ly",
             "https://onion.my",
-            "https://onion.sh",
             "https://onion.lu",
             "https://onion.casa",
             "https://onion.com.de",
@@ -80,6 +79,7 @@ class Tor {
         this.gatewayCheckEnabled = true;
         this.isCheckingGateways = false;
         this.gatewayCheckTimeout = 5000;
+        this.checkGatewayOnFailure = true; // New option to check gateway immediately after a request failure
     }
 
     async initServerInfo() {
@@ -300,10 +300,13 @@ class Tor {
             clearTimeout(timeoutId);
 
             if (!response.ok) {
-                this.blacklistGateway(gateway);
                 this.log(`Gateway ${gateway} failed. Adding to blacklist.`, 'warn');
                 this.requestStats.failed++;
                 this.errorCount++;
+
+                if (this.checkGatewayOnFailure) {
+                    await this.isGatewayOnline(gateway); // Immediately check the gateway
+                }
 
                 if (this.errorCount > this.errorThreshold) {
                     await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
@@ -327,10 +330,13 @@ class Tor {
             return response;
 
         } catch (error) {
-            this.blacklistGateway(gateway);
             this.log(`Tor fetch error with gateway ${gateway}: ${error}`, 'error');
             this.requestStats.failed++;
             this.errorCount++;
+
+            if (this.checkGatewayOnFailure) {
+                await this.isGatewayOnline(gateway); // Immediately check the gateway
+            }
 
             if (this.errorCount > this.errorThreshold) {
                 await new Promise(resolve => setTimeout(resolve, this.rateLimitDelay));
