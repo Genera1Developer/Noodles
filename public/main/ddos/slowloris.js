@@ -51,7 +51,7 @@ function slowloris(target, numSockets, statsCallback) {
 
         statsInterval = setInterval(updateStats, 1000);
 
-        } catch (error) {
+    } catch (error) {
         console.error("Error during Slowloris setup:", error.message);
         return {
             stop: () => {
@@ -121,7 +121,7 @@ function slowloris(target, numSockets, statsCallback) {
     }
 
     function sendMessage(socket, message) {
-         try {
+        try {
             if (socket.readyState === WebSocket.OPEN) {
                 socket.send(message);
                 packetsSent++;
@@ -148,7 +148,7 @@ function slowloris(target, numSockets, statsCallback) {
     }
 
     function removeSocket(socket) {
-         sockets = sockets.filter(s => s !== socket);
+        sockets = sockets.filter(s => s !== socket);
     }
 
     for (let i = 0; i < numSockets; i++) {
