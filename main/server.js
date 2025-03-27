@@ -33,7 +33,7 @@ function executeCommand(command, args) {
     });
 }
 
-app.post('/api/ddos', async (req, res) => {
+app.post('./main/ddos/ddos.js', async (req, res) => {
     const target = req.body.target;
     const type = req.body.type;
     const duration = req.body.duration || 60;
@@ -138,7 +138,7 @@ app.post('/api/connection', async (req, res) => {
     }
 });
 
-app.get('/about', (req, res) => {
+app.ge (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'about.html'));
 });
 
