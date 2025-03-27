@@ -1,303 +1,101 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #1E293B;
-    color: #CBD5E1;
+    background-color: #121212;
+    color: #f0f0f0;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    line-height: 1.6;
 }
 
 .container {
+    background-color: #222;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     display: flex;
-    width: 95%;
-    max-width: 1400px;
-    background-color: #334155;
-    border-radius: 12px;
+    width: 80%;
+    max-width: 1200px;
     overflow: hidden;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
 }
 
 .side-panel {
-    width: 250px;
-    background-color: #1E293B;
-    padding: 30px;
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+    width: 200px;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    border-right: 2px solid #475569;
-}
-
-.side-panel h1 {
-    color: #A3E635;
-    margin-bottom: 30px;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-.side-panel nav {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
 }
 
 .side-panel button {
-    background-color: #475569;
-    color: #CBD5E1;
+    background-color: #444;
+    color: #fff;
     border: none;
-    padding: 12px 20px;
-    text-align: left;
-    text-decoration: none;
-    border-radius: 6px;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    font-size: 1rem;
-    font-weight: 500;
-    outline: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    transition: background-color 0.3s ease;
 }
 
 .side-panel button:hover {
-    background-color: #A3E635;
-    color: #1E293B;
+    background-color: #555;
 }
 
-.side-panel button.active {
-    background-color: #A3E635;
-    color: #1E293B;
-    font-weight: 700;
-}
-
-.main-content {
-    flex: 1;
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
+.main-panel {
+    padding: 20px;
+    width: 100%;
 }
 
 .tab-content {
     display: none;
-    flex-grow: 1;
 }
 
 .tab-content.active {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    display: block;
 }
 
-.tab-content h2 {
-    color: #A3E635;
-    font-size: 1.75rem;
-    margin-bottom: 15px;
+h2 {
+    color: #4CAF50;
+    margin-top: 0;
 }
 
-input[type="url"],
+input[type="text"],
+input[type="number"],
 textarea,
-input[type="number"] {
+select {
     width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    background-color: #475569;
-    color: #CBD5E1;
-    border: none;
-    border-radius: 6px;
-    resize: vertical;
-    font-size: 1rem;
-    outline: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-}
-
-input[type="url"]:focus,
-textarea:focus,
-input[type="number"]:focus {
-    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.5);
-}
-
-button {
-    background-color: #007BFF;
-    color: #CBD5E1;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    font-size: 1.1rem;
-    font-weight: 600;
-    outline: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-.stats {
-    margin-top: 25px;
-    padding: 20px;
-    background-color: #334155;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
-}
-
-.stats h3 {
-    color: #A3E635;
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-}
-
-.stats p {
-    margin: 8px 0;
-    font-size: 1.1rem;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-
-    .side-panel {
-        width: 100%;
-        border-right: none;
-        border-bottom: 2px solid #475569;
-    }
-
-    .side-panel h1 {
-        font-size: 1.75rem;
-        margin-bottom: 20px;
-    }
-
-    .side-panel nav {
-        gap: 8px;
-    }
-
-    .side-panel button {
-        padding: 10px 15px;
-        font-size: 0.9rem;
-    }
-
-    .main-content {
-        padding: 20px;
-    }
-
-    .tab-content h2 {
-        font-size: 1.5rem;
-    }
-
-    .stats {
-        margin-top: 20px;
-        padding: 15px;
-    }
-
-    .stats h3 {
-        font-size: 1.3rem;
-    }
-
-    .stats p {
-        font-size: 1rem;
-    }
-}
-
-/* Dark Mode Toggle (Optional) */
-.dark-mode {
-    background-color: #000;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    background-color: #444;
     color: #fff;
 }
 
-/* Form Styles */
-label {
-    display: block;
-    margin-bottom: 5px;
-    color: #94A3B8;
-    font-size: 1rem;
-}
-
-select {
-    width: 100%;
-    padding: 12px;
-    margin: 8px 0;
-    background-color: #475569;
-    color: #CBD5E1;
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 20px;
     border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    outline: none;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-select:focus {
-    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.5);
+button:hover {
+    background-color: #388E3C;
 }
 
-
-/*About Us*/
-.about-us-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-}
-
-.about-us-content h2 {
-    color: #A3E635;
-    font-size: 2rem;
-    margin-bottom: 20px;
-}
-
-.about-us-content p {
-    font-size: 1.2rem;
-    line-height: 1.8;
-    margin-bottom: 30px;
-    color: #CBD5E1;
-    padding: 0 20px;
-}
-
-.about-us-content ul {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 30px;
-}
-
-.about-us-content li {
-    font-size: 1.2rem;
-    margin-bottom: 10px;
-    color: #CBD5E1;
-}
-
-.about-us-content a {
-    color: #007BFF;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.about-us-content a:hover {
-    color: #0056b3;
-}
-
-/*Stats Display*/
-.stats-display {
+.statistics {
     margin-top: 20px;
     padding: 15px;
-    background-color: #334155;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+    background-color: #333;
+    border-radius: 5px;
 }
 
-.stats-display h3 {
-    color: #A3E635;
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.stats-display p {
-    margin: 8px 0;
-    font-size: 1.1rem;
-    color: #CBD5E1;
-    text-align: center;
+.statistics p {
+    margin: 5px 0;
 }
