@@ -99,6 +99,16 @@
    "ip": "196.247.54.230",
    "port": 80,
    "protocol": "http"
+  },
+  {
+   "ip": "8.8.8.8",
+   "port": 53,
+   "protocol": "udp"
+  },
+  {
+   "ip": "1.1.1.1",
+   "port": 53,
+   "protocol": "udp"
   }
  ]
 }
