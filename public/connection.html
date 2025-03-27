@@ -21,7 +21,7 @@
         });
 
         function updateConnectionStatus() {
-            fetch('main/connection-status')
+            fetch('main/connection-status.php')
                 .then(response => response.json())
                 .then(data => {
                     const connectionMessage = document.getElementById('connection-message');
