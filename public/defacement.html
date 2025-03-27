@@ -8,115 +8,158 @@
     <link rel="stylesheet" href="style.css">
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #111;
-            color: #ddd;
+            font-family: 'Arial', sans-serif;
+            background-color: #1E1E1E;
+            color: #FAFAFA;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
         .defacement-container {
-            width: 80%;
-            margin: 20px auto;
+            width: 90%;
+            max-width: 800px;
             padding: 20px;
-            background-color: #222;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            background-color: #333333;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .defacement-container:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
         }
 
         h1 {
-            color: #ddd;
+            color: #E0E0E0;
             text-align: center;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
         }
 
-        .target-input {
+        .target-input,
+        .defacement-options,
+        .defacement-status {
             margin-bottom: 20px;
         }
 
         .target-input label {
             display: block;
-            margin-bottom: 5px;
-            color: #aaa;
+            margin-bottom: 8px;
+            color: #BDBDBD;
+            font-weight: bold;
         }
 
         .target-input input[type="text"] {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #555;
-            background-color: #333;
-            color: #fff;
-            border-radius: 4px;
+            padding: 10px;
+            border: 1px solid #616161;
+            background-color: #424242;
+            color: #FFFFFF;
+            border-radius: 6px;
             box-sizing: border-box;
+            transition: all 0.3s ease;
         }
 
-        .defacement-options {
-            margin-bottom: 20px;
+        .target-input input[type="text"]:focus {
+            border-color: #00BCD4;
+            box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
         }
 
         .defacement-options h2 {
-            margin-bottom: 10px;
-            color: #aaa;
+            margin-bottom: 12px;
+            color: #BDBDBD;
+            font-size: 1.2em;
+            font-weight: bold;
         }
 
         .option {
             margin-bottom: 15px;
-            padding: 10px;
-            border: 1px solid #555;
-            border-radius: 4px;
-            background-color: #333;
+            padding: 15px;
+            border: 1px solid #616161;
+            border-radius: 6px;
+            background-color: #424242;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: #0097A7;
+            box-shadow: 0 2px 6px rgba(0, 151, 167, 0.3);
         }
 
         .option label {
             display: block;
-            margin-bottom: 5px;
-            color: #aaa;
+            margin-bottom: 8px;
+            color: #BDBDBD;
+            font-weight: bold;
         }
 
         .option input[type="file"],
         .option input[type="text"],
         .option textarea {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #555;
-            background-color: #444;
-            color: #fff;
-            border-radius: 4px;
-            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #757575;
+            background-color: #616161;
+            color: #FFFFFF;
+            border-radius: 6px;
+            margin-bottom: 12px;
             box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .option input[type="file"]:focus,
+        .option input[type="text"]:focus,
+        .option textarea:focus {
+            border-color: #00BCD4;
+            box-shadow: 0 0 5px rgba(0, 188, 212, 0.5);
         }
 
         .option textarea {
-            height: 100px;
+            height: 120px;
+            resize: vertical;
         }
 
         .option button {
-            padding: 8px 12px;
-            background-color: #007BFF;
-            color: #fff;
+            padding: 10px 16px;
+            background-color: #26A69A;
+            color: #FFFFFF;
             border: none;
-            border-radius: 4px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
         }
 
         .option button:hover {
-            background-color: #0056b3;
+            background-color: #00796B;
+            transform: scale(1.05);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
         }
 
         .defacement-status {
-            margin-bottom: 20px;
-            padding: 10px;
-            border: 1px solid #555;
-            border-radius: 4px;
-            background-color: #333;
-            color: #fff;
+            padding: 15px;
+            border: 1px solid #616161;
+            border-radius: 6px;
+            background-color: #424242;
+            color: #FFFFFF;
+            text-align: center;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .defacement-status:hover {
+            box-shadow: 0 2px 6px rgba(0, 151, 167, 0.3);
         }
 
         #defacement-results {
-            background-color: #222;
-            border: 1px solid #555;
-            border-radius: 5px;
+            background-color: #333333;
+            border: 1px solid #616161;
+            border-radius: 6px;
             padding: 10px;
         }
 
