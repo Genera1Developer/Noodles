@@ -16,11 +16,17 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
       let proxyOptions = {
         protocol: parsedProxy.protocol,
         hostname: parsedProxy.hostname,
-        port: parsedProxy.port,
+        port: parseInt(parsedProxy.port, 10),
         userId: parsedProxy.username,
         password: parsedProxy.password,
+        proxyAuth: parsedProxy.username && parsedProxy.password ? `${parsedProxy.username}:${parsedProxy.password}` : undefined
       };
-      agent = new SocksProxyAgent(proxyOptions);
+
+      if (!proxyOptions.port) {
+        proxyOptions.port = parsedProxy.protocol === 'https:' ? 443 : 80;
+      }
+
+      agent = new http.Agent(proxyOptions);
     }
 
     const defaultHeaders = {
