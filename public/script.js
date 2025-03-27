@@ -2,9 +2,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeToggle = document.getElementById('theme-toggle');
   const body = document.body;
 
-  themeToggle.addEventListener('click', () => {
-    body.classList.toggle('dark-mode');
-  });
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      body.classList.toggle('dark-mode');
+    });
+  }
 
   const tabs = document.querySelectorAll('.tab-button');
   const tabContents = document.querySelectorAll('.tab-content');
@@ -35,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function performAttack(target, type, duration) {
     try {
-      const response = await fetch(`/main/attack`, {
+      const response = await fetch(`main/attack`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -61,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function fetchStatistics() {
     try {
-      const response = await fetch('/main/stats');
+      const response = await fetch('main/stats');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -73,10 +75,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function displayStatistics(stats) {
-    document.getElementById('mbps').textContent = stats.mbps;
-    document.getElementById('packets').textContent = stats.packets;
-    document.getElementById('status').textContent = stats.status;
-    document.getElementById('time').textContent = stats.time;
+    if (document.getElementById('mbps')) {
+        document.getElementById('mbps').textContent = stats.mbps;
+    }
+    if (document.getElementById('packets')) {
+        document.getElementById('packets').textContent = stats.packets;
+    }
+    if (document.getElementById('status')) {
+        document.getElementById('status').textContent = stats.status;
+    }
+    if (document.getElementById('time')) {
+        document.getElementById('time').textContent = stats.time;
+    }
   }
 
   setInterval(fetchStatistics, 5000);
