@@ -3,158 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles</title>
+    <title>Noodles - The Ultimate Hacking Tool</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <aside class="side-panel">
-            <button class="tab-button" data-tab="ddos">DDoS</button>
-            <button class="tab-button" data-tab="defacement">Defacement</button>
-            <button class="tab-button" data-tab="connection">Connection</button>
-            <button class="tab-button" data-tab="credential">Credential</button>
-            <button class="tab-button" data-tab="other">Other Hacking Tools</button>
-            <button class="tab-button" data-tab="about">About Us</button>
+            <nav>
+                <button data-tab="ddos">DDoS</button>
+                <button data-tab="defacement">Defacement</button>
+                <button data-tab="connection">Connection</button>
+                <button data-tab="credential">Credential</button>
+                <button data-tab="about">About Us</button>
+            </nav>
         </aside>
-
         <main class="main-content">
             <section id="ddos" class="tab-content active">
-                <h1>DDoS</h1>
-                <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
-                <button onclick="startDDoS()">Start DDoS Attack</button>
-                <div class="stats">
+                <h1>DDoS Attacks</h1>
+                <label for="ddos-target">Target URL:</label>
+                <input type="text" id="ddos-target" placeholder="http://example.com">
+                <label for="ddos-method">Attack Method:</label>
+                <select id="ddos-method">
+                    <option value="http-flood">HTTP Flood</option>
+                    <option value="syn-flood">SYN Flood</option>
+                    <option value="udp-flood">UDP Flood</option>
+                </select>
+                <button id="start-ddos">Start DDoS Attack</button>
+                <div class="statistics">
                     <p>MBPS: <span id="mbps">0</span></p>
                     <p>Packets Sent: <span id="packets-sent">0</span></p>
                     <p>Target Status: <span id="target-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="time-elapsed">0</span></p>
+                    <p>Time Elapsed: <span id="time-elapsed">0</span> seconds</p>
                 </div>
             </section>
-
             <section id="defacement" class="tab-content">
-                <h1>Defacement</h1>
-                <input type="text" id="defacement-target" placeholder="Target URL">
-                <textarea id="defacement-content" placeholder="Defacement HTML"></textarea>
-                <button onclick="startDefacement()">Start Defacement</button>
+                <h1>Website Defacement</h1>
+                <label for="defacement-target">Target URL:</label>
+                <input type="text" id="defacement-target" placeholder="http://example.com">
+                <label for="defacement-message">Defacement Message:</label>
+                <textarea id="defacement-message" placeholder="This site has been hacked!"></textarea>
+                <button id="start-defacement">Start Defacement</button>
             </section>
-
             <section id="connection" class="tab-content">
-                <h1>Connection</h1>
-                <input type="text" id="connection-target" placeholder="Target IP or URL">
-                <input type="number" id="connection-port" placeholder="Port">
-                <button onclick="openConnection()">Open Connection</button>
+                <h1>Establish Connection</h1>
+                <label for="connection-target">Target IP/URL:</label>
+                <input type="text" id="connection-target" placeholder="http://example.com or IP Address">
+                <label for="connection-port">Port:</label>
+                <input type="number" id="connection-port" placeholder="80">
+                <button id="start-connection">Establish Connection</button>
             </section>
-
             <section id="credential" class="tab-content">
                 <h1>Credential Stuffing</h1>
-                <input type="text" id="credential-target" placeholder="Target Website">
-                <textarea id="credential-list" placeholder="Username:Password"></textarea>
-                <button onclick="startCredentialStuffing()">Start Credential Stuffing</button>
+                <label for="credential-target">Target URL:</label>
+                <input type="text" id="credential-target" placeholder="http://example.com">
+                <label for="credential-username-list">Username List URL:</label>
+                <input type="text" id="credential-username-list" placeholder="URL to usernames">
+                <label for="credential-password-list">Password List URL:</label>
+                <input type="text" id="credential-password-list" placeholder="URL to passwords">
+                <button id="start-credential">Start Credential Stuffing</button>
             </section>
-
-            <section id="other" class="tab-content">
-                <h1>Other Hacking Tools</h1>
-                <p>Coming soon...</p>
-            </section>
-
             <section id="about" class="tab-content">
                 <h1>About Us</h1>
-                <p>This is a hacking web application for educational purposes only. Use at your own risk.</p>
+                <p>Noodles is a cutting-edge penetration testing tool designed for security professionals.</p>
+                <p>Use responsibly and at your own risk.</p>
             </section>
         </main>
     </div>
     <script src="script.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
-
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const tabId = button.dataset.tab;
-
-                    tabButtons.forEach(btn => btn.classList.remove('active'));
-                    tabContents.forEach(content => content.classList.remove('active'));
-
-                    button.classList.add('active');
-                    document.getElementById(tabId).classList.add('active');
-                });
-            });
-        });
-
-        function startDDoS() {
-            const target = document.getElementById('ddos-target').value;
-            fetch('main/ddos/ddos.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'target=' + encodeURIComponent(target)
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        function startDefacement() {
-            const target = document.getElementById('defacement-target').value;
-            const content = document.getElementById('defacement-content').value;
-            fetch('main/defacement/defacement.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'target=' + encodeURIComponent(target) + '&content=' + encodeURIComponent(content)
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        function openConnection() {
-            const target = document.getElementById('connection-target').value;
-            const port = document.getElementById('connection-port').value;
-            fetch('main/connection/connection.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'target=' + encodeURIComponent(target) + '&port=' + encodeURIComponent(port)
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-
-        function startCredentialStuffing() {
-            const target = document.getElementById('credential-target').value;
-            const list = document.getElementById('credential-list').value;
-            fetch('main/credential/credential.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: 'target=' + encodeURIComponent(target) + '&list=' + encodeURIComponent(list)
-            })
-            .then(response => response.text())
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-    </script>
 </body>
 </html>
