@@ -27,6 +27,11 @@ async function credentialStuffingAttack(credentials, attemptLogin, onCredentialA
   for (const credential of credentials) {
     const { username, password } = credential;
 
+    if (!username || !password) {
+      console.warn("Skipping credential due to missing username or password.");
+      continue;
+    }
+
     if (delay > 0) {
       await new Promise(resolve => setTimeout(resolve, delay));
     }
