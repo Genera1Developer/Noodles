@@ -1,7 +1,7 @@
 (function() {
   var config = {
     targetSelector: 'body',
-    replacementText: 'Noodles Are Here',
+    replacementText: 'Noodles!',
     backgroundColor: '#ff0000',
     textColor: '#ffffff',
     fontFamily: 'Arial, sans-serif',
