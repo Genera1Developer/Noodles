@@ -43,6 +43,10 @@
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          with:
+            args: >
+              -Dsonar.organization=your-sonarcloud-org  # Replace with your SonarCloud organization key
+              -Dsonar.projectKey=your-sonarcloud-project-key # Replace with your SonarCloud project key
 
         - name: Run security checks with Retire.js
           run: |
