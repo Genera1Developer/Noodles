@@ -17,8 +17,9 @@
     fontWeight: 'bold',
     textAlign: 'center',
     padding: '20px',
-    animationDuration: '2s', // Added animation duration
-    animationName: 'defacementAnimation' // Added animation name
+    animationDuration: '2s',
+    animationName: 'defacementAnimation',
+    animationIterationCount: 'infinite' // Added iteration count as config
   };
 
   // Apply defacement styles to the target element
@@ -38,30 +39,37 @@
     defacementMessage.textContent = config.replacementText;
 
     // Apply styles
-    defacementMessage.style.backgroundColor = config.backgroundColor;
-    defacementMessage.style.color = config.textColor;
-    defacementMessage.style.fontFamily = config.fontFamily;
-    defacementMessage.style.fontSize = config.fontSize;
-    defacementMessage.style.fontWeight = config.fontWeight;
-    defacementMessage.style.textAlign = config.textAlign;
-    defacementMessage.style.padding = config.padding;
-    defacementMessage.style.animationName = config.animationName; // Apply animation name
-    defacementMessage.style.animationDuration = config.animationDuration; // Apply animation duration
-    defacementMessage.style.animationIterationCount = 'infinite'; // Animate infinitely
+    Object.assign(defacementMessage.style, {
+      backgroundColor: config.backgroundColor,
+      color: config.textColor,
+      fontFamily: config.fontFamily,
+      fontSize: config.fontSize,
+      fontWeight: config.fontWeight,
+      textAlign: config.textAlign,
+      padding: config.padding,
+      animationName: config.animationName,
+      animationDuration: config.animationDuration,
+      animationIterationCount: config.animationIterationCount
+    });
 
     // Append the message to the target element
     target.appendChild(defacementMessage);
 
     // Add a CSS animation (optional)
-    var styleSheet = document.createElement("style");
-    styleSheet.type = "text/css";
-    styleSheet.innerText = `
-      @keyframes ${config.animationName} {
-        0%   { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-    `;
-    document.head.appendChild(styleSheet);
+    const styleSheetId = 'defacement-animation-style';
+    if (!document.getElementById(styleSheetId)) {
+      var styleSheet = document.createElement("style");
+      styleSheet.type = "text/css";
+      styleSheet.id = styleSheetId; // Add ID to avoid duplicate styles
+      styleSheet.innerText = `
+        @keyframes ${config.animationName} {
+          0%   { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `;
+      document.head.appendChild(styleSheet);
+    }
+
 
   }
 
