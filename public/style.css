@@ -1,160 +1,201 @@
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #1e1e1e;
-    color: #f0f0f0;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
+:root {
+            --bg-primary: #121420;
+            --bg-secondary: #1c2033;
+            --bg-tertiary: #262b42;
+            --accent-primary: #4a6cf7;
+            --accent-secondary: #6d80ff;
+            --text-primary: #e6e6f0;
+            --text-secondary: #a0a6c4;
+            --border-color: #2c3347;
+            --transition-speed: 0.3s;
+        }
 
-.container {
-    width: 95%;
-    max-width: 1440px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #282828;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', 'Arial', sans-serif;
+        }
 
-.header {
-    text-align: center;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #333;
-}
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-.header h1 {
-    color: #00FA9A;
-    margin-bottom: 10px;
-}
+        .container {
+            display: flex;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+        }
 
-.navigation {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-}
+        .side-panel {
+            width: 280px;
+            background-color: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            box-shadow: -5px 0 30px rgba(0,0,0,0.2);
+        }
 
-.navigation button {
-    background-color: #303030;
-    color: #00FA9A;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        .side-panel-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-.navigation button:hover {
-    background-color: #00FA9A;
-    color: #303030;
-}
+        .side-panel-logo img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+        }
 
-.content {
-    padding: 20px 0;
-}
+        .side-panel-logo h1 {
+            font-size: 1.5rem;
+            color: var(--accent-primary);
+            font-weight: 700;
+        }
 
-.attack-form {
-    display: flex;
-    flex-direction: column;
-}
+        .side-panel button {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+            padding: 15px 20px;
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            text-align: left;
+        }
 
-.form-group {
-    margin-bottom: 15px;
-}
+        .side-panel button i {
+            font-size: 1.2rem;
+            min-width: 25px;
+            text-align: center;
+            opacity: 0.7;
+        }
 
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    color: #00FA9A;
-}
+        .side-panel button:hover,
+        .side-panel button.active {
+            background-color: var(--accent-primary);
+            color: white;
+        }
 
-.form-group input[type="text"],
-.form-group select {
-    width: 98%;
-    padding: 8px;
-    border: 1px solid #444;
-    border-radius: 4px;
-    background-color: #333;
-    color: #f0f0f0;
-}
+        .side-panel button:hover i,
+        .side-panel button.active i {
+            opacity: 1;
+        }
 
-.form-group select {
-    appearance: none;
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300FA9A"><path d="M7 10l5 5 5-5z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 8px center;
-    background-size: 16px;
-}
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
 
-.form-group button {
-    background-color: #00FA9A;
-    color: #303030;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        .tab-content {
+            background-color: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-.form-group button:hover {
-    background-color: #32CD32;
-}
+        .tab-content h2 {
+            color: var(--accent-primary);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-.statistics {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #333;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-    text-align: center;
-}
+        .input-group {
+            margin-bottom: 20px;
+        }
 
-.statistics h2 {
-    color: #00FA9A;
-    margin-bottom: 10px;
-}
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
 
-.statistics p {
-    color: #f0f0f0;
-    margin: 5px 0;
-}
+        .input-group input,
+        .input-group textarea,
+        .input-group select {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
 
-.footer {
-    text-align: center;
-    margin-top: auto;
-    padding: 10px;
-    background-color: #222;
-    color: #777;
-    border-top: 1px solid #333;
-}
+        .input-group input:focus,
+        .input-group textarea:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
+        }
 
-#about-us {
-    padding: 20px;
-    line-height: 1.6;
-}
+        .btn {
+            display: inline-block;
+            padding: 15px 25px;
+            background-color: var(--accent-primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-#about-us h2 {
-    color: #00FA9A;
-    margin-bottom: 15px;
-}
+        .btn:hover {
+            background-color: var(--accent-secondary);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(74, 108, 247, 0.3);
+        }
 
-#about-us p {
-    margin-bottom: 10px;
-}
+        #about {
+            text-align: center;
+        }
 
-@media (max-width: 768px) {
-    .container {
-        width: 95%;
-        padding: 10px;
-    }
+        #about p {
+            max-width: 600px;
+            margin: 0 auto;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
 
-    .navigation {
-        flex-direction: column;
-    }
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
 
-    .navigation button {
-        margin-bottom: 10px;
-    }
-}
+            .side-panel {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 15px;
+            }
+
+            .side-panel button {
+                flex-shrink: 0;
+                padding: 10px 15px;
+            }
+        }
