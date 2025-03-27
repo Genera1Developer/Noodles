@@ -32,13 +32,22 @@
         75% { transform: translate(-0.5px, -0.5px); }
         100% { transform: translate(0, 0); }
       }
+      .glitch-lines {
+        animation: glitch 1.5s linear infinite alternate;
+      }
+      .rotate-circle {
+        animation: rotate 15s linear infinite;
+      }
+      .pulse-circle {
+        animation: pulse 1.5s linear infinite;
+      }
     </style>
   </defs>
   <rect width="64" height="64" rx="8" fill="#1e1e1e" />
   <g filter="url(#hackerGlow)">
-    <path d="M16 16 L48 48 M48 16 L16 48" stroke="url(#hackerGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="animation: glitch 1.5s linear infinite alternate;"/>
-    <path d="M32 8 L32 56 M8 32 L56 32" stroke="url(#hackerGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="animation: glitch 2s linear infinite alternate;"/>
+    <path d="M16 16 L48 48 M48 16 L16 48" stroke="url(#hackerGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="glitch-lines"/>
+    <path d="M32 8 L32 56 M8 32 L56 32" stroke="url(#hackerGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" class="glitch-lines"/>
   </g>
-  <circle cx="32" cy="32" r="24" stroke="#444" stroke-width="2" stroke-opacity="0.7" fill="none" style="animation: rotate 15s linear infinite;" />
-  <circle cx="32" cy="32" r="6" fill="#00FF7F" style="animation: pulse 1.5s linear infinite;" />
+  <circle cx="32" cy="32" r="24" stroke="#444" stroke-width="2" stroke-opacity="0.7" fill="none" class="rotate-circle" />
+  <circle cx="32" cy="32" r="6" fill="#00FF7F" class="pulse-circle" />
 </svg>
