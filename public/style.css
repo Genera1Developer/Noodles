@@ -1,1 +1,189 @@
-body {\n    font-family: Arial, sans-serif;\n    background-color: #333;\n    color: #f0f0f0;\n    margin: 0;\n    padding: 0;\n    display: flex;\n    flex-direction: column;\n    min-height: 100vh;\n}\n\n.side-panel {\n    width: 200px;\n    background-color: #222;\n    padding: 20px;\n    display: flex;\n    flex-direction: column;\n    align-items: stretch;\n}\n\n.side-panel .tab-btn {\n    background-color: #444;\n    color: #fff;\n    border: none;\n    padding: 10px 15px;\n    text-align: left;\n    cursor: pointer;\n    transition: background-color 0.3s ease;\n    margin-bottom: 5px;\n    border-radius: 5px;\n}\n\n.side-panel .tab-btn:hover {\n    background-color: #666;\n}\n\n.main-content {\n    flex: 1;\n    padding: 20px;\n}\n\nheader {\n    background-color: #2d3e50;\n    color: #fff;\n    text-align: center;\n    padding: 10px;\n    margin-bottom: 20px;\n}\n\n.tab-content {\n    display: none;\n}\n\n.tab-content h2 {\n    color: #ddd;\n    margin-bottom: 15px;\n}\n\n.input-group {\n    margin-bottom: 15px;\n}\n\n.input-group label {\n    display: block;\n    margin-bottom: 5px;\n    color: #aaa;\n}\n\n.input-group input[type=\"url\"],\n.input-group input[type=\"number\"],\n.input-group input[type=\"text\"],\n.input-group textarea {\n    width: 100%;\n    padding: 8px;\n    border: 1px solid #555;\n    background-color: #444;\n    color: #eee;\n    border-radius: 4px;\n    box-sizing: border-box;\n}\n\n.input-group textarea {\n    height: 100px;\n    resize: vertical;\n}\n\nbutton {\n    background-color: #3498db;\n    color: #fff;\n    padding: 10px 15px;\n    border: none;\n    border-radius: 5px;\n    cursor: pointer;\n    transition: background-color 0.3s ease;\n}\n\nbutton:hover {\n    background-color: #2980b9;\n}\n\n.status-area {\n    margin-top: 20px;\n    padding: 10px;\n    background-color: #222;\n    border-radius: 5px;\n    color: #ddd;\n}\n\n.status-area p {\n    margin: 5px 0;\n}\n\nfooter {\n    text-align: center;\n    padding: 10px;\n    background-color: #222;\n    color: #888;\n    margin-top: 20px;\n}\n\n/* Specific container styles */\n.credential-container,\n.ddos-container,\n.defacement-container,\n.connection-container,\n.other-container,\n.about-container {\n    max-width: 800px;\n    margin: auto;\n}\n
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #222;
+    color: #f0f0f0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.side-panel {
+    width: 220px;
+    background-color: #1a1a1a;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    border-right: 1px solid #333;
+}
+
+.side-panel .tab-btn {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 12px 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    font-size: 14px;
+    outline: none;
+}
+
+.side-panel .tab-btn:hover {
+    background-color: #444;
+    color: #ddd;
+}
+
+.side-panel .tab-btn.active {
+    background-color: #388e3c;
+    color: #fff;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+}
+
+header {
+    background-color: #212121;
+    color: #fff;
+    text-align: center;
+    padding: 15px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid #333;
+}
+
+.tab-content {
+    display: none;
+    padding: 15px;
+    border-radius: 5px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.tab-content h2 {
+    color: #ddd;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #aaa;
+    font-size: 14px;
+}
+
+.input-group input[type="url"],
+.input-group input[type="number"],
+.input-group input[type="text"],
+.input-group textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #555;
+    background-color: #333;
+    color: #eee;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 14px;
+}
+
+.input-group textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+button {
+    background-color: #388e3c;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 16px;
+    outline: none;
+}
+
+button:hover {
+    background-color: #4caf50;
+}
+
+button:active {
+    background-color: #388e3c;
+}
+
+.status-area {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #1a1a1a;
+    border-radius: 5px;
+    color: #ddd;
+    font-size: 14px;
+}
+
+.status-area p {
+    margin: 8px 0;
+}
+
+footer {
+    text-align: center;
+    padding: 15px;
+    background-color: #1a1a1a;
+    color: #888;
+    margin-top: 30px;
+    border-top: 1px solid #333;
+    font-size: 12px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.credential-container,
+.ddos-container,
+.defacement-container,
+.connection-container,
+.other-container,
+.about-container {
+    max-width: 900px;
+    margin: auto;
+}
+
+/* Utility Classes */
+.mt-20 {
+    margin-top: 20px;
+}
+
+.mb-20 {
+    margin-bottom: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .side-panel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #333;
+    }
+
+    .main-content {
+        padding: 15px;
+    }
+
+    .container {
+        padding: 0 10px;
+    }
+}
