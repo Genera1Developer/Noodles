@@ -13,7 +13,7 @@ function startDDoS() {
         return;
     }
 
-    fetch('attack.php', {
+    fetch('main/attack.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,7 +42,7 @@ function startDefacement() {
         return;
     }
 
-    fetch('attack.php', {
+    fetch('main/attack.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -71,7 +71,7 @@ function establishConnection() {
         return;
     }
 
-    fetch('attack.php', {
+    fetch('main/attack.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -100,7 +100,7 @@ function startCredentialStuffing() {
         return;
     }
 
-    fetch('attack.php', {
+    fetch('main/attack.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
