@@ -14,7 +14,6 @@
     "defacement": "node main/defacement/defacement.js",
     "connection": "node main/proxy/proxy.js",
     "credential": "node main/credentials/credentials.js",
-    "other": "node main/other/other.js",
     "test": "jest",
     "prepare-ddos": "cd main/ddos && npm install",
     "prepare-defacement": "cd main/defacement && npm install",
