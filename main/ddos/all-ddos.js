@@ -162,7 +162,7 @@ class DDoS {
  async refreshProxies() {
   this.log('Refreshing proxy list... ');
   try {
-   const response = await fetch('./main/proxies.json', {
+   const response = await fetch('./proxies.json', {
     method: 'GET',
     headers: {
      'X--Key': this.Key
