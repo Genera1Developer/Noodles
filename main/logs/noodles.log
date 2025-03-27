@@ -1,97 +1,97 @@
 Noodles Log Initialized.
 
-[INFO] 2024-10-26 10:00:00: Interface: index.html file created and populated with basic HTML structure. Added links to style.css and script.js.
-[INFO] 2024-10-26 10:00:05: Interface: Created a sidebar with menu options for DDoS, Defacement, Connection, Credential, and About Us.
-[INFO] 2024-10-26 10:00:10: Interface: Implemented tabbed content areas for each menu option with input fields and buttons.
-[INFO] 2024-10-26 10:00:15: Interface: Added status and log boxes to each tab for displaying information.
-[INFO] 2024-10-26 10:00:20: Interface: Added basic styling and JavaScript links (style.css and script.js created).
+[INFO] 2024-10-26 10:00:00: Interface: index.html created, populated with basic HTML. Links added: style.css, script.js.
+[INFO] 2024-10-26 10:00:05: Interface: Sidebar created: DDoS, Defacement, Connection, Credential, About Us.
+[INFO] 2024-10-26 10:00:10: Interface: Tabbed content areas implemented for menu options with input fields and buttons.
+[INFO] 2024-10-26 10:00:15: Interface: Status and log boxes added to each tab.
+[INFO] 2024-10-26 10:00:20: Interface: Basic styling and JavaScript links added (style.css, script.js).
 
-[DDOS] 2024-10-26 10:05:00: Attack: Successful DDoS attack. Target: example.com, Method: TCP Flood, Packets Sent: 100000, Status: Success.
-[DEFACE] 2024-10-26 10:10:00: Attack: Attempted defacement of vulnerable site. Target: compromised-site.net, Status: Successful, Message: "Owned by Noodles".
-[CONN] 2024-10-26 10:15:00: Access: Established reverse shell connection. Target: victim-machine.org, User: root, Status: Connected.
-[RANSOM] 2024-10-26 10:20:00: Attack: Initiated ransomware deployment. Target: target-network.local, Status: Encrypting, Files Encrypted: 500.
-[ABOUT] 2024-10-26 10:25:00: System: About Us updated with mission statement and contact information.
-[TOR] 2024-10-26 10:30:00: Recon: Attempted access to tor site. Target: some-onion-site.onion, Status: Failed, Error: "Invalid address".
+[DDOS] 2024-10-26 10:05:00: Attack: DDoS - Success. Target: example.com, Method: TCP Flood, Packets: 100000.
+[DEFACE] 2024-10-26 10:10:00: Attack: Defacement - Success. Target: compromised-site.net, Message: "Owned by Noodles".
+[CONN] 2024-10-26 10:15:00: Access: Reverse shell - Connected. Target: victim-machine.org, User: root.
+[RANSOM] 2024-10-26 10:20:00: Attack: Ransomware - Encrypting. Target: target-network.local, Files: 500.
+[ABOUT] 2024-10-26 10:25:00: System: About Us updated.
+[TOR] 2024-10-26 10:30:00: Recon: Tor access - Failed. Target: some-onion-site.onion, Error: "Invalid address".
 
-[DDOS] 2024-10-26 10:35:00: Attack: Successful DDoS attack. Target: critical-infrastructure.gov, Method: UDP Flood, Packets Sent: 10000000, Status: Success, MBPS: 2500.
-[DEFACE] 2024-10-26 10:40:00: Attack: Defacement of competitor site successful. Target: rival-company.com, Status: Success, Message: "Noodles Owns You".
-[CONN] 2024-10-26 10:45:00: Access: Reverse shell established on high-value target. Target: bank-server.net, User: administrator, Status: Connected, Access Granted.
-[RANSOM] 2024-10-26 10:50:00: Attack: Ransomware deployed and executed. Target: large-corporation.com, Status: Encrypted, Files Encrypted: 50000, Ransom Demand: 100 BTC.
-[RANSOM] 2024-10-26 10:55:00: Attack: Failed ransomware deployment due to advanced security measures. Target: secure-network.mil, Status: Failed, Error: "Detection and Prevention".
-[TOR] 2024-10-26 11:00:00: Recon: Successful connection to Tor site. Target: darkweb-market.onion, Status: Success, Data Retrieved: User Credentials.
+[DDOS] 2024-10-26 10:35:00: Attack: DDoS - Success. Target: critical-infrastructure.gov, Method: UDP Flood, Packets: 10000000, MBPS: 2500.
+[DEFACE] 2024-10-26 10:40:00: Attack: Defacement - Success. Target: rival-company.com, Message: "Noodles Owns You".
+[CONN] 2024-10-26 10:45:00: Access: Reverse shell - Connected. Target: bank-server.net, User: administrator, Access: Granted.
+[RANSOM] 2024-10-26 10:50:00: Attack: Ransomware - Encrypted. Target: large-corporation.com, Files: 50000, Ransom: 100 BTC.
+[RANSOM] 2024-10-26 10:55:00: Attack: Ransomware - Failed. Target: secure-network.mil, Error: "Detection and Prevention".
+[TOR] 2024-10-26 11:00:00: Recon: Tor connection - Success. Target: darkweb-market.onion, Data: User Credentials.
 
-[DDOS] 2024-10-26 11:05:00: Attack: DDoS attack initiated. Target: new-target.com, Method: SYN Flood, Packets Sent: 50000000, Status: In Progress, MBPS: 7500.
-[DEFACE] 2024-10-26 11:10:00: Attack: Defacement queued. Target: another-site.org, Message: "Noodles Was Here", Status: Pending.
-[CONN] 2024-10-26 11:15:00: Access: Connection attempt to internal server. Target: internal-server.lan, User: backdoor, Status: Attempting.
-[RANSOM] 2024-10-26 11:20:00: Attack: Ransomware deployed. Target: small-business.net, Status: Encrypting, Files Encrypted: 12000, Ransom Demand: 10 BTC.
-[ABOUT] 2024-10-26 11:25:00: System: Updated About Us with contact email and secure drop location.
-[TOR] 2024-10-26 11:30:00: Recon: Connection to Tor site successful. Target: secure-drop.onion, Status: Success, Data Retrieved: Payment Details.
+[DDOS] 2024-10-26 11:05:00: Attack: DDoS - In Progress. Target: new-target.com, Method: SYN Flood, Packets: 50000000, MBPS: 7500.
+[DEFACE] 2024-10-26 11:10:00: Attack: Defacement - Pending. Target: another-site.org, Message: "Noodles Was Here".
+[CONN] 2024-10-26 11:15:00: Access: Reverse shell - Attempting. Target: internal-server.lan, User: backdoor.
+[RANSOM] 2024-10-26 11:20:00: Attack: Ransomware - Encrypting. Target: small-business.net, Files: 12000, Ransom: 10 BTC.
+[ABOUT] 2024-10-26 11:25:00: System: About Us updated: email, secure drop.
+[TOR] 2024-10-26 11:30:00: Recon: Tor connection - Success. Target: secure-drop.onion, Data: Payment Details.
 
-[DDOS] 2024-10-26 11:35:00: Attack: DDoS attack completed. Target: new-target.com, Method: SYN Flood, Packets Sent: 50000000, Status: Success, Downtime: 1 hour.
-[DEFACE] 2024-10-26 11:40:00: Attack: Defacement successful. Target: another-site.org, Status: Success, Screenshot: defacement_image.png.
-[CONN] 2024-10-26 11:45:00: Access: Connection to internal server successful. Target: internal-server.lan, User: backdoor, Status: Connected, Access Granted.
-[RANSOM] 2024-10-26 11:50:00: Attack: Ransomware fully deployed. Target: small-business.net, Status: Encrypted, Files Encrypted: 12000, Ransom Demand: 10 BTC, Contacted: True.
-[DATA] 2024-10-26 11:55:00: Exfiltration: Successful exfiltration of database dumps. Target: compromised-database.net, Size: 500GB, Files: users.sql, transactions.sql, schema.sql, sensitive_data.csv.
+[DDOS] 2024-10-26 11:35:00: Attack: DDoS - Success. Target: new-target.com, Method: SYN Flood, Packets: 50000000, Downtime: 1 hour.
+[DEFACE] 2024-10-26 11:40:00: Attack: Defacement - Success. Target: another-site.org, Screenshot: defacement_image.png.
+[CONN] 2024-10-26 11:45:00: Access: Reverse shell - Connected. Target: internal-server.lan, User: backdoor, Access: Granted.
+[RANSOM] 2024-10-26 11:50:00: Attack: Ransomware - Encrypted. Target: small-business.net, Files: 12000, Ransom: 10 BTC, Contacted: True.
+[DATA] 2024-10-26 11:55:00: Exfiltration: Database dumps - Success. Target: compromised-database.net, Size: 500GB, Files: users.sql, transactions.sql, schema.sql, sensitive_data.csv.
 
-[DDOS] 2024-10-26 12:00:00: Attack: DDoS attack on government server. Target: government-server.gov, Method: UDP Flood, Packets Sent: 100000000, Status: Success, MBPS: 15000, Downtime: 2 hours.
-[DEFACE] 2024-10-26 12:05:00: Attack: Defacement of media outlet. Target: news-website.com, Status: Success, Message: "Noodles Controls the Narrative", Screenshot: defacement_image_news.png.
-[CONN] 2024-10-26 12:10:00: Access: Reverse shell on development server. Target: dev-server.local, User: developer, Status: Connected, Access Granted, Credentials Found: True.
-[RANSOM] 2024-10-26 12:15:00: Attack: Ransomware deployed on healthcare provider. Target: hospital-network.org, Status: Encrypted, Files Encrypted: 250000, Ransom Demand: 50 BTC, Patient Records Affected: True.
-[FINANCE] 2024-10-26 12:20:00: Breach: Connection to financial institution. Target: bank-api.com, Status: Success, Data Retrieved: API Keys, Funds Transferred: 1000000 USD.
+[DDOS] 2024-10-26 12:00:00: Attack: DDoS - Success. Target: government-server.gov, Method: UDP Flood, Packets: 100000000, MBPS: 15000, Downtime: 2 hours.
+[DEFACE] 2024-10-26 12:05:00: Attack: Defacement - Success. Target: news-website.com, Message: "Noodles Controls the Narrative", Screenshot: defacement_image_news.png.
+[CONN] 2024-10-26 12:10:00: Access: Reverse shell - Connected. Target: dev-server.local, User: developer, Access: Granted, Credentials: True.
+[RANSOM] 2024-10-26 12:15:00: Attack: Ransomware - Encrypted. Target: hospital-network.org, Files: 250000, Ransom: 50 BTC, Patient Records: True.
+[FINANCE] 2024-10-26 12:20:00: Breach: Financial institution - Success. Target: bank-api.com, Data: API Keys, Funds: 1000000 USD.
 
-[DDOS] 2024-10-26 12:25:00: Attack: DDoS attack targeting DNS server. Target: critical-dns.net, Method: DNS Amplification, Packets Sent: 500000000, Status: Success, MBPS: 30000, Downtime: 3 hours.
-[DEFACE] 2024-10-26 12:30:00: Attack: Defacement of educational institution. Target: university.edu, Status: Success, Message: "Noodles Hacking for Fun", Screenshot: defacement_image_university.png.
-[CONN] 2024-10-26 12:35:00: Access: Reverse shell on cloud server. Target: cloud-server.io, User: root, Status: Connected, Access Granted, Sensitive Data Accessed: True.
-[RANSOM] 2024-10-26 12:40:00: Attack: Ransomware deployed on manufacturing plant. Target: factory-network.com, Status: Encrypted, Files Encrypted: 75000, Ransom Demand: 25 BTC, Operations Disrupted: True.
-[DATA] 2024-10-26 12:45:00: Exfiltration: Exfiltration of intellectual property. Target: research-company.com, Size: 1TB, Files: patents.zip, blueprints.zip, Confidentiality Breached: True.
+[DDOS] 2024-10-26 12:25:00: Attack: DDoS - Success. Target: critical-dns.net, Method: DNS Amplification, Packets: 500000000, MBPS: 30000, Downtime: 3 hours.
+[DEFACE] 2024-10-26 12:30:00: Attack: Defacement - Success. Target: university.edu, Message: "Noodles Hacking for Fun", Screenshot: defacement_image_university.png.
+[CONN] 2024-10-26 12:35:00: Access: Reverse shell - Connected. Target: cloud-server.io, User: root, Access: Granted, Sensitive Data: True.
+[RANSOM] 2024-10-26 12:40:00: Attack: Ransomware - Encrypted. Target: factory-network.com, Files: 75000, Ransom: 25 BTC, Operations: Disrupted.
+[DATA] 2024-10-26 12:45:00: Exfiltration: Intellectual property - Success. Target: research-company.com, Size: 1TB, Files: patents.zip, blueprints.zip, Confidentiality: Breached.
 
-[DDOS] 2024-10-26 12:50:00: Attack: DDoS attack against competitor's API. Target: rival-api.net, Method: HTTP Flood, Requests Sent: 1000000000, Status: Success, MBPS: 40000, Downtime: 5 hours.
-[DEFACE] 2024-10-26 12:55:00: Attack: Defacement of e-commerce platform. Target: online-store.com, Status: Success, Message: "Noodles Shopping Spree", Screenshot: defacement_image_store.png.
-[CONN] 2024-10-26 13:00:00: Access: Reverse shell on database server. Target: db-server.private, User: dbadmin, Status: Connected, Access Granted, Data Modified: True.
-[RANSOM] 2024-10-26 13:05:00: Attack: Ransomware deployed on legal firm. Target: law-firm.com, Status: Encrypted, Files Encrypted: 100000, Ransom Demand: 75 BTC, Client Data Compromised: True.
-[IOT] 2024-10-26 13:10:00: Infrastructure: Compromised IoT devices for botnet. Devices: 100000, Status: Active, Location: Global, Purpose: DDoS Amplification.
+[DDOS] 2024-10-26 12:50:00: Attack: DDoS - Success. Target: rival-api.net, Method: HTTP Flood, Requests: 1000000000, MBPS: 40000, Downtime: 5 hours.
+[DEFACE] 2024-10-26 12:55:00: Attack: Defacement - Success. Target: online-store.com, Message: "Noodles Shopping Spree", Screenshot: defacement_image_store.png.
+[CONN] 2024-10-26 13:00:00: Access: Reverse shell - Connected. Target: db-server.private, User: dbadmin, Access: Granted, Data: Modified.
+[RANSOM] 2024-10-26 13:05:00: Attack: Ransomware - Encrypted. Target: law-firm.com, Files: 100000, Ransom: 75 BTC, Client Data: Compromised.
+[IOT] 2024-10-26 13:10:00: Infrastructure: IoT devices compromised - Active. Devices: 100000, Location: Global, Purpose: DDoS Amplification.
 
-[DDOS] 2024-10-26 13:15:00: Attack: DDoS attack on cryptocurrency exchange. Target: crypto-exchange.com, Method: Slowloris, Connections: 50000, Status: Success, MBPS: 20000, Downtime: 4 hours.
-[DEFACE] 2024-10-26 13:20:00: Attack: Defacement of political organization. Target: political-party.org, Status: Success, Message: "Noodles is the Future", Screenshot: defacement_image_political.png.
-[CONN] 2024-10-26 13:25:00: Access: Reverse shell on backup server. Target: backup-server.local, User: backupadmin, Status: Connected, Access Granted, Data Deleted: True.
-[RANSOM] 2024-10-26 13:30:00: Attack: Ransomware deployed on transportation company. Target: logistics-company.com, Status: Encrypted, Files Encrypted: 150000, Ransom Demand: 60 BTC, Supply Chain Disrupted: True.
-[DATA] 2024-10-26 13:35:00: Breach: Data breach at social media company. Target: social-media.com, Size: 2TB, Files: user_data.sql, messages.zip, Privacy Violated: True.
+[DDOS] 2024-10-26 13:15:00: Attack: DDoS - Success. Target: crypto-exchange.com, Method: Slowloris, Connections: 50000, MBPS: 20000, Downtime: 4 hours.
+[DEFACE] 2024-10-26 13:20:00: Attack: Defacement - Success. Target: political-party.org, Message: "Noodles is the Future", Screenshot: defacement_image_political.png.
+[CONN] 2024-10-26 13:25:00: Access: Reverse shell - Connected. Target: backup-server.local, User: backupadmin, Access: Granted, Data: Deleted.
+[RANSOM] 2024-10-26 13:30:00: Attack: Ransomware - Encrypted. Target: logistics-company.com, Files: 150000, Ransom: 60 BTC, Supply Chain: Disrupted.
+[DATA] 2024-10-26 13:35:00: Breach: Social media company - Success. Target: social-media.com, Size: 2TB, Files: user_data.sql, messages.zip, Privacy: Violated.
 
-[ABOUT] 2024-10-26 13:40:00: System: Updated About Us with team member profiles and server infrastructure details.
-[INFO] 2024-10-26 13:45:00: System: Implemented automated data backup and redundancy measures to prevent data loss.
-[INFO] 2024-10-26 13:50:00: System: Improved error handling and logging for connection failures and ransomware deployment issues.
-[CONN] 2024-10-26 13:55:00: Access: Added functionality to retrieve and display detailed system information upon reverse shell connection.
-[DDOS] 2024-10-26 14:00:00: Development: Enhanced DDoS attack methods to include advanced techniques such as reflection attacks.
-[DEFACE] 2024-10-26 14:05:00: Development: Developed capability to automate the process of finding and exploiting vulnerable websites for defacement.
-[RANSOM] 2024-10-26 14:10:00: Development: Improved encryption algorithms and key management for ransomware deployments.
-[AUTH] 2024-10-26 14:15:00: System: Implemented multi-factor authentication for accessing the admin panel.
-[DATA] 2024-10-26 14:20:00: Development: Added functionality to automatically extract and analyze sensitive data from compromised databases.
-[CONN] 2024-10-26 14:25:00: Development: Enhanced the reverse shell functionality with support for command execution and file transfer.
-[RANSOM] 2024-10-26 14:30:00: Development: Improved the ransomware deployment process with the ability to customize ransom notes and payment instructions.
-[IOT] 2024-10-26 14:35:00: Development: Added the ability to scan networks for vulnerable IoT devices and add them to the botnet.
-[SECURITY] 2024-10-26 14:40:00: Development: Implemented advanced evasion techniques to bypass security measures and detection systems.
-[ASSET] 2024-10-26 14:45:00: Development: Developed a system for tracking and managing compromised assets and data.
-[REPORT] 2024-10-26 14:50:00: Development: Added functionality to automatically generate reports on successful attacks and data breaches.
-[UPDATE] 2024-10-26 14:55:00: System: Implemented the ability to automatically update and maintain the software with the latest features and security patches.
-[LANG] 2024-10-26 15:00:00: Development: Added support for multi-language localization to target different regions and countries.
-[DATA] 2024-10-26 15:05:00: Development: Implemented a system for managing and distributing stolen data through various channels.
-[UI] 2024-10-26 15:10:00: Interface: Improved the user interface with advanced customization options and accessibility features.
-[FINANCE] 2024-10-26 15:15:00: Development: Developed a system for tracking and managing cryptocurrency payments for ransomware attacks.
-[PHISH] 2024-10-26 15:20:00: Attack: Added the ability to automatically generate and distribute phishing emails to gain access to target systems.
-[NETWORK] 2024-10-26 15:25:00: System: Implemented a system for monitoring and analyzing network traffic to identify and exploit vulnerabilities.
-[MALWARE] 2024-10-26 15:30:00: Development: Developed a system for automating the process of creating and distributing malware.
-[SOCIAL] 2024-10-26 15:35:00: Attack: Added the ability to automatically generate and deploy social engineering attacks.
-[USER] 2024-10-26 15:40:00: System: Implemented a system for tracking and managing user accounts and permissions.
-[DATA] 2024-10-26 15:45:00: Development: Developed a system for automating the process of data mining and analysis.
-[PROPAGANDA] 2024-10-26 15:50:00: Attack: Added the ability to automatically generate and distribute propaganda and disinformation.
-[DARKWEB] 2024-10-26 15:55:00: Recon: Implemented a system for monitoring and analyzing the dark web for potential targets and vulnerabilities.
-[APT] 2024-10-26 16:00:00: Development: Developed a system for automating the process of creating and deploying advanced persistent threats (APTs).
-[SPAM] 2024-10-26 16:05:00: Attack: Added the ability to automatically generate and distribute spam and malicious content.
-[REPUTATION] 2024-10-26 16:10:00: System: Implemented a system for tracking and managing the reputation of the software and its users.
-[EXPLOIT] 2024-10-26 16:15:00: Development: Developed a system for automating the process of creating and deploying zero-day exploits.
-[DISINFO] 2024-10-26 16:20:00: Attack: Added the ability to automatically generate and distribute disinformation campaigns.
+[ABOUT] 2024-10-26 13:40:00: System: About Us updated: team profiles, server infrastructure.
+[INFO] 2024-10-26 13:45:00: System: Automated data backup implemented.
+[INFO] 2024-10-26 13:50:00: System: Improved error handling and logging.
+[CONN] 2024-10-26 13:55:00: Access: Reverse shell enhanced - system information retrieval.
+[DDOS] 2024-10-26 14:00:00: Development: DDoS enhanced - reflection attacks.
+[DEFACE] 2024-10-26 14:05:00: Development: Defacement automated - vulnerability exploitation.
+[RANSOM] 2024-10-26 14:10:00: Development: Ransomware improved - encryption, key management.
+[AUTH] 2024-10-26 14:15:00: System: Multi-factor authentication implemented for admin panel.
+[DATA] 2024-10-26 14:20:00: Development: Data extraction automated - sensitive data analysis.
+[CONN] 2024-10-26 14:25:00: Development: Reverse shell enhanced - command execution, file transfer.
+[RANSOM] 2024-10-26 14:30:00: Development: Ransomware deployment improved - ransom note customization.
+[IOT] 2024-10-26 14:35:00: Development: IoT scanning and botnet integration added.
+[SECURITY] 2024-10-26 14:40:00: Development: Advanced evasion techniques implemented.
+[ASSET] 2024-10-26 14:45:00: Development: Asset tracking and management system developed.
+[REPORT] 2024-10-26 14:50:00: Development: Automated report generation added for attacks and breaches.
+[UPDATE] 2024-10-26 14:55:00: System: Automated software updates implemented.
+[LANG] 2024-10-26 15:00:00: Development: Multi-language localization support added.
+[DATA] 2024-10-26 15:05:00: Development: System for managing and distributing stolen data implemented.
+[UI] 2024-10-26 15:10:00: Interface: Improved UI with customization and accessibility features.
+[FINANCE] 2024-10-26 15:15:00: Development: Cryptocurrency payment tracking system developed.
+[PHISH] 2024-10-26 15:20:00: Attack: Automated phishing email generation and distribution added.
+[NETWORK] 2024-10-26 15:25:00: System: Network traffic monitoring and vulnerability exploitation system implemented.
+[MALWARE] 2024-10-26 15:30:00: Development: Automated malware creation and distribution system developed.
+[SOCIAL] 2024-10-26 15:35:00: Attack: Automated social engineering attack deployment added.
+[USER] 2024-10-26 15:40:00: System: User account and permission management system implemented.
+[DATA] 2024-10-26 15:45:00: Development: Automated data mining and analysis system developed.
+[PROPAGANDA] 2024-10-26 15:50:00: Attack: Automated propaganda and disinformation generation and distribution added.
+[DARKWEB] 2024-10-26 15:55:00: Recon: Dark web monitoring and analysis system implemented.
+[APT] 2024-10-26 16:00:00: Development: Automated APT creation and deployment system developed.
+[SPAM] 2024-10-26 16:05:00: Attack: Automated spam and malicious content generation and distribution added.
+[REPUTATION] 2024-10-26 16:10:00: System: Software and user reputation tracking system implemented.
+[EXPLOIT] 2024-10-26 16:15:00: Development: Automated zero-day exploit creation and deployment system developed.
+[DISINFO] 2024-10-26 16:20:00: Attack: Automated disinformation campaign generation and distribution added.
 
-[TOR] 2024-10-26 16:25:00: Recon: Tor site connection successful. Target: secure-drop.onion, Status: Success, Data Retrieved: Payment Details.
-[BRUTEFORCE] 2024-10-26 16:30:00: Attack: Implemented brute-force attack module capable of cracking passwords and accessing secured systems. Target: password-protected-system.com, Status: Cracked, Credentials: admin:password123.
-[PHISH] 2024-10-26 16:35:00: Attack: Launched spear-phishing campaign to harvest sensitive information from high-profile targets. Target: executive-team@large-corporation.com, Status: Successful, Data Retrieved: Confidential Documents.
-[BACKDOOR] 2024-10-26 16:40:00: Attack: Injected malicious code into popular software to create a widespread backdoor. Target: open-source-software.org, Status: Compromised, Devices Infected: 1000000.
+[TOR] 2024-10-26 16:25:00: Recon: Tor connection - Success. Target: secure-drop.onion, Data: Payment Details.
+[BRUTEFORCE] 2024-10-26 16:30:00: Attack: Brute-force - Cracked. Target: password-protected-system.com, Credentials: admin:password123.
+[PHISH] 2024-10-26 16:35:00: Attack: Spear-phishing - Success. Target: executive-team@large-corporation.com, Data: Confidential Documents.
+[BACKDOOR] 2024-10-26 16:40:00: Attack: Backdoor - Compromised. Target: open-source-software.org, Devices: 1000000.
