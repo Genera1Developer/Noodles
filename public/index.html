@@ -3,57 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles</title>
+    <title>Noodles - Hacking Web Application</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div class="side-panel">
-            <button data-tab="ddos" class="active">DDoS</button>
+            <h1>Noodles</h1>
+            <button data-tab="ddos">DDoS</button>
             <button data-tab="defacement">Defacement</button>
             <button data-tab="connection">Connection</button>
-            <button data-tab="credential">Credential Stuffing</button>
+            <button data-tab="credential">Credential</button>
             <button data-tab="about">About Us</button>
         </div>
         <div class="main-content">
-            <div id="ddos" class="tab-content active">
+            <section id="ddos" class="tab-content active">
                 <h2>DDoS Attack</h2>
                 <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
                 <select id="ddos-method">
-                    <option value="http-flood">HTTP Flood</option>
-                    <option value="udp-flood">UDP Flood</option>
-                    <option value="syn-flood">SYN Flood</option>
+                    <option value="udp">UDP Flood</option>
+                    <option value="tcp">TCP Flood (coming soon)</option>
+                    <option value="http">HTTP Flood (coming soon)</option>
                 </select>
-                <button id="start-ddos">Start DDoS Attack</button>
-                <div class="statistics">
+                <input type="number" id="ddos-intensity" placeholder="Intensity (1-100)" value="50">
+                <input type="number" id="ddos-duration" placeholder="Duration (seconds)" value="30">
+                <button id="ddos-start">Start DDoS Attack</button>
+                <div class="stats">
                     <p>MBPS: <span id="mbps">0</span></p>
                     <p>Packets Sent: <span id="packets-sent">0</span></p>
                     <p>Target Status: <span id="target-status">Unknown</span></p>
                     <p>Time Elapsed: <span id="time-elapsed">0</span> seconds</p>
                 </div>
-            </div>
-            <div id="defacement" class="tab-content">
+            </section>
+            <section id="defacement" class="tab-content">
                 <h2>Website Defacement</h2>
-                <input type="text" id="defacement-target" placeholder="Target URL">
-                <textarea id="defacement-payload" placeholder="Defacement HTML Payload"></textarea>
-                <button id="start-defacement">Start Defacement</button>
-            </div>
-            <div id="connection" class="tab-content">
-                <h2>Establish Connection</h2> <!-- Should use /main/tor/tor.js to connect to sites via tor proxy for anonyminity -->
-                <input type="text" id="connection-target" placeholder="Target IP Address or Hostname">
-                <input type="number" id="connection-port" placeholder="Port">
-                <button id="start-connection">Start Connection</button>
-            </div>
-            <div id="credential" class="tab-content">
+                <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
+                <textarea id="defacement-content" placeholder="Defacement HTML Content"></textarea>
+                <button id="defacement-start">Start Defacement</button>
+            </section>
+            <section id="connection" class="tab-content">
+                <h2>Establish Connection</h2>
+                <input type="text" id="connection-target" placeholder="Target IP or .onion address">
+                <input type="number" id="connection-port" placeholder="Port" value="80">
+                <button id="connection-start">Start Connection</button>
+            </section>
+            <section id="credential" class="tab-content">
                 <h2>Credential Stuffing</h2>
-                <input type="text" id="credential-target" placeholder="Target Website URL">
-                <textarea id="credential-list" placeholder="Username:Password List"></textarea>
-                <button id="start-credential">Start Credential Stuffing</button>
-            </div>
-            <div id="about" class="tab-content">
+                <input type="text" id="credential-target" placeholder="Target URL or .onion address">
+                <textarea id="credential-usernames" placeholder="Usernames (one per line)"></textarea>
+                <textarea id="credential-passwords" placeholder="Passwords (one per line)"></textarea>
+                <button id="credential-start">Start Credential Stuffing</button>
+            </section>
+            <section id="about" class="tab-content">
                 <h2>About Us</h2>
-                <p>Noodles is a powerful web application designed for security testing and research purposes. It provides a range of tools for simulating attacks and assessing the vulnerability of target systems. Use responsibly.</p>
-            </div>
+                <p>Noodles is a cutting-edge web application designed for penetration testing and security analysis. Use responsibly.</p>
+            </section>
         </div>
     </div>
     <script src="script.js"></script>
