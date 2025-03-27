@@ -21,7 +21,7 @@ function slowloris(target, numSockets, statsCallback) {
         let packetsSent = 0;
         let startTime = Date.now();
         let targetStatus = "Unknown";
-        let mbps = 0; // Initialize mbps here
+        let mbps = 0;
 
         console.log(`Slowloris attack on ${hostname}:${port} using ${numSockets} sockets.`);
 
@@ -31,8 +31,6 @@ function slowloris(target, numSockets, statsCallback) {
 
         function updateStats() {
             let elapsedTime = (Date.now() - startTime) / 1000;
-            
-            // Correct mbps calculation to account for potential zero elapsedTime
             mbps = elapsedTime > 0 ? (packetsSent * 1000 / elapsedTime) / 1000000 : 0;
 
             if (statsCallback) {
