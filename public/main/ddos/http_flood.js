@@ -44,10 +44,14 @@ async function httpFlood(target, duration, intensity) {
           })
           .then(response => {
             packetsSent++;
-            if (response.ok && response.headers.get('content-length')) {
-                mbps += parseFloat(response.headers.get('content-length')) / 1000000;
-            } else if (!response.ok) {
+            if (response.ok) {
+              const contentLength = response.headers.get('content-length');
+              if (contentLength) {
+                mbps += parseFloat(contentLength) / 1000000;
+              }
+            } else {
               targetStatus = 'Unresponsive';
+              console.warn(`Request failed with status: ${response.status}`);
             }
           })
           .catch(error => {
