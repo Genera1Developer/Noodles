@@ -1,15 +1,5 @@
 import net from 'net';
 
-/**
- * Performs a TCP flood attack on a target. This function is intended for educational/testing purposes ONLY.
- * Using this function against systems without explicit permission is illegal and unethical.
- *
- * @param {string} target The target hostname or IP address.
- * @param {number} port The target port. Defaults to 80.
- * @param {number} threads The number of concurrent TCP connections to establish. Defaults to 10.
- * @param {number} duration The duration of the flood in seconds. Defaults to 60.
- * @param {function} statusCallback A callback function to update the status.
- */
 async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCallback = null) {
   if (!target) {
     console.error("Target hostname or IP address is required for TCP flood.");
