@@ -46,6 +46,4 @@
             name: production-files
             path: |
               public/
-              main/
-              style.css
             retention-days: 5
