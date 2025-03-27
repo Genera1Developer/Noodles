@@ -231,6 +231,8 @@ class Logger {
             this.endAttack();
         }, duration * 1000);
 
+        this.resolveTargetInfo(target);
+
         switch (attackType) {
             case 'HTTP Flood':
                 this.httpFlood(target, threads, duration, attackRate, torProxy);
