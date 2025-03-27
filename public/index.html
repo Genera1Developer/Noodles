@@ -5,22 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noodles</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
-            <button onclick="showTab('ddos')">DDoS</button>
-            <button onclick="showTab('defacement')">Defacement</button>
-            <button onclick="showTab('connection')">Connection</button>
-            <button onclick="showTab('credential')">Credential</button>
-            <button onclick="showTab('about')">About Us</button>
+            <button onclick="showTab('ddos')"><i class="fas fa-skull-crossbones"></i> DDoS</button>
+            <button onclick="showTab('defacement')"><i class="fas fa-paint-roller"></i> Defacement</button>
+            <button onclick="showTab('connection')"><i class="fas fa-network-wired"></i> Connection</button>
+            <button onclick="showTab('credential')"><i class="fas fa-user-secret"></i> Credential</button>
+            <button onclick="showTab('about')"><i class="fas fa-info-circle"></i> About Us</button>
         </div>
         <div class="main-content">
             <div id="ddos" class="tab-content">
                 <h2>DDoS Attack</h2>
+                <p>Initiate a Distributed Denial of Service attack.</p>
                 <input type="text" id="ddosTarget" placeholder="Target URL">
                 <button onclick="startDDoS()">Start DDoS</button>
                 <div id="ddosStats">
+                    <h3>Statistics</h3>
                     <p>MBPS: <span id="mbps">0</span></p>
                     <p>Packets Sent: <span id="packets">0</span></p>
                     <p>Status: <span id="targetStatus">Offline</span></p>
@@ -30,6 +33,7 @@
             </div>
             <div id="defacement" class="tab-content" style="display:none;">
                 <h2>Website Defacement</h2>
+                <p>Modify the appearance of a target website.</p>
                 <input type="text" id="defacementTarget" placeholder="Target URL">
                 <input type="text" id="defacementMessage" placeholder="Defacement Message">
                 <button onclick="startDefacement()">Start Defacement</button>
@@ -37,12 +41,14 @@
             </div>
             <div id="connection" class="tab-content" style="display:none;">
                 <h2>Establish Connection</h2>
+                <p>Attempt to establish a connection to a target.</p>
                 <input type="text" id="connectionTarget" placeholder="Target URL or IP">
                 <button onclick="startConnection()">Start Connection</button>
                 <div id="connectionLog"></div>
             </div>
             <div id="credential" class="tab-content" style="display:none;">
                 <h2>Credential Stuffing</h2>
+                <p>Attempt to gain access using lists of usernames and passwords.</p>
                 <input type="text" id="credentialTarget" placeholder="Target URL">
                 <input type="text" id="credentialList" placeholder="Username/Password List URL">
                 <button onclick="startCredentialStuffing()">Start Credential Stuffing</button>
@@ -50,7 +56,7 @@
             </div>
             <div id="about" class="tab-content" style="display:none;">
                 <h2>About Us</h2>
-                <p>Noodles is a powerful web application for various hacking activities.</p>
+                <p>Noodles is a powerful web application for various activities.  This is a demonstration application and is not intended for malicious use.  Use at your own risk.</p>
             </div>
         </div>
     </div>
