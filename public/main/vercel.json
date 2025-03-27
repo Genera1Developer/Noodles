@@ -4,19 +4,24 @@
     {
       "src": "public/index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "public/main/hello.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
+      "src": "/api/(.*)",
+      "dest": "/public/main/hello.js"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/public/$1"
+      "dest": "/public/index.html"
     }
   ],
   "functions": {
     "public/main/hello.js": { "memory": 128, "maxDuration": 5 }
   },
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/main/$1" },
-    { "source": "/(.*)", "destination": "/index.html" }
-  ]
+  "rewrites": []
 }
