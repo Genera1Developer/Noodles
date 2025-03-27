@@ -37,7 +37,7 @@
           env:
             CI: true
 
-        - name: Analyze with SonarCloud
+        - name: SonarCloud Scan
           if: github.event_name == 'push'
           uses: sonarsource/sonarcloud-github-action@master
           env:
@@ -48,7 +48,8 @@
               -Dsonar.organization=${{ secrets.SONARCLOUD_ORG }}
               -Dsonar.projectKey=${{ secrets.SONARCLOUD_PROJECT_KEY }}
               -Dsonar.sources=.
-              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info # Or your lcov path
+              -Dsonar.tests=.
+              -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
         - name: Run security checks with Retire.js
           run: |
