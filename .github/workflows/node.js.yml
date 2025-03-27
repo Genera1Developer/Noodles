@@ -47,8 +47,8 @@
             args: >
               -Dsonar.organization=${{ secrets.SONARCLOUD_ORG }}
               -Dsonar.projectKey=${{ secrets.SONARCLOUD_PROJECT_KEY }}
-              -Dsonar.sources=.
-              -Dsonar.tests=.
+              -Dsonar.sources=./public
+              -Dsonar.tests=./public
               -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
         - name: Run security checks with Retire.js
