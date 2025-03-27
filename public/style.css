@@ -1,198 +1,122 @@
 body {
     font-family: 'Arial', sans-serif;
     background-color: #121212;
-    color: #f0f0f0;
+    color: #EEEEEE;
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
-#main-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #1e1e1e;
-    border: 1px solid #333;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    width: 600px;
-    max-width: 90%;
-    z-index: 2;
+.container {
+    display: flex;
+    flex: 1;
 }
 
-#side-panel {
-    position: fixed;
-    top: 0;
-    left: 0;
+.side-panel {
     width: 200px;
-    height: 100%;
-    background-color: #252525;
-    border-right: 1px solid #333;
+    background-color: #212121;
+    color: #EEEEEE;
     padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
-    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #333333;
 }
 
-#side-panel .noodle-menu-item {
-    padding: 10px;
+.side-panel button {
+    background-color: #303030;
+    color: #EEEEEE;
+    border: none;
+    padding: 10px 15px;
     margin-bottom: 10px;
     border-radius: 5px;
-    background-color: #333;
-    color: #fff;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-#side-panel .noodle-menu-item:hover {
-    background-color: #444;
+.side-panel button:hover {
+    background-color: #424242;
 }
 
-.noodle-container {
-    position: relative;
-    width: 100%;
+.content {
+    flex: 1;
     padding: 20px;
-    box-sizing: border-box;
-}
-
-.noodle-input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #444;
-    border-radius: 5px;
-    background-color: #333;
-    color: #f0f0f0;
-    box-sizing: border-box;
-}
-
-.noodle-button {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: #2e8b57;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.noodle-button:hover {
-    background-color: #3cb371;
-}
-
-.noodle-log {
-    width: 100%;
-    height: 150px;
-    padding: 10px;
-    margin-top: 15px;
-    border: 1px solid #444;
-    border-radius: 5px;
-    background-color: #333;
-    color: #f0f0f0;
-    box-sizing: border-box;
-    resize: vertical;
     overflow-y: auto;
 }
 
-.noodle-stats {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #444;
-    border-radius: 5px;
-    background-color: #333;
-    color: #f0f0f0;
+.attack-form {
+    background-color: #212121;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
 }
 
-.noodle-stats p {
-    margin: 5px 0;
-}
-
-.noodle-dark-theme {
-    background-color: #121212;
-    color: #f0f0f0;
-}
-
-.noodle-drag-handle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    background-color: rgba(0, 0, 0, 0.2);
-    cursor: move;
-    border-radius: 10px 10px 0 0;
-}
-
-.noodle-resize-handle {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 20px;
-    height: 20px;
-    background-color: rgba(0, 0, 0, 0.2);
-    cursor: nwse-resize;
-    border-radius: 0 0 10px 0;
-}
-
-.noodle-custom-code {
-    height: 100px;
-    resize: vertical;
-}
-
-.noodle-tor-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.noodle-tor-container label {
-    margin-right: 10px;
-}
-
-.noodle-label {
+.attack-form label {
     display: block;
     margin-bottom: 5px;
-    color: #bbb;
+    color: #BDBDBD;
 }
 
-.noodle-slider-container {
+.attack-form input[type="text"],
+.attack-form select,
+.attack-form button {
     margin-bottom: 15px;
-}
-
-.noodle-slider {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #424242;
+    background-color: #303030;
+    color: #EEEEEE;
     width: 100%;
+    box-sizing: border-box;
 }
 
-.noodle-slider-value {
-    display: block;
-    text-align: center;
-    margin-top: 5px;
-    color: #bbb;
+.attack-form button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
-.noodle-about-us {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #1e1e1e;
-    border: 1px solid #333;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    width: 600px;
-    max-width: 90%;
-    z-index: 4;
-    display: none;
+.attack-form button:hover {
+    background-color: #388E3C;
 }
 
-.noodle-about-us h2 {
-    color: #f0f0f0;
+.stats-display {
+    background-color: #212121;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    color: #EEEEEE;
+}
+
+.stats-display h3 {
+    color: #BDBDBD;
+    margin-top: 0;
+}
+
+#mbps, #packets, #status, #time {
     margin-bottom: 10px;
 }
 
-.noodle-about-us p {
-    color: #bbb;
-    margin-bottom: 15px;
+footer {
+    background-color: #1E1E1E;
+    color: #BDBDBD;
+    text-align: center;
+    padding: 10px;
+    border-top: 1px solid #333333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .side-panel {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #333333;
+    }
 }
