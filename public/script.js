@@ -1,34 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Theme management
   const themeStylesheet = document.getElementById('theme-stylesheet');
-  const storedTheme = localStorage.getItem('theme') || 'light'; // Default to light theme
+  const storedTheme = localStorage.getItem('theme') || 'dark';
 
   const setTheme = (theme) => {
-    if (theme === 'dark') {
-      themeStylesheet.href = '/styles/dark-theme.css';
-    } else {
-      themeStylesheet.href = '/styles/light-theme.css';
-    }
+    const themePath = theme === 'dark' ? '/styles/dark-theme.css' : '/styles/light-theme.css';
+    themeStylesheet.href = themePath;
     localStorage.setItem('theme', theme);
-    document.documentElement.setAttribute('data-theme', theme); // Apply data-theme attribute
+    document.documentElement.setAttribute('data-theme', theme);
   };
 
-  // Initialize theme
   setTheme(storedTheme);
 
-  // Theme toggle (optional - add if you have a theme toggle button)
   const themeToggle = document.getElementById('theme-toggle');
   if (themeToggle) {
     themeToggle.addEventListener('click', () => {
-      const currentTheme = localStorage.getItem('theme') || 'light';
+      const currentTheme = localStorage.getItem('theme') || 'dark';
       const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
       setTheme(newTheme);
     });
   }
 
-
-
-  // Tab functionality
   const tabs = document.querySelectorAll('.tab-button');
   const tabContent = document.querySelectorAll('.tab-content');
 
@@ -38,20 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const tabId = tab.getAttribute('data-tab');
 
-      tabContent.forEach(content => {
-        content.classList.remove('active');
-      });
-
-      tabs.forEach(t => {
-        t.classList.remove('active');
-      });
+      tabContent.forEach(content => content.classList.remove('active'));
+      tabs.forEach(t => t.classList.remove('active'));
 
       tab.classList.add('active');
       document.getElementById(tabId).classList.add('active');
     });
   });
 
-  // Generic form submission handler
   const handleFormSubmit = async (formId, endpoint, dataExtractor) => {
     const form = document.getElementById(formId);
     if (form) {
@@ -65,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(JSON.stringify(data))
           });
 
           if (!response.ok) {
@@ -74,18 +59,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
           const responseData = await response.json();
           console.log(responseData);
+          alert(responseData.message || 'Success!');
         } catch (error) {
           console.error('Error:', error);
-          alert(`An error occurred: ${error.message}`); //Basic error display for user
+          alert(`An error occurred: ${error.message}`);
         }
       });
     }
   };
 
-  // Attack form submission handlers
   handleFormSubmit(
     'ddos-form',
-    '/main/ddos/attack',
+    '/main/ddos',
     (form) => ({
       target: document.getElementById('ddos-target').value,
       type: document.getElementById('ddos-type').value,
@@ -96,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   handleFormSubmit(
     'deface-form',
-    '/main/deface/attack',
+    '/main/deface',
     (form) => ({
       target: document.getElementById('deface-target').value,
       image: document.getElementById('deface-image').value,
@@ -106,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   handleFormSubmit(
     'connection-form',
-    '/main/connection/attack',
+    '/main/connection',
     (form) => ({
       target: document.getElementById('connection-target').value,
       port: document.getElementById('connection-port').value
@@ -115,7 +100,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   handleFormSubmit(
     'credential-form',
-    '/main/credential/attack',
+    '/main/credential',
     (form) => ({
       target: document.getElementById('credential-target').value,
       usernameList: document.getElementById('credential-usernames').value,
@@ -123,14 +108,22 @@ document.addEventListener('DOMContentLoaded', () => {
     })
   );
 
-
-
-  // Statistics display (example - needs actual implementation)
   const updateStats = () => {
-    document.getElementById('mbps').innerText = 'N/A';
-    document.getElementById('packets').innerText = 'N/A';
-    document.getElementById('status').innerText = 'N/A';
-    document.getElementById('time').innerText = 'N/A';
+    fetch('/main/stats')
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById('mbps').innerText = data.mbps || 'N/A';
+        document.getElementById('packets').innerText = data.packets || 'N/A';
+        document.getElementById('status').innerText = data.status || 'N/A';
+        document.getElementById('time').innerText = data.time || 'N/A';
+      })
+      .catch(error => {
+        console.error('Error fetching stats:', error);
+        document.getElementById('mbps').innerText = 'Error';
+        document.getElementById('packets').innerText = 'Error';
+        document.getElementById('status').innerText = 'Error';
+        document.getElementById('time').innerText = 'Error';
+      });
   };
 
   setInterval(updateStats, 2000);
