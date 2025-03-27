@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   async function startAttack(target, attackType) {
     try {
-      const response = await fetch(`/api/attack`, {
+      const response = await fetch(`/attack`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
