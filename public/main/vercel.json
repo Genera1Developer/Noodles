@@ -5,22 +5,3 @@
       "src": "index.html",
       "use": "@vercel/static"
     },
-    {
-      "src": "main/hello.js",
-      "use": "@vercel/node"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/main/(.*)",
-      "dest": "/main/hello.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
-  "functions": {
-    "main/hello.js": { "memory": 128, "maxDuration": 5 }
-  }
-}
