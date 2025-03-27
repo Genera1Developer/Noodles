@@ -1,8 +1,9 @@
 body {
+    font-family: 'Arial', sans-serif;
     background-color: #121212;
-    color: #EEEEEE;
-    font-family: 'Courier New', monospace;
+    color: #f0f0f0;
     margin: 0;
+    padding: 0;
     overflow: hidden;
 }
 
@@ -11,118 +12,105 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #212121;
-    border: 1px solid #333333;
+    background-color: #1e1e1e;
+    border: 1px solid #333;
     padding: 20px;
-    width: 600px;
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    width: 600px;
+    max-width: 90%;
     z-index: 2;
 }
 
-.noodle-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #212121;
-    border: 1px solid #333333;
-    padding: 20px;
-    width: 600px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 2;
-}
-
-.noodle-label {
-    color: #AAAAAA;
-    margin-bottom: 5px;
-    display: block;
-}
-
-.noodle-input,
-.noodle-button,
-select {
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #444444;
-    background-color: #333333;
-    color: #EEEEEE;
-    width: 100%;
-    box-sizing: border-box;
-    font-family: 'Courier New', monospace;
-}
-
-.noodle-button {
-    background-color: #1A73E8;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.noodle-button:hover {
-    background-color: #0D47A1;
-}
-
-.noodle-log {
-    width: 100%;
-    height: 150px;
-    background-color: #1E1E1E;
-    color: #AAAAAA;
-    border: 1px solid #444444;
-    padding: 8px;
-    box-sizing: border-box;
-    font-family: 'Courier New', monospace;
-    resize: vertical;
-}
-
-.noodle-stats {
-    background-color: #2A2A2A;
-    border: 1px solid #444444;
-    padding: 10px;
-    margin-bottom: 10px;
-    color: #AAAAAA;
-}
-
-.noodle-side-panel {
+#side-panel {
     position: fixed;
     top: 0;
     left: 0;
     width: 200px;
     height: 100%;
-    background-color: #2A2A2A;
-    border-right: 1px solid #444444;
+    background-color: #252525;
+    border-right: 1px solid #333;
     padding: 20px;
-    box-sizing: border-box;
-    z-index: 1;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
+    z-index: 3;
 }
 
-.noodle-menu-item {
+#side-panel .noodle-menu-item {
     padding: 10px;
-    margin-bottom: 5px;
-    background-color: #333333;
-    color: #EEEEEE;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    background-color: #333;
+    color: #fff;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    text-align: center;
 }
 
-.noodle-menu-item:hover {
-    background-color: #444444;
+#side-panel .noodle-menu-item:hover {
+    background-color: #444;
 }
 
-.noodle-about-us {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #212121;
-    border: 1px solid #333333;
+.noodle-container {
+    position: relative;
+    width: 100%;
     padding: 20px;
-    width: 500px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    z-index: 3;
-    display: none;
-    color: #EEEEEE;
+    box-sizing: border-box;
+}
+
+.noodle-input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #333;
+    color: #f0f0f0;
+    box-sizing: border-box;
+}
+
+.noodle-button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #2e8b57;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.noodle-button:hover {
+    background-color: #3cb371;
+}
+
+.noodle-log {
+    width: 100%;
+    height: 150px;
+    padding: 10px;
+    margin-top: 15px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #333;
+    color: #f0f0f0;
+    box-sizing: border-box;
+    resize: vertical;
+    overflow-y: auto;
+}
+
+.noodle-stats {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: #333;
+    color: #f0f0f0;
+}
+
+.noodle-stats p {
+    margin: 5px 0;
+}
+
+.noodle-dark-theme {
+    background-color: #121212;
+    color: #f0f0f0;
 }
 
 .noodle-drag-handle {
@@ -130,53 +118,81 @@ select {
     top: 0;
     left: 0;
     width: 100%;
-    height: 10px;
-    background-color: #333333;
-    cursor: grab;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: move;
+    border-radius: 10px 10px 0 0;
 }
 
 .noodle-resize-handle {
     position: absolute;
     bottom: 0;
     right: 0;
-    width: 10px;
-    height: 10px;
-    background-color: #333333;
-    cursor: se-resize;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: nwse-resize;
+    border-radius: 0 0 10px 0;
 }
 
-.noodle-slider-container {
-    margin-bottom: 10px;
-}
-
-.noodle-slider {
-    width: 70%;
-}
-
-.noodle-slider-value {
-    display: inline-block;
-    margin-left: 10px;
-    color: #AAAAAA;
+.noodle-custom-code {
+    height: 100px;
+    resize: vertical;
 }
 
 .noodle-tor-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.noodle-tor-container label {
+    margin-right: 10px;
+}
+
+.noodle-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #bbb;
+}
+
+.noodle-slider-container {
+    margin-bottom: 15px;
+}
+
+.noodle-slider {
+    width: 100%;
+}
+
+.noodle-slider-value {
+    display: block;
+    text-align: center;
+    margin-top: 5px;
+    color: #bbb;
+}
+
+.noodle-about-us {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    width: 600px;
+    max-width: 90%;
+    z-index: 4;
+    display: none;
+}
+
+.noodle-about-us h2 {
+    color: #f0f0f0;
     margin-bottom: 10px;
 }
 
-.noodle-dark-theme {
-    background-color: #121212;
-    color: #EEEEEE;
-}
-
-#close-about-us {
-    background-color: #1A73E8;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    padding: 8px;
-}
-
-#close-about-us:hover {
-    background-color: #0D47A1;
+.noodle-about-us p {
+    color: #bbb;
+    margin-bottom: 15px;
 }
