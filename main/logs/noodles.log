@@ -1,6 +1,6 @@
 Noodles Log Initialized.
 
-[INFO] 2024-10-26 10:00:00: index.html file created and populated with basic HTML structure. Added links to style.css and Font Awesome.
+[INFO] 2024-10-26 10:00:00: index.html file created and populated with basic HTML structure. Added links to style.css and script.js.
 [INFO] 2024-10-26 10:00:05: Created a sidebar with menu options for DDoS, Defacement, Connection, Credential, and About Us.
 [INFO] 2024-10-26 10:00:10: Implemented tabbed content areas for each menu option with input fields and buttons.
 [INFO] 2024-10-26 10:00:15: Added status and log boxes to each tab for displaying information.
