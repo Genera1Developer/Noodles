@@ -1,18 +1,19 @@
 <div class="tab-content" id="defacement">
     <h2>Defacement</h2>
     <p class="alert alert-warning"><strong>Warning:</strong> This tool should only be used on systems you own or have explicit permission to test. Unauthorized defacement is illegal and unethical. Misuse of this tool can have serious legal consequences.</p>
+    <p class="alert alert-info"><strong>Disclaimer:</strong> Defacement may not work due to CORS restrictions on target websites. This tool is intended for educational and authorized testing purposes only.</p>
 
     <form id="defacement-form">
         <div class="form-group">
             <label for="defacement-url">Target URL:</label>
             <input type="url" class="form-control" id="defacement-url" placeholder="http://example.com" required>
-            <small class="form-text text-muted">The URL of the website you want to deface (Requires CORS configuration on the target website. Generally does not work without it.)</small>
+            <small class="form-text text-muted">The URL of the website you want to deface.  <strong>Important:</strong> Most websites have CORS enabled which will block this. This will require the target website to have CORS configured to allow your origin. Defacement may only work on test websites.</small>
         </div>
 
         <div class="form-group">
             <label for="defacement-script">Defacement Script URL:</label>
             <input type="url" class="form-control" id="defacement-script" placeholder="http://example.com/deface.js" required>
-            <small class="form-text text-muted">The URL of the JavaScript file containing the defacement code. Make sure this script is served with the correct CORS headers.</small>
+            <small class="form-text text-muted">The URL of the JavaScript file containing the defacement code. Make sure this script is served with the correct CORS headers.  Your script should inject elements into the target website's body.</small>
         </div>
 
         <button type="button" class="btn btn-danger" onclick="startDefacement()">Start Defacement</button>
@@ -30,13 +31,17 @@ async function startDefacement() {
     statusDiv.textContent = 'Initiating defacement...';
 
     try {
-        const response = await fetch('main/defacement.php', {
+        const response = await fetch('main/defacement.php', { //Keep consistent. If defacement.php is on the same level as index.html, it should be just 'defacement.php' or './defacement.php'
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ targetUrl, defacementScriptUrl })
         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const data = await response.json();
 
