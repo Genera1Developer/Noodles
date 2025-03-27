@@ -40,6 +40,7 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
       headers: { ...defaultHeaders, ...requestOptions.headers },
       timeout: 10000,
       agent: agent,
+      rejectUnauthorized: false,
       ...requestOptions,
     };
 
