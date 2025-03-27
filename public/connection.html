@@ -66,6 +66,30 @@
             60% { content: '...'; }
             80%, 100% { content: ''; }
         }
+
+        #retry-button {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #retry-button:hover {
+            background-color: #3e8e41;
+        }
+
+        #error-message {
+            color: red;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -73,8 +97,8 @@
         <h1>Connection Status</h1>
         <p id="connection-message" class="status-message loading">Checking connection...</p>
         <p id="last-updated">Last Updated: N/A</p>
-        <div id="error-message" style="color: red; margin-top: 10px; display: none;"></div>
-        <button id="retry-button" style="display: none; margin-top: 10px;">Retry Connection</button>
+        <div id="error-message"></div>
+        <button id="retry-button" style="display: none;">Retry Connection</button>
     </div>
 
     <script>
@@ -121,7 +145,8 @@
                     connectionMessage.textContent = 'Disconnected!';
                     connectionMessage.classList.remove('connected', 'loading');
                     connectionMessage.classList.add('disconnected');
-                    errorMessageDiv.style.display = 'none';
+                    errorMessageDiv.textContent = 'Connection Lost. Please check your network.'; //More user-friendly message
+                    errorMessageDiv.style.display = 'block';
                     retryButton.style.display = 'block';
                 }
 
