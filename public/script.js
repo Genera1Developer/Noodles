@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabs = document.querySelectorAll('.tab-button');
   const tabContent = document.querySelectorAll('.tab-content');
 
+  let statsInterval; // Store the interval ID
+
   function showTab(tabId) {
     tabContent.forEach(content => content.style.display = 'none');
     tabs.forEach(tab => tab.classList.remove('active'));
@@ -35,6 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Clear any existing stats interval
+    if (statsInterval) {
+      clearInterval(statsInterval);
+      statsInterval = null;
+    }
+
     updateStatus('info', `Initiating ${attackType} attack on ${target}...`);
 
     try {
@@ -47,7 +55,12 @@ document.addEventListener('DOMContentLoaded', () => {
         updateStatus('success', data.message || 'Attack initiated successfully.');
         startStatsUpdates(target);
       } else {
-        const errorData = await response.json();
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          errorData = { message: 'Attack failed and could not parse error response.' };
+        }
         updateStatus('error', errorData.message || 'Attack failed to initiate.');
       }
     } catch (error) {
@@ -73,14 +86,26 @@ document.addEventListener('DOMContentLoaded', () => {
         timeElapsedDisplay.textContent = `Time Elapsed: ${data.timeElapsed || '0s'}`;
       } else {
         console.error('Failed to fetch stats:', response.status, response.statusText);
+        // Consider updating the status display to indicate stats fetching failure
+        updateStatus('error', `Failed to fetch stats: ${response.statusText}`);
+        clearInterval(statsInterval); // Stop trying to fetch stats
+        statsInterval = null;
       }
     } catch (error) {
       console.error('Error fetching stats:', error);
+       updateStatus('error', `Error fetching stats: ${error.message}`);
+      clearInterval(statsInterval); // Stop trying to fetch stats
+      statsInterval = null;
     }
   }
 
   function startStatsUpdates(target) {
-    setInterval(() => {
+    // Ensure only one interval is running
+    if (statsInterval) {
+      clearInterval(statsInterval);
+    }
+
+    statsInterval = setInterval(() => {
       fetchStats(target);
     }, 2000);
   }
