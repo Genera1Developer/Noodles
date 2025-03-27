@@ -5,6 +5,7 @@ body {
     margin: 0;
     padding: 0;
     overflow: hidden;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Added transition for theme changes */
 }
 
 .noodle-container {
@@ -21,9 +22,11 @@ body {
     max-width: 90%;
     height: 400px;
     max-height: 80%;
-    resize: both;
-    overflow: auto;
+    overflow: auto; /* Changed resize to overflow for better handling */
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
 }
+
+/* Remove resize and its side effects - resize can cause unexpected behavior */
 
 .noodle-dark-theme {
     background-color: #1e272e;
@@ -40,6 +43,13 @@ body {
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 14px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
+}
+
+.noodle-input:focus, .noodle-button:focus, select:focus {
+    outline: none;
+    border-color: #2ecc71;
+    box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
 }
 
 .noodle-button {
@@ -66,6 +76,7 @@ body {
     border: 1px solid #34495e;
     border-radius: 4px;
     font-size: 14px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
 }
 
 .noodle-side-panel {
@@ -77,6 +88,7 @@ body {
     background-color: #2f3640;
     border-right: 1px solid #34495e;
     padding-top: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
 }
 
 .noodle-menu-item {
@@ -84,7 +96,7 @@ body {
     text-decoration: none;
     color: #dcdde1;
     display: block;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease;
     cursor: pointer;
 }
 
@@ -106,6 +118,7 @@ body {
     max-width: 90%;
     display: none;
     color: #dcdde1;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
 }
 
 .noodle-about-us h2 {
