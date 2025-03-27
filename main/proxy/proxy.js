@@ -1,40 +1,27 @@
 const https = require('https');
 const http = require('http');
 const SocksProxyAgent = require('socks-proxy-agent');
-const { URL } = require('url'); // Import URL from 'url' module
+const { URL } = require('url');
 
-/**
- * Connects to a target URL via a proxy server.
- *
- * @param {string} targetUrl The URL to connect to.
- * @param {string} proxyUrl The URL of the proxy server.
- * @param {object} [requestOptions] Optional request options to override default ones.
- * @returns {Promise<object>} A promise that resolves with the response data, headers, and status code, or rejects with an error.
- * @throws {Error} If there is an error during the proxy connection.
- */
 async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
   try {
     const parsedTarget = new URL(targetUrl);
     const parsedProxy = new URL(proxyUrl);
 
-    let proxyOptions = {};
     let agent = null;
 
     if (parsedProxy.protocol.startsWith('socks')) {
       agent = new SocksProxyAgent(proxyUrl);
     } else if (parsedProxy.protocol.startsWith('http')) {
-      proxyOptions = {
-        protocol: parsedProxy.protocol,
-        hostname: parsedProxy.hostname,
-        port: parseInt(parsedProxy.port, 10),
-        userId: parsedProxy.username,
-        password: parsedProxy.password,
-      };
-      agent = new http.Agent(proxyOptions);
+      const proxyAuth = parsedProxy.username && parsedProxy.password ?
+        `${parsedProxy.username}:${parsedProxy.password}@` : '';
+
+      const proxyURLForAgent = `${parsedProxy.protocol}//${proxyAuth}${parsedProxy.hostname}:${parsedProxy.port}`;
+      agent = new SocksProxyAgent(proxyURLForAgent);
+
     } else {
       throw new Error('Unsupported proxy protocol: ' + parsedProxy.protocol);
     }
-
 
     const defaultHeaders = {
       'User-Agent': 'Noodles/1.6.6',
@@ -53,7 +40,7 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
       headers: { ...defaultHeaders, ...requestOptions.headers },
       timeout: 10000,
       agent: agent,
-      ...requestOptions, // Overwrite default options, including agent, if provided
+      ...requestOptions,
     };
 
     const protocol = parsedTarget.protocol === 'https:' ? https : http;
