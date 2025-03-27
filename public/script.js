@@ -16,7 +16,7 @@ async function handleSlowlorisAttack(targetUrl, numSockets) {
         }
 
         // Construct the API endpoint URL using relative path
-        const apiUrl = 'main/ddos/slowloris';
+        const apiUrl = 'main/ddos/slowloris.php';
 
         // Make a POST request to trigger the attack
         const response = await fetch(apiUrl, {
