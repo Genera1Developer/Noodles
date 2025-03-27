@@ -1,7 +1,7 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #333333; /* Dark Grey */
-    color: #f0f0f0; /* Light Grey */
+    background-color: #333333;
+    color: #f0f0f0;
     margin: 0;
     padding: 0;
     display: flex;
@@ -16,7 +16,7 @@ body {
 }
 
 header {
-    background-color: #222222; /* Darker Grey */
+    background-color: #222222;
     color: #f0f0f0;
     text-align: center;
     padding: 20px;
@@ -26,7 +26,7 @@ header {
 
 .side-panel {
     width: 250px;
-    background-color: #222222; /* Darker Grey */
+    background-color: #222222;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -35,7 +35,7 @@ header {
 }
 
 .side-panel .tab-btn {
-    background-color: #444444; /* Dark Grey */
+    background-color: #444444;
     color: #f0f0f0;
     border: none;
     padding: 12px 15px;
@@ -46,15 +46,17 @@ header {
     border-radius: 4px;
     font-size: 16px;
     outline: none;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .side-panel .tab-btn:hover {
-    background-color: #555555; /* Even Darker Grey */
+    background-color: #555555;
     color: #ffffff;
 }
 
 .side-panel .tab-btn.active {
-    background-color: #388e3c; /* Dark Green */
+    background-color: #388e3c;
     color: #ffffff;
 }
 
@@ -67,7 +69,7 @@ header {
     display: none;
     padding: 20px;
     border-radius: 5px;
-    background-color: #121212; /* Even Darker Grey */
+    background-color: #121212;
     color: #f0f0f0;
 }
 
@@ -114,7 +116,7 @@ header {
 }
 
 .input-group select {
-    appearance: none; /* Remove default arrow */
+    appearance: none;
     background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23eee"><path d="M7 10l5 5 5-5z"/></svg>');
     background-repeat: no-repeat;
     background-position: right 12px center;
@@ -122,7 +124,7 @@ header {
 }
 
 button {
-    background-color: #388e3c; /* Dark Green */
+    background-color: #388e3c;
     color: #ffffff;
     padding: 14px 22px;
     border: none;
@@ -134,17 +136,17 @@ button {
 }
 
 button:hover {
-    background-color: #4caf50; /* Slightly Lighter Green */
+    background-color: #4caf50;
 }
 
 button:active {
-    background-color: #388e3c; /* Dark Green */
+    background-color: #388e3c;
 }
 
 .status-area {
     margin-top: 30px;
     padding: 20px;
-    background-color: #222222; /* Darker Grey */
+    background-color: #222222;
     border-radius: 5px;
     color: #dddddd;
     font-size: 16px;
@@ -157,14 +159,13 @@ button:active {
 footer {
     text-align: center;
     padding: 15px;
-    background-color: #222222; /* Darker Grey */
+    background-color: #222222;
     color: #888888;
     margin-top: 30px;
     border-top: 1px solid #444444;
     font-size: 14px;
 }
 
-/* Utility Classes */
 .mt-20 {
     margin-top: 20px;
 }
@@ -173,7 +174,6 @@ footer {
     margin-bottom: 20px;
 }
 
-/* Grid Layout */
 .grid-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -181,13 +181,12 @@ footer {
 }
 
 .grid-item {
-    background-color: #121212; /* Even Darker Grey */
+    background-color: #121212;
     padding: 20px;
     border-radius: 5px;
     color: #f0f0f0;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .side-panel {
         width: 100%;
@@ -204,7 +203,6 @@ footer {
     }
 }
 
-/* Animations */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
@@ -214,17 +212,15 @@ footer {
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/*Form styling*/
 form {
     margin-bottom: 20px;
 }
 
-/*About us page styling*/
 .about-container {
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
-    background-color: #121212; /* Even Darker Grey */
+    background-color: #121212;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     color: #f0f0f0;
@@ -254,4 +250,22 @@ form {
 
 .about-container li {
     margin-bottom: 8px;
+}
+
+/* Add dark theme scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #222;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #444;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #555;
 }
