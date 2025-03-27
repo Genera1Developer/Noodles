@@ -23,7 +23,9 @@
     "prepare-other": "cd main/other && npm install",
     "prepare-all": "npm run prepare-ddos && npm run prepare-defacement && npm run prepare-connection && npm run prepare-credential && npm run prepare-other",
     "prepare-modules": "npm install --legacy-peer-deps",
-    "prepare-tor": "cd main/tor && npm install"
+    "prepare-tor": "cd main/tor && npm install",
+    "postinstall": "npm run prepare-modules && npm run prepare-all && npm run prepare-tor",
+    "prepare-everything": "npm install --legacy-peer-deps && npm run prepare-ddos && npm run prepare-defacement && npm run prepare-connection && npm run prepare-credential && npm run prepare-other && npm run prepare-tor"
   },
   "keywords": [],
   "author": "Bigmancozmo",
