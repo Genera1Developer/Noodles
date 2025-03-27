@@ -25,19 +25,19 @@
   "routes": [
     {
       "src": "/api/ddos",
-      "dest": "/public/api/ddos.js"
+      "dest": "public/api/ddos.js"
     },
     {
       "src": "/api/defacement",
-      "dest": "/public/api/defacement.js"
+      "dest": "public/api/defacement.js"
     },
     {
       "src": "/api/connection",
-      "dest": "/public/api/connection.js"
+      "dest": "public/api/connection.js"
     },
     {
       "src": "/api/credential",
-      "dest": "/public/api/credential.js"
+      "dest": "public/api/credential.js"
     },
     {
       "src": "/(.*)",
@@ -47,7 +47,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/public/index.html"
+      "destination": "/index.html"
     }
   ]
 }
