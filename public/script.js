@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.tab-button');
     const tabContents = document.querySelectorAll('.tab-content');
 
-    // Theme Toggle (Optional)
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
         themeToggle.addEventListener('click', () => {
@@ -18,21 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Tab functionality
     tabs.forEach(tab => {
         tab.addEventListener('click', () => {
-            // Deactivate all tabs and hide all content
             tabs.forEach(t => t.classList.remove('active'));
             tabContents.forEach(c => c.classList.remove('active'));
 
-            // Activate the clicked tab and show corresponding content
             tab.classList.add('active');
             const targetId = tab.getAttribute('data-tab');
             document.getElementById(targetId).classList.add('active');
         });
     });
 
-    // Set default active tab (e.g., DDoS)
     if (tabs.length > 0 && tabContents.length > 0) {
         tabs[0].classList.add('active');
         tabContents[0].classList.add('active');
@@ -50,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         statusDisplay.textContent = `Initiating ${attackType} attack on ${target}...`;
 
         try {
-            const response = await fetch(`/main/attack`, {
+            const response = await fetch(`main/attack`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -62,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 statusDisplay.textContent = data.message;
-                startStatsUpdates(target); // Start updating statistics
+                startStatsUpdates(target);
 
             } else {
                 statusDisplay.textContent = `Attack failed: ${data.error || 'Unknown error'}`;
@@ -72,10 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Statistics update function
     async function updateStats(target) {
         try {
-            const response = await fetch(`/main/stats?target=${target}`);
+            const response = await fetch(`main/stats?target=${target}`);
             const data = await response.json();
 
             mbpsDisplay.textContent = `MBPS: ${data.mbps || 0}`;
@@ -87,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Start updating stats every second
     function startStatsUpdates(target) {
         setInterval(() => {
             updateStats(target);
