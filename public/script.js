@@ -1,103 +1,95 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const targetInput = document.getElementById('targetUrl');
+  const targetInput = document.getElementById('targetInput');
   const attackTypeSelect = document.getElementById('attackType');
-  const intensityInput = document.getElementById('intensity');
-  const durationInput = document.getElementById('duration');
-  const startButton = document.getElementById('startAttack');
-  const statusDisplay = document.getElementById('statusDisplay');
+  const attackButton = document.getElementById('attackButton');
   const mbpsDisplay = document.getElementById('mbps');
   const packetsSentDisplay = document.getElementById('packetsSent');
-  const connectionStatusDisplay = document.getElementById('connectionStatus');
+  const targetStatusDisplay = document.getElementById('targetStatus');
   const timeElapsedDisplay = document.getElementById('timeElapsed');
-  const sidePanel = document.querySelector('.side-panel');
-  const tabButtons = document.querySelectorAll('.tab-button');
-  let attackStartTime;
+  const durationInput = document.getElementById('duration');
+  const intensityInput = document.getElementById('intensity');
 
-  function showTab(tabId) {
-    document.querySelectorAll('.tab-content').forEach(tab => {
-      tab.style.display = 'none';
+  let attackStartTime;
+  let attackInterval;
+
+  attackButton.addEventListener('click', async () => {
+    const target = targetInput.value;
+    const attackType = attackTypeSelect.value;
+    const duration = parseInt(durationInput.value);
+    const intensity = parseInt(intensityInput.value);
+
+    if (!target || !attackType || !duration || !intensity) {
+      alert('Please fill in all fields.');
+      return;
+    }
+
+    attackButton.disabled = true;
+    targetInput.disabled = true;
+    attackTypeSelect.disabled = true;
+    durationInput.disabled = true;
+    intensityInput.disabled = true;
+
+    attackStartTime = Date.now();
+    updateStats(0, 0, 'Starting...', 0);
+
+    attackInterval = setInterval(() => {
+      const elapsedTime = Math.floor((Date.now() - attackStartTime) / 1000);
+      timeElapsedDisplay.textContent = `Time Elapsed: ${elapsedTime}s`;
+    }, 1000);
+
+    try {
+      const result = await startAttack(target, attackType, duration, intensity);
+      clearInterval(attackInterval);
+      updateStats(result.mbps, result.packetsSent, result.targetStatus, Math.floor((Date.now() - attackStartTime) / 1000));
+    } catch (error) {
+      console.error('Attack failed:', error);
+      updateStats(0, 0, 'Failed', Math.floor((Date.now() - attackStartTime) / 1000));
+      clearInterval(attackInterval);
+    } finally {
+      attackButton.disabled = false;
+      targetInput.disabled = false;
+      attackTypeSelect.disabled = false;
+      durationInput.disabled = false;
+      intensityInput.disabled = false;
+    }
+  });
+
+  async function startAttack(target, attackType, duration, intensity) {
+    const response = await fetch(`/main/attack/${attackType}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ target, duration, intensity })
     });
-    document.getElementById(tabId).style.display = 'block';
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    return await response.json();
   }
+
+  function updateStats(mbps, packetsSent, targetStatus, elapsedTime) {
+    mbpsDisplay.textContent = `MBPS: ${mbps.toFixed(2)}`;
+    packetsSentDisplay.textContent = `Packets Sent: ${packetsSent}`;
+    targetStatusDisplay.textContent = `Target Status: ${targetStatus}`;
+    timeElapsedDisplay.textContent = `Time Elapsed: ${elapsedTime}s`;
+  }
+
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabPanels = document.querySelectorAll('.tab-panel');
 
   tabButtons.forEach(button => {
     button.addEventListener('click', () => {
-      const tabId = button.getAttribute('data-tab');
-      showTab(tabId);
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabPanels.forEach(panel => panel.classList.remove('active'));
+
+      button.classList.add('active');
+      const target = button.dataset.target;
+      document.getElementById(target).classList.add('active');
     });
   });
 
-  showTab('ddos');
-
-  async function updateStats(attackStatus) {
-    mbpsDisplay.textContent = attackStatus.mbps;
-    packetsSentDisplay.textContent = attackStatus.packetsSent;
-    connectionStatusDisplay.textContent = attackStatus.targetStatus;
-    const elapsedTime = Math.floor((Date.now() - attackStartTime) / 1000);
-    timeElapsedDisplay.textContent = elapsedTime;
-  }
-
-  async function startAttack(target, attackType, intensity, duration) {
-    statusDisplay.textContent = 'Attack started...';
-    attackStartTime = Date.now();
-
-    try {
-      const response = await fetch('/main/attack', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ target, attackType, intensity, duration })
-      });
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const reader = response.body.getReader();
-      let partialData = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-
-        if (done) {
-          break;
-        }
-
-        partialData += new TextDecoder().decode(value);
-        const messages = partialData.split('\n');
-
-        for (let i = 0; i < messages.length - 1; i++) {
-          const message = messages[i];
-          if (message) {
-            try {
-              const attackStatus = JSON.parse(message);
-              updateStats(attackStatus);
-            } catch (e) {
-              console.error("Error parsing JSON:", e, message);
-            }
-          }
-        }
-        partialData = messages[messages.length - 1];
-      }
-      statusDisplay.textContent = 'Attack finished.';
-
-    } catch (error) {
-      console.error('Attack error:', error);
-      statusDisplay.textContent = `Attack failed: ${error.message}`;
-    }
-  }
-
-  startButton.addEventListener('click', () => {
-    const target = targetInput.value;
-    const attackType = attackTypeSelect.value;
-    const intensity = parseInt(intensityInput.value);
-    const duration = parseInt(durationInput.value);
-
-    if (target && attackType && intensity && duration) {
-      startAttack(target, attackType, intensity, duration);
-    } else {
-      statusDisplay.textContent = 'Please fill in all fields.';
-    }
-  });
+  document.querySelector('.tab-button[data-target="ddos"]').click();
 });
