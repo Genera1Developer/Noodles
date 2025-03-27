@@ -1,150 +1,87 @@
-// public/script.js
+// script.js
 
-// Function to handle form submission and trigger the Slowloris attack
-async function handleSlowlorisAttack(targetUrl, numSockets) {
+// Function to handle form submission and initiate the attack
+async function initiateAttack(target, attackType, duration, intensity) {
     try {
-        // Validate inputs (add more validation as needed)
-        if (!targetUrl) {
-            alert("Please enter a target URL.");
-            return;
-        }
-
-        if (!numSockets || isNaN(numSockets) || numSockets <= 0) {
-            numSockets = 200; // Default value
-        } else {
-            numSockets = parseInt(numSockets);
-        }
-
-        // Construct the API endpoint URL using relative path
-        const apiUrl = 'main/ddos/slowloris.php';
-
-        // Make a POST request to trigger the attack
-        const response = await fetch(apiUrl, {
+        const response = await fetch(`/main/attack`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ target: targetUrl, numSockets: numSockets })
+            body: JSON.stringify({ target, attackType, duration, intensity })
         });
 
-        if (response.ok) {
-            const data = await response.json();
-            if (data && data.message) {
-                alert(data.message); // Display success or any message from the backend
-            } else {
-                alert("Attack initiated successfully (no message from server).");
-            }
-
-             // Start updating statistics (example)
-            startUpdatingStats(targetUrl);
-
-        } else {
-            const errorData = await response.json();
-            if (errorData && errorData.error) {
-              alert(`Attack failed: ${errorData.error}`);
-            } else {
-              alert("Attack failed: Unknown error.");
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+
+        const data = await response.json();
+        console.log('Attack initiated:', data);
+        // Handle the response data as needed (e.g., update UI)
     } catch (error) {
-        console.error("Error during attack:", error);
-        alert("An unexpected error occurred: " + error.message);
+        console.error('Failed to initiate attack:', error);
+        // Handle errors in the UI
     }
 }
 
-// Function to update statistics in real-time (example implementation)
-async function updateStats(targetUrl) {
-  // Placeholder for fetching and updating statistics. Replace with actual implementation
-  // that fetches data from the server and updates the corresponding HTML elements.
-  // This is just a simulation for demonstration.
-
-  const mbpsElement = document.getElementById('mbps');
-  const packetsSentElement = document.getElementById('packetsSent');
-  const connectionStatusElement = document.getElementById('connectionStatus');
-  const elapsedTimeElement = document.getElementById('elapsedTime');
-
-  // Simulate data fetching (replace with actual API calls)
-  const simulatedMbps = Math.random() * 10; // Example: 0-10 MBPS
-  const simulatedPacketsSent = Math.floor(Math.random() * 1000); // Example: 0-1000 packets
-  const simulatedStatus = Math.random() > 0.5 ? 'Online' : 'Offline'; // Example: Online/Offline
-  const simulatedElapsedTime = Math.floor(Math.random() * 60); // Example: 0-60 seconds
-
-  if (mbpsElement) mbpsElement.textContent = simulatedMbps.toFixed(2);
-  if (packetsSentElement) packetsSentElement.textContent = simulatedPacketsSent;
-  if (connectionStatusElement) connectionStatusElement.textContent = simulatedStatus;
-  if (elapsedTimeElement) elapsedTimeElement.textContent = simulatedElapsedTime;
-}
-
-// Function to start updating statistics periodically
-function startUpdatingStats(targetUrl) {
-  // Initial update
-  updateStats(targetUrl);
-
-  // Set interval to update statistics every few seconds (e.g., 3 seconds)
-  setInterval(() => {
-    updateStats(targetUrl);
-  }, 3000);
-}
-
-// Add event listeners to your HTML elements (assuming you have corresponding elements)
-document.addEventListener('DOMContentLoaded', () => {
-    // Example: Button to trigger Slowloris
-    const slowlorisButton = document.getElementById('slowlorisButton');
-    if (slowlorisButton) {
-        slowlorisButton.addEventListener('click', () => {
-            const targetUrl = document.getElementById('targetUrl').value;
-            const numSockets = document.getElementById('numSockets').value;
-            handleSlowlorisAttack(targetUrl, numSockets);
-        });
-    }
-
-    // Navigation tabs
-    const ddosTab = document.getElementById('ddosTab');
-    const defacementTab = document.getElementById('defacementTab');
-    const connectionTab = document.getElementById('connectionTab');
-    const credentialTab = document.getElementById('credentialTab');
-    const aboutUsTab = document.getElementById('aboutUsTab');
-
-    // Tab click handlers - show relevant content, hide others.
-    if (ddosTab) {
-        ddosTab.addEventListener('click', () => {
-            showTabContent('ddosContent');
-        });
-    }
-     if (defacementTab) {
-        defacementTab.addEventListener('click', () => {
-            showTabContent('defacementContent');
-        });
-    }
-    if (connectionTab) {
-        connectionTab.addEventListener('click', () => {
-            showTabContent('connectionContent');
-        });
-    }
-    if (credentialTab) {
-        credentialTab.addEventListener('click', () => {
-            showTabContent('credentialContent');
-        });
-    }
-    if (aboutUsTab) {
-        aboutUsTab.addEventListener('click', () => {
-            showTabContent('aboutUsContent');
-        });
-    }
-
-    // Function to show the selected tab's content and hide others
-    function showTabContent(tabId) {
-        const tabContents = document.querySelectorAll('.tab-content');
-        tabContents.forEach(content => {
-            content.style.display = 'none';
-        });
-
-        const selectedTabContent = document.getElementById(tabId);
-        if (selectedTabContent) {
-            selectedTabContent.style.display = 'block';
+// Function to fetch and display statistics
+async function fetchAndDisplayStats() {
+    try {
+        const response = await fetch('/main/stats');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const stats = await response.json();
+        updateStatsDisplay(stats);
+    } catch (error) {
+        console.error('Failed to fetch stats:', error);
     }
+}
 
-    // Initial tab - show DDoS content by default
-    showTabContent('ddosContent');
+// Function to update the statistics display in the UI
+function updateStatsDisplay(stats) {
+    document.getElementById('mbps').textContent = stats.mbps ? stats.mbps.toFixed(2) : '0.00';
+    document.getElementById('packetsSent').textContent = stats.packetsSent || '0';
+    document.getElementById('targetStatus').textContent = stats.targetStatus || 'Unknown';
+    document.getElementById('attackDuration').textContent = stats.attackDuration || '0';
+}
+
+// Event listener for the attack form submission
+document.getElementById('attackForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const target = document.getElementById('target').value;
+    const attackType = document.getElementById('attackType').value;
+    const duration = parseInt(document.getElementById('duration').value, 10);
+    const intensity = parseInt(document.getElementById('intensity').value, 10);
+
+    initiateAttack(target, attackType, duration, intensity);
+
+    // Start fetching stats immediately after attack initiation
+    setInterval(fetchAndDisplayStats, 2000); // Fetch stats every 2 seconds
+});
+
+// Initial call to fetch stats when the page loads
+fetchAndDisplayStats();
+
+document.addEventListener('DOMContentLoaded', function() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Deactivate all buttons and hide all content
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            // Activate the clicked button and show the corresponding content
+            const tabId = button.getAttribute('data-tab');
+            button.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        });
+    });
+
+    // Initially activate the first tab
+    if (tabButtons.length > 0) {
+        tabButtons[0].click();
+    }
 });
