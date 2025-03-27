@@ -53,7 +53,7 @@
     https://check-host.net/
     https://www.facebook.com/
     https://www.youtube.com/
-    https://www.fbi.com/
+    https://www.fbi.gov/
     https://r.search.yahoo.com/
     https://www.cia.gov/index.html
     http://netsec-reborn.onion/QuickStresser-virus?id=
