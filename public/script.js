@@ -1,117 +1,84 @@
-// public/script.js
+document.addEventListener('DOMContentLoaded', () => {
+    const targetInput = document.getElementById('targetUrl');
+    const attackTypeSelect = document.getElementById('attackType');
+    const startButton = document.getElementById('startAttack');
+    const mbpsDisplay = document.getElementById('mbps');
+    const packetsDisplay = document.getElementById('packets');
+    const statusDisplay = document.getElementById('status');
+    const timeDisplay = document.getElementById('time');
+    const sidePanelButtons = document.querySelectorAll('.side-panel button');
+    const contentSections = document.querySelectorAll('.content-section');
 
-// Function to handle form submission for DDoS attack
-document.getElementById('ddos-form').addEventListener('submit', function(event) {
-    event.preventDefault();
-    const targetUrl = document.getElementById('target-url').value;
-    const attackType = document.getElementById('attack-type').value;
-    const numSockets = document.getElementById('num-sockets').value || 200; // Default value
-
-    // Basic validation
-    if (!targetUrl) {
-        alert('Please enter a target URL.');
-        return;
-    }
-
-    // Send data to the server using Fetch API
-    fetch('main/ddos/attack', { // Corrected path
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            target: targetUrl,
-            attackType: attackType,
-            numSockets: numSockets
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.status === 'success') {
-            alert('Attack initiated successfully!');
-            startStatsUpdate(targetUrl); // Start updating stats after successful initiation
-        } else {
-            alert('Attack failed: ' + data.message);
+    // Function to fetch data and update statistics
+    const updateStats = async () => {
+        try {
+            const response = await fetch('/main/api/stats');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            mbpsDisplay.textContent = data.mbps || '0';
+            packetsDisplay.textContent = data.packets || '0';
+            statusDisplay.textContent = data.status || 'Unknown';
+            timeDisplay.textContent = data.time || '0';
+        } catch (error) {
+            console.error('Failed to update stats:', error);
+            statusDisplay.textContent = 'Error';
         }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while initiating the attack.');
-    });
-});
+    };
 
-// Function to start updating statistics
-function startStatsUpdate(targetUrl) {
-    // Use setInterval to update stats regularly (e.g., every 5 seconds)
-    setInterval(() => {
-        updateStats(targetUrl);
-    }, 5000);
-}
-
-// Function to update statistics
-function updateStats(targetUrl) {
-    fetch(`main/ddos/stats?target=${encodeURIComponent(targetUrl)}`) // Corrected path and added URL encoding
-    .then(response => response.json())
-    .then(data => {
-        document.getElementById('mbps').textContent = data.mbps || 'N/A';
-        document.getElementById('packets').textContent = data.packets || 'N/A';
-        document.getElementById('status').textContent = data.status || 'N/A';
-        document.getElementById('time').textContent = data.time || 'N/A';
-    })
-    .catch(error => {
-        console.error('Error fetching stats:', error);
-    });
-}
-
-// Tab switching logic
-document.querySelectorAll('.tab-button').forEach(button => {
-    button.addEventListener('click', function() {
-        const tabId = this.getAttribute('data-tab');
-
-        // Hide all tab contents
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.remove('active');
-        });
-
-        // Show the selected tab content
-        document.getElementById(tabId).classList.add('active');
-
-        // Remove active class from all buttons
-        document.querySelectorAll('.tab-button').forEach(btn => {
-            btn.classList.remove('active');
-        });
-
-        // Add active class to the clicked button
-        this.classList.add('active');
-    });
-});
-
-// Initial active tab (e.g., DDoS)
-document.getElementById('ddos-tab-button').classList.add('active');
-document.getElementById('ddos').classList.add('active');
-
-// About Us page functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const aboutUsButton = document.getElementById('about-us-tab-button');
-    const aboutUsContent = document.getElementById('about-us');
-
-    if (aboutUsButton && aboutUsContent) {
-        aboutUsButton.addEventListener('click', function() {
-            // Hide all tab contents
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
+    // Function to start the attack
+    const startAttack = async (target, attackType) => {
+        try {
+            const response = await fetch('/main/api/attack', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ target: target, attackType: attackType })
             });
 
-            // Show the About Us content
-            aboutUsContent.classList.add('active');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-            // Remove active class from all buttons
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
+            const data = await response.json();
+            console.log('Attack started:', data);
+            statusDisplay.textContent = 'Attacking';
+            // Start updating stats every second
+            setInterval(updateStats, 1000);
+        } catch (error) {
+            console.error('Failed to start attack:', error);
+            statusDisplay.textContent = 'Failed to Start';
+        }
+    };
 
-            // Add active class to the About Us button
-            aboutUsButton.classList.add('active');
+    // Attach event listener to the start button
+    startButton.addEventListener('click', () => {
+        const target = targetInput.value;
+        const attackType = attackTypeSelect.value;
+        startAttack(target, attackType);
+    });
+
+    // Side panel navigation
+    sidePanelButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Deactivate all buttons and hide all content sections
+            sidePanelButtons.forEach(btn => btn.classList.remove('active'));
+            contentSections.forEach(section => section.classList.remove('active'));
+
+            // Activate the clicked button
+            button.classList.add('active');
+
+            // Show the corresponding content section
+            const targetSectionId = button.dataset.target;
+            const targetSection = document.getElementById(targetSectionId);
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
         });
-    }
+    });
+
+    // Initially activate the DDoS section
+    document.querySelector('.side-panel button[data-target="ddos"]').click();
 });
