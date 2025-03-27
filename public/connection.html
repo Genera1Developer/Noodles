@@ -106,12 +106,31 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        #status-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 5px;
+            vertical-align: middle;
+            display: inline-block;
+        }
+
+        .connected-icon {
+            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%2300ff7f"%3E%3Cpath d="M0 0h24v24H0z" fill="none"/%3E%3Cpath d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/%3E%3C/svg%3E') no-repeat center;
+        }
+
+        .disconnected-icon {
+            background: url('data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23ff4500"%3E%3Cpath d="M0 0h24v24H0z" fill="none"/%3E%3Cpath d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/%3E%3C/svg%3E') no-repeat center;
+        }
     </style>
 </head>
 <body>
     <div class="panel">
         <h1>Connection Status</h1>
-        <p id="connection-message" class="status-message">Checking connection...</p>
+        <p id="connection-message" class="status-message">
+            <span id="status-icon"></span>
+            <span id="connection-text">Checking connection...</span>
+        </p>
         <div id="spinner"></div>
         <p id="last-updated">Last Updated: N/A</p>
         <div id="error-message"></div>
@@ -131,6 +150,8 @@
 
         async function updateConnectionStatus() {
             const connectionMessage = document.getElementById('connection-message');
+            const connectionText = document.getElementById('connection-text');
+            const statusIcon = document.getElementById('status-icon');
             const lastUpdated = document.getElementById('last-updated');
             const errorMessageDiv = document.getElementById('error-message');
             const retryButton = document.getElementById('retry-button');
@@ -140,8 +161,9 @@
             errorMessageDiv.style.display = 'none';
             retryButton.style.display = 'none';
             spinner.style.display = 'block'; // Show the spinner
-            connectionMessage.textContent = 'Checking connection...';
+            connectionText.textContent = 'Checking connection...';
             connectionMessage.classList.remove('connected', 'disconnected');
+            statusIcon.classList.remove('connected-icon', 'disconnected-icon');
 
 
             try {
@@ -156,15 +178,19 @@
                 const data = await response.json();
 
                 if (data.connected) {
-                    connectionMessage.textContent = 'Connected!';
+                    connectionText.textContent = 'Connected!';
                     connectionMessage.classList.remove('disconnected');
                     connectionMessage.classList.add('connected');
+                    statusIcon.classList.remove('disconnected-icon');
+                    statusIcon.classList.add('connected-icon');
                     errorMessageDiv.style.display = 'none';
                     retryButton.style.display = 'none';
                 } else {
-                    connectionMessage.textContent = 'Disconnected!';
+                    connectionText.textContent = 'Disconnected!';
                     connectionMessage.classList.remove('connected');
                     connectionMessage.classList.add('disconnected');
+                    statusIcon.classList.remove('connected-icon');
+                    statusIcon.classList.add('disconnected-icon');
                     errorMessageDiv.textContent = 'Connection Lost. Please check your network.'; //More user-friendly message
                     errorMessageDiv.style.display = 'block';
                     retryButton.style.display = 'block';
@@ -174,9 +200,11 @@
 
             } catch (error) {
                 console.error('Error fetching connection status:', error);
-                connectionMessage.textContent = 'Error checking connection.';
+                connectionText.textContent = 'Error checking connection.';
                 connectionMessage.classList.remove('connected');
                 connectionMessage.classList.add('disconnected');
+                statusIcon.classList.remove('connected-icon');
+                statusIcon.classList.add('disconnected-icon');
                 lastUpdated.textContent = `Last Updated: ${new Date().toLocaleString()}`;
                 errorMessageDiv.textContent = 'Failed to retrieve connection status. Check your network and server.';
                 errorMessageDiv.style.display = 'block';
