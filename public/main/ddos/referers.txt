@@ -31,9 +31,9 @@ http://panel.stopthehacker.com/services/validate-payflow?email=1@1.com&callback=
 http://www.onlinewebcheck.com/check.php?url=
 http://www.online-translator.com/url/translation.aspx?direction=er&sourceURL=
 http://www.translate.ru/url/translation.aspx?direction=er&sourceURL=
-http://about42.nl/www/showheaders.php;POST;about42.nl.txt
-http://browsershots.org;POST;browsershots.org.txt
-http://ping-admin.ru/index.sema;POST;ping-admin.ru.txt
+http://about42.nl/www/showheaders.php
+http://browsershots.org
+http://ping-admin.ru/index.sema
 http://web-sniffer.net/?url=
 http://translate.yandex.ru/translate?srv=yasearch&lang=ru-uk&url=
 http://translate.yandex.ua/translate?srv=yasearch&lang=ru-uk&url=
