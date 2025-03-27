@@ -1,114 +1,137 @@
 {
- "proxies": [
-  {
-   "ip": "103.48.224.146",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "190.120.8.132",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "165.232.147.73",
-   "port": 3128,
-   "protocol": "http"
-  },
-  {
-   "ip": "167.71.227.240",
-   "port": 80,
-   "protocol": "http"
-  },
-  {
-   "ip": "103.77.172.25",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "178.128.113.154",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "196.201.226.234",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "190.145.181.41",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "202.5.4.130",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "202.142.168.162",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "64.227.100.171",
-   "port": 80,
-   "protocol": "http"
-  },
-  {
-   "ip": "198.16.70.11",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "109.237.70.201",
-   "port": 53281,
-   "protocol": "http"
-  },
-  {
-   "ip": "209.127.190.130",
-   "port": 8123,
-   "protocol": "http"
-  },
-  {
-   "ip": "176.9.68.42",
-   "port": 8080,
-   "protocol": "http"
-  },
-  {
-   "ip": "20.200.22.152",
-   "port": 3128,
-   "protocol": "http"
-  },
-  {
-   "ip": "172.245.126.151",
-   "port": 8118,
-   "protocol": "http"
-  },
-  {
-   "ip": "104.27.179.145",
-   "port": 80,
-   "protocol": "http"
-  },
-  {
-   "ip": "144.217.252.213",
-   "port": 3128,
-   "protocol": "http"
-  },
-  {
-   "ip": "196.247.54.230",
-   "port": 80,
-   "protocol": "http"
-  },
-  {
-   "ip": "8.8.8.8",
-   "port": 53,
-   "protocol": "http"
-  },
-  {
-   "ip": "1.1.1.1",
-   "port": 53,
-   "protocol": "http"
-  }
- ]
+  "proxies": [
+    {
+      "ip": "103.48.224.146",
+      "port": 8080,
+      "protocol": "http",
+      "country": "IN"
+    },
+    {
+      "ip": "190.120.8.132",
+      "port": 8080,
+      "protocol": "http",
+      "country": "VE"
+    },
+    {
+      "ip": "165.232.147.73",
+      "port": 3128,
+      "protocol": "http",
+      "country": "US"
+    },
+    {
+      "ip": "167.71.227.240",
+      "port": 80,
+      "protocol": "http",
+      "country": "US"
+    },
+    {
+      "ip": "103.77.172.25",
+      "port": 8080,
+      "protocol": "http",
+      "country": "PK"
+    },
+    {
+      "ip": "178.128.113.154",
+      "port": 8080,
+      "protocol": "http",
+      "country": "SG"
+    },
+    {
+      "ip": "196.201.226.234",
+      "port": 8080,
+      "protocol": "http",
+      "country": "ZA"
+    },
+    {
+      "ip": "190.145.181.41",
+      "port": 8080,
+      "protocol": "http",
+      "country": "VE"
+    },
+    {
+      "ip": "202.5.4.130",
+      "port": 8080,
+      "protocol": "http",
+      "country": "BD"
+    },
+    {
+      "ip": "202.142.168.162",
+      "port": 8080,
+      "protocol": "http",
+      "country": "NP"
+    },
+    {
+      "ip": "64.227.100.171",
+      "port": 80,
+      "protocol": "http",
+      "country": "US"
+    },
+    {
+      "ip": "198.16.70.11",
+      "port": 8080,
+      "protocol": "http",
+      "country": "CA"
+    },
+    {
+      "ip": "109.237.70.201",
+      "port": 53281,
+      "protocol": "http",
+      "country": "UA"
+    },
+    {
+      "ip": "209.127.190.130",
+      "port": 8123,
+      "protocol": "http",
+      "country": "US"
+    },
+    {
+      "ip": "176.9.68.42",
+      "port": 8080,
+      "protocol": "http",
+      "country": "FR"
+    },
+    {
+      "ip": "20.200.22.152",
+      "port": 3128,
+      "protocol": "http",
+      "country": "US"
+    },
+    {
+      "ip": "172.245.126.151",
+      "port": 8118,
+      "protocol": "http",
+      "country": "US"
+    },
+    {
+      "ip": "104.27.179.145",
+      "port": 80,
+      "protocol": "http",
+      "country": "US"
+    },
+    {
+      "ip": "144.217.252.213",
+      "port": 3128,
+      "protocol": "http",
+      "country": "CA"
+    },
+    {
+      "ip": "196.247.54.230",
+      "port": 80,
+      "protocol": "http",
+      "country": "ZA"
+    },
+    {
+      "ip": "8.8.8.8",
+      "port": 53,
+      "protocol": "http",
+      "country": "US"
+    },
+    {
+      "ip": "1.1.1.1",
+      "port": 53,
+      "protocol": "http",
+      "protocol": "http",
+      "country": "AU"
+    }
+  ]
 }
