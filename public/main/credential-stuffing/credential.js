@@ -7,6 +7,10 @@
  */
 async function tryLogin(username, password, attemptLogin) {
   try {
+    if (typeof attemptLogin !== 'function') {
+      console.error('attemptLogin is not a function');
+      return false;
+    }
     const result = await attemptLogin(username, password);
     return result;
   } catch (error) {
