@@ -1,82 +1,83 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const targetInput = document.getElementById('targetInput');
+  const targetInput = document.getElementById('targetUrl');
   const attackTypeSelect = document.getElementById('attackType');
   const attackButton = document.getElementById('attackButton');
-  const statusDisplay = document.getElementById('statusDisplay');
   const mbpsDisplay = document.getElementById('mbps');
   const packetsSentDisplay = document.getElementById('packetsSent');
   const connectionStatusDisplay = document.getElementById('connectionStatus');
-  const timeElapsedDisplay = document.getElementById('timeElapsed');
-  const sidePanel = document.querySelector('.side-panel');
+  const elapsedTimeDisplay = document.getElementById('elapsedTime');
   const tabs = document.querySelectorAll('.tab-button');
-  let attackStartTime;
+  const tabContents = document.querySelectorAll('.tab-content');
 
-  function updateStatus(message) {
-    statusDisplay.textContent = message;
+  let attackStartTime;
+  let attackInterval;
+
+  function showTab(tabId) {
+    tabContents.forEach(content => {
+      content.style.display = 'none';
+    });
+    tabs.forEach(tab => {
+      tab.classList.remove('active');
+    });
+
+    document.getElementById(tabId).style.display = 'block';
+    document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
   }
 
-  function updateStatistics(mbps, packets, status, time) {
+  tabs.forEach(tab => {
+    tab.addEventListener('click', (event) => {
+      const tabId = event.target.dataset.tab;
+      showTab(tabId);
+    });
+  });
+
+  showTab('ddos');
+
+  function updateStatistics(mbps, packetsSent, connectionStatus) {
     mbpsDisplay.textContent = mbps;
-    packetsSentDisplay.textContent = packets;
-    connectionStatusDisplay.textContent = status;
-    timeElapsedDisplay.textContent = time;
+    packetsSentDisplay.textContent = packetsSent;
+    connectionStatusDisplay.textContent = connectionStatus;
+  }
+
+  function formatTime(milliseconds) {
+    const seconds = Math.floor((milliseconds / 1000) % 60);
+    const minutes = Math.floor((milliseconds / (1000 * 60)) % 60);
+    const hours = Math.floor((milliseconds / (1000 * 60 * 60)) % 24);
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  function startAttackSimulation(targetUrl, attackType) {
+    attackStartTime = Date.now();
+    attackInterval = setInterval(() => {
+      const elapsedTime = Date.now() - attackStartTime;
+      elapsedTimeDisplay.textContent = formatTime(elapsedTime);
+
+      const randomMbps = Math.random() * 100;
+      const randomPackets = Math.floor(Math.random() * 1000);
+      const statusOptions = ['Online', 'Offline', 'Unresponsive'];
+      const randomStatus = statusOptions[Math.floor(Math.random() * statusOptions.length)];
+
+      updateStatistics(randomMbps.toFixed(2), randomPackets, randomStatus);
+    }, 1000);
+  }
+
+  function stopAttackSimulation() {
+    clearInterval(attackInterval);
   }
 
   attackButton.addEventListener('click', async () => {
-    const target = targetInput.value;
+    const targetUrl = targetInput.value;
     const attackType = attackTypeSelect.value;
 
-    if (!target) {
-      updateStatus('Please enter a target URL or .onion address.');
-      return;
-    }
-
-    updateStatus(`Starting ${attackType} attack on ${target}...`);
-    attackStartTime = Date.now();
-
-    try {
-      const response = await fetch(`/main/attack`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ target: target, attackType: attackType }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        updateStatus(`Attack failed: ${errorData.error || 'Unknown error'}`);
-        return;
-      }
-
-      const attackData = await response.json();
-      const attackInterval = setInterval(() => {
-        const elapsedTime = Math.floor((Date.now() - attackStartTime) / 1000);
-        updateStatistics(
-          attackData.mbps || 'N/A',
-          attackData.packets || 'N/A',
-          attackData.status || 'N/A',
-          `${elapsedTime}s`
-        );
-      }, 1000);
-
-      setTimeout(() => {
-        clearInterval(attackInterval);
-        updateStatus('Attack finished.');
-      }, 60000);
-    } catch (error) {
-      updateStatus(`Attack failed: ${error.message}`);
+    if (attackButton.textContent === 'Start Attack') {
+      attackButton.textContent = 'Stop Attack';
+      startAttackSimulation(targetUrl, attackType);
+    } else {
+      attackButton.textContent = 'Start Attack';
+      stopAttackSimulation();
+      updateStatistics('0.00', '0', 'Unknown');
+      elapsedTimeDisplay.textContent = '00:00:00';
     }
   });
-
-  tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            const targetPage = tab.getAttribute('data-page');
-            const pages = document.querySelectorAll('.page');
-            pages.forEach(page => page.classList.remove('active'));
-            document.getElementById(targetPage).classList.add('active');
-        });
-    });
 });
