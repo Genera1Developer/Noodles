@@ -1,107 +1,90 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Tab Management
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
+document.addEventListener('DOMContentLoaded', () => {
+    const targetInput = document.getElementById('targetUrl');
+    const attackTypeSelect = document.getElementById('attackType');
+    const attackButton = document.getElementById('attackButton');
+    const mbpsDisplay = document.getElementById('mbps');
+    const packetsSentDisplay = document.getElementById('packetsSent');
+    const connectionStatusDisplay = document.getElementById('connectionStatus');
+    const elapsedTimeDisplay = document.getElementById('elapsedTime');
 
-    function openTab(tabName) {
-        tabContents.forEach(tabContent => {
-            tabContent.style.display = 'none';
-        });
-        document.getElementById(tabName).style.display = 'block';
-    }
+    let attackStartTime;
+    let attackInterval;
 
-    tabButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const tabName = this.textContent.trim(); // Use textContent for robustness
-            openTab(tabName);
-        });
+    attackButton.addEventListener('click', () => {
+        const targetUrl = targetInput.value;
+        const attackType = attackTypeSelect.value;
+
+        if (!targetUrl) {
+            alert('Please enter a target URL.');
+            return;
+        }
+
+        startAttack(targetUrl, attackType);
     });
 
-    // Attack Functions - Placeholder implementations (TO BE IMPLEMENTED)
-    function startDDoSAttack(targetUrl, threads) {
-        console.log(`Starting DDoS attack on ${targetUrl} with ${threads} threads...`);
-        // Placeholder: Implement DDoS attack logic here
-        updateDDoSStatus("Attacking...", "N/A", "N/A", "Online", "Starting...");
+    async function startAttack(targetUrl, attackType) {
+        attackButton.disabled = true;
+        attackStartTime = new Date();
+        updateStatistics();
+
+        try {
+            const response = await fetch(`/main/attack`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ targetUrl: targetUrl, attackType: attackType })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            attackInterval = setInterval(updateStatistics, 1000);
+
+        } catch (error) {
+            console.error('Attack initiation error:', error);
+            alert('Attack initiation failed. Check console for details.');
+            attackButton.disabled = false;
+            clearInterval(attackInterval);
+        }
     }
 
-    function startDefacement(targetUrl, message) {
-        console.log(`Starting defacement of ${targetUrl} with message: ${message}`);
-        // Placeholder: Implement website defacement logic here
-        updateDefacementStatus("Defacing...", "Starting...");
+    function updateStatistics() {
+        const now = new Date();
+        const elapsedTime = Math.floor((now - attackStartTime) / 1000);
+
+        mbpsDisplay.textContent = 'Calculating...';
+        packetsSentDisplay.textContent = 'Calculating...';
+        connectionStatusDisplay.textContent = 'Checking...';
+        elapsedTimeDisplay.textContent = `${elapsedTime} seconds`;
+
+        fetch('/main/stats')
+            .then(response => response.json())
+            .then(data => {
+                mbpsDisplay.textContent = data.mbps ? `${data.mbps} MBPS` : 'N/A';
+                packetsSentDisplay.textContent = data.packetsSent ? `${data.packetsSent} packets` : 'N/A';
+                connectionStatusDisplay.textContent = data.status || 'Unknown';
+            })
+            .catch(error => {
+                console.error('Error fetching statistics:', error);
+                mbpsDisplay.textContent = 'Error';
+                packetsSentDisplay.textContent = 'Error';
+                connectionStatusDisplay.textContent = 'Error';
+            });
     }
 
-    function startConnection(targetIp, targetPort) {
-        console.log(`Attempting to connect to ${targetIp}:${targetPort}...`);
-        // Placeholder: Implement connection logic here
-        updateConnectionStatus("Connecting...", "Starting...");
-    }
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabPanels = document.querySelectorAll('.tab-panel');
 
-    function startCredentialStuffing(targetUrl, usernames, passwords) {
-        console.log(`Starting credential stuffing attack on ${targetUrl} with ${usernames.length} usernames and ${passwords.length} passwords...`);
-        updateCredentialStatus("Stuffing...", "Starting...");
-        // Placeholder: Implement credential stuffing logic here
-    }
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanels.forEach(panel => panel.classList.remove('active'));
 
-    // UI Interaction and Event Listeners
-    const ddosStartButton = document.getElementById('start-ddos');
-    if (ddosStartButton) {
-        ddosStartButton.addEventListener('click', function() {
-            const targetUrl = document.getElementById('ddos-target-url').value;
-            const threads = document.getElementById('ddos-threads').value;
-            startDDoSAttack(targetUrl, threads);
+            button.classList.add('active');
+            const target = button.dataset.target;
+            document.getElementById(target).classList.add('active');
         });
-    }
-
-    const defacementStartButton = document.getElementById('start-defacement');
-    if (defacementStartButton) {
-        defacementStartButton.addEventListener('click', function() {
-            const targetUrl = document.getElementById('defacement-target-url').value;
-            const message = document.getElementById('defacement-message').value;
-            startDefacement(targetUrl, message);
-        });
-    }
-
-    const connectionStartButton = document.getElementById('start-connection');
-    if (connectionStartButton) {
-        connectionStartButton.addEventListener('click', function() {
-            const targetIp = document.getElementById('connection-target-ip').value;
-            const targetPort = document.getElementById('connection-target-port').value;
-            startConnection(targetIp, targetPort);
-        });
-    }
-
-    const credentialStartButton = document.getElementById('start-stuffing');
-    if (credentialStartButton) {
-        credentialStartButton.addEventListener('click', function() {
-            const targetUrl = document.getElementById('target-url').value;
-            const usernames = document.getElementById('username-list').value.split('\n');
-            const passwords = document.getElementById('password-list').value.split('\n');
-            startCredentialStuffing(targetUrl, usernames, passwords);
-        });
-    }
-
-
-    // Status Update Functions
-    function updateDDoSStatus(status, mbps, packets, targetStatus, timeElapsed) {
-        document.getElementById('ddos-status-message').textContent = `Status: ${status}`;
-        document.getElementById('mbps').textContent = mbps;
-        document.getElementById('packets-sent').textContent = packets;
-        document.getElementById('target-status').textContent = targetStatus;
-        document.getElementById('time-elapsed').textContent = timeElapsed;
-    }
-
-    function updateDefacementStatus(status, message) {
-        document.getElementById('defacement-status-message').textContent = `Status: ${status} ${message}`;
-    }
-
-    function updateConnectionStatus(status, message) {
-        document.getElementById('connection-status-message').textContent = `Status: ${status} ${message}`;
-    }
-
-    function updateCredentialStatus(status, message) {
-        document.getElementById('status-message').textContent = `Status: ${status} ${message}`;
-    }
-
-    // Initialize - Open the first tab by default
-    openTab('DDoS');
+    });
 });
