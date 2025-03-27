@@ -45,8 +45,8 @@
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           with:
             args: >
-              -Dsonar.organization=your-sonarcloud-org  # Replace with your SonarCloud organization key
-              -Dsonar.projectKey=your-sonarcloud-project-key # Replace with your SonarCloud project key
+              -Dsonar.organization=${{ secrets.SONARCLOUD_ORG }}
+              -Dsonar.projectKey=${{ secrets.SONARCLOUD_PROJECT_KEY }}
 
         - name: Run security checks with Retire.js
           run: |
