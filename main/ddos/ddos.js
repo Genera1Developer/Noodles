@@ -27,7 +27,7 @@ class DDoS {
   this.requestRateSliderValue = this.requestRateSlider.querySelector('.noodle-slider-value');
   this.torToggleInput = this.torToggle.querySelector('input');
 
-  this.attackThreads = [];
+  this.attackRunning = false;
  }
 
  initializeValues() {
@@ -49,7 +49,6 @@ class DDoS {
   this.attackStartTime = null;
   this.requestRate = 50;
   this.isTorEnabled = false;
-  this.running = false;
   this.maxThreads = 100;
   this.target = '';
   this.attackTimeout = null;
@@ -97,8 +96,8 @@ class DDoS {
 
  setupEventListeners() {
   this.attackTypeSelect.addEventListener('change', () => this.toggleCustomCodeArea());
-  this.startButton.addEventListener('click', () => this.start());
-  this.stopButton.addEventListener('click', () => this.stop());
+  this.startButton.addEventListener('click', () => this.startAttack());
+  this.stopButton.addEventListener('click', () => this.stopAttack());
   this.proxyRefreshButton.addEventListener('click', () => this.refreshProxies());
   this.torToggleInput.addEventListener('change', () => this.toggleTor());
 
@@ -173,7 +172,7 @@ class DDoS {
  async refreshProxies() {
   this.log('Refreshing proxy list... ');
   try {
-   const response = await fetch('//proxies', {
+   const response = await fetch('/proxies', {
     method: 'GET',
     headers: {
      'X--Key': this.Key
@@ -490,7 +489,7 @@ class DDoS {
  async exploit(target) {
   this.log(`Attempting to exploit ${target}...`);
   try {
-   const response = await fetch(`//exploit?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/exploit?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'GET'
    });
    const data = await response.json();
@@ -504,7 +503,7 @@ class DDoS {
  async massExploit() {
   this.log('Starting mass exploit...');
   try {
-   const response = await fetch(`//mass_exploit?Key=${this.Key}`, {
+   const response = await fetch(`/mass_exploit?Key=${this.Key}`, {
     method: 'GET'
    });
    const data = await response.json();
@@ -518,7 +517,7 @@ class DDoS {
  async deface(target) {
   this.log(`Attempting to deface ${target}...`);
   try {
-   const response = await fetch(`//deface?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/deface?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -532,7 +531,7 @@ class DDoS {
  async connect(target) {
   this.log(`Attempting to connect to ${target}...`);
   try {
-   const response = await fetch(`//connect?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/connect?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'GET'
    });
    const data = await response.json();
@@ -546,7 +545,7 @@ class DDoS {
  async bruteForce(target) {
   this.log(`Starting brute force attack on ${target}...`);
   try {
-   const response = await fetch(`//brute_force?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/brute_force?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -558,7 +557,7 @@ class DDoS {
  }
 
  async ddos(target) {
-  if (this.running) {
+  if (this.attackRunning) {
    this.log('DDoS attack already in progress. Stop before starting a new one.');
    return;
   }
@@ -570,7 +569,7 @@ class DDoS {
 
   this.log(`Initiating DDoS attack on ${target}...`);
   this.connectionStatus = 'Attacking';
-  this.running = true;
+  this.attackRunning = true;
   this.startButton.disabled = true;
   this.stopButton.disabled = false;
   this.attackStartTime = Date.now();
@@ -580,24 +579,22 @@ class DDoS {
   this.activeThreads = 0;
   this.target = target;
 
-  this.attackThreads = [];
-
   for (let i = 0; i < this.maxThreads; i++) {
    this.sendDDoSRequest(target);
   }
 
   this.attackTimeout = setTimeout(() => {
-   this.stop();
+   this.stopAttack();
    this.log('DDoS attack stopped automatically after 60 seconds.');
   }, 60000);
  }
 
  async sendDDoSRequest(target) {
-  if (!this.running) return;
+  if (!this.attackRunning) return;
 
   try {
    const proxy = this.isTorEnabled ? this.torProxy : this.proxyList.value;
-   const url = `//ddos?target=${encodeURIComponent(target)}&Key=${this.Key}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(proxy)}&rate=${this.requestRate}`;
+   const url = `/ddos?target=${encodeURIComponent(target)}&Key=${this.Key}&tor=${this.isTorEnabled}&proxy=${encodeURIComponent(proxy)}&rate=${this.requestRate}`;
    const response = await fetch(url, {
     method: 'POST'
    });
@@ -611,9 +608,9 @@ class DDoS {
   } catch (err) {
    this.handleAttackError('DDoS', target, err);
   } finally {
-   if (this.running) {
+   if (this.attackRunning) {
     setTimeout(() => this.sendDDoSRequest(target), 1000 / this.requestRate);
-    this.activeThreads = this.attackThreads.length;
+    this.activeThreads = this.maxThreads;
    }
   }
  }
@@ -621,7 +618,7 @@ class DDoS {
  async ransomware(target) {
   this.log(`Simulating ransomware attack on ${target}...`);
   try {
-   const response = await fetch(`//ransomware?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/ransomware?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -640,7 +637,7 @@ class DDoS {
     this.log('No custom code provided.');
     return;
    }
-   const response = await fetch(`//custom?target=${encodeURIComponent(target)}&code=${encodeURIComponent(customCode)}&Key=${this.Key}`, {
+   const response = await fetch(`/custom?target=${encodeURIComponent(target)}&code=${encodeURIComponent(customCode)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -654,7 +651,7 @@ class DDoS {
  async phishing(target) {
   this.log(`Initiating phishing attack targeting: ${target}...`);
   try {
-   const response = await fetch(`//phishing?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/phishing?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -668,7 +665,7 @@ class DDoS {
  async dataBreach(target) {
   this.log(`Simulating data breach on ${target}...`);
   try {
-   const response = await fetch(`//data_breach?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/data_breach?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -682,7 +679,7 @@ class DDoS {
  async botnet(target) {
   this.log(`Attempting to connect to target: ${target}...`);
   try {
-   const response = await fetch(`//botnet?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/botnet?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -696,7 +693,7 @@ class DDoS {
  async zero_day(target) {
   this.log(`Attempting zero-day exploit on ${target}...`);
   try {
-   const response = await fetch(`//zero_day?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/zero_day?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -710,7 +707,7 @@ class DDoS {
  async sql_inject(target) {
   this.log(`Attempting SQL injection on ${target}...`);
   try {
-   const response = await fetch(`//sql_inject?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/sql_inject?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -724,7 +721,7 @@ class DDoS {
  async xss(target) {
   this.log(`Attempting XSS attack on ${target}...`);
   try {
-   const response = await fetch(`//xss?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/xss?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -738,7 +735,7 @@ class DDoS {
  async port_scan(target) {
   this.log(`Starting port scan on ${target}...`);
   try {
-   const response = await fetch(`//port_scan?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/port_scan?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -752,7 +749,7 @@ class DDoS {
  async credential_stuffing(target) {
   this.log(`Starting credential stuffing attack on ${target}...`);
   try {
-   const response = await fetch(`//credential_stuffing?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/credential_stuffing?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -766,7 +763,7 @@ class DDoS {
  async network_scan(target) {
   this.log(`Starting network scan on ${target}...`);
   try {
-   const response = await fetch(`//network_scan?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/network_scan?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -780,7 +777,7 @@ class DDoS {
  async vuln_scan(target) {
   this.log(`Starting vulnerability scan on ${target}...`);
   try {
-   const response = await fetch(`//vuln_scan?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/vuln_scan?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -794,7 +791,7 @@ class DDoS {
  async reverse_shell(target) {
   this.log(`Attempting to establish a reverse shell on ${target}...`);
   try {
-   const response = await fetch(`//reverse_shell?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/reverse_shell?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -808,7 +805,7 @@ class DDoS {
  async dns_poisoning(target) {
   this.log(`Attempting DNS poisoning on ${target}...`);
   try {
-   const response = await fetch(`//dns_poisoning?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/dns_poisoning?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -822,7 +819,7 @@ class DDoS {
  async session_hijacking(target) {
   this.log(`Attempting session hijacking on ${target}...`);
   try {
-   const response = await fetch(`//session_hijacking?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
+   const response = await fetch(`/session_hijacking?target=${encodeURIComponent(target)}&Key=${this.Key}`, {
     method: 'POST'
    });
    const data = await response.json();
@@ -856,7 +853,7 @@ class DDoS {
   return key;
  }
 
- start() {
+ startAttack() {
   const target = this.targetInput.value;
   const attackType = this.attackTypeSelect.value;
 
@@ -872,8 +869,8 @@ class DDoS {
   }
  }
 
- stop() {
-  this.running = false;
+ stopAttack() {
+  this.attackRunning = false;
   this.connectionStatus = 'Stopping';
   this.log('Stopping attack...');
   this.startButton.disabled = false;
