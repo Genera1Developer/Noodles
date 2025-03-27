@@ -31,3 +31,12 @@
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        - name: Run security checks
+          run: |
+            npm install -g retire
+            retire --node --outputformat json > retire-results.json
+        - name: Upload RetireJS results
+          uses: actions/upload-artifact@v3
+          with:
+            name: retire-results
+            path: retire-results.json
