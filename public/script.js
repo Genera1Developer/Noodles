@@ -282,58 +282,76 @@ attackButton.addEventListener('click', async () => {
 // --- End Attack Functions ---
 
 // --- Feature Implementations ---
-defaceButton.addEventListener('click', async () => {
-    const defaceUrl = defaceUrlInput.value;
-    const defaceCode = defaceCodeInput.value;
+// Refactor event listeners to call a central function for API calls
+function handleApiCall(button, endpoint, dataFunction, successMessage, errorMessage) {
+    button.addEventListener('click', async () => {
+        const data = dataFunction();
+        if (!data) return; // Data validation failed
 
-    if (!defaceUrl || !defaceCode) {
-        alert('Please enter a deface URL and code. 💻');
-        return;
-    }
-
-    try {
-        const response = await genericApiCall('deface', { defaceUrl, defaceCode }, `Successfully defaced ${defaceUrl} 💀`, `Failed to deface ${defaceUrl}`);
-        if (response && response.newUrl) {
-            window.open(response.newUrl, '_blank');
+        try {
+            const response = await genericApiCall(endpoint, data, successMessage, errorMessage);
+            // Special handling for deface to open the new URL
+            if (endpoint === 'deface' && response && response.newUrl) {
+                window.open(response.newUrl, '_blank');
+            }
+            //Potentially handle other special cases here, such as displaying specific results
+        } catch (error) {
+            logMessage(`${endpoint} operation failed: ${error.message}`);
+            setStatus(`${endpoint} operation failed: ${error.message}`);
         }
-    } catch (error) {
-        logMessage(`Deface operation failed: ${error.message}`);
-        setStatus(`Deface operation failed: ${error.message}`);
-    }
-});
+    });
+}
 
-connectButton.addEventListener('click', async () => {
-    const connectUrl = connectUrlInput.value;
+// Usage for the deface button
+handleApiCall(
+    defaceButton,
+    'deface',
+    () => {
+        const defaceUrl = defaceUrlInput.value;
+        const defaceCode = defaceCodeInput.value;
+        if (!defaceUrl || !defaceCode) {
+            alert('Please enter a deface URL and code. 💻');
+            return null;
+        }
+        return { defaceUrl, defaceCode };
+    },
+    `Successfully defaced ${defaceUrlInput.value} 💀`,
+    `Failed to deface ${defaceUrlInput.value}`
+);
 
-    if (!connectUrl) {
-        alert('Please enter a URL to connect to. 💻');
-        return;
-    }
+// Usage for the connect button
+handleApiCall(
+    connectButton,
+    'connect',
+    () => {
+        const connectUrl = connectUrlInput.value;
+        if (!connectUrl) {
+            alert('Please enter a URL to connect to. 💻');
+            return null;
+        }
+        return { connectUrl };
+    },
+    `Successfully connected to ${connectUrlInput.value} 💻`,
+    `Failed to connect to ${connectUrlInput.value}`
+);
 
-    try {
-        const response = await genericApiCall('connect', { connectUrl }, `Successfully connected to ${connectUrl} 💻`, `Failed to connect to ${connectUrl}`);
-    } catch (error) {
-        logMessage(`Connect operation failed: ${error.message}`);
-        setStatus(`Connect operation failed: ${error.message}`);
-    }
-});
+// Usage for the ransomware button
+handleApiCall(
+    ransomwareButton,
+    'ransomware',
+    () => {
+        const ransomwareUrl = ransomwareUrlInput.value;
+        if (!ransomwareUrl) {
+            alert("Please enter a URL to send ransomware to. 💻");
+            return null;
+        }
+        return { ransomwareUrl };
+    },
+    `Successfully sent ransomware to ${ransomwareUrlInput.value} 💀`,
+    `Failed to send ransomware to ${ransomwareUrlInput.value}`
+);
 
-ransomwareButton.addEventListener('click', async () => {
-    const ransomwareUrl = ransomwareUrlInput.value;
-
-    if (!ransomwareUrl) {
-        alert("Please enter a URL to send ransomware to. 💻");
-        return;
-    }
-
-    try {
-        const response = await genericApiCall('ransomware', { ransomwareUrl }, `Successfully sent ransomware to ${ransomwareUrl} 💀`, `Failed to send ransomware to ${ransomwareUrl}`);
-    } catch (error) {
-        logMessage(`Ransomware operation failed: ${error.message}`);
-        setStatus(`Ransomware operation failed: ${error.message}`);
-    }
-});
-
+// GeoIP Button - Keeping existing structure because it's slightly different
 geoIpButton.addEventListener('click', async () => {
     const geoIpUrl = geoIpUrlInput.value;
 
@@ -370,39 +388,40 @@ geoIpButton.addEventListener('click', async () => {
     }
 });
 
-customAttackButton.addEventListener('click', async () => {
-    const targetUrl = targetUrlInput.value;
-    const customAttackCode = customAttackCodeInput.value;
+// Custom Attack Button
+handleApiCall(
+    customAttackButton,
+    'customAttack',
+    () => {
+        const targetUrl = targetUrlInput.value;
+        const customAttackCode = customAttackCodeInput.value;
+        if (!targetUrl || !customAttackCode) {
+            alert('Please enter a target URL and custom attack code. 💻');
+            return null;
+        }
+        return { targetUrl, customAttackCode };
+    },
+    `Successfully executed custom attack on ${targetUrlInput.value} 💥`,
+    `Failed to execute custom attack on ${targetUrlInput.value}`
+);
 
-    if (!targetUrl || !customAttackCode) {
-        alert('Please enter a target URL and custom attack code. 💻');
-        return;
-    }
+// Nuke Button
+handleApiCall(
+    nukeButton,
+    'nuke',
+    () => {
+        const targetUrl = nukeUrlInput.value;
+        if (!targetUrl) {
+            alert('Please enter a target URL to NUKE. 💻');
+            return null;
+        }
+        return { targetUrl };
+    },
+    `Successfully NUKED ${nukeUrlInput.value} 💀`,
+    `Failed to NUKE ${nukeUrlInput.value}`
+);
 
-    try {
-        const response = await genericApiCall('customAttack', { targetUrl, customAttackCode }, `Successfully executed custom attack on ${targetUrl} 💥`, `Failed to execute custom attack on ${targetUrl}`);
-    } catch (error) {
-        logMessage(`Custom attack operation failed: ${error.message}`);
-        setStatus(`Custom attack operation failed: ${error.message}`);
-    }
-});
-
-nukeButton.addEventListener('click', async () => {
-    const targetUrl = nukeUrlInput.value;
-
-    if (!targetUrl) {
-        alert('Please enter a target URL to NUKE. 💻');
-        return;
-    }
-
-    try {
-        const response = await genericApiCall('nuke', { targetUrl }, `Successfully NUKED ${targetUrl} 💀`, `Failed to NUKE ${targetUrl}`);
-    } catch (error) {
-        logMessage(`Nuke operation failed: ${error.message}`);
-        setStatus(`Nuke operation failed: ${error.message}`);
-    }
-});
-
+// IP Lookup Button - Keeping existing structure, different fetch
 ipLookupButton.addEventListener('click', async () => {
     const ipAddress = ipLookupInput.value;
 
@@ -439,70 +458,71 @@ ipLookupButton.addEventListener('click', async () => {
     }
 });
 
-sqlInjectionButton.addEventListener('click', async () => {
-    const sqlInjectionUrl = sqlInjectionUrlInput.value;
+// SQL Injection Button
+handleApiCall(
+    sqlInjectionButton,
+    'sqlInjection',
+    () => {
+        const sqlInjectionUrl = sqlInjectionUrlInput.value;
+        if (!sqlInjectionUrl) {
+            alert('Please enter a URL to attempt SQL injection on. 💻');
+            return null;
+        }
+        return { sqlInjectionUrl };
+    },
+    `Successfully attempted SQL injection on ${sqlInjectionUrlInput.value} 💥`,
+    `Failed to attempt SQL injection on ${sqlInjectionUrlInput.value}`
+);
 
-    if (!sqlInjectionUrl) {
-        alert('Please enter a URL to attempt SQL injection on. 💻');
-        return;
-    }
+// XSS Button
+handleApiCall(
+    xssButton,
+    'xss',
+    () => {
+        const xssUrl = xssUrlInput.value;
+        if (!xssUrl) {
+            alert('Please enter a URL to attempt XSS on. 💻');
+            return null;
+        }
+        return { xssUrl };
+    },
+    `Successfully attempted XSS on ${xssUrlInput.value} 💥`,
+    `Failed to attempt XSS on ${xssUrlInput.value}`
+);
 
-    try {
-        const response = await genericApiCall('sqlInjection', { sqlInjectionUrl }, `Successfully attempted SQL injection on ${sqlInjectionUrl} 💥`, `Failed to attempt SQL injection on ${sqlInjectionUrl}`);
-    } catch (error) {
-        logMessage(`SQL Injection operation failed: ${error.message}`);
-        setStatus(`SQL Injection operation failed: ${error.message}`);
-    }
-});
+// CSRF Button
+handleApiCall(
+    csrfButton,
+    'csrf',
+    () => {
+        const csrfUrl = csrfUrlInput.value;
+        if (!csrfUrl) {
+            alert('Please enter a URL to attempt CSRF on. 💻');
+            return null;
+        }
+        return { csrfUrl };
+    },
+    `Successfully attempted CSRF on ${csrfUrlInput.value} 💥`,
+    `Failed to attempt CSRF on ${csrfUrlInput.value}`
+);
 
-xssButton.addEventListener('click', async () => {
-    const xssUrl = xssUrlInput.value;
+// Reverse Shell Button
+handleApiCall(
+    reverseShellButton,
+    'reverseShell',
+    () => {
+        const reverseShellUrl = reverseShellUrlInput.value;
+        if (!reverseShellUrl) {
+            alert('Please enter a URL to attempt Reverse Shell on. 💻');
+            return null;
+        }
+        return { reverseShellUrl };
+    },
+    `Successfully attempted Reverse Shell on ${reverseShellUrlInput.value} 💥`,
+    `Failed to attempt Reverse Shell on ${reverseShellUrlInput.value}`
+);
 
-    if (!xssUrl) {
-        alert('Please enter a URL to attempt XSS on. 💻');
-        return;
-    }
-
-    try {
-        const response = await genericApiCall('xss', { xssUrl }, `Successfully attempted XSS on ${xssUrl} 💥`, `Failed to attempt XSS on ${xssUrl}`);
-    } catch (error) {
-        logMessage(`XSS operation failed: ${error.message}`);
-        setStatus(`XSS operation failed: ${error.message}`);
-    }
-});
-
-csrfButton.addEventListener('click', async () => {
-    const csrfUrl = csrfUrlInput.value;
-
-    if (!csrfUrl) {
-        alert('Please enter a URL to attempt CSRF on. 💻');
-        return;
-    }
-
-    try {
-        const response = await genericApiCall('csrf', { csrfUrl }, `Successfully attempted CSRF on ${csrfUrl} 💥`, `Failed to attempt CSRF on ${csrfUrl}`);
-    } catch (error) {
-        logMessage(`CSRF operation failed: ${error.message}`);
-        setStatus(`CSRF operation failed: ${error.message}`);
-    }
-});
-
-reverseShellButton.addEventListener('click', async () => {
-    const reverseShellUrl = reverseShellUrlInput.value;
-
-    if (!reverseShellUrl) {
-        alert('Please enter a URL to attempt Reverse Shell on. 💻');
-        return;
-    }
-
-    try {
-        const response = await genericApiCall('reverseShell', { reverseShellUrl }, `Successfully attempted Reverse Shell on ${reverseShellUrl} 💥`, `Failed to attempt Reverse Shell on ${reverseShellUrl}`);
-    } catch (error) {
-        logMessage(`Reverse Shell operation failed: ${error.message}`);
-        setStatus(`Reverse Shell operation failed: ${error.message}`);
-    }
-});
-
+// Port Scan Button - Keeping existing structure, different fetch
 portScanButton.addEventListener('click', async () => {
     const portScanUrl = portScanUrlInput.value;
 
@@ -539,38 +559,39 @@ portScanButton.addEventListener('click', async () => {
     }
 });
 
-socialEngineeringButton.addEventListener('click', async () => {
-    const target = socialEngineeringTargetInput.value;
+// Social Engineering Button
+handleApiCall(
+    socialEngineeringButton,
+    'socialEngineering',
+    () => {
+        const target = socialEngineeringTargetInput.value;
+        if (!target) {
+            alert('Please enter a target for social engineering. 💻');
+            return null;
+        }
+        return { target };
+    },
+    `Successfully initiated social engineering attack on ${socialEngineeringTargetInput.value} 😈`,
+    `Failed to initiate social engineering attack on ${socialEngineeringTargetInput.value}`
+);
 
-    if (!target) {
-        alert('Please enter a target for social engineering. 💻');
-        return;
-    }
+// Credential Stuffing Button
+handleApiCall(
+    credentialStuffingButton,
+    'credentialStuffing',
+    () => {
+        const credentialStuffingUrl = credentialStuffingUrlInput.value;
+        if (!credentialStuffingUrl) {
+            alert('Please enter a URL to attempt credential stuffing on. 💻');
+            return null;
+        }
+        return { credentialStuffingUrl };
+    },
+    `Successfully attempted credential stuffing on ${credentialStuffingUrlInput.value} 💥`,
+    `Failed to attempt credential stuffing on ${credentialStuffingUrlInput.value}`
+);
 
-    try {
-        const response = await genericApiCall('socialEngineering', { target }, `Successfully initiated social engineering attack on ${target} 😈`, `Failed to initiate social engineering attack on ${target}`);
-    } catch (error) {
-        logMessage(`Social Engineering operation failed: ${error.message}`);
-        setStatus(`Social Engineering operation failed: ${error.message}`);
-    }
-});
-
-credentialStuffingButton.addEventListener('click', async () => {
-    const credentialStuffingUrl = credentialStuffingUrlInput.value;
-
-    if (!credentialStuffingUrl) {
-        alert('Please enter a URL to attempt credential stuffing on. 💻');
-        return;
-    }
-
-    try {
-        const response = await genericApiCall('credentialStuffing', { credentialStuffingUrl }, `Successfully attempted credential stuffing on ${credentialStuffingUrl} 💥`, `Failed to attempt credential stuffing on ${credentialStuffingUrl}`);
-    } catch (error) {
-        logMessage(`Credential Stuffing operation failed: ${error.message}`);
-        setStatus(`Credential Stuffing operation failed: ${error.message}`);
-    }
-});
-
+// Data Breach Search Button - Keeping existing structure, different fetch
 dataBreachSearchButton.addEventListener('click', async () => {
     const searchTerm = dataBreachSearchInput.value;
 
@@ -607,6 +628,7 @@ dataBreachSearchButton.addEventListener('click', async () => {
     }
 });
 
+// Dark Web Scan Button - Keeping existing structure, different fetch
 darkWebScanButton.addEventListener('click', async () => {
     const searchTerm = darkWebScanInput.value;
 
@@ -643,6 +665,7 @@ darkWebScanButton.addEventListener('click', async () => {
     }
 });
 
+// Vulnerability Scan Button - Keeping existing structure, different fetch
 vulnerabilityScanButton.addEventListener('click', async () => {
     const vulnerabilityScanUrl = vulnerabilityScanUrlInput.value;
 
