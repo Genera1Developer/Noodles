@@ -3,69 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles 😈</title>
+    <title>Noodles 🍜</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
         <div class="sidebar">
+            <h1>Noodles 🍜</h1>
             <button data-tab="ddos">DDoS 💥</button>
             <button data-tab="defacement">Defacement 💀</button>
             <button data-tab="connection">Connection 💻</button>
-            <button data-tab="credential">Credential 💣</button>
-            <button data-tab="other">Other 🔥</button>
+            <button data-tab="credential">Credential Stuffing 💣</button>
             <button data-tab="about">About Us ⚠</button>
         </div>
-        <div class="main-content">
-            <section id="ddos" class="tab-content">
+        <div class="content">
+            <div id="ddos" class="tab-content active">
                 <h2>DDoS Attacks 💥</h2>
-                <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                <label for="ddos-target">Target URL:</label>
+                <input type="text" id="ddos-target" placeholder="Enter URL or .onion address">
+                <label for="ddos-type">Attack Type:</label>
                 <select id="ddos-type">
-                    <option value="http">HTTP Flood</option>
+                    <option value="http_flood">HTTP Flood</option>
                     <option value="tcp">TCP Flood</option>
                     <option value="udp">UDP Flood</option>
                     <option value="slowloris">Slowloris</option>
                 </select>
-                <button id="ddos-start">Start DDoS Attack</button>
+                <button id="start-ddos">Start DDoS Attack 🔥</button>
                 <div class="stats">
-                    <p>MBPS: <span id="ddos-mbps">0</span></p>
-                    <p>Packets Sent: <span id="ddos-packets">0</span></p>
-                    <p>Target Status: <span id="ddos-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="ddos-time">0</span>s</p>
+                    <p>MBPS: <span id="mbps">0</span></p>
+                    <p>Packets Sent: <span id="packets-sent">0</span></p>
+                    <p>Status: <span id="target-status">Unknown</span></p>
+                    <p>Time Elapsed: <span id="time-elapsed">0</span> seconds</p>
                 </div>
-            </section>
-            <section id="defacement" class="tab-content" style="display:none;">
-                <h2>Website Defacement 💀</h2>
-                <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
+            </div>
+
+            <div id="defacement" class="tab-content">
+                <h2>Defacement Tools 💀</h2>
+                <label for="defacement-target">Target URL:</label>
+                <input type="text" id="defacement-target" placeholder="Enter URL">
+                <label for="defacement-type">Defacement Type:</label>
                 <select id="defacement-type">
                     <option value="image">Image Replacement</option>
                     <option value="text">Text Modification</option>
                     <option value="html">HTML Injection</option>
                 </select>
-                <button id="defacement-start">Start Defacement</button>
-            </section>
-            <section id="connection" class="tab-content" style="display:none;">
-                <h2>Unauthorized Connection 💻</h2>
-                <input type="text" id="connection-target" placeholder="Target URL or .onion address">
+                <button id="start-defacement">Start Defacement</button>
+            </div>
+
+            <div id="connection" class="tab-content">
+                <h2>Connection Tools 💻</h2>
+                <label for="connection-target">Target URL/IP:</label>
+                <input type="text" id="connection-target" placeholder="Enter URL or IP address">
+                <label for="connection-type">Connection Type:</label>
                 <select id="connection-type">
-                    <option value="portscan">Port Scanning</option>
+                    <option value="portscan">Port Scan</option>
                     <option value="bannergrab">Banner Grabbing</option>
                 </select>
-                <button id="connection-start">Start Connection</button>
-            </section>
-             <section id="credential" class="tab-content" style="display:none;">
+                <button id="start-connection">Start Connection</button>
+            </div>
+
+           <div id="credential" class="tab-content">
                 <h2>Credential Stuffing 💣</h2>
-                <input type="text" id="credential-target" placeholder="Target URL">
-                <button id="credential-start">Start Credential Stuffing</button>
-            </section>
-            <section id="other" class="tab-content" style="display:none;">
-                <h2>Other Hacking Tools 🔥</h2>
-                <p>Coming soon...😈</p>
-            </section>
-            <section id="about" class="tab-content" style="display:none;">
+                <label for="credential-target">Target URL:</label>
+                <input type="text" id="credential-target" placeholder="Enter URL">
+                <label for="credential-username-list">Username List URL:</label>
+                <input type="text" id="credential-username-list" placeholder="Enter URL to username list">
+                <label for="credential-password-list">Password List URL:</label>
+                <input type="text" id="credential-password-list" placeholder="Enter URL to password list">
+                <button id="start-credential">Start Credential Stuffing</button>
+            </div>
+
+            <div id="about" class="tab-content">
                 <h2>About Us ⚠</h2>
-                <p>Noodles is a cutting-edge penetration testing tool designed for assessing the security vulnerabilities of web applications. Our mission is to empower security professionals with the tools they need to identify and mitigate potential threats. Use responsibly. Or don't. 😉</p>
-            </section>
+                <p>Noodles is a cutting-edge penetration testing suite designed for advanced security analysis and network vulnerability assessments. We provide tools for simulating real-world attack scenarios to help organizations identify and mitigate potential weaknesses. Use responsibly. 🍜</p>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>
