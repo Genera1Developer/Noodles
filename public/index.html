@@ -3,62 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles</title>
+    <title>Noodles - Hacking Web Application</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
     <div class="container">
-        <div class="sidebar">
-            <button class="tab-button" data-tab="ddos">DDoS</button>
-            <button class="tab-button" data-tab="defacement">Defacement</button>
-            <button class="tab-button" data-tab="connection">Connection</button>
-            <button class="tab-button" data-tab="credential">Credential Stuffing</button>
-            <button class="tab-button" data-tab="about">About Us</button>
+
+        <div class="side-panel">
+            <button data-tab="ddos">DDoS</button>
+            <button data-tab="defacement">Defacement</button>
+            <button data-tab="connection">Connection</button>
+            <button data-tab="credential">Credential</button>
+            <button data-tab="about">About Us</button>
         </div>
 
         <div class="main-content">
-            <div id="ddos" class="tab-content">
+
+            <div id="ddos" class="tab-content active">
                 <h2>DDoS Attack</h2>
-                <input type="text" id="ddos-target" placeholder="Target URL">
-                <button onclick="startDDoS()">Start DDoS Attack</button>
-                <div class="status-box">
-                    <p>MBPS: <span id="ddos-mbps">0</span></p>
-                    <p>Packets Sent: <span id="ddos-packets">0</span></p>
-                    <p>Status: <span id="ddos-status">Idle</span></p>
-                    <p>Time Elapsed: <span id="ddos-time">0</span> seconds</p>
+                <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                <button id="ddos-start">Start DDoS Attack</button>
+                <div class="stats">
+                    <p>MBPS: <span id="mbps">0</span></p>
+                    <p>Packets Sent: <span id="packets-sent">0</span></p>
+                    <p>Target Status: <span id="target-status">Unknown</span></p>
+                    <p>Elapsed Time: <span id="elapsed-time">0</span></p>
                 </div>
             </div>
 
-            <div id="defacement" class="tab-content" style="display:none;">
+            <div id="defacement" class="tab-content">
                 <h2>Website Defacement</h2>
-                <input type="text" id="defacement-target" placeholder="Target URL">
-                <input type="text" id="defacement-message" placeholder="Defacement Message">
-                <button onclick="startDefacement()">Start Defacement</button>
-                <div class="status-box">Status: <span id="defacement-status">Idle</span></div>
+                <input type="text" id="defacement-target" placeholder="Target URL or .onion address">
+                <textarea id="defacement-content" placeholder="Defacement HTML Content"></textarea>
+                <button id="defacement-start">Start Defacement</button>
             </div>
 
-            <div id="connection" class="tab-content" style="display:none;">
-                <h2>Establish Connection</h2>
-                <input type="text" id="connection-target" placeholder="Target URL">
-                <button onclick="startConnection()">Start Connection</button>
-                <div class="status-box">Status: <span id="connection-status">Idle</span></div>
+            <div id="connection" class="tab-content">
+                <h2>Connection</h2>
+                <input type="text" id="connection-target" placeholder="Target IP or .onion address">
+                <input type="number" id="connection-port" placeholder="Port">
+                <button id="connection-start">Start Connection</button>
             </div>
 
-            <div id="credential" class="tab-content" style="display:none;">
+            <div id="credential" class="tab-content">
                 <h2>Credential Stuffing</h2>
-                <input type="text" id="credential-target" placeholder="Target URL">
-                <input type="text" id="credential-username-list" placeholder="Username List URL">
-                <input type="text" id="credential-password-list" placeholder="Password List URL">
-                <button onclick="startCredentialStuffing()">Start Credential Stuffing</button>
-                <div class="status-box">Status: <span id="credential-status">Idle</span></div>
+                <input type="text" id="credential-target" placeholder="Target URL or .onion address">
+                <textarea id="credential-usernames" placeholder="Usernames (one per line)"></textarea>
+                <textarea id="credential-passwords" placeholder="Passwords (one per line)"></textarea>
+                <button id="credential-start">Start Credential Stuffing</button>
             </div>
 
-            <div id="about" class="tab-content" style="display:none;">
+            <div id="about" class="tab-content">
                 <h2>About Noodles</h2>
-                <p>Noodles is a powerful web application for penetration testing and security analysis.</p>
+                <p>Noodles is a powerful web application for penetration testing and security analysis. Use responsibly.</p>
             </div>
+
         </div>
+
     </div>
+
     <script src="script.js"></script>
 </body>
 </html>
