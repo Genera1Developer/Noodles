@@ -66,19 +66,19 @@ app.post('/api/ddos', async (req, res) => {
             case 'http':
                 scriptPath = path.join(ddosDir, 'http_flood.js');
                 if (!fs.existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'HTTP Flood script not found' });
+                    fs.writeFileSync(scriptPath, 'console.log("HTTP Flood script placeholder"); process.exit(1);');
                 }
                 break;
             case 'tcp':
                 scriptPath = path.join(ddosDir, 'tcp_flood.js');
                 if (!fs.existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'TCP Flood script not found' });
+                    fs.writeFileSync(scriptPath, 'console.log("TCP Flood script placeholder"); process.exit(1);');
                 }
                 break;
             case 'udp':
                 scriptPath = path.join(ddosDir, 'udp_flood.js');
                 if (!fs.existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'UDP Flood script not found' });
+                    fs.writeFileSync(scriptPath, 'console.log("UDP Flood script placeholder"); process.exit(1);');
                 }
                 break;
             default:
@@ -110,7 +110,7 @@ app.post('/api/defacement', async (req, res) => {
         const scriptPath = path.join(defacementDir, 'deface.js');
 
         if (!fs.existsSync(scriptPath)) {
-            return res.status(500).send({ status: 'Deface script not found' });
+             fs.writeFileSync(scriptPath, 'console.log("Deface script placeholder"); process.exit(1);');
         }
 
         const args = [target, action, content];
@@ -139,13 +139,13 @@ app.post('/api/connection', async (req, res) => {
             case 'portscan':
                 scriptPath = path.join(connectionDir, 'port_scan.js');
                  if (!fs.existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'Port Scan script not found' });
+                     fs.writeFileSync(scriptPath, 'console.log("Port Scan script placeholder"); process.exit(1);');
                 }
                 break;
             case 'bannergrab':
                 scriptPath = path.join(connectionDir, 'banner_grab.js');
                  if (!fs.existsSync(scriptPath)) {
-                    return res.status(500).send({ status: 'Banner Grab script not found' });
+                     fs.writeFileSync(scriptPath, 'console.log("Banner Grab script placeholder"); process.exit(1);');
                 }
                 break;
             default:
