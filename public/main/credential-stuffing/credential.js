@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         passwords: passwords
       };
 
-      fetch('/main/credential-stuffing/stuff', {
+      fetch('/credential-stuffing/stuff', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
