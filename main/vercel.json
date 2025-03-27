@@ -4,9 +4,41 @@
     {
       "src": "public/index.html",
       "use": "@vercel/static"
+    },
+    {
+      "src": "public/api/ddos.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/api/defacement.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/api/connection.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "public/api/credential.js",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
+    {
+      "src": "/api/ddos",
+      "dest": "/public/api/ddos.js"
+    },
+    {
+      "src": "/api/defacement",
+      "dest": "/public/api/defacement.js"
+    },
+    {
+      "src": "/api/connection",
+      "dest": "/public/api/connection.js"
+    },
+    {
+      "src": "/api/credential",
+      "dest": "/public/api/credential.js"
+    },
     {
       "src": "/(.*)",
       "dest": "/public/$1"
