@@ -19,7 +19,7 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
     const proxyOptions = {
       protocol: parsedProxy.protocol,
       hostname: parsedProxy.hostname,
-      port: parseInt(parsedProxy.port, 10), // Ensure port is a number
+      port: parseInt(parsedProxy.port, 10),
       userId: parsedProxy.username,
       password: parsedProxy.password,
     };
@@ -35,19 +35,20 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
 
     const options = {
       hostname: parsedTarget.hostname,
-      port: parseInt(parsedTarget.port, 10) || (parsedTarget.protocol === 'https:' ? 443 : 80), // Ensure port is a number
+      port: parseInt(parsedTarget.port, 10) || (parsedTarget.protocol === 'https:' ? 443 : 80),
       path: parsedTarget.pathname + parsedTarget.search,
       method: 'GET',
-      headers: { ...defaultHeaders, ...requestOptions.headers }, // Merge default headers with request-specific headers, allowing overrides
-      ...requestOptions, // Allow other request options to be passed through (e.g., timeout, followRedirects)
+      headers: { ...defaultHeaders, ...requestOptions.headers },
+      ...requestOptions,
     };
 
     let agent = null;
     if (parsedProxy.protocol.startsWith('socks')) {
       agent = new SocksProxyAgent(proxyUrl);
-    } else if (parsedProxy.protocol.startsWith('http')) {
+    } else {
       agent = new http.Agent(proxyOptions);
     }
+
     options.agent = agent;
 
     const protocol = parsedTarget.protocol === 'https:' ? https : http;
@@ -66,7 +67,8 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
             data,
           });
         });
-        res.on('error', (error) => {  // Handle errors on the response stream
+
+        res.on('error', (error) => {
           reject(error);
         });
       });
@@ -83,7 +85,7 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
     });
 
   } catch (error) {
-    console.error('Proxy Connection Error:', error); // Include the full error object
+    console.error('Proxy Connection Error:', error);
     throw error;
   }
 }
