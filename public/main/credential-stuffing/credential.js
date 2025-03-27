@@ -10,7 +10,7 @@ async function tryLogin(username, password, attemptLogin) {
     const result = await attemptLogin(username, password);
     return result;
   } catch (error) {
-    console.error(`Login failed for user ${username}:`, error.message || error); // Log more details and include username
+    console.error(`Login failed for user ${username}:`, error);
     return false;
   }
 }
@@ -25,39 +25,29 @@ async function tryLogin(username, password, attemptLogin) {
  */
 async function credentialStuffingAttack(credentials, attemptLogin, onCredentialAttempted, delay = 0) {
   let success = false;
-  let successfulUsername = null;
-
   for (const credential of credentials) {
     const { username, password } = credential;
 
     if (delay > 0) {
-      await new Promise(resolve => setTimeout(resolve, delay)); // Introduce delay
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
 
-    const result = await tryLogin(username, password, attemptLogin);
+    try {
+      const result = await tryLogin(username, password, attemptLogin);
 
-    if (result) {
-      success = true;
-      successfulUsername = username;
-      console.log(`Success: ${username}, ${password}`);
-      break; // Stop after first successful login
-    } else {
-      console.log(`Failed: ${username}, ${password}`);
-    }
-
-    if (onCredentialAttempted) {
-      try {
-        onCredentialAttempted(username, password, result);
-      } catch (error) {
-        console.error("Error in onCredentialAttempted callback:", error); // Handle errors in the callback
+      if (result) {
+        success = true;
+        console.log(`Success: ${username}, ${password}`);
+      } else {
+        console.log(`Failed: ${username}, ${password}`);
       }
-    }
-  }
 
-  if(success) {
-      console.log(`Credential stuffing attack successful. User "${successfulUsername}" logged in.`);
-  } else {
-      console.log("Credential stuffing attack failed. No successful logins.");
+      if (onCredentialAttempted) {
+        onCredentialAttempted(username, password, result);
+      }
+    } catch (error) {
+      console.error("Error during login attempt:", error);
+    }
   }
 
   return success;
