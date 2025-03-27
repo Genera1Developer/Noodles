@@ -1,98 +1,135 @@
 body {
-    font-family: monospace;
-    background-color: #121212;
-    color: #f0f0f0;
+    font-family: 'Arial', sans-serif;
+    background-color: #1E293B;
+    color: #CBD5E1;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    line-height: 1.6;
 }
 
 .container {
     display: flex;
-    width: 90%;
-    max-width: 1200px;
-    background-color: #212121;
-    border-radius: 8px;
+    width: 95%;
+    max-width: 1400px;
+    background-color: #334155;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
 }
 
 .side-panel {
-    width: 200px;
-    background-color: #303030;
-    padding: 20px;
+    width: 250px;
+    background-color: #1E293B;
+    padding: 30px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    border-right: 2px solid #475569;
 }
 
 .side-panel h1 {
-    color: #00ff00;
-    margin-bottom: 20px;
+    color: #A3E635;
+    margin-bottom: 30px;
     text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
 }
 
 .side-panel nav {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    gap: 10px;
 }
 
 .side-panel button {
-    background-color: #424242;
-    color: #f0f0f0;
+    background-color: #475569;
+    color: #CBD5E1;
     border: none;
-    padding: 10px 15px;
+    padding: 12px 20px;
     text-align: left;
     text-decoration: none;
-    margin: 5px 0;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    width: 100%;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    font-size: 1rem;
+    font-weight: 500;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .side-panel button:hover {
-    background-color: #00ff00;
-    color: #212121;
+    background-color: #A3E635;
+    color: #1E293B;
+}
+
+.side-panel button.active {
+    background-color: #A3E635;
+    color: #1E293B;
+    font-weight: 700;
 }
 
 .main-content {
     flex: 1;
-    padding: 20px;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
 }
 
 .tab-content {
     display: none;
+    flex-grow: 1;
 }
 
 .tab-content.active {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.tab-content h2 {
+    color: #A3E635;
+    font-size: 1.75rem;
+    margin-bottom: 15px;
 }
 
 input[type="url"],
-textarea {
+textarea,
+input[type="number"] {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    background-color: #424242;
-    color: #f0f0f0;
+    padding: 12px;
+    margin: 8px 0;
+    background-color: #475569;
+    color: #CBD5E1;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     resize: vertical;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+input[type="url"]:focus,
+textarea:focus,
+input[type="number"]:focus {
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.5);
 }
 
 button {
-    background-color: #007bff;
-    color: #f0f0f0;
+    background-color: #007BFF;
+    color: #CBD5E1;
     border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
+    padding: 12px 20px;
+    border-radius: 6px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 1.1rem;
+    font-weight: 600;
+    outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 button:hover {
@@ -100,14 +137,22 @@ button:hover {
 }
 
 .stats {
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #303030;
-    border-radius: 4px;
+    margin-top: 25px;
+    padding: 20px;
+    background-color: #334155;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+.stats h3 {
+    color: #A3E635;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
 }
 
 .stats p {
-    margin: 5px 0;
+    margin: 8px 0;
+    font-size: 1.1rem;
 }
 
 /* Responsive Design */
@@ -118,5 +163,141 @@ button:hover {
 
     .side-panel {
         width: 100%;
+        border-right: none;
+        border-bottom: 2px solid #475569;
     }
+
+    .side-panel h1 {
+        font-size: 1.75rem;
+        margin-bottom: 20px;
+    }
+
+    .side-panel nav {
+        gap: 8px;
+    }
+
+    .side-panel button {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    .tab-content h2 {
+        font-size: 1.5rem;
+    }
+
+    .stats {
+        margin-top: 20px;
+        padding: 15px;
+    }
+
+    .stats h3 {
+        font-size: 1.3rem;
+    }
+
+    .stats p {
+        font-size: 1rem;
+    }
+}
+
+/* Dark Mode Toggle (Optional) */
+.dark-mode {
+    background-color: #000;
+    color: #fff;
+}
+
+/* Form Styles */
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #94A3B8;
+    font-size: 1rem;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    background-color: #475569;
+    color: #CBD5E1;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+select:focus {
+    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.5);
+}
+
+
+/*About Us*/
+.about-us-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.about-us-content h2 {
+    color: #A3E635;
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.about-us-content p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    margin-bottom: 30px;
+    color: #CBD5E1;
+    padding: 0 20px;
+}
+
+.about-us-content ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 30px;
+}
+
+.about-us-content li {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #CBD5E1;
+}
+
+.about-us-content a {
+    color: #007BFF;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.about-us-content a:hover {
+    color: #0056b3;
+}
+
+/*Stats Display*/
+.stats-display {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #334155;
+    border-radius: 8px;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
+}
+
+.stats-display h3 {
+    color: #A3E635;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.stats-display p {
+    margin: 8px 0;
+    font-size: 1.1rem;
+    color: #CBD5E1;
+    text-align: center;
 }
