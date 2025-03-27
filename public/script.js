@@ -1,86 +1,96 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const targetInput = document.getElementById('targetInput');
-  const attackTypeSelect = document.getElementById('attackType');
-  const attackButton = document.getElementById('attackButton');
-  const statusDisplay = document.getElementById('statusDisplay');
-  const mbpsDisplay = document.getElementById('mbps');
-  const packetsSentDisplay = document.getElementById('packetsSent');
-  const connectionStatusDisplay = document.getElementById('connectionStatus');
-  const timeElapsedDisplay = document.getElementById('timeElapsed');
-  const tabs = document.querySelectorAll('.tab-button');
-  const tabContents = document.querySelectorAll('.tab-content');
+    const targetInput = document.getElementById('targetInput');
+    const attackTypeSelect = document.getElementById('attackType');
+    const attackButton = document.getElementById('attackButton');
+    const statusDisplay = document.getElementById('statusDisplay');
+    const mbpsDisplay = document.getElementById('mbps');
+    const packetsSentDisplay = document.getElementById('packetsSent');
+    const targetStatusDisplay = document.getElementById('targetStatus');
+    const timeElapsedDisplay = document.getElementById('timeElapsed');
+    const tabs = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
 
-  let attackStartTime;
-  let packetsSent = 0;
-
-  function updateStatus(message) {
-    statusDisplay.textContent = message;
-  }
-
-  function updateStatistics(mbps, packets, connection, time) {
-    mbpsDisplay.textContent = `MBPS: ${mbps}`;
-    packetsSentDisplay.textContent = `Packets Sent: ${packets}`;
-    connectionStatusDisplay.textContent = `Connection: ${connection}`;
-    timeElapsedDisplay.textContent = `Time: ${time}`;
-  }
-
-  function startAttack(target, attackType) {
-    attackStartTime = Date.now();
-    packetsSent = 0;
-    updateStatus(`Starting ${attackType} attack on ${target}...`);
-    
-    const intervalId = setInterval(() => {
-      const timeElapsed = (Date.now() - attackStartTime) / 1000;
-      updateStatistics('N/A', packetsSent, 'Online', `${timeElapsed.toFixed(2)}s`);
-    }, 1000);
-
-    fetch('/main/attack', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ target: target, attackType: attackType })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === 'success') {
-        updateStatus(`${attackType} attack launched successfully.`);
-        packetsSent = data.packetsSent || 0;
-
-      } else {
-        updateStatus(`Attack failed: ${data.message}`);
-      }
-    })
-    .catch(error => {
-      updateStatus(`Error launching attack: ${error}`);
-    })
-    .finally(() => {
-      clearInterval(intervalId);
-    });
-  }
-
-  attackButton.addEventListener('click', () => {
-    const target = targetInput.value;
-    const attackType = attackTypeSelect.value;
-
-    if (!target) {
-      updateStatus('Please enter a target URL or .onion address.');
-      return;
+    // Theme Toggle (Optional)
+    const themeToggle = document.getElementById('themeToggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+        });
     }
 
-    startAttack(target, attackType);
-  });
+    // Tab functionality
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Deactivate all tabs and hide all content
+            tabs.forEach(t => t.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.remove('active'));
-      tabContents.forEach(content => content.classList.remove('active'));
-
-      tab.classList.add('active');
-      const tabId = tab.getAttribute('data-tab');
-      document.getElementById(tabId).classList.add('active');
+            // Activate the clicked tab and show corresponding content
+            tab.classList.add('active');
+            const targetId = tab.getAttribute('data-tab');
+            document.getElementById(targetId).classList.add('active');
+        });
     });
-  });
 
-  updateStatistics('0', '0', 'Idle', '0s');
+    // Set default active tab (e.g., DDoS)
+    if (tabs.length > 0 && tabContents.length > 0) {
+        tabs[0].classList.add('active');
+        tabContents[0].classList.add('active');
+    }
+
+    attackButton.addEventListener('click', async () => {
+        const target = targetInput.value;
+        const attackType = attackTypeSelect.value;
+
+        if (!target) {
+            statusDisplay.textContent = 'Target is required.';
+            return;
+        }
+
+        statusDisplay.textContent = `Initiating ${attackType} attack on ${target}...`;
+
+        try {
+            const response = await fetch(`/main/attack`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ target: target, attackType: attackType })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                statusDisplay.textContent = data.message;
+                startStatsUpdates(target); // Start updating statistics
+
+            } else {
+                statusDisplay.textContent = `Attack failed: ${data.error || 'Unknown error'}`;
+            }
+        } catch (error) {
+            statusDisplay.textContent = `Error initiating attack: ${error.message}`;
+        }
+    });
+
+    // Statistics update function
+    async function updateStats(target) {
+        try {
+            const response = await fetch(`/main/stats?target=${target}`);
+            const data = await response.json();
+
+            mbpsDisplay.textContent = `MBPS: ${data.mbps || 0}`;
+            packetsSentDisplay.textContent = `Packets Sent: ${data.packetsSent || 0}`;
+            targetStatusDisplay.textContent = `Target Status: ${data.targetStatus || 'Unknown'}`;
+            timeElapsedDisplay.textContent = `Time Elapsed: ${data.timeElapsed || 0}s`;
+        } catch (error) {
+            console.error("Error fetching stats:", error);
+        }
+    }
+
+    // Start updating stats every second
+    function startStatsUpdates(target) {
+        setInterval(() => {
+            updateStats(target);
+        }, 1000);
+    }
 });
