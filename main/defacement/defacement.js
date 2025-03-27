@@ -1,23 +1,3 @@
-// ==UserScript==
-// @name Noodles - Webpage Domination Tool 💥💀💻💣🔥⚠
-// @namespace http://noodles.local/
-// @version 1.337.75
-// @description Own any webpage. Deface, redirect, inject. Advanced config, remote control.
-// @author TheBlackHatNoRemorse | Edited By Noodles Automatic - Enhanced by yours truly
-// @match *://*/*
-// @grant GM_setValue
-// @grant GM_getValue
-// @grant GM_addStyle
-// @grant GM_deleteValue
-// @grant GM_registerMenuCommand
-// @grant GM_xmlhttpRequest
-// @grant GM_openInTab
-// @run-at document-start
-// @connect ipinfo.io
-// @connect noodles.local
-// @require https://cdnjs.cloudflare.com/ajax/libs/uuid/8.3.2/uuidv4.min.js
-// ==/UserScript==
-
 (function() {
     'use strict';
 
