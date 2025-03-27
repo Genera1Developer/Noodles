@@ -1,17 +1,9 @@
-// public/main/defacement/defacement.js
-
-/**
- * This script provides basic defacement functionality.
- * It can be extended to implement more sophisticated features.
- */
-
 (function() {
-  // Configuration options (can be overridden in other scripts)
   var config = {
-    targetSelector: 'body', // The element to deface (default: the entire body)
-    replacementText: 'This website has been defaced!', // The text to replace the content with
-    backgroundColor: '#ff0000', // Background color
-    textColor: '#ffffff', // Text color
+    targetSelector: 'body',
+    replacementText: 'This website has been defaced!',
+    backgroundColor: '#ff0000',
+    textColor: '#ffffff',
     fontFamily: 'Arial, sans-serif',
     fontSize: '36px',
     fontWeight: 'bold',
@@ -19,10 +11,9 @@
     padding: '20px',
     animationDuration: '2s',
     animationName: 'defacementAnimation',
-    animationIterationCount: 'infinite' // Added iteration count as config
+    animationIterationCount: 'infinite'
   };
 
-  // Apply defacement styles to the target element
   function deface() {
     var target = document.querySelector(config.targetSelector);
 
@@ -31,14 +22,11 @@
       return;
     }
 
-    // Clear existing content
     target.innerHTML = '';
 
-    // Create a new element to display the defacement message
     var defacementMessage = document.createElement('div');
     defacementMessage.textContent = config.replacementText;
 
-    // Apply styles
     Object.assign(defacementMessage.style, {
       backgroundColor: config.backgroundColor,
       color: config.textColor,
@@ -52,15 +40,13 @@
       animationIterationCount: config.animationIterationCount
     });
 
-    // Append the message to the target element
     target.appendChild(defacementMessage);
 
-    // Add a CSS animation (optional)
     const styleSheetId = 'defacement-animation-style';
     if (!document.getElementById(styleSheetId)) {
       var styleSheet = document.createElement("style");
       styleSheet.type = "text/css";
-      styleSheet.id = styleSheetId; // Add ID to avoid duplicate styles
+      styleSheet.id = styleSheetId;
       styleSheet.innerText = `
         @keyframes ${config.animationName} {
           0%   { transform: rotate(0deg); }
@@ -69,11 +55,8 @@
       `;
       document.head.appendChild(styleSheet);
     }
-
-
   }
 
-  // Initialize the defacement
-  deface();
+  document.addEventListener('DOMContentLoaded', deface);
 
 })();
