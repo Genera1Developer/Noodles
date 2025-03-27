@@ -1,89 +1,81 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const targetInput = document.getElementById('target');
-  const portInput = document.getElementById('port');
-  const threadsInput = document.getElementById('threads');
-  const durationInput = document.getElementById('duration');
-  const attackSelect = document.getElementById('attackType');
-  const startButton = document.getElementById('startAttack');
-  const statusDisplay = document.getElementById('status');
+  const targetInput = document.getElementById('targetUrl');
+  const attackTypeSelect = document.getElementById('attackType');
+  const attackButton = document.getElementById('attackButton');
   const mbpsDisplay = document.getElementById('mbps');
   const packetsSentDisplay = document.getElementById('packetsSent');
   const connectionStatusDisplay = document.getElementById('connectionStatus');
   const timeElapsedDisplay = document.getElementById('timeElapsed');
+  const tabs = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
 
-  let attackStartTime;
-  let packetsSent = 0;
+  function updateStats(data) {
+    mbpsDisplay.textContent = data.mbps || '0';
+    packetsSentDisplay.textContent = data.packetsSent || '0';
+    connectionStatusDisplay.textContent = data.connectionStatus || 'Unknown';
+    timeElapsedDisplay.textContent = data.timeElapsed || '0';
+  }
 
-  const updateStatus = (message) => {
-    statusDisplay.textContent = message;
-  };
-
-  const updateStats = (mbps, packets, connectionStatus, timeElapsed) => {
-    mbpsDisplay.textContent = `MBPS: ${mbps}`;
-    packetsSentDisplay.textContent = `Packets Sent: ${packets}`;
-    connectionStatusDisplay.textContent = `Connection: ${connectionStatus}`;
-    timeElapsedDisplay.textContent = `Time: ${timeElapsed}`;
-  };
-
-  const startAttack = async () => {
-    const target = targetInput.value;
-    const port = parseInt(portInput.value);
-    const threads = parseInt(threadsInput.value);
-    const duration = parseInt(durationInput.value);
-    const attackType = attackSelect.value;
-
-    if (!target) {
-      updateStatus('Error: Target is required.');
-      return;
-    }
-
-    attackStartTime = Date.now();
-    packetsSent = 0;
-    updateStats(0, 0, 'Starting...', 0);
-
-    const statusCallback = (data) => {
-      if (data.status === 'packet_sent') {
-        packetsSent = data.packets;
-        const timeElapsed = (Date.now() - attackStartTime) / 1000;
-        const mbps = (packetsSent * 1000) / timeElapsed / 1000000;
-        updateStats(mbps.toFixed(2), packetsSent, 'Attacking', timeElapsed.toFixed(2));
-      } else if (data.status === 'thread_connected') {
-        updateStatus(`Thread ${data.thread} connected.`);
-      } else if (data.status === 'thread_error' || data.status === 'socket_error') {
-        updateStatus(`Error: ${data.error}`);
-      } else if (data.status === 'flood_stopped') {
-        const timeElapsed = (Date.now() - attackStartTime) / 1000;
-        updateStatus(`Attack stopped. Total packets sent: ${data.packets}`);
-        updateStats(0, data.packets, 'Stopped', timeElapsed.toFixed(2));
-      } else if (data.status === 'starting') {
-        updateStatus('Attack starting...');
-      }
-    };
-
+  async function performAttack(target, attackType) {
     try {
-      const response = await fetch('/main/attack', {
+      const response = await fetch(`/main/attack`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ target, port, threads, duration, attackType }),
+        body: JSON.stringify({ target, attackType }),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        updateStatus(`Attack failed: ${errorData.error}`);
-        updateStats(0, 0, 'Failed', 0);
-        return;
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      updateStatus('Attack initiated...');
+      const reader = response.body.getReader();
 
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+
+        const textDecoder = new TextDecoder();
+        const textChunk = textDecoder.decode(value);
+        const lines = textChunk.split('\n');
+
+        lines.forEach(line => {
+          if (line) {
+            try {
+              const data = JSON.parse(line);
+              updateStats(data);
+            } catch (error) {
+              console.error('Error parsing JSON:', error, line);
+            }
+          }
+        });
+      }
+
+      console.log('Attack completed.');
     } catch (error) {
-      console.error('Error:', error);
-      updateStatus(`Attack failed: ${error.message}`);
-      updateStats(0, 0, 'Failed', 0);
+      console.error('Attack failed:', error);
+      connectionStatusDisplay.textContent = 'Error';
     }
-  };
+  }
 
-  startButton.addEventListener('click', startAttack);
+  attackButton.addEventListener('click', () => {
+    const target = targetInput.value;
+    const attackType = attackTypeSelect.value;
+    performAttack(target, attackType);
+  });
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContents.forEach(c => c.classList.remove('active'));
+
+      tab.classList.add('active');
+      const tabId = tab.getAttribute('data-tab');
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
 });
