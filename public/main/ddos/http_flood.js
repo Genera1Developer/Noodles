@@ -1,4 +1,3 @@
-|
 async function httpFlood(target, duration, intensity, updateStatsCallback) {
   let packetsSent = 0;
   let targetStatus = 'Online';
@@ -74,7 +73,6 @@ async function httpFlood(target, duration, intensity, updateStatsCallback) {
       await Promise.all(promises);
       await new Promise(resolve => setTimeout(resolve, interval));
 
-      // Update stats periodically
       const elapsedTime = (Date.now() - startTime) / 1000;
       const currentMbps = (mbps * 8) / elapsedTime;
 
@@ -94,12 +92,12 @@ async function httpFlood(target, duration, intensity, updateStatsCallback) {
     clearTimeout(timeoutId);
     controller.abort();
     const elapsedTime = (Date.now() - startTime) / 1000;
-    mbps = (mbps * 8) / elapsedTime;
+    const currentMbps = (mbps * 8) / elapsedTime;
     if (updateStatsCallback) {
       updateStatsCallback({
         packetsSent: packetsSent,
         targetStatus: targetStatus,
-        mbps: mbps.toFixed(2),
+        mbps: currentMbps.toFixed(2),
         elapsedTime: elapsedTime.toFixed(2)
       });
     }
