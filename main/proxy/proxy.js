@@ -2,7 +2,16 @@ const https = require('https');
 const http = require('http');
 const SocksProxyAgent = require('socks-proxy-agent');
 
-async function connectViaProxy(targetUrl, proxyUrl) {
+/**
+ * Connects to a target URL via a proxy server.
+ *
+ * @param {string} targetUrl The URL to connect to.
+ * @param {string} proxyUrl The URL of the proxy server.
+ * @param {object} [requestOptions] Optional request options to override default ones.
+ * @returns {Promise<object>} A promise that resolves with the response data, headers, and status code, or rejects with an error.
+ * @throws {Error} If there is an error during the proxy connection.
+ */
+async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
   try {
     const parsedTarget = new URL(targetUrl);
     const parsedProxy = new URL(proxyUrl);
@@ -10,31 +19,36 @@ async function connectViaProxy(targetUrl, proxyUrl) {
     const proxyOptions = {
       protocol: parsedProxy.protocol,
       hostname: parsedProxy.hostname,
-      port: parsedProxy.port,
+      port: parseInt(parsedProxy.port, 10), // Ensure port is a number
       userId: parsedProxy.username,
-      password: parsedProxy.password
+      password: parsedProxy.password,
+    };
+
+    const defaultHeaders = {
+      'User-Agent': 'Noodles/1.6.6',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.5',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1',
     };
 
     const options = {
       hostname: parsedTarget.hostname,
-      port: parsedTarget.port || (parsedTarget.protocol === 'https:' ? 443 : 80),
+      port: parseInt(parsedTarget.port, 10) || (parsedTarget.protocol === 'https:' ? 443 : 80), // Ensure port is a number
       path: parsedTarget.pathname + parsedTarget.search,
       method: 'GET',
-      headers: {
-        'User-Agent': 'Noodles/1.6.6',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Connection': 'keep-alive',
-        'Upgrade-Insecure-Requests': '1',
-      },
+      headers: { ...defaultHeaders, ...requestOptions.headers }, // Merge default headers with request-specific headers, allowing overrides
+      ...requestOptions, // Allow other request options to be passed through (e.g., timeout, followRedirects)
     };
 
+    let agent = null;
     if (parsedProxy.protocol.startsWith('socks')) {
-      options.agent = new SocksProxyAgent(proxyUrl);
+      agent = new SocksProxyAgent(proxyUrl);
     } else if (parsedProxy.protocol.startsWith('http')) {
-      options.agent = new http.Agent(proxyOptions);
+      agent = new http.Agent(proxyOptions);
     }
+    options.agent = agent;
 
     const protocol = parsedTarget.protocol === 'https:' ? https : http;
 
@@ -52,6 +66,9 @@ async function connectViaProxy(targetUrl, proxyUrl) {
             data,
           });
         });
+        res.on('error', (error) => {  // Handle errors on the response stream
+          reject(error);
+        });
       });
 
       req.on('error', (error) => {
@@ -66,7 +83,7 @@ async function connectViaProxy(targetUrl, proxyUrl) {
     });
 
   } catch (error) {
-    console.error('Proxy Connection Error:', error.message);
+    console.error('Proxy Connection Error:', error); // Include the full error object
     throw error;
   }
 }
