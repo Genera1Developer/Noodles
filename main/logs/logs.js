@@ -15,7 +15,7 @@ class Logger {
     constructor() {
         this.logEntries = [];
         this.maxLogSize = 200;
-        this.logFilePath = '/public/noodles.log';
+        this.logFilePath = './noodles.log';
         this.stats = {
             packetsSent: 0,
             bytesSent: 0,
@@ -628,7 +628,6 @@ class Logger {
 
     setDefacementScript(script) {
         this.stats.defacementScript = script;
-        this.displayStats();
     }
 
     setRansomwareDetails(details) {
