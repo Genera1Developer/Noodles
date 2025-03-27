@@ -1,5 +1,5 @@
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: monospace;
     background-color: #121212;
     color: #f0f0f0;
     margin: 0;
@@ -7,244 +7,150 @@ body {
     overflow: hidden;
 }
 
-#main-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #1e1e1e;
-    border: 1px solid #333;
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.side-panel {
+    width: 200px;
+    background-color: #222;
+    color: #ddd;
     padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+    z-index: 100;
+}
+
+.side-panel button {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    margin-bottom: 10px;
+    background-color: #333;
+    color: #eee;
+    border: none;
+    text-align: left;
+    padding-left: 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.side-panel button:hover {
+    background-color: #555;
+}
+
+.side-panel button.active {
+    background-color: #00FA9A;
+    color: #121212;
+}
+
+.content-area {
+    flex-grow: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.attack-panel {
+    background-color: #333;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    width: 600px;
-    max-width: 90%;
-    resize: both;
-    overflow: auto;
+    padding: 20px;
+    margin-bottom: 20px;
 }
 
-.noodle-container * {
-    box-sizing: border-box;
+.attack-panel h2 {
+    color: #00FA9A;
+    margin-top: 0;
 }
 
-.noodle-label {
+.attack-panel label {
     display: block;
     margin-bottom: 5px;
     color: #ddd;
 }
 
-.noodle-input,
-.noodle-button,
-.noodle-log,
-.noodle-slider {
+.attack-panel input[type="text"],
+.attack-panel input[type="number"],
+.attack-panel select,
+.attack-panel textarea {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
-    border-radius: 4px;
-    border: 1px solid #444;
-    background-color: #252525;
-    color: #eee;
-    font-size: 14px;
-}
-
-.noodle-input:focus {
-    outline: none;
-    border-color: #5fa2dd;
-    box-shadow: 0 0 5px rgba(95, 162, 221, 0.5);
-}
-
-.noodle-button {
-    background-color: #304d63;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.noodle-button:hover {
-    background-color: #5fa2dd;
-}
-
-.noodle-button:disabled {
+    border: 1px solid #555;
     background-color: #444;
-    cursor: not-allowed;
+    color: #eee;
+    border-radius: 4px;
 }
 
-.noodle-log {
-    height: 150px;
-    overflow-y: auto;
-    font-family: monospace;
-    font-size: 12px;
-    resize: vertical;
-}
-
-.noodle-slider-container {
-    margin-bottom: 10px;
-}
-
-.noodle-slider {
-    -webkit-appearance: none;
-    height: 10px;
-    background: #333;
-    outline: none;
-    opacity: 0.7;
-    -webkit-transition: .2s;
-    transition: opacity .2s;
-    border-radius: 5px;
-}
-
-.noodle-slider:hover {
-    opacity: 1;
-}
-
-.noodle-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 15px;
-    height: 15px;
-    background: #5fa2dd;
-    cursor: pointer;
-    border-radius: 50%;
-}
-
-.noodle-slider::-moz-range-thumb {
-    width: 15px;
-    height: 15px;
-    background: #5fa2dd;
-    cursor: pointer;
-    border-radius: 50%;
+.attack-panel button {
+    background-color: #00FA9A;
+    color: #121212;
+    padding: 10px 15px;
     border: none;
-}
-
-.noodle-slider-value {
-    color: #bbb;
-    margin-left: 10px;
-}
-
-.noodle-stats {
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #333;
     border-radius: 4px;
-    background-color: #252525;
-    color: #eee;
-    font-size: 14px;
-}
-
-.noodle-stats p {
-    margin: 5px 0;
-}
-
-.noodle-dark-theme {
-    background-color: #121212;
-    color: #f0f0f0;
-}
-
-.noodle-dark-theme .noodle-input,
-.noodle-dark-theme .noodle-button,
-.noodle-dark-theme .noodle-log {
-    background-color: #252525;
-    color: #eee;
-    border-color: #444;
-}
-
-.noodle-dark-theme .noodle-button {
-    background-color: #304d63;
-}
-
-.noodle-dark-theme .noodle-button:hover {
-    background-color: #5fa2dd;
-}
-
-.noodle-side-panel {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 200px;
-    height: 100%;
-    background-color: #1e1e1e;
-    border-right: 1px solid #333;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    z-index: 1000;
-}
-
-.noodle-menu-item {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    background-color: #252525;
-    color: #eee;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    text-align: center;
 }
 
-.noodle-menu-item:hover {
+.attack-panel button:hover {
+    background-color: #00FF7F;
+}
+
+.stats-display {
+    background-color: #2a2a2a;
+    color: #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.stats-display h3 {
+    color: #00FA9A;
+    margin-top: 0;
+}
+
+.stats-display p {
+    margin-bottom: 8px;
+}
+
+.about-us {
     background-color: #333;
-}
-
-.noodle-about-us {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #1e1e1e;
-    border: 1px solid #333;
+    color: #eee;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    width: 500px;
-    max-width: 80%;
-    z-index: 1001;
-    display: none;
-    color: #f0f0f0;
 }
 
-.noodle-about-us h2 {
-    color: #eee;
-    margin-bottom: 15px;
+.about-us h2 {
+    color: #00FA9A;
 }
 
-.noodle-about-us p {
-    margin-bottom: 10px;
-    line-height: 1.4;
+.about-us p {
+    line-height: 1.6;
 }
 
-.noodle-drag-handle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    background: rgba(0, 0, 0, 0.2);
-    cursor: move;
-    border-radius: 8px 8px 0 0;
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-.noodle-resize-handle {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 20px;
-    height: 20px;
-    background: rgba(0, 0, 0, 0.2);
-    cursor: nwse-resize;
-    border-radius: 0 0 8px 0;
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
 }
 
-.noodle-tor-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.noodle-tor-container label {
-    margin-right: 10px;
-}
-
-.noodle-custom-code {
-    height: 100px;
-    font-family: monospace;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .side-panel {
+        width: 100%;
+        box-shadow: none;
+        border-bottom: 1px solid #444;
+    }
+    .content-area {
+        padding: 10px;
+    }
+    .attack-panel, .stats-display, .about-us {
+        padding: 15px;
+    }
 }
