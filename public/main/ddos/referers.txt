@@ -74,3 +74,4 @@ http://www.owl.cat/plugins/system/plugin_googlemap2/plugin_googlemap2_proxy.php?
 http://www.sizzlebistro.com/plugins/system/plugin_googlemap2/plugin_googlemap2_proxy.php?url=
 http://thebluepine.com/plugins/system/plugin_googlemap2_proxy.php?url=
 http://donellis.ie/plugins/system/plugin_googlemap2/plugin_googlemap2_proxy.php?url=
+data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7
