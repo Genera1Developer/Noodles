@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.tab-button');
     const tabContent = document.querySelectorAll('.tab-content');
 
-    // Function to handle tab switching
     function openTab(tabName) {
         tabContent.forEach(content => {
             content.style.display = 'none';
@@ -18,17 +17,19 @@ document.addEventListener('DOMContentLoaded', () => {
             tab.classList.remove('active');
         });
         document.getElementById(tabName).style.display = 'block';
-        event.target.classList.add('active');
+        tabs.forEach(tab => {
+            if (tab.dataset.tab === tabName) {
+                tab.classList.add('active');
+            }
+        });
     }
 
-    // Attach click event listeners to tabs
     tabs.forEach(tab => {
         tab.addEventListener('click', (event) => {
             openTab(event.target.dataset.tab);
         });
     });
 
-    // Show the first tab by default
     openTab('DDoS');
 
     attackButton.addEventListener('click', async () => {
@@ -41,10 +42,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         let startTime;
+        let attackInterval;
 
         async function updateStats() {
             try {
-                const response = await fetch('/main/api/stats');
+                const response = await fetch('./main/api/stats');
+                if (!response.ok) {
+                    console.error('Error fetching stats:', response.status);
+                    clearInterval(attackInterval);
+                    connectionStatusDisplay.textContent = 'Error';
+                    return;
+                }
                 const data = await response.json();
 
                 mbpsDisplay.textContent = data.mbps;
@@ -57,11 +65,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
             } catch (error) {
                 console.error('Error fetching stats:', error);
+                clearInterval(attackInterval);
+                connectionStatusDisplay.textContent = 'Error';
             }
         }
 
         try {
-            const response = await fetch('/main/api/attack', {
+            const response = await fetch('./main/api/attack', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -74,15 +84,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (response.ok) {
                 startTime = Date.now();
-                setInterval(updateStats, 1000);
+                connectionStatusDisplay.textContent = 'Attacking';
+                attackInterval = setInterval(updateStats, 1000);
                 alert('Attack started successfully!');
             } else {
                 const errorData = await response.json();
                 alert(`Attack failed: ${errorData.error}`);
+                connectionStatusDisplay.textContent = 'Failed';
             }
         } catch (error) {
             console.error('Error starting attack:', error);
             alert('Failed to start attack. Check console for details.');
+            connectionStatusDisplay.textContent = 'Failed';
         }
     });
 });
