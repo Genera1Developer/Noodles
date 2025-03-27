@@ -2,10 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
-      "use": "@vercel/node@latest"
-    },
-    {
       "src": "public/index.html",
       "use": "@vercel/static"
     }
@@ -20,7 +16,7 @@
     "public/main/hello.js": { "memory": 128, "maxDuration": 5 }
   },
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/public/main/$1" },
-    { "source": "/(.*)", "destination": "/public/index.html" }
+    { "source": "/api/(.*)", "destination": "/main/$1" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
