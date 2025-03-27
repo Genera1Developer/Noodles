@@ -1,11 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connection Tools 💻</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -93,6 +97,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="connection-container">
         <h1>Connection Tools 💻</h1>
@@ -123,5 +128,68 @@
         </div>
     </div>
     <script src="script.js"></script>
+    <script>
+        document.getElementById('port-scan-button').addEventListener('click', function () {
+            var target = document.getElementById('port-scan-target').value;
+            var ports = document.getElementById('port-scan-ports').value;
+            fetch('/main/port_scan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ target: target, ports: ports })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('port-scan-results').innerText = JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('port-scan-results').innerText = 'Error: ' + error;
+                });
+        });
+
+        document.getElementById('banner-grab-button').addEventListener('click', function () {
+            var target = document.getElementById('banner-grab-target').value;
+            var port = document.getElementById('banner-grab-port').value;
+            fetch('/main/banner_grab', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ target: target, port: port })
+            })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('banner-grab-results').innerText = data;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('banner-grab-results').innerText = 'Error: ' + error;
+                });
+        });
+
+        document.getElementById('send-payload-button').addEventListener('click', function () {
+            var payload = document.getElementById('custom-payload').value;
+            var target = document.getElementById('payload-target').value;
+            var port = document.getElementById('payload-port').value;
+            fetch('/main/send_payload', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ payload: payload, target: target, port: port })
+            })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('payload-results').innerText = data;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('payload-results').innerText = 'Error: ' + error;
+                });
+        });
+    </script>
 </body>
+
 </html>
