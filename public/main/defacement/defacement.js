@@ -1,7 +1,7 @@
 (function() {
   var config = {
     targetSelector: 'body',
-    replacementText: 'This website has been defaced!',
+    replacementText: 'Noodles Are Here',
     backgroundColor: '#ff0000',
     textColor: '#ffffff',
     fontFamily: 'Arial, sans-serif',
