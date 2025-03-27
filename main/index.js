@@ -1,6 +1,7 @@
 const ddosAttack = require('./ddos/ddos');
-const defaceSite = require('./deface/deface');
-const connectionEstablish = require('./connection/connection');
+const defaceSite = require('./defacement/defacement');
+const connectionEstablish = require('./proxy/proxy');
+const credentialStuffing = require('./credentials/credentials');
 
 const attackStatistics = {
     mbps: 0,
@@ -73,8 +74,9 @@ const executeAttack = async (target, attackType, options) => {
         let attackModule;
         switch (attackType) {
             case 'ddos': attackModule = ddosAttack; break;
-            case 'deface': attackModule = defaceSite; break;
+            case 'defacement': attackModule = defaceSite; break;
             case 'connection': attackModule = connectionEstablish; break;
+            case 'credential': attackModule = credentialStuffing; break;
             default: throw new Error('Invalid attack type');
         }
 
