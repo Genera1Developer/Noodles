@@ -2,6 +2,7 @@
     --grey: #333333;
     --dark-grey: #222222;
     --dark-blue: #283593;
+    --dark-dark-green: #1B5E20;
     --dark-green: #388E3C;
     --bg-primary: var(--dark-grey);
     --bg-secondary: var(--grey);
@@ -245,4 +246,13 @@ footer {
 form {
     display: flex;
     flex-direction: column;
+}
+
+.attack-in-progress {
+    background-color: var(--dark-dark-green);
+    color: var(--text-primary);
+    padding: 10px;
+    border-radius: 5px;
+    margin-top: 10px;
+    text-align: center;
 }
