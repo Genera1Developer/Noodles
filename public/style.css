@@ -1,160 +1,250 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #1E1E1E; /* Dark Grey */
-    color: #EEEEEE; /* Light Grey */
+    background-color: #121212;
+    color: #f0f0f0;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Ensure full height */
+    overflow: hidden;
 }
 
-.container {
-    display: flex;
-    flex: 1;
-}
-
-.side-panel {
-    width: 250px; /* Wider side panel */
-    background-color: #2D2D2D; /* Darker Grey */
-    color: #EEEEEE;
+#main-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1e1e1e;
+    border: 1px solid #333;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid #333333;
-    box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    width: 600px;
+    max-width: 90%;
+    resize: both;
+    overflow: auto;
 }
 
-.side-panel button {
-    background-color: #3D3D3D; /* Slightly lighter grey */
-    color: #EEEEEE;
-    border: none;
-    padding: 12px 18px; /* Slightly larger buttons */
-    margin-bottom: 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease; /* Smooth transition */
-}
-
-.side-panel button:hover {
-    background-color: #555555; /* Even lighter grey on hover */
-    transform: scale(1.05); /* Slight scale up on hover */
-}
-
-.content {
-    flex: 1;
-    padding: 25px; /* Increased padding */
-    overflow-y: auto;
-    background-color: #252525; /* Dark background for content */
-    box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.2); /* Inner shadow */
-}
-
-.attack-form {
-    background-color: #333333; /* Darker form background */
-    padding: 25px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-}
-
-.attack-form label {
-    display: block;
-    margin-bottom: 8px;
-    color: #BDBDBD;
-    font-weight: bold; /* Make labels bolder */
-}
-
-.attack-form input[type="text"],
-.attack-form select {
-    margin-bottom: 20px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #555555;
-    background-color: #444444;
-    color: #EEEEEE;
-    width: calc(100% - 22px); /* Account for padding and border */
+.noodle-container * {
     box-sizing: border-box;
-    transition: border-color 0.3s ease;
 }
 
-.attack-form input[type="text"]:focus,
-.attack-form select:focus {
-    border-color: #4CAF50; /* Green border on focus */
-    outline: none; /* Remove default focus outline */
+.noodle-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #ddd;
 }
 
-.attack-form button {
-    background-color: #4CAF50; /* Green button */
+.noodle-input,
+.noodle-button,
+.noodle-log,
+.noodle-slider {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background-color: #252525;
+    color: #eee;
+    font-size: 14px;
+}
+
+.noodle-input:focus {
+    outline: none;
+    border-color: #5fa2dd;
+    box-shadow: 0 0 5px rgba(95, 162, 221, 0.5);
+}
+
+.noodle-button {
+    background-color: #304d63;
     color: white;
     border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.1s ease;
-    width: 100%;
-    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
-.attack-form button:hover {
-    background-color: #388E3C; /* Darker green on hover */
-    transform: scale(1.02); /* Slight scale up on hover */
+.noodle-button:hover {
+    background-color: #5fa2dd;
 }
 
-.stats-display {
-    background-color: #333333; /* Dark stats background */
+.noodle-button:disabled {
+    background-color: #444;
+    cursor: not-allowed;
+}
+
+.noodle-log {
+    height: 150px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 12px;
+    resize: vertical;
+}
+
+.noodle-slider-container {
+    margin-bottom: 10px;
+}
+
+.noodle-slider {
+    -webkit-appearance: none;
+    height: 10px;
+    background: #333;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+    border-radius: 5px;
+}
+
+.noodle-slider:hover {
+    opacity: 1;
+}
+
+.noodle-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background: #5fa2dd;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.noodle-slider::-moz-range-thumb {
+    width: 15px;
+    height: 15px;
+    background: #5fa2dd;
+    cursor: pointer;
+    border-radius: 50%;
+    border: none;
+}
+
+.noodle-slider-value {
+    color: #bbb;
+    margin-left: 10px;
+}
+
+.noodle-stats {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    background-color: #252525;
+    color: #eee;
+    font-size: 14px;
+}
+
+.noodle-stats p {
+    margin: 5px 0;
+}
+
+.noodle-dark-theme {
+    background-color: #121212;
+    color: #f0f0f0;
+}
+
+.noodle-dark-theme .noodle-input,
+.noodle-dark-theme .noodle-button,
+.noodle-dark-theme .noodle-log {
+    background-color: #252525;
+    color: #eee;
+    border-color: #444;
+}
+
+.noodle-dark-theme .noodle-button {
+    background-color: #304d63;
+}
+
+.noodle-dark-theme .noodle-button:hover {
+    background-color: #5fa2dd;
+}
+
+.noodle-side-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100%;
+    background-color: #1e1e1e;
+    border-right: 1px solid #333;
     padding: 20px;
-    border-radius: 10px;
-    margin-bottom: 25px;
-    color: #EEEEEE;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
 }
 
-.stats-display h3 {
-    color: #BDBDBD;
-    margin-top: 0;
-    margin-bottom: 15px;
-    font-size: 1.4em; /* Slightly larger heading */
-}
-
-.stats-display p {
-    margin-bottom: 12px;
-    font-size: 1.1em;
-}
-
-#mbps, #packets, #status, #time {
-    margin-bottom: 12px;
-}
-
-footer {
-    background-color: #1E1E1E; /* Dark grey footer */
-    color: #BDBDBD;
+.noodle-menu-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    background-color: #252525;
+    color: #eee;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
     text-align: center;
-    padding: 15px;
-    border-top: 1px solid #333333;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
+.noodle-menu-item:hover {
+    background-color: #333;
+}
 
-    .side-panel {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #333333;
-        box-shadow: none; /* Remove shadow on mobile */
-    }
+.noodle-about-us {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #1e1e1e;
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    width: 500px;
+    max-width: 80%;
+    z-index: 1001;
+    display: none;
+    color: #f0f0f0;
+}
 
-    .content {
-        padding: 15px;
-    }
+.noodle-about-us h2 {
+    color: #eee;
+    margin-bottom: 15px;
+}
 
-    .attack-form {
-        padding: 15px;
-    }
+.noodle-about-us p {
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
 
-    .stats-display {
-        padding: 15px;
-    }
+.noodle-drag-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    cursor: move;
+    border-radius: 8px 8px 0 0;
+}
+
+.noodle-resize-handle {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 20px;
+    height: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    cursor: nwse-resize;
+    border-radius: 0 0 8px 0;
+}
+
+.noodle-tor-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.noodle-tor-container label {
+    margin-right: 10px;
+}
+
+.noodle-custom-code {
+    height: 100px;
+    font-family: monospace;
 }
