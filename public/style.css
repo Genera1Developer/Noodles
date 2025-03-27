@@ -6,6 +6,7 @@ body {
     background-color: #282c34; /* Dark Grey */
     color: #abb2bf; /* Grey */
     overflow-x: hidden;
+    font-size: 14px; /* Base font size for better responsiveness */
 }
 
 .container {
@@ -15,9 +16,9 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-    width: 220px;
+    width: 200px; /* Adjusted width for better compactness */
     background-color: #3e4451; /* Dark Blue-Grey */
-    padding: 20px;
+    padding: 15px; /* Adjusted padding for compactness */
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3);
     z-index: 100;
     flex-shrink: 0; /* Prevent shrinking */
@@ -25,11 +26,11 @@ body {
 
 .sidebar-header {
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Adjusted margin */
 }
 
 .sidebar-header h1 {
-    font-size: 1.5em;
+    font-size: 1.3em; /* Adjusted font size */
     color: #61af69; /* Dark Green */
     margin: 0;
 }
@@ -41,13 +42,13 @@ body {
 }
 
 .nav li {
-    margin-bottom: 10px;
+    margin-bottom: 8px; /* Adjusted margin */
 }
 
 .nav li button {
     display: block;
     width: 100%;
-    padding: 10px;
+    padding: 8px; /* Adjusted padding */
     background-color: #44475a; /* Dark Blue-Grey */
     color: #fff;
     border: none;
@@ -55,6 +56,7 @@ body {
     text-align: left;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 0.9em; /* Adjusted font size */
 }
 
 .nav li button:hover,
@@ -66,7 +68,7 @@ body {
 /* Content Styles */
 .content {
     flex-grow: 1;
-    padding: 20px;
+    padding: 15px; /* Adjusted padding */
     overflow-y: auto;
     background-color: #282c34; /* Dark Grey */
 }
@@ -87,13 +89,14 @@ body {
 
 /* Input Styles */
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 12px; /* Adjusted margin */
 }
 
 .input-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 3px; /* Adjusted margin */
     color: #61af69; /* Dark Green */
+    font-size: 0.9em; /* Adjusted font size */
 }
 
 .input-group input[type="text"],
@@ -101,12 +104,13 @@ body {
 .input-group select,
 .input-group textarea {
     width: 100%;
-    padding: 8px;
+    padding: 6px; /* Adjusted padding */
     border: 1px solid #555;
     border-radius: 4px;
     background-color: #3e4451; /* Dark Blue-Grey */
     color: #abb2bf; /* Grey */
     box-sizing: border-box;
+    font-size: 1em; /* Adjusted font size */
 }
 
 .input-group textarea {
@@ -116,13 +120,14 @@ body {
 
 /* Button Styles */
 button {
-    padding: 10px 20px;
+    padding: 8px 16px; /* Adjusted padding */
     background-color: #44475a; /* Dark Blue-Grey */
     color: #fff;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    font-size: 0.9em; /* Adjusted font size */
 }
 
 button:hover {
@@ -134,8 +139,8 @@ button:hover {
 .status-box,
 .log-box,
 .stats-box {
-    margin-top: 20px;
-    padding: 15px;
+    margin-top: 15px; /* Adjusted margin */
+    padding: 10px; /* Adjusted padding */
     background-color: #3e4451; /* Dark Blue-Grey */
     border-radius: 5px;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
@@ -146,24 +151,26 @@ button:hover {
 .stats-box h3 {
     margin-top: 0;
     color: #61af69; /* Dark Green */
-    margin-bottom: 10px;
+    margin-bottom: 8px; /* Adjusted margin */
+    font-size: 1em; /* Adjusted font size */
 }
 
 .status-box p,
 .stats-box p {
-    margin: 5px 0;
+    margin: 3px 0; /* Adjusted margin */
 }
 
 .log-box textarea {
     width: 100%;
-    height: 150px;
-    padding: 8px;
+    height: 120px; /* Adjusted height */
+    padding: 6px; /* Adjusted padding */
     border: 1px solid #555;
     border-radius: 4px;
     background-color: #3e4451; /* Dark Blue-Grey */
     color: #abb2bf; /* Grey */
     box-sizing: border-box;
     resize: vertical;
+    font-size: 1em; /* Adjusted font size */
 }
 
 /* Utility Classes */
@@ -184,14 +191,11 @@ button:hover {
     .sidebar {
         width: 100%;
         box-shadow: none;
+        padding: 10px;
     }
 
     .content {
         padding: 10px;
-    }
-
-    .sidebar {
-        position: static;
     }
 }
 
@@ -199,63 +203,4 @@ button:hover {
 ::-webkit-scrollbar {
     width: 0;
     background: transparent;
-}
-
-/* Additional Styles for Compactness and Resizability */
-body,
-input,
-button,
-textarea,
-select {
-    font-size: 14px;
-}
-
-.sidebar {
-    width: 200px;
-    padding: 15px;
-}
-
-.sidebar-header h1 {
-    font-size: 1.3em;
-}
-
-.nav li button {
-    padding: 8px;
-    font-size: 0.9em;
-}
-
-.content {
-    padding: 15px;
-}
-
-.input-group label {
-    font-size: 0.9em;
-}
-
-.input-group input[type="text"],
-.input-group input[type="number"],
-.input-group select,
-.input-group textarea {
-    padding: 6px;
-}
-
-button {
-    padding: 8px 16px;
-    font-size: 0.9em;
-}
-
-.status-box,
-.log-box,
-.stats-box {
-    padding: 10px;
-}
-
-.status-box h3,
-.log-box h3,
-.stats-box h3 {
-    font-size: 1em;
-}
-
-.log-box textarea {
-    height: 120px;
 }
