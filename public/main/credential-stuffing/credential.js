@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
 
-      // Basic error handling for URL format
       try {
           new URL(targetUrl);
       } catch (_) {
@@ -35,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         passwords: passwords
       };
 
-      fetch('/credential-stuffing/stuff', {
+      fetch('/main/credential-stuffing/stuff', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
