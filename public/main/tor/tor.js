@@ -79,7 +79,7 @@ class Tor {
         this.gatewayCheckEnabled = true;
         this.isCheckingGateways = false;
         this.gatewayCheckTimeout = 5000;
-        this.checkGatewayOnFailure = true; // New option to check gateway immediately after a request failure
+        this.checkGatewayOnFailure = true;
     }
 
     async initServerInfo() {
@@ -305,7 +305,7 @@ class Tor {
                 this.errorCount++;
 
                 if (this.checkGatewayOnFailure) {
-                    await this.isGatewayOnline(gateway); // Immediately check the gateway
+                    await this.isGatewayOnline(gateway);
                 }
 
                 if (this.errorCount > this.errorThreshold) {
@@ -335,7 +335,7 @@ class Tor {
             this.errorCount++;
 
             if (this.checkGatewayOnFailure) {
-                await this.isGatewayOnline(gateway); // Immediately check the gateway
+                await this.isGatewayOnline(gateway);
             }
 
             if (this.errorCount > this.errorThreshold) {
