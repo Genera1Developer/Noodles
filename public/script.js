@@ -9,14 +9,25 @@ document.addEventListener('DOMContentLoaded', () => {
   const tabButtons = document.querySelectorAll('.tab-button');
   const tabContents = document.querySelectorAll('.tab-content');
 
+  let attackRunning = false; // Flag to prevent multiple attacks
+
   function updateStats(data) {
-    mbpsDisplay.textContent = data.mbps || 'N/A';
-    packetsSentDisplay.textContent = data.packetsSent || 'N/A';
-    connectionStatusDisplay.textContent = data.status || 'N/A';
-    timeElapsedDisplay.textContent = data.timeElapsed || 'N/A';
+    mbpsDisplay.textContent = data.mbps !== undefined ? data.mbps : 'N/A';
+    packetsSentDisplay.textContent = data.packetsSent !== undefined ? data.packetsSent : 'N/A';
+    connectionStatusDisplay.textContent = data.status || 'Idle';
+    timeElapsedDisplay.textContent = data.timeElapsed !== undefined ? data.timeElapsed : 'N/A';
   }
 
   async function executeAttack(target, type) {
+    if (attackRunning) {
+      console.warn("Attack already in progress.");
+      return;
+    }
+
+    attackRunning = true;
+    attackButton.disabled = true; // Disable the button during the attack
+    connectionStatusDisplay.textContent = 'Connecting...'; // Initial status
+
     try {
       const response = await fetch(`/main/attack`, {
         method: 'POST',
@@ -31,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       const reader = response.body.getReader();
-      let partialData = '';
+      const decoder = new TextDecoder();
+      let buffer = '';
 
       while (true) {
         const { done, value } = await reader.read();
@@ -40,28 +52,45 @@ document.addEventListener('DOMContentLoaded', () => {
           break;
         }
 
-        partialData += new TextDecoder().decode(value);
+        buffer += decoder.decode(value);
 
-        try {
-          const fullJson = JSON.parse(partialData);
-          updateStats(fullJson);
-          partialData = '';
-        } catch (e) {
-          if (!(e instanceof SyntaxError)) {
-            console.error("Error parsing JSON:", e);
-          }
+        // Process the buffer, looking for complete JSON objects
+        let boundary = buffer.indexOf('\n'); // Assuming newline separation
+        while (boundary !== -1) {
+            const jsonString = buffer.substring(0, boundary);
+            buffer = buffer.substring(boundary + 1);
+
+            try {
+                const data = JSON.parse(jsonString);
+                updateStats(data);
+            } catch (e) {
+                console.error("Error parsing JSON:", e, "String:", jsonString);
+            }
+            boundary = buffer.indexOf('\n');
         }
       }
+
+
+      connectionStatusDisplay.textContent = 'Completed';
 
     } catch (error) {
       console.error('Attack execution failed:', error);
       connectionStatusDisplay.textContent = 'Error';
+    } finally {
+      attackRunning = false;
+      attackButton.disabled = false; // Re-enable the button
     }
   }
 
   attackButton.addEventListener('click', () => {
     const target = targetInput.value;
     const type = attackTypeSelect.value;
+
+    if (!target) {
+      alert("Please enter a target URL.");
+      return;
+    }
+
     executeAttack(target, type);
   });
 
