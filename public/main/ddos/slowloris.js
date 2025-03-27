@@ -36,7 +36,7 @@ function slowloris(target, numSockets, statsCallback) {
 
         function updateStats() {
             const elapsedTime = (Date.now() - startTime) / 1000;
-            mbps = elapsedTime > 0 ? (bytesSent / elapsedTime) / 1000000 : 0;
+            mbps = elapsedTime > 0 ? (bytesSent * 8 / elapsedTime) / 1000000 : 0;
 
             if (statsCallback) {
                 statsCallback({
