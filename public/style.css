@@ -1,7 +1,7 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #121212;
-    color: #f0f0f0;
+    background-color: #1E293B; /* Dark Blue */
+    color: #CBD5E1; /* Grey */
     margin: 0;
     padding: 0;
     overflow: hidden;
@@ -14,8 +14,8 @@ body {
 
 .side-panel {
     width: 200px;
-    background-color: #212121;
-    border-right: 1px solid #333;
+    background-color: #334155; /* Dark Grey */
+    border-right: 1px solid #475569; /* Darker Grey */
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -29,8 +29,8 @@ body {
 .side-panel button {
     padding: 10px 15px;
     margin-bottom: 10px;
-    background-color: #333;
-    color: #fff;
+    background-color: #475569; /* Darker Grey */
+    color: #CBD5E1; /* Grey */
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -41,12 +41,13 @@ body {
 }
 
 .side-panel button:hover {
-    background-color: #4CAF50;
+    background-color: #84CC16; /* Dark Green */
+    color: #1E293B; /* Dark Blue */
 }
 
 .side-panel button.active {
-    background-color: #4CAF50;
-    color: #000;
+    background-color: #84CC16; /* Dark Green */
+    color: #1E293B; /* Dark Blue */
 }
 
 .main-content {
@@ -56,15 +57,15 @@ body {
 }
 
 .panel {
-    background-color: #2a2a2a;
+    background-color: #334155; /* Dark Grey */
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
 }
 
 .panel h2 {
-    color: #4CAF50;
+    color: #84CC16; /* Dark Green */
     margin-top: 0;
 }
 
@@ -75,7 +76,7 @@ body {
 .form-group label {
     display: block;
     margin-bottom: 5px;
-    color: #ddd;
+    color: #CBD5E1; /* Grey */
 }
 
 .form-group input[type="text"],
@@ -84,16 +85,16 @@ body {
 .form-group select {
     width: 100%;
     padding: 8px;
-    border: 1px solid #555;
+    border: 1px solid #475569; /* Darker Grey */
     border-radius: 4px;
-    background-color: #333;
-    color: #eee;
+    background-color: #1E293B; /* Dark Blue */
+    color: #CBD5E1; /* Grey */
     box-sizing: border-box;
 }
 
 .form-group select {
     appearance: none;
-    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23eee"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23CBD5E1"><path d="M7 10l5 5 5-5z"/></svg>');
     background-repeat: no-repeat;
     background-position: right 8px center;
     background-size: 16px;
@@ -101,8 +102,8 @@ body {
 
 button.execute-button {
     padding: 10px 20px;
-    background-color: #4CAF50;
-    color: #000;
+    background-color: #84CC16; /* Dark Green */
+    color: #1E293B; /* Dark Blue */
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -110,7 +111,7 @@ button.execute-button {
 }
 
 button.execute-button:hover {
-    background-color: #388E3C;
+    background-color: #65A30D; /* Darker Green */
 }
 
 .stats-panel {
@@ -120,11 +121,11 @@ button.execute-button:hover {
 }
 
 .stats-panel div {
-    background-color: #333;
+    background-color: #475569; /* Darker Grey */
     border-radius: 5px;
     padding: 15px;
     text-align: center;
-    color: #eee;
+    color: #CBD5E1; /* Grey */
 }
 
 /* About Us Page */
@@ -141,7 +142,7 @@ button.execute-button:hover {
     .side-panel {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid #333;
+        border-bottom: 1px solid #475569; /* Darker Grey */
         padding: 10px;
     }
 
