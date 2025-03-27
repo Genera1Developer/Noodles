@@ -1,16 +1,18 @@
 {
-  "name": "my-app",
+  "name": "Noodles",
   "version": "1.0.0",
-  "description": "A simple application",
-  "main": "index.js",
+  "description": "A sophisticated web application for ethical hacking.",
+  "main": "main.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node main.js",
+    "dev": "nodemon main.js"
   },
-  "author": "You",
+  "author": "NoodlesDev",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2",
+    "url-parse": "^1.5.10"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
