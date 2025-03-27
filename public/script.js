@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let startTime;
   let intervalId;
 
-  // Function to update statistics display
   function updateStatistics(data) {
     mbpsDisplay.textContent = data.mbps;
     packetsDisplay.textContent = data.packets;
@@ -23,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
     timeElapsedDisplay.textContent = elapsedTime;
   }
 
-  // Function to handle tab selection
   function openTab(tabName) {
     const tabcontent = document.getElementsByClassName("tabcontent");
     for (let i = 0; i < tabcontent.length; i++) {
@@ -31,12 +29,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.getElementById(tabName).style.display = "block";
 
-    // Remove 'active' class from all tab buttons and add to the current one
     tabs.forEach(tab => tab.classList.remove('active'));
-    document.querySelector(`[onclick="openTab('${tabName}')"]`).classList.add('active');
+    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
   }
 
-  // Attach event listeners to tab buttons
   tabs.forEach(tab => {
     tab.addEventListener('click', (event) => {
       const tabName = event.target.getAttribute('data-tab');
@@ -44,7 +40,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Initial tab setup - open the first tab by default ('DDoS')
   openTab('DDoS');
 
   attackButton.addEventListener('click', async () => {
@@ -67,9 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     attackRunning = true;
     startTime = Date.now();
 
-    // Start statistics update interval
     intervalId = setInterval(() => {
-      // Mocked statistics data
       const stats = {
         mbps: Math.random() * 100,
         packets: Math.floor(Math.random() * 1000),
@@ -78,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
       updateStatistics(stats);
     }, 1000);
 
-    // Send the attack request to the server
     try {
       const response = await fetch('/main/attack', {
         method: 'POST',
