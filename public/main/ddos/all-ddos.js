@@ -55,6 +55,7 @@ class DDoS {
   this.maxThreads = 100;
   this.target = '';
   this.attackTimeout = null;
+  this.attackType = 'ddos'; // Default attack type
  }
 
  setupUI() {
@@ -237,6 +238,7 @@ class DDoS {
 
   const statsHtml = `
    <p>Target: ${this.target}</p>
+   <p>Attack Type: ${this.attackType}</p>
    <p>MBPS: ${this.mbps.toFixed(2)}</p>
    <p>Packets Sent: ${this.packetsSent}</p>
    <p>Data Sent: ${(this.dataSent / 1024 / 1024).toFixed(2)} MB</p>
@@ -568,6 +570,7 @@ class DDoS {
   this.errors = 0;
   this.activeThreads = 0;
   this.target = target;
+  this.attackType = 'ddos'; // Set attack type for stats
 
   for (let i = 0; i < this.maxThreads; i++) {
    this.sendDDoSRequest(target);
@@ -845,17 +848,17 @@ class DDoS {
 
  startAttack() {
   const target = this.targetInput.value;
-  const attackType = this.attackTypeSelect.value;
+  this.attackType = this.attackTypeSelect.value;
 
   if (!target) {
    this.log('Please enter a target URL.');
    return;
   }
 
-  if (typeof this[attackType] === 'function') {
-   this[attackType](target);
+  if (typeof this[this.attackType] === 'function') {
+   this[this.attackType](target);
   } else {
-   this.log(`Attack type "${attackType}" not implemented.`);
+   this.log(`Attack type "${this.attackType}" not implemented.`);
   }
  }
 
@@ -879,6 +882,7 @@ class DDoS {
  }
 
  setAttackType(attackType) {
+  this.attackType = attackType;
   this.attackTypeSelect.value = attackType;
   this.toggleCustomCodeArea();
  }
