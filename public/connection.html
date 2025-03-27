@@ -4,33 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Connection Status</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f0f0;
-        }
-
-        #status {
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: white;
-            text-align: center;
-        }
-
-        .connected {
-            color: green;
-        }
-
-        .disconnected {
-            color: red;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div id="status">
@@ -39,9 +13,15 @@
         <p id="last-updated">Last Updated: N/A</p>
     </div>
 
+    <script src="script.js"></script>
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateConnectionStatus();
+            setInterval(updateConnectionStatus, 5000);
+        });
+
         function updateConnectionStatus() {
-            fetch('/api/connection-status') // Replace with your actual API endpoint
+            fetch('main/connection-status')
                 .then(response => response.json())
                 .then(data => {
                     const connectionMessage = document.getElementById('connection-message');
@@ -69,12 +49,6 @@
                     lastUpdated.textContent = `Last Updated: ${new Date().toLocaleString()}`;
                 });
         }
-
-        // Update connection status every 5 seconds
-        setInterval(updateConnectionStatus, 5000);
-
-        // Initial update
-        updateConnectionStatus();
     </script>
 </body>
 </html>
