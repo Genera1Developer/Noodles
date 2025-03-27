@@ -5,18 +5,9 @@ const port = 3000;
 const path = require('path');
 const fs = require('fs');
 
-// Middleware to prevent execution if a 'SAFE_MODE' flag is present
-app.use((req, res, next) => {
-    if (process.env.SAFE_MODE === 'true') {
-        return res.status(403).send('Server is in safe mode. Offensive actions are disabled.');
-    }
-    next();
-});
-
 app.use(express.static(path.join(__dirname, '../')));
 app.use(express.json());
 
-// Centralized error handling function
 function handleCommandExecution(command, res, operation) {
     exec(command, (error, stdout, stderr) => {
         if (error) {
@@ -28,12 +19,10 @@ function handleCommandExecution(command, res, operation) {
     });
 }
 
-// Construct paths relative to the current file
 const ddosScriptPath = path.join(__dirname, 'ddos.py');
 const defacementScriptPath = path.join(__dirname, 'defacement.py');
 const connectionScriptPath = path.join(__dirname, 'connection.py');
 
-// DDoS route
 if (fs.existsSync(ddosScriptPath)) {
     app.post('/ddos', (req, res) => {
         const target = req.body.target;
@@ -59,7 +48,6 @@ if (fs.existsSync(ddosScriptPath)) {
     console.warn("ddos.py not found. DDoS route disabled.");
 }
 
-// Defacement route
 if (fs.existsSync(defacementScriptPath)) {
     app.post('/defacement', (req, res) => {
         const target = req.body.target;
@@ -79,7 +67,6 @@ if (fs.existsSync(defacementScriptPath)) {
     console.warn("defacement.py not found. Defacement route disabled.");
 }
 
-// Connection route
 if (fs.existsSync(connectionScriptPath)) {
     app.post('/connection', (req, res) => {
         const target = req.body.target;
