@@ -22,7 +22,7 @@ body {
     margin: 0;
     padding: 0;
     transition: background-color var(--transition-speed), color var(--transition-speed);
-    overflow: hidden;
+    overflow: auto;
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -33,7 +33,6 @@ body {
     flex: 1;
 }
 
-/* Side Panel Styles */
 .side-panel {
     width: 200px;
     background-color: var(--bg-secondary);
@@ -84,7 +83,6 @@ body {
     color: var(--text-primary);
 }
 
-/* Main Content Styles */
 .main-content {
     flex: 1;
     padding: 20px;
@@ -142,7 +140,6 @@ body {
     border-color: var(--accent-secondary);
 }
 
-/* Button Styles */
 .btn {
     display: inline-block;
     padding: 10px 15px;
@@ -161,7 +158,6 @@ body {
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);
 }
 
-/* Statistics Display */
 .stats-display {
     background-color: var(--bg-secondary);
     border-radius: 8px;
@@ -184,7 +180,6 @@ body {
     margin: 5px 0;
 }
 
-/* About Us Section */
 #about-us {
     text-align: center;
     padding: 20px;
@@ -202,12 +197,10 @@ body {
     margin: 0 auto;
 }
 
-/* Utility Classes */
 .mt-20 {
     margin-top: 20px;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     .container {
         flex-direction: column;
@@ -232,7 +225,6 @@ body {
     }
 }
 
-/* Footer Styles */
 footer {
     text-align: center;
     padding: 10px;
@@ -242,7 +234,6 @@ footer {
     transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-/* Form Styles */
 form {
     display: flex;
     flex-direction: column;
@@ -256,3 +247,5 @@ form {
     margin-top: 10px;
     text-align: center;
 }
+
+edit filepath: public/style.css
