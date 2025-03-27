@@ -5,60 +5,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Noodles</title>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <div class="container">
-        <div class="sidebar">
-            <button onclick="showTab('ddos')"><i class="fas fa-skull-crossbones"></i> DDoS</button>
-            <button onclick="showTab('defacement')"><i class="fas fa-paint-roller"></i> Defacement</button>
-            <button onclick="showTab('connection')"><i class="fas fa-network-wired"></i> Connection</button>
-            <button onclick="showTab('credential')"><i class="fas fa-user-secret"></i> Credential</button>
-            <button onclick="showTab('about')"><i class="fas fa-info-circle"></i> About Us</button>
-        </div>
-        <div class="main-content">
-            <div id="ddos" class="tab-content">
+        <aside class="side-panel">
+            <nav>
+                <button data-tab="ddos">DDoS</button>
+                <button data-tab="defacement">Defacement</button>
+                <button data-tab="connection">Connection</button>
+                <button data-tab="credential">Credential</button>
+                <button data-tab="about">About Us</button>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <section id="ddos" class="tab-content active">
                 <h2>DDoS Attack</h2>
-                <p>Initiate a Distributed Denial of Service attack.</p>
-                <input type="text" id="ddosTarget" placeholder="Target URL">
-                <button onclick="startDDoS()">Start DDoS</button>
-                <div id="ddosStats">
-                    <h3>Statistics</h3>
+                <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                <button id="ddos-attack-button">Launch DDoS Attack</button>
+                <div class="stats">
                     <p>MBPS: <span id="mbps">0</span></p>
-                    <p>Packets Sent: <span id="packets">0</span></p>
-                    <p>Status: <span id="targetStatus">Offline</span></p>
-                    <p>Time Elapsed: <span id="elapsedTime">0</span></p>
+                    <p>Packets Sent: <span id="packets-sent">0</span></p>
+                    <p>Target Status: <span id="target-status">Unknown</span></p>
+                    <p>Time Elapsed: <span id="time-elapsed">0</span>s</p>
                 </div>
-                <div id="ddosLog"></div>
-            </div>
-            <div id="defacement" class="tab-content" style="display:none;">
+            </section>
+            <section id="defacement" class="tab-content">
                 <h2>Website Defacement</h2>
-                <p>Modify the appearance of a target website.</p>
-                <input type="text" id="defacementTarget" placeholder="Target URL">
-                <input type="text" id="defacementMessage" placeholder="Defacement Message">
-                <button onclick="startDefacement()">Start Defacement</button>
-                <div id="defacementLog"></div>
-            </div>
-            <div id="connection" class="tab-content" style="display:none;">
-                <h2>Establish Connection</h2>
-                <p>Attempt to establish a connection to a target.</p>
-                <input type="text" id="connectionTarget" placeholder="Target URL or IP">
-                <button onclick="startConnection()">Start Connection</button>
-                <div id="connectionLog"></div>
-            </div>
-            <div id="credential" class="tab-content" style="display:none;">
+                <input type="text" id="defacement-target" placeholder="Target URL">
+                <textarea id="defacement-payload" placeholder="Defacement Payload (HTML)"></textarea>
+                <button id="defacement-attack-button">Launch Defacement Attack</button>
+            </section>
+            <section id="connection" class="tab-content">
+                <h2>Connection</h2>
+                <input type="text" id="connection-target" placeholder="Target IP or URL">
+                <input type="number" id="connection-port" placeholder="Port">
+                <button id="connection-attack-button">Establish Connection</button>
+            </section>
+            <section id="credential" class="tab-content">
                 <h2>Credential Stuffing</h2>
-                <p>Attempt to gain access using lists of usernames and passwords.</p>
-                <input type="text" id="credentialTarget" placeholder="Target URL">
-                <input type="text" id="credentialList" placeholder="Username/Password List URL">
-                <button onclick="startCredentialStuffing()">Start Credential Stuffing</button>
-                <div id="credentialLog"></div>
-            </div>
-            <div id="about" class="tab-content" style="display:none;">
+                <input type="text" id="credential-target" placeholder="Target URL">
+                <textarea id="credential-list" placeholder="Username:Password List"></textarea>
+                <button id="credential-attack-button">Launch Credential Stuffing</button>
+            </section>
+            <section id="about" class="tab-content">
                 <h2>About Us</h2>
-                <p>Noodles is a powerful web application for various activities.  This is a demonstration application and is not intended for malicious use.  Use at your own risk.</p>
-            </div>
-        </div>
+                <p>Noodles is a cutting-edge web application designed for penetration testing and cybersecurity analysis. It provides a range of tools for assessing website security, including DDoS attacks, defacement, and connection testing.</p>
+            </section>
+        </main>
     </div>
     <script src="script.js"></script>
 </body>
