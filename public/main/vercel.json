@@ -13,10 +13,10 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/public/index.html"
+      "dest": "/public/$1"
     }
   ],
   "functions": {
-    "api/hello.js": { "memory": 128, "maxDuration": 5 }
+    "main/hello.js": { "memory": 128, "maxDuration": 5 }
   }
 }
