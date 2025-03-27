@@ -1,84 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles 🍜</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <div class="sidebar">
-            <h1>Noodles 🍜</h1>
-            <button data-tab="ddos">DDoS 💥</button>
-            <button data-tab="defacement">Defacement 💀</button>
-            <button data-tab="connection">Connection 💻</button>
-            <button data-tab="credential">Credential Stuffing 💣</button>
-            <button data-tab="about">About Us ⚠</button>
-        </div>
-        <div class="content">
-            <div id="ddos" class="tab-content active">
-                <h2>DDoS Attacks 💥</h2>
-                <label for="ddos-target">Target URL:</label>
-                <input type="text" id="ddos-target" placeholder="Enter URL or .onion address">
-                <label for="ddos-type">Attack Type:</label>
-                <select id="ddos-type">
-                    <option value="http_flood">HTTP Flood</option>
-                    <option value="tcp">TCP Flood</option>
-                    <option value="udp">UDP Flood</option>
-                    <option value="slowloris">Slowloris</option>
-                </select>
-                <button id="start-ddos">Start DDoS Attack 🔥</button>
-                <div class="stats">
-                    <p>MBPS: <span id="mbps">0</span></p>
-                    <p>Packets Sent: <span id="packets-sent">0</span></p>
-                    <p>Status: <span id="target-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="time-elapsed">0</span> seconds</p>
-                </div>
-            </div>
-
-            <div id="defacement" class="tab-content">
-                <h2>Defacement Tools 💀</h2>
-                <label for="defacement-target">Target URL:</label>
-                <input type="text" id="defacement-target" placeholder="Enter URL">
-                <label for="defacement-type">Defacement Type:</label>
-                <select id="defacement-type">
-                    <option value="image">Image Replacement</option>
-                    <option value="text">Text Modification</option>
-                    <option value="html">HTML Injection</option>
-                </select>
-                <button id="start-defacement">Start Defacement</button>
-            </div>
-
-            <div id="connection" class="tab-content">
-                <h2>Connection Tools 💻</h2>
-                <label for="connection-target">Target URL/IP:</label>
-                <input type="text" id="connection-target" placeholder="Enter URL or IP address">
-                <label for="connection-type">Connection Type:</label>
-                <select id="connection-type">
-                    <option value="portscan">Port Scan</option>
-                    <option value="bannergrab">Banner Grabbing</option>
-                </select>
-                <button id="start-connection">Start Connection</button>
-            </div>
-
-           <div id="credential" class="tab-content">
-                <h2>Credential Stuffing 💣</h2>
-                <label for="credential-target">Target URL:</label>
-                <input type="text" id="credential-target" placeholder="Enter URL">
-                <label for="credential-username-list">Username List URL:</label>
-                <input type="text" id="credential-username-list" placeholder="Enter URL to username list">
-                <label for="credential-password-list">Password List URL:</label>
-                <input type="text" id="credential-password-list" placeholder="Enter URL to password list">
-                <button id="start-credential">Start Credential Stuffing</button>
-            </div>
-
-            <div id="about" class="tab-content">
-                <h2>About Us ⚠</h2>
-                <p>Noodles is a cutting-edge penetration testing suite designed for advanced security analysis and network vulnerability assessments. We provide tools for simulating real-world attack scenarios to help organizations identify and mitigate potential weaknesses. Use responsibly. 🍜</p>
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-</html>
+ <html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Noodles - Hacking Web Application</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+ </head>
+ <body>
+  <div class="container">
+  <aside class="sidebar">
+  <div class="sidebar-header">
+  <h1><i class="fas fa-code"></i> Noodles</h1>
+  </div>
+  <nav>
+  <ul>
+  <li><a href="#" data-page="ddos"><i class="fas fa-skull"></i> DDoS</a></li>
+  <li><a href="#" data-page="defacement"><i class="fas fa-paint-brush"></i> Defacement</a></li>
+  <li><a href="#" data-page="connection"><i class="fas fa-network-wired"></i> Connection</a></li>
+  <li><a href="#" data-page="credential"><i class="fas fa-key"></i> Credential Stuffing</a></li>
+  <li><a href="#" data-page="other"><i class="fas fa-wrench"></i> Other Tools</a></li>
+  <li><a href="#" data-page="about"><i class="fas fa-info-circle"></i> About Us</a></li>
+  </ul>
+  </nav>
+  </aside>
+  <main class="content">
+  <section id="ddos" class="page">
+  <h2>DDoS Attacks 💥</h2>
+  <label for="ddos-target">Target URL:</label>
+  <input type="text" id="ddos-target" placeholder="http://example.com or onion address">
+  <label for="ddos-type">Attack Type:</label>
+  <select id="ddos-type">
+  <option value="http_flood">HTTP Flood</option>
+  <option value="tcp">TCP Flood</option>
+  <option value="udp">UDP Flood</option>
+  <option value="slowloris">Slowloris</option>
+  </select>
+  <button id="ddos-start">Start Attack 💀</button>
+  <div class="stats">
+  <p>MBPS: <span id="mbps">0</span></p>
+  <p>Packets Sent: <span id="packets">0</span></p>
+  <p>Status: <span id="status">Offline</span></p>
+  <p>Time Elapsed: <span id="time">0</span></p>
+  </div>
+  </section>
+  <section id="defacement" class="page" style="display: none;">
+  <h2>Website Defacement 💻</h2>
+  <label for="defacement-target">Target URL:</label>
+  <input type="text" id="defacement-target" placeholder="http://example.com">
+  <label for="defacement-type">Defacement Type:</label>
+  <select id="defacement-type">
+  <option value="image">Image Replacement</option>
+  <option value="text">Text Modification</option>
+  <option value="html">HTML Injection</option>
+  </select>
+  <button id="defacement-start">Start Defacement 🔥</button>
+  </section>
+  <section id="connection" class="page" style="display: none;">
+  <h2>Unauthorized Connections ⚠</h2>
+  <label for="connection-target">Target URL/Onion:</label>
+  <input type="text" id="connection-target" placeholder="http://example.com or onion address">
+  <label for="connection-type">Connection Type:</label>
+  <select id="connection-type">
+  <option value="portscan">Port Scanning</option>
+  <option value="bannergrab">Banner Grabbing</option>
+  </select>
+  <button id="connection-start">Start Connection 💣</button>
+  </section>
+  <section id="credential" class="page" style="display: none;">
+  <h2>Credential Stuffing</h2>
+  <label for="credential-target">Target URL:</label>
+  <input type="text" id="credential-target" placeholder="http://example.com">
+  <button id="credential-start">Start Credential Stuffing</button>
+  </section>
+  <section id="other" class="page" style="display: none;">
+  <h2>Other Hacking Tools</h2>
+  <p>Coming soon...</p>
+  </section>
+  <section id="about" class="page" style="display: none;">
+  <h2>About Us</h2>
+  <p>Noodles is a powerful web application designed for security professionals and penetration testers. It provides a range of tools for testing website security, including DDoS attacks, website defacement, and unauthorized connection attempts. Use responsibly. 💥</p>
+  </section>
+  </main>
+  </div>
+  <script src="script.js"></script>
+ </body>
+ </html>
