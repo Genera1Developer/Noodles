@@ -15,6 +15,7 @@
                 <button data-tab="defacement">Defacement</button>
                 <button data-tab="connection">Connection</button>
                 <button data-tab="credential">Credential</button>
+                <button data-tab="other">Other Tools</button>
                 <button data-tab="about">About Us</button>
             </nav>
         </aside>
@@ -22,6 +23,11 @@
             <section id="ddos" class="tab-content active">
                 <h2>DDoS Attack</h2>
                 <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                <select id="ddos-type">
+                    <option value="tcp">TCP Flood</option>
+                    <option value="udp">UDP Flood</option>
+                    <option value="http">HTTP Flood</option>
+                </select>
                 <button id="start-ddos">Start DDoS Attack</button>
                 <div class="statistics">
                     <p>MBPS: <span id="mbps">0</span></p>
@@ -48,9 +54,14 @@
                 <textarea id="credential-list" placeholder="Username:Password List"></textarea>
                 <button id="start-credential">Start Credential Stuffing</button>
             </section>
+             <section id="other" class="tab-content">
+                <h2>Other Hacking Tools</h2>
+                <p>More tools coming soon...</p>
+            </section>
             <section id="about" class="tab-content">
                 <h2>About Noodles</h2>
-                <p>Noodles is a powerful web application designed for security testing and ethical hacking. Use responsibly.</p>
+                <p>Noodles is a powerful web application designed for security testing. Use responsibly.</p>
+                <p>This application is intended for educational and research purposes only. Any unauthorized use is strictly prohibited.</p>
             </section>
         </main>
     </div>
