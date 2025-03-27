@@ -35,10 +35,10 @@
         - name: Run tests
           run: npm test --if-present
           env:
-            CI: true # Enforce CI environment for consistent test results
+            CI: true
 
         - name: Analyze with SonarCloud
-          if: github.event_name == 'push' # Only run SonarCloud on push events
+          if: github.event_name == 'push'
           uses: sonarsource/sonarcloud-github-action@master
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -49,17 +49,16 @@
             npm install -g retire
             retire --node --outputformat json > retire-results.json
         - name: Upload RetireJS results
-          if: always() # Ensure artifact is uploaded even if security check fails
+          if: always()
           uses: actions/upload-artifact@v3
           with:
             name: retire-results
             path: retire-results.json
 
         - name: Archive production artifacts
-          if: github.event_name == 'push' && matrix.node-version == '22.x' # Only archive on push to main and specific Node.js version
+          if: github.event_name == 'push' && matrix.node-version == '22.x'
           uses: actions/upload-artifact@v3
           with:
             name: production-files
-            path: |
-              public/
+            path: public/
             retention-days: 5
