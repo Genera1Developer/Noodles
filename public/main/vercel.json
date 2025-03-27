@@ -3,7 +3,7 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/node-npm"
+      "use": "@vercel/node@latest"
     },
     {
       "src": "public/index.html",
@@ -15,5 +15,8 @@
       "src": "/(.*)",
       "dest": "/public/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/hello.js": { "memory": 128, "maxDuration": 5 }
+  }
 }
