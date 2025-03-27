@@ -1,21 +1,21 @@
-(function() {
-  var config = {
+(() => {
+  const config = {
     targetSelector: 'body',
-    replacementText: 'Noodles!',
-    backgroundColor: '#ff0000',
-    textColor: '#ffffff',
-    fontFamily: 'Arial, sans-serif',
-    fontSize: '36px',
+    replacementText: 'HACKED BY NOODLES',
+    backgroundColor: '#000',
+    textColor: '#0f0',
+    fontFamily: 'monospace',
+    fontSize: '24px',
     fontWeight: 'bold',
     textAlign: 'center',
     padding: '20px',
-    animationDuration: '2s',
-    animationName: 'defacementAnimation',
+    animationDuration: '1s',
+    animationName: 'hackerAnimation',
     animationIterationCount: 'infinite'
   };
 
-  function applyDefacement() {
-    var target = document.querySelector(config.targetSelector);
+  const applyDefacement = () => {
+    const target = document.querySelector(config.targetSelector);
 
     if (!target) {
       console.error('Target element not found: ' + config.targetSelector);
@@ -26,7 +26,7 @@
       target.removeChild(target.firstChild);
     }
 
-    var defacementMessage = document.createElement('div');
+    const defacementMessage = document.createElement('div');
     defacementMessage.textContent = config.replacementText;
 
     Object.assign(defacementMessage.style, {
@@ -57,7 +57,7 @@
 
     const styleSheetId = 'defacement-animation-style';
     if (!document.getElementById(styleSheetId)) {
-      var styleSheet = document.createElement("style");
+      const styleSheet = document.createElement("style");
       styleSheet.type = "text/css";
       styleSheet.id = styleSheetId;
       styleSheet.innerText = `
@@ -68,16 +68,15 @@
       `;
       document.head.appendChild(styleSheet);
     }
-  }
+  };
 
-  function deface() {
+  const deface = () => {
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', applyDefacement);
     } else {
       applyDefacement();
     }
-  }
+  };
 
   deface();
-
 })();
