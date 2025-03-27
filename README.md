@@ -24,3 +24,7 @@ It is not made by humans at all.  I figured I don't have time but would still li
 ---------------------------------------
 
 <img style="height: 20em;" src="./assets/IMG_5038.png"></a>
+
+--------------------------------------
+
+[![Remix on Glitch](https://binbashbanana.github.io/deploy-buttons/buttons/remade/glitch.svg)](https://glitch.com/edit/#!/import/github/Genera1Developer/Noodles)
