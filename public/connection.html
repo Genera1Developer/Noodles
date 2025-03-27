@@ -90,12 +90,29 @@
             margin-top: 10px;
             display: none;
         }
+
+        #spinner {
+            border: 5px solid #f3f3f3; /* Light grey */
+            border-top: 5px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 2s linear infinite;
+            display: none; /* Hidden by default */
+            margin: 0 auto; /* Center the spinner */
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
     <div class="panel">
         <h1>Connection Status</h1>
-        <p id="connection-message" class="status-message loading">Checking connection...</p>
+        <p id="connection-message" class="status-message">Checking connection...</p>
+        <div id="spinner"></div>
         <p id="last-updated">Last Updated: N/A</p>
         <div id="error-message"></div>
         <button id="retry-button" style="display: none;">Retry Connection</button>
@@ -117,12 +134,15 @@
             const lastUpdated = document.getElementById('last-updated');
             const errorMessageDiv = document.getElementById('error-message');
             const retryButton = document.getElementById('retry-button');
+            const spinner = document.getElementById('spinner');
+
 
             errorMessageDiv.style.display = 'none';
             retryButton.style.display = 'none';
-            connectionMessage.classList.add('loading');
-            connectionMessage.classList.remove('connected', 'disconnected');
+            spinner.style.display = 'block'; // Show the spinner
             connectionMessage.textContent = 'Checking connection...';
+            connectionMessage.classList.remove('connected', 'disconnected');
+
 
             try {
                 const response = await fetch('main/connection-status.php', {
@@ -137,13 +157,13 @@
 
                 if (data.connected) {
                     connectionMessage.textContent = 'Connected!';
-                    connectionMessage.classList.remove('disconnected', 'loading');
+                    connectionMessage.classList.remove('disconnected');
                     connectionMessage.classList.add('connected');
                     errorMessageDiv.style.display = 'none';
                     retryButton.style.display = 'none';
                 } else {
                     connectionMessage.textContent = 'Disconnected!';
-                    connectionMessage.classList.remove('connected', 'loading');
+                    connectionMessage.classList.remove('connected');
                     connectionMessage.classList.add('disconnected');
                     errorMessageDiv.textContent = 'Connection Lost. Please check your network.'; //More user-friendly message
                     errorMessageDiv.style.display = 'block';
@@ -155,14 +175,14 @@
             } catch (error) {
                 console.error('Error fetching connection status:', error);
                 connectionMessage.textContent = 'Error checking connection.';
-                connectionMessage.classList.remove('connected', 'loading');
+                connectionMessage.classList.remove('connected');
                 connectionMessage.classList.add('disconnected');
                 lastUpdated.textContent = `Last Updated: ${new Date().toLocaleString()}`;
                 errorMessageDiv.textContent = 'Failed to retrieve connection status. Check your network and server.';
                 errorMessageDiv.style.display = 'block';
                 retryButton.style.display = 'block';
             } finally {
-                connectionMessage.classList.remove('loading');
+                spinner.style.display = 'none'; // Hide the spinner
             }
         }
     </script>
