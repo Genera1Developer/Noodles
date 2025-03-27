@@ -39,6 +39,7 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
       path: parsedTarget.pathname + parsedTarget.search,
       method: 'GET',
       headers: { ...defaultHeaders, ...requestOptions.headers },
+      timeout: 10000,
       ...requestOptions,
     };
 
@@ -77,7 +78,7 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
         reject(error);
       });
 
-      req.setTimeout(10000, () => {
+      req.on('timeout', () => {
         req.destroy(new Error('Request timeout'));
       });
 
