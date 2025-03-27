@@ -1,130 +1,104 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const themeStylesheet = document.getElementById('theme-stylesheet');
-  const storedTheme = localStorage.getItem('theme') || 'dark';
+  const targetInput = document.getElementById('targetUrl');
+  const attackSelect = document.getElementById('attackType');
+  const attackButton = document.getElementById('attackButton');
+  const mbpsDisplay = document.getElementById('mbps');
+  const packetsDisplay = document.getElementById('packets');
+  const statusDisplay = document.getElementById('status');
+  const timeElapsedDisplay = document.getElementById('timeElapsed');
+  const sidePanel = document.getElementById('sidePanel');
+  const contentArea = document.getElementById('contentArea');
+  const tabs = document.querySelectorAll('.tab-button');
 
-  const setTheme = (theme) => {
-    const themePath = theme === 'dark' ? '/styles/dark-theme.css' : '/styles/light-theme.css';
-    themeStylesheet.href = themePath;
-    localStorage.setItem('theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
-  };
+  let attackRunning = false;
+  let startTime;
+  let intervalId;
 
-  setTheme(storedTheme);
-
-  const themeToggle = document.getElementById('theme-toggle');
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const currentTheme = localStorage.getItem('theme') || 'dark';
-      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      setTheme(newTheme);
-    });
+  // Function to update statistics display
+  function updateStatistics(data) {
+    mbpsDisplay.textContent = data.mbps;
+    packetsDisplay.textContent = data.packets;
+    statusDisplay.textContent = data.status;
+    const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+    timeElapsedDisplay.textContent = elapsedTime;
   }
 
-  const tabs = document.querySelectorAll('.tab-button');
-  const tabContent = document.querySelectorAll('.tab-content');
+  // Function to handle tab selection
+  function openTab(tabName) {
+    const tabcontent = document.getElementsByClassName("tabcontent");
+    for (let i = 0; i < tabcontent.length; i++) {
+      tabcontent[i].style.display = "none";
+    }
+    document.getElementById(tabName).style.display = "block";
 
+    // Remove 'active' class from all tab buttons and add to the current one
+    tabs.forEach(tab => tab.classList.remove('active'));
+    document.querySelector(`[onclick="openTab('${tabName}')"]`).classList.add('active');
+  }
+
+  // Attach event listeners to tab buttons
   tabs.forEach(tab => {
     tab.addEventListener('click', (event) => {
-      event.preventDefault();
-
-      const tabId = tab.getAttribute('data-tab');
-
-      tabContent.forEach(content => content.classList.remove('active'));
-      tabs.forEach(t => t.classList.remove('active'));
-
-      tab.classList.add('active');
-      document.getElementById(tabId).classList.add('active');
+      const tabName = event.target.getAttribute('data-tab');
+      openTab(tabName);
     });
   });
 
-  const handleFormSubmit = async (formId, endpoint, dataExtractor) => {
-    const form = document.getElementById(formId);
-    if (form) {
-      form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const data = dataExtractor(form);
+  // Initial tab setup - open the first tab by default ('DDoS')
+  openTab('DDoS');
 
-        try {
-          const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(JSON.stringify(data))
-          });
-
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const responseData = await response.json();
-          console.log(responseData);
-          alert(responseData.message || 'Success!');
-        } catch (error) {
-          console.error('Error:', error);
-          alert(`An error occurred: ${error.message}`);
-        }
-      });
+  attackButton.addEventListener('click', async () => {
+    if (attackRunning) {
+      clearInterval(intervalId);
+      attackButton.textContent = 'Start Attack';
+      attackRunning = false;
+      return;
     }
-  };
 
-  handleFormSubmit(
-    'ddos-form',
-    '/main/ddos',
-    (form) => ({
-      target: document.getElementById('ddos-target').value,
-      type: document.getElementById('ddos-type').value,
-      duration: document.getElementById('ddos-duration').value,
-      intensity: document.getElementById('ddos-intensity').value
-    })
-  );
+    const target = targetInput.value;
+    const attackType = attackSelect.value;
 
-  handleFormSubmit(
-    'deface-form',
-    '/main/deface',
-    (form) => ({
-      target: document.getElementById('deface-target').value,
-      image: document.getElementById('deface-image').value,
-      message: document.getElementById('deface-message').value
-    })
-  );
+    if (!target) {
+      alert('Please enter a target URL.');
+      return;
+    }
 
-  handleFormSubmit(
-    'connection-form',
-    '/main/connection',
-    (form) => ({
-      target: document.getElementById('connection-target').value,
-      port: document.getElementById('connection-port').value
-    })
-  );
+    attackButton.textContent = 'Stop Attack';
+    attackRunning = true;
+    startTime = Date.now();
 
-  handleFormSubmit(
-    'credential-form',
-    '/main/credential',
-    (form) => ({
-      target: document.getElementById('credential-target').value,
-      usernameList: document.getElementById('credential-usernames').value,
-      passwordList: document.getElementById('credential-passwords').value
-    })
-  );
+    // Start statistics update interval
+    intervalId = setInterval(() => {
+      // Mocked statistics data
+      const stats = {
+        mbps: Math.random() * 100,
+        packets: Math.floor(Math.random() * 1000),
+        status: 'Online'
+      };
+      updateStatistics(stats);
+    }, 1000);
 
-  const updateStats = () => {
-    fetch('/main/stats')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('mbps').innerText = data.mbps || 'N/A';
-        document.getElementById('packets').innerText = data.packets || 'N/A';
-        document.getElementById('status').innerText = data.status || 'N/A';
-        document.getElementById('time').innerText = data.time || 'N/A';
-      })
-      .catch(error => {
-        console.error('Error fetching stats:', error);
-        document.getElementById('mbps').innerText = 'Error';
-        document.getElementById('packets').innerText = 'Error';
-        document.getElementById('status').innerText = 'Error';
-        document.getElementById('time').innerText = 'Error';
+    // Send the attack request to the server
+    try {
+      const response = await fetch('/main/attack', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ target: target, attackType: attackType })
       });
-  };
 
-  setInterval(updateStats, 2000);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log(result);
+    } catch (error) {
+      console.error('Error starting attack:', error);
+      clearInterval(intervalId);
+      attackButton.textContent = 'Start Attack';
+      attackRunning = false;
+    }
+  });
 });
