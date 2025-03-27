@@ -33,7 +33,7 @@ function executeCommand(command, args) {
     });
 }
 
-app.post('./main/ddos/ddos.js', async (req, res) => {
+app.post('/api/ddos', async (req, res) => {
     const target = req.body.target;
     const type = req.body.type;
     const duration = req.body.duration || 60;
@@ -45,17 +45,22 @@ app.post('./main/ddos/ddos.js', async (req, res) => {
     console.log(`DDoS attack requested: Target=${target}, Type=${type}, Duration=${duration}`);
 
     try {
+        const ddosDir = path.join(__dirname, 'ddos');
+        if (!fs.existsSync(ddosDir)) {
+            fs.mkdirSync(ddosDir);
+        }
+
         let scriptPath;
 
         switch (type) {
             case 'http':
-                scriptPath = path.join(__dirname, 'ddos', 'http_flood.js');
+                scriptPath = path.join(ddosDir, 'http_flood.js');
                 break;
             case 'tcp':
-                scriptPath = path.join(__dirname, 'ddos', 'tcp_flood.js');
+                scriptPath = path.join(ddosDir, 'tcp_flood.js');
                 break;
             case 'udp':
-                scriptPath = path.join(__dirname, 'ddos', 'udp_flood.js');
+                scriptPath = path.join(ddosDir, 'udp_flood.js');
                 break;
             default:
                 return res.status(400).send({ status: 'Invalid DDoS attack type' });
@@ -86,7 +91,11 @@ app.post('/api/defacement', async (req, res) => {
     console.log(`Defacement requested: Target=${target}, Action=${action}`);
 
     try {
-        const scriptPath = path.join(__dirname, 'defacement', 'deface.js');
+        const defacementDir = path.join(__dirname, 'defacement');
+        if (!fs.existsSync(defacementDir)) {
+            fs.mkdirSync(defacementDir);
+        }
+        const scriptPath = path.join(defacementDir, 'deface.js');
 
         if (!fs.existsSync(scriptPath)) {
             return res.status(500).send({ status: 'Deface script not found' });
@@ -112,14 +121,19 @@ app.post('/api/connection', async (req, res) => {
     console.log(`Connection requested: Target=${target}, Type=${type}`);
 
     try {
+        const connectionDir = path.join(__dirname, 'connection');
+        if (!fs.existsSync(connectionDir)) {
+            fs.mkdirSync(connectionDir);
+        }
+
         let scriptPath;
 
         switch (type) {
             case 'portscan':
-                scriptPath = path.join(__dirname, 'connection', 'port_scan.js');
+                scriptPath = path.join(connectionDir, 'port_scan.js');
                 break;
             case 'bannergrab':
-                scriptPath = path.join(__dirname, 'connection', 'banner_grab.js');
+                scriptPath = path.join(connectionDir, 'banner_grab.js');
                 break;
             default:
                 return res.status(400).send({ status: 'Invalid connection type' });
@@ -138,7 +152,7 @@ app.post('/api/connection', async (req, res) => {
     }
 });
 
-app.ge (req, res) => {
+app.get('/about', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'about.html'));
 });
 
