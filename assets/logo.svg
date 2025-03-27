@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" aria-label="Logo">
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" aria-label="Logo" style="enable-background:new 0 0 64 64;">
   <defs>
     <linearGradient id="hackerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#00FA9A" />
@@ -22,10 +22,10 @@
       }
     </style>
   </defs>
-  <rect width="64" height="64" rx="8" fill="#222" />
+  <rect width="64" height="64" rx="8" fill="#222" style="fill:#1e1e1e;"/>
   <g filter="url(#hackerGlow)">
-    <path d="M16 16 L48 48 M48 16 L16 48" stroke="url(#hackerGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M32 8 L32 56 M8 32 L56 32" stroke="url(#hackerGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M16 16 L48 48 M48 16 L16 48" stroke="url(#hackerGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="stroke:url(#hackerGradient)"/>
+    <path d="M32 8 L32 56 M8 32 L56 32" stroke="url(#hackerGradient)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" style="stroke:url(#hackerGradient)"/>
   </g>
-  <circle cx="32" cy="32" r="24" stroke="#444" stroke-width="2" stroke-opacity="0.7" fill="none" style="animation: rotate 10s linear infinite;" />
+  <circle cx="32" cy="32" r="24" stroke="#444" stroke-width="2" stroke-opacity="0.7" fill="none" style="animation: rotate 10s linear infinite; stroke:#444;"/>
 </svg>
