@@ -1,9 +1,9 @@
 Noodles Log Initialized.
 
-[INFO] 2024-10-26 10:00:00: Interface: index.html created, populated with basic HTML. Links added: style.css, script.js.
+[INFO] 2024-10-26 10:00:00: Interface: index.html created with basic HTML. Links: style.css, script.js.
 [INFO] 2024-10-26 10:00:05: Interface: Sidebar created: DDoS, Defacement, Connection, Credential, About Us.
-[INFO] 2024-10-26 10:00:10: Interface: Tabbed content areas implemented for menu options with input fields and buttons.
-[INFO] 2024-10-26 10:00:15: Interface: Status and log boxes added to each tab.
+[INFO] 2024-10-26 10:00:10: Interface: Tabbed content areas implemented (menu options, input fields, buttons).
+[INFO] 2024-10-26 10:00:15: Interface: Status and log boxes added to tabs.
 [INFO] 2024-10-26 10:00:20: Interface: Basic styling and JavaScript links added (style.css, script.js).
 
 [DDOS] 2024-10-26 10:05:00: Attack: DDoS - Success. Target: example.com, Method: TCP Flood, Packets: 100000.
@@ -11,13 +11,13 @@ Noodles Log Initialized.
 [CONN] 2024-10-26 10:15:00: Access: Reverse shell - Connected. Target: victim-machine.org, User: root.
 [RANSOM] 2024-10-26 10:20:00: Attack: Ransomware - Encrypting. Target: target-network.local, Files: 500.
 [ABOUT] 2024-10-26 10:25:00: System: About Us updated.
-[TOR] 2024-10-26 10:30:00: Recon: Tor access - Failed. Target: some-onion-site.onion, Error: "Invalid address".
+[TOR] 2024-10-26 10:30:00: Recon: Tor access - Failed. Target: some-onion-site.onion, Error: Invalid address.
 
 [DDOS] 2024-10-26 10:35:00: Attack: DDoS - Success. Target: critical-infrastructure.gov, Method: UDP Flood, Packets: 10000000, MBPS: 2500.
 [DEFACE] 2024-10-26 10:40:00: Attack: Defacement - Success. Target: rival-company.com, Message: "Noodles Owns You".
 [CONN] 2024-10-26 10:45:00: Access: Reverse shell - Connected. Target: bank-server.net, User: administrator, Access: Granted.
 [RANSOM] 2024-10-26 10:50:00: Attack: Ransomware - Encrypted. Target: large-corporation.com, Files: 50000, Ransom: 100 BTC.
-[RANSOM] 2024-10-26 10:55:00: Attack: Ransomware - Failed. Target: secure-network.mil, Error: "Detection and Prevention".
+[RANSOM] 2024-10-26 10:55:00: Attack: Ransomware - Failed. Target: secure-network.mil, Error: Detection and Prevention.
 [TOR] 2024-10-26 11:00:00: Recon: Tor connection - Success. Target: darkweb-market.onion, Data: User Credentials.
 
 [DDOS] 2024-10-26 11:05:00: Attack: DDoS - In Progress. Target: new-target.com, Method: SYN Flood, Packets: 50000000, MBPS: 7500.
