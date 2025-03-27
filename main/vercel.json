@@ -38,16 +38,16 @@
     {
       "src": "/api/credential",
       "dest": "/public/api/credential.js"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1"
     }
   ],
   "rewrites": [
     {
       "source": "/",
       "destination": "/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/$1"
     }
   ],
   "trailingSlash": false,
