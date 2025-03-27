@@ -55,7 +55,7 @@ class DDoS {
   this.maxThreads = 100;
   this.target = '';
   this.attackTimeout = null;
-  this.attackType = 'ddos'; // Default attack type
+  this.attackType = 'ddos';
  }
 
  setupUI() {
@@ -570,7 +570,7 @@ class DDoS {
   this.errors = 0;
   this.activeThreads = 0;
   this.target = target;
-  this.attackType = 'ddos'; // Set attack type for stats
+  this.attackType = 'ddos';
 
   for (let i = 0; i < this.maxThreads; i++) {
    this.sendDDoSRequest(target);
