@@ -1,206 +1,122 @@
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #181818;
-    color: #e0e0e0;
+    font-family: monospace;
+    background-color: #121212;
+    color: #f0f0f0;
     margin: 0;
     padding: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    overflow: auto;
 }
 
 .container {
-    background-color: #222;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
     display: flex;
     width: 90%;
-    max-width: 1400px;
+    max-width: 1200px;
+    background-color: #212121;
+    border-radius: 8px;
     overflow: hidden;
-    margin: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 .side-panel {
-    background-color: #333;
-    color: #ddd;
-    padding: 25px;
-    width: 280px;
+    width: 200px;
+    background-color: #303030;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    border-right: 1px solid #444;
+    align-items: center;
 }
 
 .side-panel h1 {
-    margin-bottom: 25px;
-    color: #a8e6cf;
+    color: #00ff00;
+    margin-bottom: 20px;
     text-align: center;
-    font-size: 2em;
-    font-weight: 600;
 }
 
 .side-panel nav {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    width: 100%;
 }
 
 .side-panel button {
-    background-color: #444;
-    color: #eee;
+    background-color: #424242;
+    color: #f0f0f0;
     border: none;
-    padding: 12px 18px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    padding: 10px 15px;
     text-align: left;
-    font-size: 1rem;
-    font-weight: 500;
-    outline: none;
+    text-decoration: none;
+    margin: 5px 0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 100%;
 }
 
 .side-panel button:hover {
-    background-color: #555;
-    color: #fff;
-}
-
-.side-panel button.active {
-    background-color: #a8e6cf;
-    color: #222;
-    font-weight: 600;
+    background-color: #00ff00;
+    color: #212121;
 }
 
 .main-content {
-    padding: 30px;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
+    flex: 1;
+    padding: 20px;
 }
 
 .tab-content {
     display: none;
-    flex-grow: 1;
 }
 
 .tab-content.active {
     display: block;
 }
 
-.tab-content h2 {
-    margin-bottom: 20px;
-    color: #a8e6cf;
-    font-size: 1.75em;
-    font-weight: 600;
-}
-
-.tab-content label {
-    display: block;
-    margin-bottom: 8px;
-    color: #ccc;
-    font-size: 1.1em;
-}
-
-.tab-content input[type="url"],
-.tab-content textarea,
-.tab-content input[type="text"] {
+input[type="url"],
+textarea {
     width: 100%;
-    padding: 12px;
-    margin-bottom: 20px;
-    border: 1px solid #555;
-    border-radius: 6px;
-    background-color: #333;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #424242;
     color: #f0f0f0;
-    font-size: 1rem;
-    outline: none;
-    transition: border-color 0.2s ease;
-}
-
-.tab-content input[type="url"]:focus,
-.tab-content textarea:focus,
-.tab-content input[type="text"]:focus {
-    border-color: #a8e6cf;
-}
-
-.tab-content button {
-    background-color: #5cb85c;
-    color: white;
-    padding: 14px 22px;
     border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-    font-size: 1.1em;
-    font-weight: 500;
-    outline: none;
+    border-radius: 4px;
+    resize: vertical;
 }
 
-.tab-content button:hover {
-    background-color: #4cae4c;
+button {
+    background-color: #007bff;
+    color: #f0f0f0;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
 }
 
 .stats {
-    margin-top: 30px;
-    padding: 15px;
-    border: 1px solid #555;
-    border-radius: 6px;
-    background-color: #333;
-    color: #ddd;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #303030;
+    border-radius: 4px;
 }
 
 .stats p {
-    margin: 8px 0;
-    font-size: 1.05em;
+    margin: 5px 0;
 }
 
-@media (max-width: 960px) {
+/* Responsive Design */
+@media (max-width: 768px) {
     .container {
         flex-direction: column;
-        width: 98%;
-        margin: 10px;
     }
 
     .side-panel {
         width: 100%;
-        border-right: none;
-        border-bottom: 1px solid #444;
-        padding: 15px;
-    }
-
-    .side-panel h1 {
-        font-size: 1.75em;
-        margin-bottom: 15px;
-    }
-
-    .main-content {
-        padding: 20px;
-    }
-}
-
-@media (max-width: 600px) {
-    .side-panel button {
-        padding: 10px 12px;
-        font-size: 0.9em;
-    }
-
-    .tab-content h2 {
-        font-size: 1.5em;
-    }
-
-    .tab-content input,
-    .tab-content textarea {
-        padding: 10px;
-        margin-bottom: 15px;
-        font-size: 0.9em;
-    }
-
-    .tab-content button {
-        padding: 12px 18px;
-        font-size: 1em;
-    }
-
-    .stats p {
-        font-size: 0.95em;
     }
 }
