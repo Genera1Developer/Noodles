@@ -1,6 +1,7 @@
 const https = require('https');
 const http = require('http');
 const SocksProxyAgent = require('socks-proxy-agent');
+const { URL } = require('url'); // Import URL from 'url' module
 
 /**
  * Connects to a target URL via a proxy server.
@@ -16,13 +17,24 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
     const parsedTarget = new URL(targetUrl);
     const parsedProxy = new URL(proxyUrl);
 
-    const proxyOptions = {
-      protocol: parsedProxy.protocol,
-      hostname: parsedProxy.hostname,
-      port: parseInt(parsedProxy.port, 10),
-      userId: parsedProxy.username,
-      password: parsedProxy.password,
-    };
+    let proxyOptions = {};
+    let agent = null;
+
+    if (parsedProxy.protocol.startsWith('socks')) {
+      agent = new SocksProxyAgent(proxyUrl);
+    } else if (parsedProxy.protocol.startsWith('http')) {
+      proxyOptions = {
+        protocol: parsedProxy.protocol,
+        hostname: parsedProxy.hostname,
+        port: parseInt(parsedProxy.port, 10),
+        userId: parsedProxy.username,
+        password: parsedProxy.password,
+      };
+      agent = new http.Agent(proxyOptions);
+    } else {
+      throw new Error('Unsupported proxy protocol: ' + parsedProxy.protocol);
+    }
+
 
     const defaultHeaders = {
       'User-Agent': 'Noodles/1.6.6',
@@ -40,19 +52,9 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
       method: 'GET',
       headers: { ...defaultHeaders, ...requestOptions.headers },
       timeout: 10000,
-      ...requestOptions,
+      agent: agent,
+      ...requestOptions, // Overwrite default options, including agent, if provided
     };
-
-    let agent = null;
-    if (parsedProxy.protocol.startsWith('socks')) {
-      agent = new SocksProxyAgent(proxyUrl);
-    } else if (parsedProxy.protocol.startsWith('http')) {
-      agent = new http.Agent(proxyOptions);
-    } else {
-      throw new Error('Unsupported proxy protocol: ' + parsedProxy.protocol);
-    }
-
-    options.agent = agent;
 
     const protocol = parsedTarget.protocol === 'https:' ? https : http;
 
