@@ -42,7 +42,7 @@ async function startDDoS() {
         if (typeof data === 'object' && data !== null && data.status === 'success') {
             updateStatistics(data);
         } else {
-            alert('DDoS attack failed: ' + (typeof data === 'object' && data !== null && data.message) ? data.message : data);
+            alert('DDoS attack failed: ' + (typeof data === 'object' && data !== null && data.message ? data.message : data));
         }
     } catch (error) {
         console.error('DDoS error:', error);
@@ -69,9 +69,8 @@ async function startDefacement() {
 
         if (typeof data === 'string' && data.includes('Defacement successful')) {
             alert('Defacement successful!');
-        }
-         else {
-            alert('Defacement failed: ' + (typeof data === 'object' && data !== null && data.message) ? data.message : data);
+        } else {
+            alert('Defacement failed: ' + (typeof data === 'object' && data !== null && data.message ? data.message : data));
         }
     } catch (error) {
         console.error('Defacement error:', error);
@@ -99,7 +98,7 @@ async function establishConnection() {
         if (typeof data === 'string' && data.includes('Connection established')) {
             alert('Connection established!');
         } else {
-            alert('Connection failed: ' + (typeof data === 'object' && data !== null && data.message) ? data.message : data);
+            alert('Connection failed: ' + (typeof data === 'object' && data !== null && data.message ? data.message : data));
         }
     } catch (error) {
         console.error('Connection error:', error);
@@ -127,7 +126,7 @@ async function startCredentialStuffing() {
         if (typeof data === 'string' && data.includes('Credential stuffing started')) {
             alert('Credential stuffing started!');
         } else {
-            alert('Credential stuffing failed: ' + (typeof data === 'object' && data !== null && data.message) ? data.message : data);
+            alert('Credential stuffing failed: ' + (typeof data === 'object' && data !== null && data.message ? data.message : data));
         }
     } catch (error) {
         console.error('Credential stuffing error:', error);
