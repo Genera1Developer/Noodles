@@ -266,3 +266,45 @@ button:hover {
 .attack-options button:hover {
     background-color: #61af69;
 }
+
+.attack-form {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #303841;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #98c379;
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #555;
+    border-radius: 5px;
+    background-color: #3e4451;
+    color: #abb2bf;
+    box-sizing: border-box;
+    font-size: 1.1em;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group select:focus {
+    border-color: #98c379;
+    outline: none;
+    box-shadow: 0 0 5px rgba(152, 195, 121, 0.5);
+}
