@@ -79,7 +79,7 @@ const credentials = {
       'political':
           '<body bgcolor="black"><center><h1 style="color:yellow;">FREEDOM</h1><p style="color:white;">The truth will prevail.</p></center></body>',
       'nsfw':
-          '<body bgcolor="black"><center><img src="assets/nsfw.gif" alt="NSFW Image"><p style="color:white;">Get Noodled!</p></center></body>',  // Modified Path
+          '<body bgcolor="black"><center><img src="nsfw.gif" alt="NSFW Image"><p style="color:white;">Get Noodled!</p></center></body>',
       'rickroll':
           '<body bgcolor="black"><center><iframe width="560" height="315" src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1" title="Rickroll Video" frameborder="0" allowfullscreen></iframe></center></body>',
       'custom':
