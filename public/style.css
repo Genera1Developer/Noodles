@@ -1,170 +1,142 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #1e272e;
-    color: #dcdde1;
+    background-color: #282c34;
+    color: #abb2bf;
     margin: 0;
     padding: 0;
     overflow: hidden;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Added transition for theme changes */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.noodle-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #2f3640;
-    border: 1px solid #34495e;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.container {
+    display: flex;
+    height: 100vh;
+}
+
+.side-panel {
+    width: 220px;
+    background-color: #383e4a;
+    color: #abb2bf;
+    border-right: 1px solid #52596a;
     padding: 20px;
-    border-radius: 8px;
-    width: 600px;
-    max-width: 90%;
-    height: 400px;
-    max-height: 80%;
-    overflow: auto; /* Changed resize to overflow for better handling */
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Remove resize and its side effects - resize can cause unexpected behavior */
-
-.noodle-dark-theme {
-    background-color: #1e272e;
-    color: #dcdde1;
+.side-panel button {
+    background-color: #44475a;
+    color: #abb2bf;
+    border: none;
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: left;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.noodle-input, .noodle-button, .noodle-log, select {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin: 5px 0;
-    border: 1px solid #34495e;
-    background-color: #2f3640;
-    color: #dcdde1;
+.side-panel button:hover {
+    background-color: #52596a;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.panel {
+    background-color: #383e4a;
+    border: 1px solid #52596a;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.panel h2 {
+    color: #61afef;
+    margin-top: 0;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #98c379;
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #52596a;
+    background-color: #44475a;
+    color: #abb2bf;
     border-radius: 4px;
     box-sizing: border-box;
-    font-size: 14px;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
 }
 
-.noodle-input:focus, .noodle-button:focus, select:focus {
-    outline: none;
-    border-color: #2ecc71;
-    box-shadow: 0 0 5px rgba(46, 204, 113, 0.5);
-}
-
-.noodle-button {
-    background-color: #2ecc71;
-    color: white;
+button.primary {
+    background-color: #61afef;
+    color: #282c34;
     border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.noodle-button:hover {
-    background-color: #27ae60;
+button.primary:hover {
+    background-color: #569cd6;
 }
 
-.noodle-log {
-    height: 100px;
-    overflow-y: scroll;
-    white-space: pre-wrap;
-}
-
-.noodle-stats {
-    margin-top: 20px;
-    padding: 10px;
-    border: 1px solid #34495e;
-    border-radius: 4px;
-    font-size: 14px;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
-}
-
-.noodle-side-panel {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 200px;
-    background-color: #2f3640;
-    border-right: 1px solid #34495e;
-    padding-top: 20px;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
-}
-
-.noodle-menu-item {
-    padding: 10px 20px;
-    text-decoration: none;
-    color: #dcdde1;
-    display: block;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    cursor: pointer;
-}
-
-.noodle-menu-item:hover {
-    background-color: #34495e;
-}
-
-.noodle-about-us {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #2f3640;
-    border: 1px solid #34495e;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.stats {
+    background-color: #383e4a;
+    border: 1px solid #52596a;
+    border-radius: 5px;
     padding: 20px;
-    border-radius: 8px;
-    width: 600px;
-    max-width: 90%;
-    display: none;
-    color: #dcdde1;
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added transition for theme changes */
+    font-size: 0.9em;
 }
 
-.noodle-about-us h2 {
-    color: #2ecc71;
+.stats h3 {
+    color: #e06c75;
+    margin-top: 0;
+    margin-bottom: 15px;
 }
 
-.noodle-drag-handle {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 20px;
-    background-color: rgba(52, 73, 94, 0.3);
-    cursor: move;
-    border-radius: 8px 8px 0 0;
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
 }
 
-.noodle-resize-handle {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 20px;
-    height: 20px;
-    background-color: rgba(52, 73, 94, 0.3);
-    cursor: se-resize;
-    border-radius: 0 0 8px 0;
+.stats-grid div {
+    padding: 10px;
+    border: 1px solid #52596a;
+    border-radius: 4px;
 }
 
-.noodle-tor-container {
-    display: flex;
-    align-items: center;
-    margin: 5px 0;
+#about-us {
+    background-color: #383e4a;
+    border: 1px solid #52596a;
+    border-radius: 5px;
+    padding: 20px;
+    margin-top: 20px;
+    color: #abb2bf;
 }
 
-.noodle-tor-container label {
-    margin-right: 10px;
+#about-us h2 {
+    color: #61afef;
 }
 
-.noodle-slider-container {
-    margin: 10px 0;
-}
-
-.noodle-slider {
-    width: 70%;
-}
-
-.noodle-slider-value {
-    margin-left: 10px;
+#about-us p {
+    line-height: 1.6;
 }
