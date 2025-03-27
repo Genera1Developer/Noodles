@@ -1,27 +1,23 @@
-|
-    https://www.google.com/search?q=
-    https://www.facebook.com/
-    https://www.youtube.com/
-    https://www.fbi.gov/
-    https://r.search.yahoo.com/
-    https://www.cia.gov/index.html
-    https://vk.com/profile.php?redirect=
-    https://www.usatoday.com/search/results?q=
-    https://steamcommunity.com/market/search?q=
-    https://www.ted.com/search?q=
-    https://www.bing.com/search?q=
-    https://duckduckgo.com/?q=
-    https://yandex.com/search/?text=
-    https://baidu.com/s?wd=
-    https://www.wolframalpha.com/input/?i=
-    https://www.startpage.com/sp/search?query=
-    https://www.qwant.com/?q=
-    https://search.brave.com/search?q=
-    https://gigablast.com/search?q=
-    https://searx.space/?q=
-    https://metager.org/meta/index.php?eingabe=
-    https://swisscows.com/en/web?query=
-    https://boardreader.com/s/
-    https://www.searchencrypt.com/search?q=
-    https://mojeek.com/search?q=
-    https://www.perplexity.ai/search?q=
+https://www.google.com/search?q=
+https://www.facebook.com/
+https://www.youtube.com/
+https://r.search.yahoo.com/
+https://www.bing.com/search?q=
+https://duckduckgo.com/?q=
+https://yandex.com/search/?text=
+https://baidu.com/s?wd=
+https://www.startpage.com/sp/search?query=
+https://www.qwant.com/?q=
+https://search.brave.com/search?q=
+https://gigablast.com/search?q=
+https://searx.space/?q=
+https://metager.org/meta/index.php?eingabe=
+https://swisscows.com/en/web?query=
+https://boardreader.com/s/
+https://www.searchencrypt.com/search?q=
+https://mojeek.com/search?q=
+https://www.perplexity.ai/search?q=
+https://www.usatoday.com/search/results?q=
+https://steamcommunity.com/market/search?q=
+https://www.ted.com/search?q=
+https://www.wolframalpha.com/input/?i=
