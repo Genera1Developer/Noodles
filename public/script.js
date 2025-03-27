@@ -1,8 +1,6 @@
 function showTab(tabId) {
     const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(tab => {
-        tab.style.display = 'none';
-    });
+    tabContents.forEach(tab => tab.style.display = 'none');
     document.getElementById(tabId).style.display = 'block';
 }
 
