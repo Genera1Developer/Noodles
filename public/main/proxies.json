@@ -119,18 +119,6 @@
       "port": 80,
       "protocol": "http",
       "country": "ZA"
-    },
-    {
-      "ip": "8.8.8.8",
-      "port": 53,
-      "protocol": "http",
-      "country": "US"
-    },
-    {
-      "ip": "1.1.1.1",
-      "port": 53,
-      "protocol": "http",
-      "country": "AU"
     }
   ]
 }
