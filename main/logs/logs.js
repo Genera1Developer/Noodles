@@ -15,7 +15,7 @@ class Logger {
     constructor() {
         this.logEntries = [];
         this.maxLogSize = 200;
-        this.logFilePath = 'noodles.log';
+        this.logFilePath = '/public/noodles.log';
         this.stats = {
             packetsSent: 0,
             bytesSent: 0,
@@ -108,8 +108,9 @@ class Logger {
 
     persistLog(logEntry) {
         const logString = JSON.stringify(logEntry) + '\n';
+        const logFilePath = this.logFilePath;
 
-        fs.appendFile(this.logFilePath, logString, err => {
+        fs.appendFile(logFilePath, logString, err => {
             if (err) {
                 console.error('Failed to persist log:', err);
                 this.stats.errors++;
@@ -158,7 +159,8 @@ class Logger {
     }
 
     loadPersistentLogs() {
-        fs.readFile(this.logFilePath, 'utf8', (err, data) => {
+        const logFilePath = this.logFilePath;
+        fs.readFile(logFilePath, 'utf8', (err, data) => {
             if (err) {
                 console.warn('No previous logs found or unable to read file.');
                 return;
@@ -187,7 +189,8 @@ class Logger {
                 logsContainer.innerHTML = '';
             }
         }
-        fs.writeFile(this.logFilePath, '', err => {
+        const logFilePath = this.logFilePath;
+        fs.writeFile(logFilePath, '', err => {
             if (err) {
                 console.error('Failed to clear log file:', err);
                 this.stats.errors++;
