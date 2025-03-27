@@ -3,78 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - Hacking Web Application</title>
+    <title>Noodles</title>
     <link rel="stylesheet" href="style.css">
-    <script src="script.js" defer></script>
 </head>
-<body class="dark-theme">
+<body>
+
     <div class="container">
-        <aside class="side-panel">
-            <header>
-                <h1>Noodles 😈</h1>
-            </header>
-            <nav>
-                <button data-tab="ddos" class="active">DDoS</button>
-                <button data-tab="defacement">Defacement</button>
-                <button data-tab="connection">Connection</button>
-                <button data-tab="credential">Credential Stuffing</button>
-                <button data-tab="about">About Us</button>
-            </nav>
-        </aside>
-        <main class="main-content">
-            <section id="ddos" class="tab-content active">
-                <h2>DDoS Attack 💥</h2>
-                <div class="attack-form">
-                    <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
-                    <select id="ddos-method">
-                        <option value="tcp">TCP Flood</option>
-                        <option value="udp">UDP Flood</option>
-                        <option value="http">HTTP Flood</option>
-                    </select>
-                    <button id="ddos-start">Start Attack</button>
-                </div>
-                <div class="statistics">
-                    <h3>Statistics</h3>
-                    <p>MBPS: <span id="mbps">0</span></p>
-                    <p>Packets Sent: <span id="packets-sent">0</span></p>
-                    <p>Target Status: <span id="target-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="time-elapsed">0</span> seconds</p>
-                </div>
-            </section>
 
-            <section id="defacement" class="tab-content">
-                <h2>Website Defacement 😈</h2>
-                <div class="defacement-form">
-                    <input type="text" id="defacement-target" placeholder="Target Website URL">
-                    <textarea id="defacement-content" placeholder="HTML Content for Defacement"></textarea>
-                    <button id="defacement-start">Start Defacement</button>
-                </div>
-            </section>
+        <div class="side-panel">
+            <button class="tab-button" data-tab="ddos">DDoS</button>
+            <button class="tab-button" data-tab="defacement">Defacement</button>
+            <button class="tab-button" data-tab="connection">Connection</button>
+            <button class="tab-button" data-tab="credential">Credential</button>
+            <button class="tab-button" data-tab="other">Other Hacking Tools</button>
+            <button class="tab-button" data-tab="about">About Us</button>
+        </div>
 
-            <section id="connection" class="tab-content">
-                <h2>Establish Connection 🔗</h2>
-                <div class="connection-form">
-                    <input type="text" id="connection-target" placeholder="Target IP Address or Domain">
-                    <input type="number" id="connection-port" placeholder="Port Number">
-                    <button id="connection-start">Establish Connection</button>
-                </div>
-            </section>
+        <div class="main-panel">
+            <div id="ddos" class="tab-content">
+                <h2>DDoS Attack</h2>
+                <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                <button onclick="startDDoS()">Start DDoS Attack</button>
+            </div>
 
-            <section id="credential" class="tab-content">
-                <h2>Credential Stuffing 🔑</h2>
-                <div class="credential-form">
-                    <input type="text" id="credential-target" placeholder="Target Login URL">
-                    <textarea id="credential-usernames" placeholder="List of Usernames"></textarea>
-                    <textarea id="credential-passwords" placeholder="List of Passwords"></textarea>
-                    <button id="credential-start">Start Stuffing</button>
-                </div>
-            </section>
+            <div id="defacement" class="tab-content" style="display:none;">
+                <h2>Website Defacement</h2>
+                <input type="text" id="defacement-target" placeholder="Target URL">
+                <textarea id="defacement-content" placeholder="Defacement Content"></textarea>
+                <button onclick="startDefacement()">Start Defacement</button>
+            </div>
 
-            <section id="about" class="tab-content">
-                <h2>About Us ℹ️</h2>
-                <p>Noodles is a powerful web application designed for penetration testing and security analysis. Use responsibly. 😈</p>
-            </section>
-        </main>
+            <div id="connection" class="tab-content" style="display:none;">
+                <h2>Establish Connection</h2>
+                <input type="text" id="connection-target" placeholder="Target IP Address">
+                <input type="number" id="connection-port" placeholder="Port">
+                <button onclick="establishConnection()">Establish Connection</button>
+            </div>
+
+             <div id="credential" class="tab-content" style="display:none;">
+                <h2>Credential Stuffing</h2>
+                <input type="text" id="credential-target" placeholder="Target Website">
+                <textarea id="credential-credentials" placeholder="Username:Password"></textarea>
+                <button onclick="startCredentialStuffing()">Start Credential Stuffing</button>
+            </div>
+
+            <div id="other" class="tab-content" style="display:none;">
+                <h2>Other Hacking Tools</h2>
+                <p>Additional tools will be placed here.</p>
+            </div>
+
+            <div id="about" class="tab-content" style="display:none;">
+                <h2>About Us</h2>
+                <p>Noodles is a web application for penetration testing and security analysis. Use responsibly.</p>
+            </div>
+        </div>
+
+        <div class="stats-panel">
+            <h2>Real-Time Statistics</h2>
+            <p>MBPS: <span id="mbps">0</span></p>
+            <p>Packets Sent: <span id="packets">0</span></p>
+            <p>Target Status: <span id="status">Unknown</span></p>
+            <p>Time Elapsed: <span id="time">0</span></p>
+        </div>
+
     </div>
+
+    <script src="script.js"></script>
+
 </body>
 </html>
