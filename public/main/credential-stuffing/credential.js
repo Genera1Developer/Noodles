@@ -24,7 +24,17 @@ async function tryLogin(username, password, attemptLogin) {
  * @returns {Promise<void>}
  */
 async function credentialStuffingAttack(credentials, attemptLogin, onCredentialAttempted, delay = 0) {
+  if (!credentials || !Array.isArray(credentials)) {
+    console.warn("Invalid credentials data provided.");
+    return;
+  }
+
   for (const credential of credentials) {
+    if (typeof credential !== 'object' || credential === null) {
+      console.warn("Skipping invalid credential entry.");
+      continue;
+    }
+
     const { username, password } = credential;
 
     if (!username || !password) {
@@ -39,7 +49,7 @@ async function credentialStuffingAttack(credentials, attemptLogin, onCredentialA
     try {
       const result = await tryLogin(username, password, attemptLogin);
 
-      if (onCredentialAttempted) {
+      if (onCredentialAttempted && typeof onCredentialAttempted === 'function') {
         onCredentialAttempted(username, password, result);
       }
     } catch (error) {
