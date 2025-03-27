@@ -23,7 +23,7 @@
     }
 
     while (target.firstChild) {
-        target.removeChild(target.firstChild);
+      target.removeChild(target.firstChild);
     }
 
     var defacementMessage = document.createElement('div');
@@ -40,12 +40,17 @@
       animationName: config.animationName,
       animationDuration: config.animationDuration,
       animationIterationCount: config.animationIterationCount,
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
+      position: 'fixed',
+      top: '0',
+      left: '0',
       width: '100%',
-      boxSizing: 'border-box'
+      height: '100%',
+      boxSizing: 'border-box',
+      zIndex: '9999',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'column'
     });
 
     target.appendChild(defacementMessage);
