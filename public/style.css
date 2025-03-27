@@ -1,6 +1,6 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #333; /* Dark Grey */
+    background-color: #282c34; /* Dark Blue-Grey */
     color: #f0f0f0; /* Light Grey */
     margin: 0;
     padding: 0;
@@ -16,26 +16,26 @@ body {
 }
 
 header {
-    background-color: #282c34; /* Dark Blue-Grey */
+    background-color: #1e2127; /* Darker Blue-Grey */
     color: #f0f0f0;
     text-align: center;
     padding: 20px;
     margin-bottom: 20px;
-    border-bottom: 1px solid #444;
+    border-bottom: 1px solid #333;
 }
 
 .side-panel {
     width: 250px;
-    background-color: #282c34; /* Dark Blue-Grey */
+    background-color: #1e2127; /* Darker Blue-Grey */
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    border-right: 1px solid #444;
+    border-right: 1px solid #333;
 }
 
 .side-panel .tab-btn {
-    background-color: #444; /* Darker Grey */
+    background-color: #333; /* Dark Grey */
     color: #f0f0f0;
     border: none;
     padding: 12px 15px;
@@ -43,13 +43,13 @@ header {
     cursor: pointer;
     transition: background-color 0.3s ease, color 0.3s ease;
     margin-bottom: 10px;
-    border-radius: 5px;
+    border-radius: 4px;
     font-size: 16px;
     outline: none;
 }
 
 .side-panel .tab-btn:hover {
-    background-color: #555; /* Even Darker Grey */
+    background-color: #444; /* Even Darker Grey */
     color: #fff;
 }
 
@@ -67,7 +67,7 @@ header {
     display: none;
     padding: 20px;
     border-radius: 5px;
-    background-color: #222; /* Dark */
+    background-color: #181a1f; /* Darker Background */
     color: #f0f0f0;
 }
 
@@ -144,7 +144,7 @@ button:active {
 .status-area {
     margin-top: 30px;
     padding: 20px;
-    background-color: #282c34; /* Dark Blue-Grey */
+    background-color: #1e2127; /* Darker Blue-Grey */
     border-radius: 5px;
     color: #ddd;
     font-size: 16px;
@@ -157,10 +157,10 @@ button:active {
 footer {
     text-align: center;
     padding: 15px;
-    background-color: #282c34; /* Dark Blue-Grey */
+    background-color: #1e2127; /* Darker Blue-Grey */
     color: #888;
     margin-top: 30px;
-    border-top: 1px solid #444;
+    border-top: 1px solid #333;
     font-size: 14px;
 }
 
@@ -181,7 +181,7 @@ footer {
 }
 
 .grid-item {
-    background-color: #222;
+    background-color: #181a1f; /* Darker Background */
     padding: 20px;
     border-radius: 5px;
     color: #f0f0f0;
@@ -192,7 +192,7 @@ footer {
     .side-panel {
         width: 100%;
         border-right: none;
-        border-bottom: 1px solid #444;
+        border-bottom: 1px solid #333;
     }
 
     .main-content {
@@ -224,7 +224,7 @@ form {
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
-    background-color: #222;
+    background-color: #181a1f; /* Darker Background */
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     color: #f0f0f0;
