@@ -9,12 +9,14 @@ async function handleSlowlorisAttack(targetUrl, numSockets) {
             return;
         }
 
-        if (!numSockets || numSockets <= 0) {
+        if (!numSockets || isNaN(numSockets) || numSockets <= 0) {
             numSockets = 200; // Default value
+        } else {
+            numSockets = parseInt(numSockets);
         }
 
-        // Construct the API endpoint URL
-        const apiUrl = '/main/ddos/slowloris';
+        // Construct the API endpoint URL using relative path
+        const apiUrl = 'main/ddos/slowloris';
 
         // Make a POST request to trigger the attack
         const response = await fetch(apiUrl, {
@@ -27,18 +29,26 @@ async function handleSlowlorisAttack(targetUrl, numSockets) {
 
         if (response.ok) {
             const data = await response.json();
-            alert(data.message); // Display success or any message from the backend
+            if (data && data.message) {
+                alert(data.message); // Display success or any message from the backend
+            } else {
+                alert("Attack initiated successfully (no message from server).");
+            }
 
              // Start updating statistics (example)
             startUpdatingStats(targetUrl);
 
         } else {
             const errorData = await response.json();
-            alert(`Attack failed: ${errorData.error}`);
+            if (errorData && errorData.error) {
+              alert(`Attack failed: ${errorData.error}`);
+            } else {
+              alert("Attack failed: Unknown error.");
+            }
         }
     } catch (error) {
         console.error("Error during attack:", error);
-        alert("An unexpected error occurred.");
+        alert("An unexpected error occurred: " + error.message);
     }
 }
 
