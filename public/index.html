@@ -3,76 +3,71 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Noodles - Hacking Web Application</title>
+  <title>Noodles</title>
   <link rel="stylesheet" href="style.css">
-  <script src="script.js" defer></script>
  </head>
  <body>
   <div class="container">
-  <header>
-  <h1>🍜 Noodles</h1>
-  </header>
-  <nav>
-  <button data-tab="ddos">DDoS</button>
-  <button data-tab="defacement">Defacement</button>
-  <button data-tab="connection">Connection</button>
-  <button data-tab="credential">Credential Stuffing</button>
-  <button data-tab="about">About Us</button>
-  </nav>
-  <main>
+  <aside class="side-panel">
+  <button class="tab-button" data-tab="ddos">DDoS</button>
+  <button class="tab-button" data-tab="defacement">Defacement</button>
+  <button class="tab-button" data-tab="connection">Connection</button>
+  <button class="tab-button" data-tab="credential">Credential</button>
+  <button class="tab-button" data-tab="other">Other Hacking Tools</button>
+  <button class="tab-button" data-tab="about">About Us</button>
+  </aside>
+ 
+
+  <main class="main-content">
   <section id="ddos" class="tab-content active">
-  <h2>DDoS Attack</h2>
-  <label for="ddos-target">Target URL:</label>
-  <input type="text" id="ddos-target" placeholder="http://example.com or onion address">
-  <label for="ddos-type">Attack Type:</label>
-  <select id="ddos-type">
-  <option value="http-flood">HTTP Flood</option>
-  <option value="slowloris">Slowloris</option>
-  <option value="udp-flood">UDP Flood</option>
-  </select>
-  <button id="ddos-start">Start DDoS Attack</button>
-  <div id="ddos-stats">
+  <h1>DDoS</h1>
+  <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+  <button onclick="startDDoS()">Start DDoS Attack</button>
+  <div class="stats">
   <p>MBPS: <span id="mbps">0</span></p>
-  <p>Packets Sent: <span id="packets">0</span></p>
-  <p>Target Status: <span id="status">Unknown</span></p>
-  <p>Time Elapsed: <span id="time">0</span> seconds</p>
+  <p>Packets Sent: <span id="packets-sent">0</span></p>
+  <p>Target Status: <span id="target-status">Unknown</span></p>
+  <p>Time Elapsed: <span id="time-elapsed">0</span></p>
   </div>
   </section>
+ 
+
   <section id="defacement" class="tab-content">
-  <h2>Website Defacement</h2>
-  <label for="defacement-target">Target URL:</label>
-  <input type="text" id="defacement-target" placeholder="http://example.com">
-  <label for="defacement-message">Defacement Message:</label>
-  <textarea id="defacement-message" placeholder="Enter your defacement message"></textarea>
-  <button id="defacement-start">Start Defacement</button>
+  <h1>Defacement</h1>
+  <input type="text" id="defacement-target" placeholder="Target URL">
+  <textarea id="defacement-content" placeholder="Defacement HTML"></textarea>
+  <button onclick="startDefacement()">Start Defacement</button>
   </section>
+ 
+
   <section id="connection" class="tab-content">
-  <h2>Unauthorized Connection</h2>
-  <label for="connection-target">Target IP Address:</label>
-  <input type="text" id="connection-target" placeholder="127.0.0.1">
-  <label for="connection-port">Port:</label>
-  <input type="number" id="connection-port" placeholder="8080">
-  <button id="connection-start">Establish Connection</button>
+  <h1>Connection</h1>
+  <input type="text" id="connection-target" placeholder="Target IP or URL">
+  <input type="number" id="connection-port" placeholder="Port">
+  <button onclick="openConnection()">Open Connection</button>
   </section>
+ 
+
   <section id="credential" class="tab-content">
-  <h2>Credential Stuffing</h2>
-  <label for="credential-target">Target Login URL:</label>
-  <input type="text" id="credential-target" placeholder="http://example.com/login">
-  <label for="credential-username-list">Username List URL:</label>
-  <input type="text" id="credential-username-list" placeholder="URL to username list">
-  <label for="credential-password-list">Password List URL:</label>
-  <input type="text" id="credential-password-list" placeholder="URL to password list">
-  <button id="credential-start">Start Credential Stuffing</button>
+  <h1>Credential Stuffing</h1>
+  <input type="text" id="credential-target" placeholder="Target Website">
+  <textarea id="credential-list" placeholder="Username:Password"></textarea>
+  <button onclick="startCredentialStuffing()">Start Credential Stuffing</button>
   </section>
+ 
+
+  <section id="other" class="tab-content">
+  <h1>Other Hacking Tools</h1>
+  <p>Coming soon...</p>
+  </section>
+ 
+
   <section id="about" class="tab-content">
-  <h2>About Us</h2>
-  <p>Noodles is a web application designed for security testing and ethical hacking purposes.
-  Use responsibly.</p>
+  <h1>About Us</h1>
+  <p>This is a hacking web application for educational purposes only. Use at your own risk.</p>
   </section>
   </main>
-  <footer>
-  <p>&copy; 2024 Noodles. All rights reserved.</p>
-  </footer>
   </div>
+  <script src="script.js"></script>
  </body>
  </html>
