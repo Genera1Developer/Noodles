@@ -1,95 +1,170 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const targetInput = document.getElementById('targetUrl');
-    const attackTypeSelect = document.getElementById('attackType');
-    const attackButton = document.getElementById('attackButton');
-    const mbpsDisplay = document.getElementById('mbps');
-    const packetsSentDisplay = document.getElementById('packetsSent');
-    const connectionStatusDisplay = document.getElementById('connectionStatus');
-    const timeElapsedDisplay = document.getElementById('timeElapsed');
-    const tabs = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
+  // Dark theme implementation
+  const applyTheme = () => {
+    document.body.style.backgroundColor = 'darkgrey';
+    document.body.style.color = 'darkgreen';
 
-    let attackStartTime;
-    let attackInterval;
-
-    function updateStats(mbps, packets, status) {
-        mbpsDisplay.textContent = mbps;
-        packetsSentDisplay.textContent = packets;
-        connectionStatusDisplay.textContent = status;
-    }
-
-    function updateElapsedTime() {
-        const now = Date.now();
-        const elapsedSeconds = (now - attackStartTime) / 1000;
-        timeElapsedDisplay.textContent = elapsedSeconds.toFixed(2);
-    }
-
-    attackButton.addEventListener('click', async () => {
-        const target = targetInput.value;
-        const attackType = attackTypeSelect.value;
-
-        if (!target) {
-            alert('Please enter a target URL.');
-            return;
-        }
-
-        attackButton.disabled = true;
-        attackButton.textContent = 'Attacking...';
-        attackStartTime = Date.now();
-        attackInterval = setInterval(updateElapsedTime, 100);
-
-        try {
-            const response = await fetch(`/main/attack`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ target: target, attackType: attackType })
-            });
-
-            if (response.ok) {
-                console.log('Attack initiated successfully');
-                updateStats('N/A', 'N/A', 'Attacking');
-
-                // Simulate receiving updates (replace with actual updates from the server)
-                let packetsSent = 0;
-                const updateInterval = setInterval(() => {
-                    packetsSent += 500;
-                    updateStats('150', packetsSent, 'Online');
-                }, 2000);
-
-                // Stop the attack and updates after a certain duration (e.g., 60 seconds)
-                setTimeout(() => {
-                    clearInterval(updateInterval);
-                    clearInterval(attackInterval);
-                    attackButton.disabled = false;
-                    attackButton.textContent = 'Start Attack';
-                    updateStats('N/A', packetsSent, 'Offline');
-                }, 60000); // 60 seconds
-            } else {
-                console.error('Failed to initiate attack:', response.statusText);
-                updateStats('N/A', 'N/A', 'Failed');
-                clearInterval(attackInterval);
-                attackButton.disabled = false;
-                attackButton.textContent = 'Start Attack';
-            }
-        } catch (error) {
-            console.error('Error initiating attack:', error);
-            updateStats('N/A', 'N/A', 'Error');
-            clearInterval(attackInterval);
-            attackButton.disabled = false;
-            attackButton.textContent = 'Start Attack';
-        }
+    const panels = document.querySelectorAll('.panel');
+    panels.forEach(panel => {
+      panel.style.backgroundColor = 'darkblue';
+      panel.style.border = '1px solid darkgreen';
     });
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            tabContents.forEach(c => c.classList.remove('active'));
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+      button.style.backgroundColor = 'grey';
+      button.style.color = 'darkgreen';
+      button.style.border = '1px solid darkgreen';
+    });
 
-            tab.classList.add('active');
-            const tabId = tab.getAttribute('data-tab');
-            document.getElementById(tabId).classList.add('active');
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(button => {
+      button.style.backgroundColor = 'grey';
+      button.style.color = 'darkgreen';
+      button.style.border = '1px solid darkgreen';
+    });
+
+    const inputFields = document.querySelectorAll('input[type="text"], input[type="number"]');
+    inputFields.forEach(input => {
+      input.style.backgroundColor = 'grey';
+      input.style.color = 'darkgreen';
+      input.style.border = '1px solid darkgreen';
+    });
+  };
+
+  applyTheme();
+
+  // Tab functionality
+  const tabs = document.querySelectorAll('.tab-button');
+  const tabContent = document.querySelectorAll('.tab-content');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', (event) => {
+      event.preventDefault();
+
+      const tabId = tab.getAttribute('data-tab');
+
+      tabContent.forEach(content => {
+        content.classList.remove('active');
+      });
+
+      tabs.forEach(t => {
+        t.classList.remove('active');
+      });
+
+      tab.classList.add('active');
+      document.getElementById(tabId).classList.add('active');
+    });
+  });
+
+  // Attack functions
+  const ddosForm = document.getElementById('ddos-form');
+  if (ddosForm) {
+    ddosForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const target = document.getElementById('ddos-target').value;
+      const type = document.getElementById('ddos-type').value;
+      const duration = document.getElementById('ddos-duration').value;
+      const intensity = document.getElementById('ddos-intensity').value;
+
+      try {
+        const response = await fetch('/main/ddos/attack', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ target, type, duration, intensity })
         });
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
     });
+  }
+
+  const defaceForm = document.getElementById('deface-form');
+  if (defaceForm) {
+    defaceForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const target = document.getElementById('deface-target').value;
+      const image = document.getElementById('deface-image').value;
+      const message = document.getElementById('deface-message').value;
+
+      try {
+        const response = await fetch('/main/deface/attack', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ target, image, message })
+        });
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  const connectionForm = document.getElementById('connection-form');
+  if (connectionForm) {
+    connectionForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const target = document.getElementById('connection-target').value;
+      const port = document.getElementById('connection-port').value;
+
+      try {
+        const response = await fetch('/main/connection/attack', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ target, port })
+        });
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  const credentialForm = document.getElementById('credential-form');
+  if (credentialForm) {
+    credentialForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const target = document.getElementById('credential-target').value;
+      const usernameList = document.getElementById('credential-usernames').value;
+      const passwordList = document.getElementById('credential-passwords').value;
+
+      try {
+        const response = await fetch('/main/credential/attack', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ target, usernameList, passwordList })
+        });
+
+        const data = await response.json();
+        console.log(data);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  }
+
+  // Statistics display (example - needs actual implementation)
+  const updateStats = () => {
+    document.getElementById('mbps').innerText = 'N/A';
+    document.getElementById('packets').innerText = 'N/A';
+    document.getElementById('status').innerText = 'N/A';
+    document.getElementById('time').innerText = 'N/A';
+  };
+
+  setInterval(updateStats, 2000);
 });
