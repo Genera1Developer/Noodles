@@ -3,10 +3,6 @@ const httpFlood = require('./ddos/http_flood');
 const slowloris = require('./ddos/slowloris');
 const tcp = require('./ddos/tcp');
 const udp = require('./ddos/udp');
-const defaceSite = require('./defacement/defacement');
-const connectionEstablish = require('./proxy/proxy');
-const torConnection = require('./tor/tor');
-const credentialStuffing = require('./credentials/credentials');
 
 const attackStatistics = {
     mbps: 0,
@@ -126,18 +122,6 @@ const executeAttack = async (target, attackType, options) => {
                 break;
             case 'udp':
                 attackModule = { execute: udp.execute };
-                break;
-            case 'defacement':
-                attackModule = { execute: defaceSite.execute };
-                break;
-            case 'connection':
-                attackModule = connectionEstablish;
-                break;
-            case 'tor':
-                attackModule = torConnection;
-                break;
-            case 'credential':
-                attackModule = credentialStuffing;
                 break;
             default:
                 throw new Error('Invalid attack type');
