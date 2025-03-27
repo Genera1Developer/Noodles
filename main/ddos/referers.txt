@@ -21,3 +21,9 @@ https://www.usatoday.com/search/results?q=
 https://steamcommunity.com/market/search?q=
 https://www.ted.com/search?q=
 https://www.wolframalpha.com/input/?i=
+https://news.google.com/search?q=
+https://www.amazon.com/s?k=
+https://twitter.com/search?q=
+https://www.instagram.com/explore/tags/
+https://www.linkedin.com/search/results/content/?keywords=
+https://www.reddit.com/search/?q=
