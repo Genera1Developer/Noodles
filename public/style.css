@@ -1,6 +1,6 @@
 body {
     font-family: 'Arial', sans-serif;
-    background-color: #1E1E1E;
+    background-color: #181818;
     color: #E0E0E0;
     margin: 0;
     padding: 0;
@@ -14,12 +14,15 @@ body {
 
 .side-panel {
     width: 250px;
-    background-color: #2D2D30;
+    background-color: #202124;
     color: #D4D4D4;
     padding: 20px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.7);
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.8);
     z-index: 100;
     transition: width 0.3s ease-in-out;
+    overflow: auto;
+    height: 100vh;
+    position: relative;
 }
 
 .side-panel button {
@@ -27,7 +30,7 @@ body {
     width: 100%;
     padding: 12px 0;
     margin-bottom: 12px;
-    background-color: #3F3F46;
+    background-color: #303134;
     color: #D4D4D4;
     border: none;
     text-align: left;
@@ -37,37 +40,39 @@ body {
     border-radius: 5px;
     font-size: 1rem;
     outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .side-panel button:hover {
-    background-color: #646CFF;
+    background-color: #3D5A80;
     color: #FFFFFF;
     transform: translateX(5px);
 }
 
 .side-panel button.active {
-    background-color: #00A36C;
-    color: #FFFFFF;
+    background-color: #98C1D9;
+    color: #293241;
     font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
 .content-area {
     flex-grow: 1;
     padding: 30px;
     overflow-y: auto;
-    background-color: #252526;
+    background-color: #282A36;
 }
 
 .attack-panel {
-    background-color: #333337;
+    background-color: #373B41;
     border-radius: 10px;
     padding: 25px;
     margin-bottom: 25px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
 }
 
 .attack-panel h2 {
-    color: #646CFF;
+    color: #98C1D9;
     margin-top: 0;
     margin-bottom: 20px;
     font-size: 1.75rem;
@@ -100,11 +105,12 @@ body {
 .attack-panel input[type="number"]:focus,
 .attack-panel select:focus,
 .attack-panel textarea:focus {
-    border-color: #646CFF;
+    border-color: #98C1D9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .attack-panel button {
-    background-color: #646CFF;
+    background-color: #3D5A80;
     color: #FFFFFF;
     padding: 12px 20px;
     border: none;
@@ -113,24 +119,26 @@ body {
     transition: background-color 0.3s ease, transform 0.3s ease;
     font-size: 1.1rem;
     outline: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .attack-panel button:hover {
     background-color: #00A36C;
     transform: scale(1.05);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
 }
 
 .stats-display {
-    background-color: #333337;
+    background-color: #373B41;
     color: #D4D4D4;
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
     margin-bottom: 25px;
 }
 
 .stats-display h3 {
-    color: #646CFF;
+    color: #98C1D9;
     margin-top: 0;
     margin-bottom: 15px;
     font-size: 1.5rem;
@@ -142,17 +150,17 @@ body {
 }
 
 .about-us {
-    background-color: #333337;
+    background-color: #373B41;
     color: #E0E0E0;
     padding: 30px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.7);
     line-height: 1.7;
     font-size: 1.1rem;
 }
 
 .about-us h2 {
-    color: #646CFF;
+    color: #98C1D9;
     margin-bottom: 20px;
     font-size: 1.75rem;
 }
@@ -238,7 +246,7 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #646CFF;
+    background: #98C1D9;
     border-radius: 4px;
 }
 
