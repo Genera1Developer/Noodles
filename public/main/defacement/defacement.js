@@ -14,7 +14,7 @@
     animationIterationCount: 'infinite'
   };
 
-  function deface() {
+  function applyDefacement() {
     var target = document.querySelector(config.targetSelector);
 
     if (!target) {
@@ -22,7 +22,9 @@
       return;
     }
 
-    target.innerHTML = '';
+    while (target.firstChild) {
+        target.removeChild(target.firstChild);
+    }
 
     var defacementMessage = document.createElement('div');
     defacementMessage.textContent = config.replacementText;
@@ -37,7 +39,13 @@
       padding: config.padding,
       animationName: config.animationName,
       animationDuration: config.animationDuration,
-      animationIterationCount: config.animationIterationCount
+      animationIterationCount: config.animationIterationCount,
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '100%',
+      boxSizing: 'border-box'
     });
 
     target.appendChild(defacementMessage);
@@ -57,6 +65,14 @@
     }
   }
 
-  document.addEventListener('DOMContentLoaded', deface);
+  function deface() {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', applyDefacement);
+    } else {
+      applyDefacement();
+    }
+  }
+
+  deface();
 
 })();
