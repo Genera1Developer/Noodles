@@ -1,10 +1,10 @@
 Noodles Log Initialized.
 index.html file created and populated with basic HTML structure.
 Added links to style.css and Font Awesome.
-Created a sidebar with menu options for DDoS, Defacement, Connection, Ransomware, and About Us.
+Created a sidebar with menu options for DDoS, Defacement, Connection, Credential, and About Us.
 Implemented tabbed content areas for each menu option with input fields and buttons.
 Added status and log boxes to each tab for displaying information.
-Added basic styling and JavaScript links (style.css and script.js need to be created).
+Added basic styling and JavaScript links (style.css and script.js created).
 Updated log with successful DDoS attack. Target: example.com, Packets Sent: 100000, Status: Success.
 Attempted defacement of vulnerable site. Target: compromised-site.net, Status: Successful, Message: "Owned by Noodles".
 Established reverse shell connection. Target: victim-machine.org, User: root, Status: Connected.
@@ -243,4 +243,57 @@ button:hover {
     color: #f1f2f6;
     box-sizing: border-box;
     resize: vertical;
+}
+
+/* Additional Styling for Compactness and Resizability */
+.sidebar, .content {
+    padding: 15px;
+}
+
+.sidebar-header h1 {
+    font-size: 20px;
+}
+
+.nav li {
+    padding: 8px;
+    margin-bottom: 3px;
+}
+
+button {
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+.input-group label {
+    font-size: 14px;
+}
+
+.input-group input[type="text"],
+.input-group input[type="number"],
+.input-group select,
+.input-group textarea {
+    padding: 6px;
+    font-size: 14px;
+}
+
+.log-box textarea {
+    height: 120px;
+    font-size: 12px;
+}
+
+/* Media Query for Responsiveness */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .content {
+        padding: 10px;
+    }
 }
