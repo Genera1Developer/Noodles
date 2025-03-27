@@ -68,7 +68,7 @@
         }
 
         #retry-button {
-            background-color: #4CAF50; /* Green */
+            background-color: #4CAF50;
             border: none;
             color: white;
             padding: 10px 20px;
@@ -92,14 +92,14 @@
         }
 
         #spinner {
-            border: 5px solid #f3f3f3; /* Light grey */
-            border-top: 5px solid #3498db; /* Blue */
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
             border-radius: 50%;
             width: 20px;
             height: 20px;
             animation: spin 2s linear infinite;
-            display: none; /* Hidden by default */
-            margin: 0 auto; /* Center the spinner */
+            display: none;
+            margin: 0 auto;
         }
 
         @keyframes spin {
@@ -160,7 +160,7 @@
 
             errorMessageDiv.style.display = 'none';
             retryButton.style.display = 'none';
-            spinner.style.display = 'block'; // Show the spinner
+            spinner.style.display = 'block';
             connectionText.textContent = 'Checking connection...';
             connectionMessage.classList.remove('connected', 'disconnected');
             statusIcon.classList.remove('connected-icon', 'disconnected-icon');
@@ -191,7 +191,7 @@
                     connectionMessage.classList.add('disconnected');
                     statusIcon.classList.remove('connected-icon');
                     statusIcon.classList.add('disconnected-icon');
-                    errorMessageDiv.textContent = 'Connection Lost. Please check your network.'; //More user-friendly message
+                    errorMessageDiv.textContent = 'Connection Lost. Please check your network.';
                     errorMessageDiv.style.display = 'block';
                     retryButton.style.display = 'block';
                 }
@@ -210,7 +210,7 @@
                 errorMessageDiv.style.display = 'block';
                 retryButton.style.display = 'block';
             } finally {
-                spinner.style.display = 'none'; // Hide the spinner
+                spinner.style.display = 'none';
             }
         }
     </script>
