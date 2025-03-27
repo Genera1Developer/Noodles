@@ -131,7 +131,8 @@
     "windows-registry": "^1.0.0",
     "wmi-client": "^0.0.4",
     "ws": "^8.16.0",
-    "zlib": "^1.0.5"
+    "zlib": "^1.0.5",
+    "esbuild": "^0.21.19"
   },
   "devDependencies": {
     "eslint": "^8.56.0",
@@ -148,5 +149,9 @@
   },
   "lint-staged": {
     "*.js": "eslint --fix"
+  },
+  "scripts": {
+    "build": "esbuild public/script.js --bundle --outfile=public/bundle.js --format=iife",
+    "start": "node main/server.js"
   }
 }
