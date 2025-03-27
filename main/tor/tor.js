@@ -77,6 +77,7 @@ class Tor {
         this.attackConfig = {};
         this.ddosThreads = [];
         this.gatewayBlacklistDuration = 60000; // 1 minute
+        this.gatewayCheckEnabled = true; // Control the gateway monitoring
     }
 
     async initServerInfo() {
@@ -91,9 +92,13 @@ class Tor {
     }
 
     startStatUpdates() {
-        setInterval(() => {
+        this.statUpdateIntervalId = setInterval(() => {
             this.dispatchEvent('statsUpdate', this.getRequestStats());
         }, this.statUpdateInterval);
+    }
+
+    stopStatUpdates() {
+        clearInterval(this.statUpdateIntervalId);
     }
 
     getRequestStats() {
@@ -126,20 +131,26 @@ class Tor {
 
     addEventListener(event, callback) {
         if (!this.eventListeners[event]) {
-            this.eventListeners[event] = [];
+            this.eventListeners[event] = {};
         }
-        this.eventListeners[event].push(callback);
+        if (!this.eventListeners[event][callback]) {
+            this.eventListeners[event][callback] = callback;
+        }
     }
 
     removeEventListener(event, callback) {
-        if (this.eventListeners[event]) {
-            this.eventListeners[event].filter(cb => cb !== callback);
+        if (this.eventListeners[event] && this.eventListeners[event][callback]) {
+            delete this.eventListeners[event][callback];
         }
     }
 
     dispatchEvent(event, data) {
         if (this.eventListeners[event]) {
-            this.eventListeners[event].forEach(callback => callback(data));
+            for (const callbackKey in this.eventListeners[event]) {
+                if (this.eventListeners[event].hasOwnProperty(callbackKey)) {
+                    this.eventListeners[event][callbackKey](data);
+                }
+            }
         }
     }
 
@@ -214,15 +225,19 @@ class Tor {
     }
 
     blacklistGateway(gateway) {
-        this.failedGateways.add(gateway);
-        setTimeout(() => {
-            this.failedGateways.delete(gateway);
-            this.log(`Gateway ${gateway} removed from blacklist.`, 'info');
-        }, this.gatewayBlacklistDuration);
+        if (!this.failedGateways.has(gateway)) {
+            this.failedGateways.add(gateway);
+            this.log(`Gateway ${gateway} blacklisted.`, 'warn');
+            setTimeout(() => {
+                this.failedGateways.delete(gateway);
+                this.log(`Gateway ${gateway} removed from blacklist.`, 'info');
+            }, this.gatewayBlacklistDuration);
+        }
     }
 
-    async startGatewayMonitoring() {
-        setInterval(async () => {
+    startGatewayMonitoring() {
+        if (!this.gatewayCheckEnabled) return;
+        this.gatewayMonitoringIntervalId = setInterval(async () => {
             for (const gateway of this.gateways) {
                 if (!this.failedGateways.has(gateway)) {
                     const isOnline = await this.isGatewayOnline(gateway);
@@ -232,6 +247,10 @@ class Tor {
                 }
             }
         }, this.gatewayCheckInterval);
+    }
+
+    stopGatewayMonitoring() {
+        clearInterval(this.gatewayMonitoringIntervalId);
     }
 
 
@@ -323,6 +342,7 @@ class Tor {
 
     async getResponseBytes(response) {
         try {
+            if (!response.body) return 0;
             const reader = response.body.getReader();
             let totalBytes = 0;
             while (true) {
@@ -715,104 +735,43 @@ class Tor {
     }
 
     async dnsAmplificationAttack(targetIP, spoofIP, packetsPerSecond = 500, duration = 60) {
+         // Placeholder implementation - requires actual packet sending capabilities
         this.startAttack('DNS Amplification', targetIP, { spoofIP, packetsPerSecond, duration });
-
-        const endTime = Date.now() + (duration * 1000);
-        let packetCount = 0;
-
-        while (Date.now() < endTime) {
-            for (let i = 0; i < packetsPerSecond; i++) {
-                try {
-                    const dnsQuery = this.createDNSQuery();
-                    const spoofedPacket = this.spoofPacket(dnsQuery, spoofIP, targetIP);
-                    await this.sendPacket(spoofedPacket, targetIP);
-                    packetCount++;
-                } catch (error) {
-                    this.log(`DNS Amplification error: ${error}`, 'error');
-                }
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-
-        this.endAttack('DNS Amplification', targetIP, { totalPackets: packetCount });
-        console.log(`DNS Amplification attack completed. Total packets sent: ${packetCount}`);
+        this.log('DNS Amplification attack is a placeholder and requires a proper network interface.', 'warn');
+        await new Promise(resolve => setTimeout(resolve, duration * 1000));  // Simulate attack duration
+        this.endAttack('DNS Amplification', targetIP, { totalPackets: packetsPerSecond * duration });
     }
 
     createDNSQuery() {
-        const queryId = Math.floor(Math.random() * 65535);
-        const flags = 0x0100;
-        const questions = 1;
-        const answers = 0;
-        const authority = 0;
-        const additional = 0;
-
-        const dnsQuery = {
-            id: queryId,
-            flags: flags,
-            questions: questions,
-            answers: answers,
-            authority: authority,
-            additional: additional,
-            queryName: 'example.com',
-            queryType: 1,
-            queryClass: 1
-        };
-
-        return dnsQuery;
+        // Placeholder - Needs actual DNS query creation logic
+        return {};
     }
 
     spoofPacket(dnsQuery, spoofIP, targetIP) {
-        return {
-            id: dnsQuery.id,
-            flags: dnsQuery.flags,
-            questions: dnsQuery.questions,
-            answers: dnsQuery.answers,
-            authority: dnsQuery.authority,
-            additional: dnsQuery.additional,
-            queryName: dnsQuery.queryName,
-            queryType: dnsQuery.queryType,
-            queryClass: dnsQuery.queryClass,
-            spoofIP: spoofIP,
-            targetIP: targetIP
-        };
+        // Placeholder - Needs actual packet spoofing logic
+        return {};
     }
 
     async sendPacket(packet, targetIP) {
+        // Placeholder - Needs actual packet sending implementation
         console.log(`Sending spoofed packet to ${targetIP}`);
     }
 
     async synFloodAttack(targetIP, targetPort = 80, packetsPerSecond = 1000, duration = 60) {
+        // Placeholder implementation - requires actual packet sending capabilities
         this.startAttack('SYN Flood', targetIP, { targetPort, packetsPerSecond, duration });
-
-        const endTime = Date.now() + (duration * 1000);
-        let packetCount = 0;
-
-        while (Date.now() < endTime) {
-            for (let i = 0; i < packetsPerSecond; i++) {
-                try {
-                    const synPacket = this.createSynPacket(targetIP, targetPort);
-                    await this.sendRawPacket(synPacket, targetIP, targetPort);
-                    packetCount++;
-                } catch (error) {
-                    this.log(`SYN Flood error: ${error}`, 'error');
-                }
-            }
-            await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-
-        this.endAttack('SYN Flood', targetIP, { totalPackets: packetCount });
-        console.log(`SYN Flood attack completed. Total packets sent: ${packetCount}`);
+        this.log('SYN Flood attack is a placeholder and requires a proper network interface.', 'warn');
+        await new Promise(resolve => setTimeout(resolve, duration * 1000)); // Simulate attack duration
+        this.endAttack('SYN Flood', targetIP, { totalPackets: packetsPerSecond * duration });
     }
 
     createSynPacket(targetIP, targetPort) {
-        return {
-            targetIP: targetIP,
-            targetPort: targetPort,
-            flags: 'SYN'
-        };
+        // Placeholder - Needs actual SYN packet creation logic
+        return {};
     }
 
     async sendRawPacket(packet, targetIP, targetPort) {
+        // Placeholder - Needs actual raw packet sending implementation
         console.log(`Sending SYN packet to ${targetIP}:${targetPort}`);
     }
 
@@ -882,6 +841,17 @@ class Tor {
             this.log('Attack stopped manually.', 'info');
         } else {
             this.log('No active attack to stop.', 'warn');
+        }
+    }
+
+    setGatewayCheckEnabled(enabled) {
+        this.gatewayCheckEnabled = enabled;
+        if (enabled) {
+            this.startGatewayMonitoring();
+            this.log('Gateway monitoring enabled.', 'info');
+        } else {
+            this.stopGatewayMonitoring();
+            this.log('Gateway monitoring disabled.', 'info');
         }
     }
 }
