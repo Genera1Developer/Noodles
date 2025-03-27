@@ -20,3 +20,33 @@
 
     <div id="defacement-status" class="mt-3"></div>
 </div>
+
+<script>
+async function startDefacement() {
+    const targetUrl = document.getElementById('defacement-url').value;
+    const defacementScriptUrl = document.getElementById('defacement-script').value;
+    const statusDiv = document.getElementById('defacement-status');
+
+    statusDiv.textContent = 'Initiating defacement...';
+
+    try {
+        const response = await fetch('/main/defacement', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ targetUrl, defacementScriptUrl })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            statusDiv.textContent = 'Defacement initiated successfully.';
+        } else {
+            statusDiv.textContent = `Defacement failed: ${data.error}`;
+        }
+    } catch (error) {
+        statusDiv.textContent = `An error occurred: ${error.message}`;
+    }
+}
+</script>
