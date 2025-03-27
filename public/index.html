@@ -3,88 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - Cyber Attack Suite</title>
+    <title>Noodles - Cyber Arsenal</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
     <div class="container">
         <aside class="sidebar">
-            <nav>
-                <button data-tab="ddos">💥 DDoS</button>
-                <button data-tab="defacement">💀 Defacement</button>
-                <button data-tab="connection">💻 Connection</button>
-                <button data-tab="credential">🔑 Credential Stuffing</button>
-                <button data-tab="other">⚙️ Other Tools</button>
-                <button data-tab="about">ℹ️ About Us</button>
+            <div class="sidebar-header">
+                <img src="assets/logo.svg" alt="Noodles Logo" class="logo">
+                <h1>Noodles</h1>
+            </div>
+            <nav class="nav">
+                <button data-tab="ddos"><i class="fas fa-skull"></i> DDoS</button>
+                <button data-tab="defacement"><i class="fas fa-fire"></i> Defacement</button>
+                <button data-tab="connection"><i class="fas fa-network-wired"></i> Connection</button>
+                <button data-tab="credential"><i class="fas fa-key"></i> Credential</button>
+                <button data-tab="other"><i class="fas fa-wrench"></i> Other Tools</button>
+                <button data-tab="about"><i class="fas fa-info-circle"></i> About Us</button>
             </nav>
         </aside>
         <main class="main-content">
             <section id="ddos" class="tab-content active">
-                <h2>DDoS Attacks</h2>
-                <label for="ddosTarget">Target URL:</label>
-                <input type="text" id="ddosTarget" placeholder="Enter URL or .onion address">
-                <label for="ddosType">Attack Type:</label>
-                <select id="ddosType">
-                    <option value="http">HTTP Flood</option>
-                    <option value="tcp">TCP Flood</option>
-                    <option value="udp">UDP Flood</option>
-                    <option value="slowloris">Slowloris</option>
-                </select>
-                <button id="startDDoS">🔥 Start Attack</button>
+                <h2>DDoS Attacks 💀</h2>
+                <div class="attack-form">
+                    <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                    <select id="ddos-method">
+                        <option value="tcp-flood">TCP Flood</option>
+                        <option value="udp-flood">UDP Flood</option>
+                        <option value="http-flood">HTTP Flood</option>
+                    </select>
+                    <button id="ddos-start">Initiate Attack 💥</button>
+                </div>
+                <div class="attack-stats">
+                    <p>MBPS: <span id="ddos-mbps">0</span></p>
+                    <p>Packets Sent: <span id="ddos-packets">0</span></p>
+                    <p>Target Status: <span id="ddos-status">Unknown</span></p>
+                    <p>Elapsed Time: <span id="ddos-time">0</span>s</p>
+                </div>
             </section>
-
             <section id="defacement" class="tab-content">
-                <h2>Website Defacement</h2>
-                <label for="defacementTarget">Target URL:</label>
-                <input type="text" id="defacementTarget" placeholder="Enter URL">
-                <label for="defacementType">Defacement Type:</label>
-                <select id="defacementType">
-                    <option value="image">Image Replacement</option>
-                    <option value="text">Text Modification</option>
-                    <option value="html">HTML Injection</option>
-                </select>
-                <label for="defacementContent">Content:</label>
-                <textarea id="defacementContent" placeholder="Enter new image URL, text, or HTML"></textarea>
-                <button id="startDefacement">💀 Start Defacement</button>
+                <h2>Website Defacement 🔥</h2>
+                <div class="defacement-form">
+                    <input type="text" id="defacement-target" placeholder="Target URL">
+                    <textarea id="defacement-payload" placeholder="HTML Payload"></textarea>
+                    <button id="defacement-start">Deface Website 💣</button>
+                </div>
             </section>
-
             <section id="connection" class="tab-content">
-                <h2>Unauthorized Connections</h2>
-                <label for="connectionTarget">Target URL or IP:</label>
-                <input type="text" id="connectionTarget" placeholder="Enter URL or IP address">
-                <label for="connectionType">Connection Type:</label>
-                <select id="connectionType">
-                    <option value="portscan">Port Scan</option>
-                    <option value="bannergrab">Banner Grabbing</option>
-                    <option value="proxy">Proxy Connection</option>
-                </select>
-                <button id="startConnection">💻 Start Connection</button>
+                <h2>Establish Connection 💻</h2>
+                <div class="connection-form">
+                    <input type="text" id="connection-target" placeholder="Target IP Address">
+                    <input type="number" id="connection-port" placeholder="Port">
+                    <button id="connection-start">Connect</button>
+                </div>
             </section>
-             <section id="credential" class="tab-content">
-                <h2>Credential Stuffing</h2>
-                <label for="credentialTarget">Target URL:</label>
-                <input type="text" id="credentialTarget" placeholder="Enter URL">
-                <label for="credentialList">Credential List (username:password):</label>
-                <textarea id="credentialList" placeholder="Enter credentials"></textarea>
-                <button id="startCredential">🔑 Start Credential Stuffing</button>
+            <section id="credential" class="tab-content">
+                <h2>Credential Stuffing 🔑</h2>
+                <div class="credential-form">
+                    <input type="text" id="credential-target" placeholder="Target Login URL">
+                    <textarea id="credential-usernames" placeholder="Usernames (one per line)"></textarea>
+                    <textarea id="credential-passwords" placeholder="Passwords (one per line)"></textarea>
+                    <button id="credential-start">Start Stuffing</button>
+                </div>
             </section>
-            <section id="other" class="tab-content">
-                <h2>Other Hacking Tools ⚙️</h2>
-                <p>Additional tools will be available soon. Check back later! 💣</p>
+             <section id="other" class="tab-content">
+                <h2>Other Hacking Tools 🛠️</h2>
+                <p>More tools coming soon...</p>
             </section>
-
             <section id="about" class="tab-content">
-                <h2>About Noodles ℹ️</h2>
-                <p>Noodles is a cutting-edge cyber security assessment tool designed for penetration testing and ethical hacking purposes. Our mission is to provide the most powerful tools for assessing network vulnerabilities. Use responsibly. ⚠</p>
+                <h2>About Us</h2>
+                <p>Noodles is a powerful web application designed for cybersecurity professionals and penetration testers. This tool provides a range of functionalities, including DDoS attacks, website defacement, and connection establishment. Use responsibly.</p>
             </section>
         </main>
-        <aside class="stats-panel">
-            <h3>Real-Time Statistics</h3>
-            <p>MBPS: <span id="mbps">0</span></p>
-            <p>Packets Sent: <span id="packetsSent">0</span></p>
-            <p>Target Status: <span id="targetStatus">Unknown</span></p>
-            <p>Time Elapsed: <span id="timeElapsed">0</span> seconds</p>
-        </aside>
     </div>
     <script src="script.js"></script>
 </body>
