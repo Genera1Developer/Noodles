@@ -47,7 +47,6 @@ async function connectViaProxy(targetUrl, proxyUrl, requestOptions = {}) {
       timeout: 10000,
       agent: agent,
       rejectUnauthorized: false,
-      ...requestOptions,
     };
 
     const protocol = parsedTarget.protocol === 'https:' ? https : http;
