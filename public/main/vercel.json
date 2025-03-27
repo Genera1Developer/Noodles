@@ -2,26 +2,25 @@
   "version": 2,
   "builds": [
     {
-      "src": "public/index.html",
+      "src": "index.html",
       "use": "@vercel/static"
     },
     {
-      "src": "public/main/hello.js",
+      "src": "main/hello.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "/public/main/hello.js"
+      "src": "/main/(.*)",
+      "dest": "/main/hello.js"
     },
     {
       "src": "/(.*)",
-      "dest": "/public/index.html"
+      "dest": "/index.html"
     }
   ],
   "functions": {
-    "public/main/hello.js": { "memory": 128, "maxDuration": 5 }
-  },
-  "rewrites": []
+    "main/hello.js": { "memory": 128, "maxDuration": 5 }
+  }
 }
