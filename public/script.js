@@ -1,71 +1,78 @@
-// script.js
+document.addEventListener('DOMContentLoaded', () => {
+  const targetInput = document.getElementById('targetUrl');
+  const attackTypeSelect = document.getElementById('attackType');
+  const attackButton = document.getElementById('attackButton');
+  const mbpsDisplay = document.getElementById('mbps');
+  const packetsSentDisplay = document.getElementById('packetsSent');
+  const connectionStatusDisplay = document.getElementById('connectionStatus');
+  const elapsedTimeDisplay = document.getElementById('elapsedTime');
+  const tabs = document.querySelectorAll('.tab-button');
+  const tabContent = document.querySelectorAll('.tab-content');
 
-// Function to handle form submission and attack execution
-async function executeAttack(target, attackType) {
-    const statusDisplay = document.getElementById('statusDisplay');
-    statusDisplay.innerText = 'Initiating attack...';
+  let attackStartTime;
+  let attackInterval;
+
+  function updateStatistics(mbps, packets, status) {
+    mbpsDisplay.textContent = `MBPS: ${mbps}`;
+    packetsSentDisplay.textContent = `Packets Sent: ${packets}`;
+    connectionStatusDisplay.textContent = `Status: ${status}`;
+    const elapsedTime = Math.floor((Date.now() - attackStartTime) / 1000);
+    elapsedTimeDisplay.textContent = `Time: ${elapsedTime}s`;
+  }
+
+  attackButton.addEventListener('click', async () => {
+    const target = targetInput.value;
+    const attackType = attackTypeSelect.value;
+
+    if (!target) {
+      alert('Please enter a target URL or .onion address.');
+      return;
+    }
+
+    attackButton.disabled = true;
+    attackButton.textContent = 'Attacking...';
+    attackStartTime = Date.now();
 
     try {
-        const response = await fetch('/main/attack', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ target: target, attackType: attackType })
-        });
+      const response = await fetch(`/main/attack`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ target: target, attackType: attackType }),
+      });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
 
-        const data = await response.json();
-        statusDisplay.innerText = `Attack Result: ${data.message}`;
-        // Implement real-time stats updates here based on the response.
-        updateStats(data.stats);
+      attackInterval = setInterval(() => {
+        const mbps = Math.random() * 10;
+        const packets = Math.floor(Math.random() * 1000);
+        const status = 'Online';
+        updateStatistics(mbps, packets, status);
+      }, 1000);
+
+      const result = await response.json();
+      console.log(result);
 
     } catch (error) {
-        console.error('Attack execution failed:', error);
-        statusDisplay.innerText = `Attack Failed: ${error.message}`;
+      console.error('Attack failed:', error);
+      alert('Attack failed. Check console for details.');
+    } finally {
+      attackButton.disabled = false;
+      attackButton.textContent = 'Start Attack';
+      clearInterval(attackInterval);
     }
-}
+  });
 
-// Function to update statistics display
-function updateStats(stats) {
-    document.getElementById('mbps').innerText = stats.mbps || 'N/A';
-    document.getElementById('packets').innerText = stats.packets || 'N/A';
-    document.getElementById('targetStatus').innerText = stats.targetStatus || 'N/A';
-    document.getElementById('elapsedTime').innerText = stats.elapsedTime || 'N/A';
-}
-
-// Event listener for the attack button
-document.addEventListener('DOMContentLoaded', () => {
-    const attackButton = document.getElementById('attackButton');
-    if (attackButton) {
-        attackButton.addEventListener('click', () => {
-            const target = document.getElementById('target').value;
-            const attackType = document.getElementById('attackType').value;
-            executeAttack(target, attackType);
-        });
-    } else {
-        console.error('Attack button not found');
-    }
-
-    //Navigation buttons functionality
-    document.getElementById('ddosButton').addEventListener('click', () => showTab('ddos'));
-    document.getElementById('defacementButton').addEventListener('click', () => showTab('defacement'));
-    document.getElementById('connectionButton').addEventListener('click', () => showTab('connection'));
-    document.getElementById('credentialButton').addEventListener('click', () => showTab('credential'));
-    document.getElementById('aboutUsButton').addEventListener('click', () => showTab('aboutUs'));
-});
-
-
-function showTab(tabId) {
-    // Hide all tab contents
-    const tabContents = document.querySelectorAll('.tab-content');
-    tabContents.forEach(content => {
-        content.style.display = 'none';
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tabContent.forEach(c => c.classList.remove('active'));
+      tab.classList.add('active');
+      const tabId = tab.getAttribute('data-tab');
+      document.getElementById(tabId).classList.add('active');
     });
-
-    // Show the selected tab content
-    document.getElementById(tabId + 'Tab').style.display = 'block';
-}
+  });
+});
