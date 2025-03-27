@@ -21,6 +21,11 @@
             <section id="ddos" class="tab-content active">
                 <h2>DDoS Attack</h2>
                 <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                <select id="ddos-type">
+                    <option value="tcp-flood">TCP Flood</option>
+                    <option value="udp-flood">UDP Flood</option>
+                    <option value="http-flood">HTTP Flood</option>
+                </select>
                 <button id="ddos-attack-button">Launch DDoS Attack</button>
                 <div class="stats">
                     <p>MBPS: <span id="mbps">0</span></p>
@@ -50,6 +55,7 @@
             <section id="about" class="tab-content">
                 <h2>About Us</h2>
                 <p>Noodles is a cutting-edge web application designed for penetration testing and cybersecurity analysis. It provides a range of tools for assessing website security, including DDoS attacks, defacement, and connection testing.</p>
+                <p>This tool is for educational purposes only. Misuse is strictly prohibited.</p>
             </section>
         </main>
     </div>
