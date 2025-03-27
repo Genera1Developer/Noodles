@@ -1,29 +1,45 @@
 {
   "name": "noodles",
   "version": "1.0.0",
-  "description": "A sophisticated hacking web application.",
+  "description": "A web application.",
   "main": "main/index.js",
   "scripts": {
     "start": "node main/index.js",
     "dev": "nodemon main/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "debug": "node --inspect main/index.js"
   },
   "author": "NoodlesDev",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.7",
     "express": "^4.18.2",
-    "node-fetch": "^3.3.2",
     "socket.io": "^4.7.4"
   },
   "devDependencies": {
     "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.1.0",
+    "jest": "^29.0.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.0.0"
   },
   "engines": {
     "node": ">=16.0.0"
-  }
+  },
+  "keywords": [
+    "web",
+    "application",
+    "express",
+    "socket.io"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/noodles.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/noodles/issues"
+  },
+  "homepage": "https://github.com/your-username/noodles#readme"
 }
