@@ -1,6 +1,6 @@
 body {
     font-family: 'Courier New', monospace;
-    background-color: #121212;
+    background-color: #1e1e2e; /* Dark Blue */
     color: #f0f0f0;
     margin: 0;
     padding: 0;
@@ -10,71 +10,84 @@ body {
 .noodle-container {
     position: absolute;
     top: 50px;
-    left: 50px;
-    background-color: #282828;
+    left: 220px; /* Shift to accommodate side panel */
+    background-color: #282838; /* Darker Blue */
     padding: 20px;
-    border: 1px solid #333;
+    border: 1px solid #333343; /* Dark Grey/Blue */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    width: 600px;
+    width: 70%; /* Adjusted width */
     resize: both;
     overflow: auto;
+    border-radius: 5px; /* Rounded corners */
 }
 
 .noodle-input, .noodle-button, select {
     margin-bottom: 10px;
-    padding: 8px;
-    border: 1px solid #555;
-    background-color: #333;
+    padding: 10px; /* Increased padding */
+    border: 1px solid #555565; /* Darker Grey/Blue */
+    background-color: #333343; /* Darker Blue */
     color: #f0f0f0;
-    width: calc(100% - 20px);
+    width: calc(100% - 22px);
     box-sizing: border-box;
+    border-radius: 3px; /* Rounded corners */
+    font-size: 14px; /* Increased font size */
 }
 
 .noodle-button {
     cursor: pointer;
-    background-color: #4CAF50;
+    background-color: #4CAF50; /* Dark Green */
     color: white;
     border: none;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.noodle-button:hover {
+    background-color: #388E3C; /* Darker Green on hover */
 }
 
 .noodle-button:disabled {
-    background-color: #666;
+    background-color: #666676; /* Darker Grey/Blue */
     cursor: not-allowed;
 }
 
 .noodle-log {
-    width: calc(100% - 20px);
+    width: calc(100% - 22px);
     height: 150px;
-    padding: 8px;
-    border: 1px solid #555;
-    background-color: #333;
+    padding: 10px; /* Increased padding */
+    border: 1px solid #555565; /* Darker Grey/Blue */
+    background-color: #333343; /* Darker Blue */
     color: #f0f0f0;
     box-sizing: border-box;
     resize: vertical;
     overflow-y: scroll;
+    border-radius: 3px; /* Rounded corners */
+    font-size: 12px; /* Increased font size */
 }
 
 .noodle-stats {
     margin-top: 10px;
-    padding: 10px;
-    border: 1px solid #555;
-    background-color: #333;
+    padding: 15px; /* Increased padding */
+    border: 1px solid #555565; /* Darker Grey/Blue */
+    background-color: #333343; /* Darker Blue */
     color: #f0f0f0;
+    border-radius: 5px; /* Rounded corners */
+    font-size: 14px; /* Increased font size */
 }
 
 .noodle-dark-theme {
-    background-color: #1e1e1e;
+    background-color: #1e1e2e; /* Dark Blue */
     color: #d4d4d4;
 }
 
 .noodle-menu-item {
-    padding: 10px;
+    padding: 15px; /* Increased padding */
     cursor: pointer;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #333343; /* Darker Grey/Blue */
+    transition: background-color 0.3s ease; /* Smooth transition */
 }
 
 .noodle-menu-item:hover {
-    background-color: #333;
+    background-color: #333343; /* Darker Blue on hover */
 }
 
 #side-panel {
@@ -83,11 +96,28 @@ body {
     left: 0;
     width: 200px;
     height: 100%;
-    background-color: #252525;
-    border-right: 1px solid #333;
+    background-color: #252535; /* Darker Blue */
+    border-right: 1px solid #333343; /* Darker Grey/Blue */
     padding-top: 20px;
     box-sizing: border-box;
     color: #f0f0f0;
+    z-index: 999; /* Ensure it's above other elements */
+}
+
+#side-panel button {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: none;
+    background-color: #252535;
+    color: #f0f0f0;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#side-panel button:hover {
+    background-color: #333343;
 }
 
 #about-us {
@@ -95,26 +125,33 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #282828;
+    background-color: #282838; /* Darker Blue */
     padding: 20px;
-    border: 1px solid #333;
+    border: 1px solid #333343; /* Darker Grey/Blue */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    width: 400px;
+    width: 500px; /* Adjusted width */
     display: none;
     z-index: 1000;
     color: #f0f0f0;
+    border-radius: 5px; /* Rounded corners */
 }
 
 #about-us h2 {
-    color: #4CAF50;
+    color: #4CAF50; /* Dark Green */
 }
 
 #close-about-us {
-    background-color: #4CAF50;
+    background-color: #4CAF50; /* Dark Green */
     color: white;
     padding: 10px 15px;
     border: none;
     cursor: pointer;
+    border-radius: 3px; /* Rounded corners */
+    transition: background-color 0.3s ease;
+}
+
+#close-about-us:hover {
+    background-color: #388E3C; /* Darker Green on hover */
 }
 
 .noodle-drag-handle {
@@ -146,6 +183,7 @@ body {
 .noodle-slider-container label {
     margin-right: 10px;
     width: 120px;
+    color: #d4d4d4; /* Lighter Grey */
 }
 
 .noodle-slider {
@@ -155,6 +193,7 @@ body {
 .noodle-slider-value {
     width: 40px;
     text-align: center;
+    color: #d4d4d4; /* Lighter Grey */
 }
 
 .noodle-tor-container {
@@ -166,4 +205,31 @@ body {
 .noodle-tor-container label {
     margin-right: 10px;
     width: 60px;
+    color: #d4d4d4; /* Lighter Grey */
+}
+
+/* New styles for real-time stats */
+.noodle-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+}
+
+.noodle-stats-item {
+    padding: 10px;
+    border: 1px solid #555565;
+    background-color: #333343;
+    border-radius: 3px;
+    text-align: center;
+}
+
+.noodle-stats-label {
+    font-size: 12px;
+    color: #9999aa;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.noodle-stats-value {
+    font-size: 16px;
 }
