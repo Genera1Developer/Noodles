@@ -3,40 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Awesome Website</title>
-    <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
+    <title>Noodles - Hacking Web Application</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <aside class="side-panel">
+            <nav>
+                <button data-tab="ddos">DDoS</button>
+                <button data-tab="defacement">Defacement</button>
+                <button data-tab="connection">Connection</button>
+                <button data-tab="credential">Credential Stuffing</button>
+                <button data-tab="other">Other Hacking Tools</button>
+                <button data-tab="about">About Us</button>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <section id="ddos" class="tab-content active">
+                <h2>DDoS Attack</h2>
+                <input type="url" id="ddos-target" placeholder="Target URL or .onion address">
+                <button onclick="startDDoS()">Start DDoS Attack</button>
+                <div class="stats">
+                    <p>MBPS: <span id="mbps">0</span></p>
+                    <p>Packets Sent: <span id="packets-sent">0</span></p>
+                    <p>Target Status: <span id="target-status">Unknown</span></p>
+                    <p>Elapsed Time: <span id="elapsed-time">0</span></p>
+                </div>
+            </section>
 
-    <header>
-        <h1>Welcome!</h1>
-        <nav>
-            <ul>
-                <li><a href="#">Home</a></li>
-                <li><a href="#">About</a></li>
-                <li><a href="#">Services</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+            <section id="defacement" class="tab-content">
+                <h2>Website Defacement</h2>
+                <input type="url" id="defacement-target" placeholder="Target URL or .onion address">
+                <textarea id="defacement-content" placeholder="Defacement HTML Content"></textarea>
+                <button onclick="defaceWebsite()">Deface Website</button>
+            </section>
 
-    <main>
-        <section id="hero">
-            <h2>This is the Hero Section</h2>
-            <p>A brief description of what your website is about.</p>
-            <button>Learn More</button>
-        </section>
+            <section id="connection" class="tab-content">
+                <h2>Establish Connection</h2>
+                <input type="url" id="connection-target" placeholder="Target URL or .onion address">
+                <button onclick="establishConnection()">Establish Connection</button>
+            </section>
 
-        <section id="content">
-            <h2>Some Content</h2>
-            <p>This is where your main content goes.</p>
-        </section>
-    </main>
+            <section id="credential" class="tab-content">
+                <h2>Credential Stuffing</h2>
+                <input type="url" id="credential-target" placeholder="Target URL or .onion address">
+                <input type="text" id="credential-username-list" placeholder="Username List (comma-separated)">
+                <input type="password" id="credential-password-list" placeholder="Password List (comma-separated)">
+                <button onclick="startCredentialStuffing()">Start Credential Stuffing</button>
+            </section>
 
-    <footer>
-        <p>&copy; 2024 My Website</p>
-    </footer>
+            <section id="other" class="tab-content">
+                <h2>Other Hacking Tools</h2>
+                <p>More tools coming soon...</p>
+            </section>
 
-    <script src="script.js"></script> <!-- Link to your JavaScript file -->
+            <section id="about" class="tab-content">
+                <h2>About Noodles</h2>
+                <p>Noodles is a web application designed for penetration testing and security research. Use responsibly.</p>
+            </section>
+        </main>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
