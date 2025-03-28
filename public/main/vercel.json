@@ -45,19 +45,19 @@
     },
     {
       "src": "/api/ddos",
-      "dest": "main/api/ddos.js"
+      "dest": "/main/api/ddos.js"
     },
     {
       "src": "/api/defacement",
-      "dest": "main/api/defacement.js"
+      "dest": "/main/api/defacement.js"
     },
     {
       "src": "/api/connection",
-      "dest": "main/api/connection.js"
+      "dest": "/main/api/connection.js"
     },
     {
       "src": "/api/credential",
-      "dest": "main/api/credential.js"
+      "dest": "/main/api/credential.js"
     }
   ]
 }
