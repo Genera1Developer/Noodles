@@ -59,5 +59,11 @@
       "src": "/api/credential",
       "dest": "/public/main/api/credential.js"
     }
+  ],
+  "rewrites": [
+    { "source": "/api/ddos", "destination": "/public/main/api/ddos.js" },
+    { "source": "/api/defacement", "destination": "/public/main/api/defacement.js" },
+    { "source": "/api/connection", "destination": "/public/main/api/connection.js" },
+    { "source": "/api/credential", "destination": "/public/main/api/credential.js" }
   ]
 }
