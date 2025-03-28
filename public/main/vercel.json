@@ -2,62 +2,62 @@
   "version": 2,
   "builds": [
     {
-      "src": "index.html",
+      "src": "public/index.html",
       "use": "@vercel/static"
     },
     {
-      "src": "styles.css",
+      "src": "public/styles.css",
       "use": "@vercel/static"
     },
     {
-      "src": "script.js",
+      "src": "public/script.js",
       "use": "@vercel/static"
     },
     {
-      "src": "main/api/ddos.js",
+      "src": "public/main/api/ddos.js",
       "use": "@vercel/node"
     },
     {
-      "src": "main/api/defacement.js",
+      "src": "public/main/api/defacement.js",
       "use": "@vercel/node"
     },
     {
-      "src": "main/api/connection.js",
+      "src": "public/main/api/connection.js",
       "use": "@vercel/node"
     },
     {
-      "src": "main/api/credential.js",
+      "src": "public/main/api/credential.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/",
-      "dest": "/index.html"
+      "dest": "/public/index.html"
     },
     {
       "src": "/styles.css",
-      "dest": "/styles.css"
+      "dest": "/public/styles.css"
     },
     {
       "src": "/script.js",
-      "dest": "/script.js"
+      "dest": "/public/script.js"
     },
     {
       "src": "/api/ddos",
-      "dest": "/main/api/ddos.js"
+      "dest": "/public/main/api/ddos.js"
     },
     {
       "src": "/api/defacement",
-      "dest": "/main/api/defacement.js"
+      "dest": "/public/main/api/defacement.js"
     },
     {
       "src": "/api/connection",
-      "dest": "/main/api/connection.js"
+      "dest": "/public/main/api/connection.js"
     },
     {
       "src": "/api/credential",
-      "dest": "/main/api/credential.js"
+      "dest": "/public/main/api/credential.js"
     }
   ]
 }
