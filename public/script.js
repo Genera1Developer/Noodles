@@ -12,7 +12,12 @@ async function fetchData(url, options) {
             throw new Error(message);
         }
         try {
-            return await response.json();
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                return await response.json();
+            } else {
+                return await response.text();
+            }
         } catch (e) {
             return await response.text();
         }
