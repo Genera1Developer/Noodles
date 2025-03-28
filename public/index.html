@@ -3,72 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Noodles - The Ultimate Hacking Tool</title>
+    <title>Noodles</title>
     <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
     <div class="container">
         <aside class="side-panel">
-            <nav>
-                <button data-tab="ddos">DDoS</button>
-                <button data-tab="defacement">Defacement</button>
-                <button data-tab="connection">Connection</button>
-                <button data-tab="credential">Credential</button>
-                <button data-tab="about">About Us</button>
-            </nav>
+            <button data-tab="ddos" class="active">DDoS</button>
+            <button data-tab="defacement">Defacement</button>
+            <button data-tab="connection">Connection</button>
+            <button data-tab="credential">Credential</button>
+            <button data-tab="about">About Us</button>
         </aside>
         <main class="main-content">
             <section id="ddos" class="tab-content active">
-                <h1>DDoS Attacks</h1>
-                <label for="ddos-target">Target URL:</label>
-                <input type="text" id="ddos-target" placeholder="http://example.com">
-                <label for="ddos-method">Attack Method:</label>
-                <select id="ddos-method">
-                    <option value="http-flood">HTTP Flood</option>
-                    <option value="syn-flood">SYN Flood</option>
-                    <option value="udp-flood">UDP Flood</option>
-                </select>
-                <button id="start-ddos">Start DDoS Attack</button>
-                <div class="statistics">
+                <h2>DDoS Attack</h2>
+                <input type="text" id="ddos-target" placeholder="Target URL or .onion address">
+                <button id="ddos-start">Start DDoS Attack</button>
+                <div class="stats">
                     <p>MBPS: <span id="mbps">0</span></p>
                     <p>Packets Sent: <span id="packets-sent">0</span></p>
-                    <p>Target Status: <span id="target-status">Unknown</span></p>
-                    <p>Time Elapsed: <span id="time-elapsed">0</span> seconds</p>
+                    <p>Status: <span id="target-status">Offline</span></p>
+                    <p>Time Elapsed: <span id="time-elapsed">0</span></p>
                 </div>
             </section>
             <section id="defacement" class="tab-content">
-                <h1>Website Defacement</h1>
-                <label for="defacement-target">Target URL:</label>
-                <input type="text" id="defacement-target" placeholder="http://example.com">
-                <label for="defacement-message">Defacement Message:</label>
-                <textarea id="defacement-message" placeholder="This site has been hacked!"></textarea>
-                <button id="start-defacement">Start Defacement</button>
+                <h2>Website Defacement</h2>
+                <input type="text" id="defacement-target" placeholder="Target URL">
+                <textarea id="defacement-content" placeholder="Defacement Content"></textarea>
+                <button id="defacement-start">Start Defacement</button>
             </section>
             <section id="connection" class="tab-content">
-                <h1>Establish Connection</h1>
-                <label for="connection-target">Target IP/URL:</label>
-                <input type="text" id="connection-target" placeholder="http://example.com or IP Address">
-                <label for="connection-port">Port:</label>
-                <input type="number" id="connection-port" placeholder="80">
-                <button id="start-connection">Establish Connection</button>
+                <h2>Connection</h2>
+                <input type="text" id="connection-target" placeholder="Target IP Address">
+                <input type="number" id="connection-port" placeholder="Port">
+                <button id="connection-start">Start Connection</button>
             </section>
             <section id="credential" class="tab-content">
-                <h1>Credential Stuffing</h1>
-                <label for="credential-target">Target URL:</label>
-                <input type="text" id="credential-target" placeholder="http://example.com">
-                <label for="credential-username-list">Username List URL:</label>
-                <input type="text" id="credential-username-list" placeholder="URL to usernames">
-                <label for="credential-password-list">Password List URL:</label>
-                <input type="text" id="credential-password-list" placeholder="URL to passwords">
-                <button id="start-credential">Start Credential Stuffing</button>
+                <h2>Credential Stuffing</h2>
+                <input type="text" id="credential-target" placeholder="Target URL">
+                <textarea id="credential-list" placeholder="Username:Password List"></textarea>
+                <button id="credential-start">Start Credential Stuffing</button>
             </section>
             <section id="about" class="tab-content">
-                <h1>About Us</h1>
-                <p>Noodles is a cutting-edge penetration testing tool designed for security professionals.</p>
-                <p>Use responsibly and at your own risk.</p>
+                <h2>About Us</h2>
+                <p>This is the about us page.</p>
             </section>
         </main>
     </div>
-    <script src="script.js"></script>
 </body>
 </html>
