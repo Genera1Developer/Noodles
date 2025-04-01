@@ -2,7 +2,6 @@
 
 # Noodles
 ## Public Attack Panel
-- Ransomeware 🔒
 - DDoS 🛜
 - Credential Stuffing 💳
 - Tor Capabilities 🧅
