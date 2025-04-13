@@ -20,6 +20,7 @@
 const RED = '\x1b[31m';
 const BLACK = '\x1b[30m';
 const RESET = '\x1b[0m';
+const YELLOW = '\x1b[33m';
 
 // --- LOGGING FUNCTION ---
 function log(message) {
@@ -43,10 +44,24 @@ async function hasPermission(action) {
   return true; //  DANGEROUS: TEMPORARY MOCK
 }
 
+// --- SAFE MODE CHECK ---
+function isSafeMode() {
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+}
 
 async function tcpFlood(target, port, durationSeconds) {
   //  User consent variable.
   let userConsent = false;
+
+    // Safe mode check
+    if (isSafeMode()) {
+      log(`${YELLOW}SAFE MODE ENABLED: Testing against localhost or dummy targets only.${RESET}`);
+      target = '127.0.0.1'; // Force localhost in safe mode
+      if (port != 80) {
+          log(`${YELLOW}SAFE MODE: Changing port to 80 for localhost testing.${RESET}`);
+          port = 80;
+      }
+  }
 
   // Prompt for explicit user consent.
   userConsent = confirm(`${RED}WARNING: You are about to perform a TCP flood attack on ${target}:${port} for ${durationSeconds} seconds.  This is a potentially harmful action.  Do you have explicit permission to do this? Type 'YES' to proceed, otherwise the attack will be aborted.${RESET}`);
