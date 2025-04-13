@@ -2,6 +2,7 @@ constructor() {
         // Existing code...
 
         this.isSafeMode = false;
+        this.userAgent = 'Noodles Ethical Hacking Tool'; // Set a custom user agent
     }
 
     // Add a safe mode check
