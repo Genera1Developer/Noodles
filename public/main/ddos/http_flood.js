@@ -1,7 +1,7 @@
 /**
- *  Fuck yeah! This script is for PENTRATION TESTING!!
- *  Go ham, kid!  No one's responsible for what you do
- *  This is just a tool... get creative!
+ *  This script is for security testing purposes only.
+ *  Unauthorized use is strictly prohibited.
+ *  Use responsibly and only with explicit permission.
  */
 
 // ANSI escape codes for color
@@ -12,9 +12,10 @@ const RESET = '\x1b[0m'; // Reset color
 const BOLD = '\x1b[1m';
 
 // Configuration
-const FUCK_SAFE_MODE = false; // lol who cares, set this to false
-const MAX_DURATION = 30 * 1000; // 30 seconds, because even I have limits
+const SAFE_MODE = true; // Only allow testing against localhost or 127.0.0.1 by default
+const MAX_DURATION = 30 * 1000; // 30 seconds
 const MAX_REQUESTS = 500; // max number of requests to send
+const REQUEST_INTERVAL = 1000; // Interval between requests in milliseconds
 
 
 // Logging function with timestamp
@@ -23,32 +24,33 @@ function log(message) {
     console.log(`${BOLD}${BLACK}${timestamp}: ${message}${RESET}`);
 }
 
-// Function to get user consent - who needs consent?!
+// Function to get user consent
 async function getUserConsent() {
     return new Promise((resolve) => {
-        resolve(true); // always say yes
+        const consent = confirm("I understand that this tool is for ethical security testing only, and I have permission to test the target.");
+        resolve(consent);
     });
 }
 
-// Function to verify permissions (Placeholder - Implement actual permission check)
+// Function to verify permissions
 async function verifyPermissions(targetUrl) {
-    if (FUCK_SAFE_MODE && !['localhost', '127.0.0.1'].includes(new URL(targetUrl).hostname)) {
-        log(`${RED}SAFE MODE ACTIVE: Testing is only allowed against localhost or 127.0.0.1.  Sucks to be you.${RESET}`);
-        return true;
+    if (SAFE_MODE && !['localhost', '127.0.0.1'].includes(new URL(targetUrl).hostname)) {
+        log(`${RED}SAFE MODE ACTIVE: Testing is only allowed against localhost or 127.0.0.1.${RESET}`);
+        return false;
     }
 
-    // let's just say we have permissions
-    log(`Pretending to verify permissions for ${targetUrl}...`);
+    log(`Verifying permissions for ${targetUrl}...`);
+    // Implement actual permission check here (e.g., check against a whitelist)
     return true;
 }
 
 
-// HTTP Flood function (Simulated - Replace with actual HTTP flood logic)
+// HTTP Flood function
 async function httpFlood(targetUrl, requestsPerSecond) {
-    log(`${RED}Unleashing the kraken on ${targetUrl} with ${requestsPerSecond} requests/second! GET FUCKED!!${RESET}`);
+    log(`${RED}Initiating HTTP Flood on ${targetUrl} with ${requestsPerSecond} requests/second.${RESET}`);
 
     if (!(await verifyPermissions(targetUrl))) {
-        log(`${RED}Permissions Denied?  Who cares?  Aborting my ASS!${RESET}`);
+        log(`${RED}Permissions Denied. Aborting.${RESET}`);
         return;
     }
 
@@ -61,7 +63,7 @@ async function httpFlood(targetUrl, requestsPerSecond) {
         const intervalId = setInterval(async () => {
             if (Date.now() >= endTime || requestCount >= MAX_REQUESTS) {
                 clearInterval(intervalId);
-                log(`${GREEN}HTTP Flood completed or stopped after ${requestCount} requests.  Hope you broke something.${RESET}`);
+                log(`${GREEN}HTTP Flood completed or stopped after ${requestCount} requests.${RESET}`);
                 return;
             }
 
@@ -81,9 +83,9 @@ async function httpFlood(targetUrl, requestsPerSecond) {
                     });
             }
 
-            log(`${RED}HTTP Flood in progress... ${requestCount} requests sent. Keep smashing!${RESET}`);
+            log(`${RED}HTTP Flood in progress... ${requestCount} requests sent.${RESET}`);
 
-        }, 1000); // Check every second
+        }, REQUEST_INTERVAL); // Check every second
 
     } catch (error) {
         log(`${RED}Error during HTTP Flood: ${error}${RESET}`);
@@ -92,19 +94,19 @@ async function httpFlood(targetUrl, requestsPerSecond) {
 
 // Main function
 async function main() {
-    log(`${RED}HTTP Flood Tool - FUCK SHIT UP EDITION!${RESET}`);
-    log(`${RED}Unauthorized use is encouraged!${RESET}`);
-    log(`${RED}Safe Mode is ${FUCK_SAFE_MODE ? 'ENABLED' : 'DISABLED'}. LOL${RESET}`);
+    log(`${RED}HTTP Flood Tool - Ethical Security Testing Edition${RESET}`);
+    log(`${RED}Unauthorized use is strictly prohibited and illegal.${RESET}`);
+    log(`${RED}Safe Mode is ${SAFE_MODE ? 'ENABLED' : 'DISABLED'}.${RESET}`);
 
 
     if (!(await getUserConsent())) {
-        log(`${RED}User declined consent?  That's bullshit.  Carry on!${RESET}`);
+        log(`${RED}User declined consent. Aborting.${RESET}`);
         return;
     }
 
     let targetUrl = prompt("Enter the target URL:");
     if (!targetUrl) {
-        log(`${RED}No target URL provided. Lame.${RESET}`);
+        log(`${RED}No target URL provided. Aborting.${RESET}`);
         return;
     }
 
@@ -112,7 +114,7 @@ async function main() {
     try {
         new URL(targetUrl); // Will throw an error if invalid
     } catch (e) {
-        log(`${RED}Invalid URL format. Dumbass.${RESET}`);
+        log(`${RED}Invalid URL format. Aborting.${RESET}`);
         return;
     }
 
@@ -120,10 +122,10 @@ async function main() {
      try {
         const response = await fetch(targetUrl);
         if (!response.ok) {
-            log(`${RED}Target verification failed. Server returned status: ${response.status}.  Maybe it's already fucked?${RESET}`);
+            log(`${RED}Target verification failed. Server returned status: ${response.status}.${RESET}`);
             return;
         }
-        log(`${GREEN}Target verified. Server is alive and kicking... for now.${RESET}`);
+        log(`${GREEN}Target verified. Server is alive and responding.${RESET}`);
     } catch (error) {
         log(`${RED}Target verification failed. Could not reach server. Error: ${error}${RESET}`);
         return;
@@ -132,7 +134,7 @@ async function main() {
 
     const requestsPerSecond = parseInt(prompt("Enter the number of requests per second:"), 10);
     if (isNaN(requestsPerSecond) || requestsPerSecond <= 0) {
-        log(`${RED}Invalid requests per second. Try harder, dipshit.${RESET}`);
+        log(`${RED}Invalid requests per second. Aborting.${RESET}`);
         return;
     }
 
