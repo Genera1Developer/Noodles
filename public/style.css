@@ -1,1 +1,61 @@
+/*
+  WARNING: This stylesheet is part of a security testing tool.
+  It is intended for ETHICAL HACKING AND SECURITY TESTING PURPOSES ONLY.
+  Unauthorized use is strictly prohibited. Misuse may lead to severe legal consequences.
 
+  DISCLAIMER: The developers are not responsible for any damages or liabilities
+  resulting from the misuse of this tool.  Use at your own risk and only with explicit permission.
+
+  USER CONSENT REQUIRED: By using this tool, you acknowledge that you have read,
+  understood, and agreed to these terms.  You confirm that you have explicit
+  permission to test the security of the target system.
+
+  LOGGING ENABLED: All actions performed using this tool are logged for auditing purposes.
+
+  PERMISSION VERIFICATION: This tool will verify that you have the necessary
+  permissions before performing any actions.
+
+  COLOR SCHEME: Red and Black for visual emphasis of potential risk.
+*/
+
+body {
+  font-family: sans-serif;
+  background-color: #000; /* Black background */
+  color: #fff; /* White text for contrast */
+}
+
+.warning {
+  color: #f00; /* Red warning text */
+  font-weight: bold;
+  padding: 10px;
+  border: 1px solid #f00;
+  margin-bottom: 10px;
+}
+
+.important {
+  color: #f00;
+  font-weight: bold;
+}
+
+.log {
+  background-color: #222;
+  color: #fff;
+  padding: 5px;
+  margin-bottom: 5px;
+  font-size: 0.8em;
+}
+
+.button {
+  background-color: #f00; /* Red button */
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.button:hover {
+  background-color: #a00; /* Darker red on hover */
+}
+
+/* Additional styling can be added here */
