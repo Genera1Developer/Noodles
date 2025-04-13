@@ -92,6 +92,25 @@ async function changeTextColor(element, color) {
     logAction(`Changed text color of ${element.tagName}#${element.id || 'No ID'} from ${originalColor} to ${color}`);
 }
 
+async function replaceText(element, newText) {
+    if (!await getUserConsent()) {
+        console.warn("User did not grant consent. Action aborted.");
+        logAction("Action aborted: User did not grant consent to replace text.");
+        return;
+    }
+
+    if (!verifyPermissions(element)) {
+        console.warn("Insufficient permissions to replace text.");
+        logAction(`Insufficient permissions to replace text of ${element.tagName}#${element.id || 'No ID'}`);
+        return;
+    }
+
+    const originalText = element.innerText;
+    element.innerText = newText;
+    element.dataset.originalText = originalText;
+    logAction(`Replaced text of ${element.tagName}#${element.id || 'No ID'} from ${originalText} to ${newText}`);
+}
+
 function revertChanges(element) {
     if (element.dataset.originalBackgroundColor) {
         element.style.backgroundColor = element.dataset.originalBackgroundColor;
@@ -103,6 +122,12 @@ function revertChanges(element) {
         element.style.color = element.dataset.originalTextColor;
         delete element.dataset.originalTextColor;
         logAction(`Reverted text color of ${element.tagName}#${element.id || 'No ID'}`);
+    }
+
+    if (element.dataset.originalText) {
+        element.innerText = element.dataset.originalText;
+        delete element.dataset.originalText;
+        logAction(`Reverted text of ${element.tagName}#${element.id || 'No ID'}`);
     }
 }
 
@@ -123,7 +148,8 @@ async function backupElement(element) {
     const backup = {
         backgroundColor: element.style.backgroundColor,
         color: element.style.color,
-        innerHTML: element.innerHTML
+        innerHTML: element.innerHTML,
+        innerText: element.innerText
     };
 
     logAction(`Backed up element ${element.tagName}#${element.id || 'No ID'}`);
@@ -152,6 +178,8 @@ async function restoreElement(element, backup) {
     element.style.backgroundColor = backup.backgroundColor;
     element.style.color = backup.color;
     element.innerHTML = backup.innerHTML;
+    element.innerText = backup.innerText;
+
 
     logAction(`Restored element ${element.tagName}#${element.id || 'No ID'}`);
 }
@@ -196,7 +224,7 @@ function applyRedBlackTheme() {
 // --- Initialization ---
 (async function () {
     applyRedBlackTheme();
-    logAction("Defacement tool loaded.");
+    logAction("Defacement tool loaded. Get ready to cause some mayhem!");
 
     // Example usage:
     // const myElement = document.getElementById('targetElement');
@@ -208,6 +236,7 @@ function applyRedBlackTheme() {
 window.defacementTool = {
     changeBackgroundColor: changeBackgroundColor,
     changeTextColor: changeTextColor,
+    replaceText: replaceText,
     revertChanges: revertChanges,
     backupElement: backupElement,
     restoreElement: restoreElement,
