@@ -87,24 +87,33 @@ async function tcpFlood(target, port, durationSeconds) {
   const startTime = Date.now();
   const endTime = startTime + (durationSeconds * 1000);
 
-  while (Date.now() < endTime) {
-    //  MOCK ATTACK: REPLACE WITH ACTUAL TCP PACKET SENDING CODE
-    //  This is a placeholder. Use a library like 'net' to create TCP sockets
-    //  and send SYN packets rapidly.  Implement rate limiting to avoid crashing
-    //  your own system.
+  // Add rate limiting variables
+  const packetsPerSecond = 100; // Adjust for desired rate
+  const intervalMs = 1000 / packetsPerSecond;
+  let lastSentTime = 0;
 
-    // Example (Requires 'net' library - not included for safety reasons):
-    // const net = require('net');
-    // const socket = net.createConnection({ host: target, port: port }, () => {
-    //   log(`Connected to ${target}:${port}`);
-    //   socket.write('SYN'); // Send SYN packet
-    //   socket.end(); // Immediately close.  SYN Flood
-    // });
-    // socket.on('error', (err) => {
-    //   log(`${RED}Error sending packet: ${err.message}${RESET}`);
-    // });
-    log(`Sending mock TCP packet to ${target}:${port}`); // Replaced actual sending with this line for demonstration.
-    await delay(10); // Rate limiting (adjust as needed).  Simulates time to send a packet.
+  while (Date.now() < endTime) {
+    const now = Date.now();
+    if (now - lastSentTime >= intervalMs) {
+          //  MOCK ATTACK: REPLACE WITH ACTUAL TCP PACKET SENDING CODE
+          //  This is a placeholder. Use a library like 'net' to create TCP sockets
+          //  and send SYN packets rapidly.  Implement rate limiting to avoid crashing
+          //  your own system.
+
+          // Example (Requires 'net' library - not included for safety reasons):
+          // const net = require('net');
+          // const socket = net.createConnection({ host: target, port: port }, () => {
+          //   log(`Connected to ${target}:${port}`);
+          //   socket.write('SYN'); // Send SYN packet
+          //   socket.end(); // Immediately close.  SYN Flood
+          // });
+          // socket.on('error', (err) => {
+          //   log(`${RED}Error sending packet: ${err.message}${RESET}`);
+          // });
+          log(`Sending mock TCP packet to ${target}:${port}`); // Replaced actual sending with this line for demonstration.
+          lastSentTime = now;
+    }
+    await delay(1); // Small delay to prevent busy-waiting
   }
 
   log(`TCP flood attack completed on ${target}:${port}.`);
