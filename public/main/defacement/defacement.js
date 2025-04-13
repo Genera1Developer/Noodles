@@ -240,5 +240,55 @@ window.defacementTool = {
     revertChanges: revertChanges,
     backupElement: backupElement,
     restoreElement: restoreElement,
-    previewBackgroundColorChange: previewBackgroundColorChange
+    previewBackgroundColorChange: previewBackgroundColorChange,
+    previewTextColorChange: previewTextColorChange,
+    previewReplaceText: previewReplaceText
 };
+
+async function previewTextColorChange(element, color) {
+    if (!await getUserConsent()) {
+        console.warn("User did not grant consent. Action aborted.");
+        logAction("Action aborted: User did not grant consent to preview text color change.");
+        return;
+    }
+
+    if (!verifyPermissions(element)) {
+        console.warn("Insufficient permissions to preview text color change.");
+        logAction(`Insufficient permissions to preview text color change of ${element.tagName}#${element.id || 'No ID'}`);
+        return;
+    }
+
+    const originalColor = element.style.color;
+    element.style.color = color;
+
+    // Revert after a short delay (e.g., 2 seconds)
+    setTimeout(() => {
+        element.style.color = originalColor;
+    }, 2000);
+
+    logAction(`Previewed text color change of ${element.tagName}#${element.id || 'No ID'}`);
+}
+
+async function previewReplaceText(element, newText) {
+        if (!await getUserConsent()) {
+        console.warn("User did not grant consent. Action aborted.");
+        logAction("Action aborted: User did not grant consent to preview text replace.");
+        return;
+    }
+
+    if (!verifyPermissions(element)) {
+        console.warn("Insufficient permissions to preview text replace.");
+        logAction(`Insufficient permissions to preview text replace of ${element.tagName}#${element.id || 'No ID'}`);
+        return;
+    }
+
+    const originalText = element.innerText;
+    element.innerText = newText;
+
+    // Revert after a short delay (e.g., 2 seconds)
+    setTimeout(() => {
+        element.innerText = originalText;
+    }, 2000);
+
+    logAction(`Previewed text replace of ${element.tagName}#${element.id || 'No ID'}`);
+}
