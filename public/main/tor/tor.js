@@ -107,7 +107,11 @@ class Tor {
             return { success: false, message: 'Target is not safe.' };
         }
         
-        // Ethical hacking warning and consent verification would be placed here
+        // Add consent verification
+        if (!confirm('You are about to deface a website. Do you have explicit permission?')) {
+            this.log('Deface operation cancelled due to lack of consent.', 'warn');
+            return { success: false, message: 'Operation cancelled: Permission not granted.' };
+        }
 
         try {
             const response = await this.fetchWithTor(url, { method: 'GET' });
