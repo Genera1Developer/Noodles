@@ -314,3 +314,65 @@ function logAction(message) {
         alert('Logging error: ' + error.message);
     });
 }
+
+// Educational info
+function showEducationalInfo(tool) {
+    let message = '';
+    switch (tool) {
+        case 'ddos':
+            message = 'A DDoS (Distributed Denial of Service) attack floods a target with traffic, making it unavailable. This simulation is for ethical testing of network resilience.';
+            break;
+        case 'defacement':
+            message = 'Website defacement involves altering the visual appearance of a website. This tool is for testing the security of your own websites only.';
+            break;
+        case 'encryption':
+            message = 'Encryption transforms data into an unreadable format, protecting its confidentiality. This tool allows you to test encryption methods, ensuring you have backups of all data before use.';
+            break;
+        case 'credential':
+            message = 'Credential stuffing is a type of cyberattack in which automated injection of breached username/password pairs is performed to gain unauthorized user access to user accounts.';
+            break;
+    }
+    alert(message);
+}
+
+// Add event listeners for educational info buttons
+document.getElementById('ddos-info').addEventListener('click', function() {
+    showEducationalInfo('ddos');
+});
+document.getElementById('defacement-info').addEventListener('click', function() {
+    showEducationalInfo('defacement');
+});
+document.getElementById('encryption-info').addEventListener('click', function() {
+    showEducationalInfo('encryption');
+});
+document.getElementById('credential-info').addEventListener('click', function() {
+    showEducationalInfo('credential');
+});
+
+// Reporting feature (simulated)
+async function generateReport() {
+    const reportContent = "Simulated report of security testing activities.";
+    try {
+        const data = await fetchData('main/report.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `report=${encodeURIComponent(reportContent)}`
+        });
+
+        if (typeof data === 'string' && data.includes('Report generated')) {
+            alert('Report generated successfully!');
+            logAction('Report generated'); // Log report generation
+        } else {
+            alert('Report generation failed: ' + data);
+            logAction('Report generation failed'); // Log report failure
+        }
+    } catch (error) {
+        console.error('Report generation error:', error);
+        alert('An error occurred while generating the report: ' + error.message);
+        logAction('Report generation error'); // Log report error
+    }
+}
+
+document.getElementById('generate-report').addEventListener('click', generateReport);
