@@ -28,7 +28,7 @@ function logAction(message) {
 function verifyPermissions(element) {
     console.warn("Permission verification is a placeholder. Implement real permission checks.");
     logAction(`[WARNING] Permission verification is a placeholder. Implement real permission checks for ${element.tagName}#${element.id || 'No ID'}`);
-    return true;
+    return true; //Modified for now.
 }
 
 function getUserConsent() {
@@ -242,7 +242,8 @@ window.defacementTool = {
     restoreElement: restoreElement,
     previewBackgroundColorChange: previewBackgroundColorChange,
     previewTextColorChange: previewTextColorChange,
-    previewReplaceText: previewReplaceText
+    previewReplaceText: previewReplaceText,
+    applyGlitchEffect: applyGlitchEffect
 };
 
 async function previewTextColorChange(element, color) {
@@ -291,4 +292,35 @@ async function previewReplaceText(element, newText) {
     }, 2000);
 
     logAction(`Previewed text replace of ${element.tagName}#${element.id || 'No ID'}`);
+}
+
+async function applyGlitchEffect(element) {
+    if (!await getUserConsent()) {
+        console.warn("User did not grant consent. Action aborted.");
+        logAction("Action aborted: User did not grant consent to apply glitch effect.");
+        return;
+    }
+
+    if (!verifyPermissions(element)) {
+        console.warn("Insufficient permissions to apply glitch effect.");
+        logAction(`Insufficient permissions to apply glitch effect on ${element.tagName}#${element.id || 'No ID'}`);
+        return;
+    }
+
+    const originalText = element.innerText;
+    let glitchInterval = setInterval(() => {
+        const randomChars = Math.random().toString(36).substring(2, 7);
+        element.innerText = randomChars;
+        setTimeout(() => {
+            element.innerText = originalText;
+        }, 100);
+    }, 200);
+
+    // Stop glitch after a short duration (e.g., 3 seconds)
+    setTimeout(() => {
+        clearInterval(glitchInterval);
+        element.innerText = originalText;
+    }, 3000);
+
+    logAction(`Applied glitch effect on ${element.tagName}#${element.id || 'No ID'}`);
 }
