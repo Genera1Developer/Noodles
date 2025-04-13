@@ -74,3 +74,75 @@
             name: production-files
             path: public/
             retention-days: 5
+
+        - name: Security Testing Tool
+          run: |
+            echo -e "\e[31m###############################################################################\e[0m"
+            echo -e "\e[31m#                                                                             #\e[0m"
+            echo -e "\e[31m#                       !!  SECURITY TESTING TOOL  !!                       #\e[0m"
+            echo -e "\e[31m#                                                                             #\e[0m"
+            echo -e "\e[31m###############################################################################\e[0m"
+            echo -e "\e[31m#  WARNING: This tool is for SECURITY TESTING PURPOSES ONLY.                #\e[0m"
+            echo -e "\e[31m#  Unauthorized use is strictly prohibited and may be illegal.              #\e[0m"
+            echo -e "\e[31m#  You are solely responsible for your actions while using this tool.        #\e[0m"
+            echo -e "\e[31m#  The creators are not liable for any misuse or damage caused.              #\e[0m"
+            echo -e "\e[31m###############################################################################\e[0m"
+            echo -e "\e[31m#  DISCLAIMER: Use at your own risk. This tool is provided 'as is' without    #\e[0m"
+            echo -e "\e[31m#  any warranty, express or implied.  Always obtain explicit permission      #\e[0m"
+            echo -e "\e[31m#  before testing any system or network.                                     #\e[0m"
+            echo -e "\e[31m###############################################################################\e[0m"
+            echo -e "\e[31m#  USER CONSENT REQUIRED: By proceeding, you acknowledge and agree to these  #\e[0m"
+            echo -e "\e[31m#  terms. Type 'I AGREE' (in ALL CAPS) to continue:                          #\e[0m"
+            echo -e "\e[31m###############################################################################\e[0m\e[0m"
+            read -r user_consent
+            if [ "$user_consent" != "I AGREE" ]; then
+              echo -e "\e[31mUser consent not received. Exiting.\e[0m"
+              exit 1
+            fi
+            echo -e "\e[32mUser consent granted. Proceeding...\e[0m"
+
+            # Logging Function
+            log_action() {
+              local message="$1"
+              echo -e "\e[30m[\e[31m$(date +%Y-%m-%d_%H:%M:%S)\e[30m]\e[0m $message" >> security_tool.log
+            }
+
+            # Permission Check Function
+            check_permission() {
+              local file_path="$1"
+              if [ ! -w "$file_path" ]; then
+                echo -e "\e[31mError: Insufficient permissions to write to $file_path.  Exiting.\e[0m"
+                log_action "ERROR: Insufficient permissions to write to $file_path."
+                exit 1
+              fi
+            }
+
+            # Example Security Test (replace with actual tests)
+            log_action "Starting security test..."
+            echo -e "\e[34mRunning example security test...\e[0m"
+
+            # Check permissions before creating a file
+            check_permission "./test_file.txt"
+            touch ./test_file.txt
+            echo "This is a test." >> ./test_file.txt
+            log_action "Created file ./test_file.txt"
+
+            # Check permissions before reading a file
+            if [ -r "./test_file.txt" ]; then
+                echo -e "\e[34mReading file ./test_file.txt...\e[0m"
+                cat ./test_file.txt
+                log_action "Read file ./test_file.txt"
+            else
+                echo -e "\e[31mError: Insufficient permissions to read ./test_file.txt.\e[0m"
+                log_action "ERROR: Insufficient permissions to read ./test_file.txt"
+            fi
+
+            # Example: Checking for world-writable files/directories
+            echo -e "\e[34mChecking for world-writable files and directories...\e[0m"
+            find / -perm -002 -type f -print 2>/dev/null
+            find / -perm -002 -type d -print 2>/dev/null
+            log_action "Checked for world-writable files and directories."
+
+            echo -e "\e[32mSecurity test completed. Check security_tool.log for details.\e[0m"
+            log_action "Security test completed."
+            echo -e "\e[31mIMPORTANT: Remember to remove any test files/artifacts created.\e[0m"
