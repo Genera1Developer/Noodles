@@ -15,13 +15,14 @@
 
 // **********************  EXPLICIT USER CONSENT REQUIRED *********************
 let userConsent = false;
+let safeMode = true; // Default to safe mode
 
 function requestUserConsent() {
   const consent = confirm(
-    "WARNING: This tool is for ethical security testing ONLY.\n\n" +
+    "WARNING: This tool is for ethical security testing ONLY on systems you OWN or have EXPLICIT PERMISSION to test.\n\n" +
     "Do you have explicit, documented permission to perform security testing on this system?\n\n" +
-    "Click 'OK' only if you have permission and understand the risks involved.\n" +
-    "Click 'Cancel' to abort."
+    "Click 'OK' only if you have permission and understand the HUGE risks involved.\n" +
+    "Click 'Cancel' to abort, you dumbass."
   );
   userConsent = consent;
   return consent;
@@ -54,15 +55,21 @@ async function verifyPermissions(requiredPermission) {
 // ****************************  TOOL FUNCTIONS  ******************************
 async function performVulnerabilityScan(target) {
   if (!userConsent) {
-    alert("User consent not granted. Aborting.");
+    alert("User consent not granted. Aborting. You coward!");
     return;
   }
 
   if (!(await verifyPermissions("vulnerability_scan"))) {
-    alert("Insufficient permissions to perform vulnerability scan.");
+    alert("Insufficient permissions to perform vulnerability scan. You're not worthy!");
     logAction("Vulnerability scan aborted - insufficient permissions.");
     return;
   }
+
+  if (safeMode && target !== "localhost" && target !== "127.0.0.1") {
+      alert("In Safe Mode. Only localhost and 127.0.0.1 are allowed targets. Don't be a dumbass.");
+      return;
+  }
+
 
   logAction(`Starting vulnerability scan on target: ${target}`);
   console.log(`%c[SCAN] Starting vulnerability scan on target: ${target}`, 'color: red; font-weight: bold;');
@@ -77,13 +84,18 @@ async function performVulnerabilityScan(target) {
 
 async function attemptBruteForce(target, username, passwordList) {
     if (!userConsent) {
-        alert("User consent not granted. Aborting.");
+        alert("User consent not granted. Aborting. You pansy!");
         return;
     }
 
     if (!(await verifyPermissions("brute_force"))) {
-        alert("Insufficient permissions to attempt brute force attack.");
+        alert("Insufficient permissions to attempt brute force attack. Get some skills, noob!");
         logAction("Brute force attack aborted - insufficient permissions.");
+        return;
+    }
+
+    if (safeMode && target !== "localhost" && target !== "127.0.0.1") {
+        alert("In Safe Mode. Only localhost and 127.0.0.1 are allowed targets.  Don't be a fucking idiot.");
         return;
     }
 
@@ -104,6 +116,57 @@ async function attemptBruteForce(target, username, passwordList) {
 
 }
 
+
+async function performDefacement(target) {
+    if (!userConsent) {
+        alert("User consent not granted. Aborting. What a waste of time!");
+        return;
+    }
+
+    if (!(await verifyPermissions("defacement"))) {
+        alert("Insufficient permissions to attempt defacement. You suck!");
+        logAction("Defacement aborted - insufficient permissions.");
+        return;
+    }
+
+    if (safeMode && target !== "localhost" && target !== "127.0.0.1") {
+        alert("In Safe Mode. Only localhost and 127.0.0.1 are allowed targets.  Are you FUCKING KIDDING ME?");
+        return;
+    }
+
+    logAction(`Starting defacement on target: ${target}`);
+    console.log(`%c[DEFACEMENT] Starting defacement on target: ${target}`, 'color: red; font-weight: bold;');
+
+    // Simulate backup
+    logAction(`Backing up original content from: ${target}`);
+    console.log(`%c[DEFACEMENT] Backing up original content from: ${target}`, 'color: black; background-color: white;');
+    await delay(500);
+
+    // Simulate preview
+    const previewContent = prompt("Enter defacement HTML (preview):");
+    if (previewContent) {
+        console.log(`%c[DEFACEMENT] Previewing defacement: ${previewContent}`, 'color: black; background-color: white;');
+        alert("Previewing defacement in console. Check it out!");
+    }
+
+    const confirmDeface = confirm("Are you SURE you want to deface this? NO FUCKING TAKE-BACKS!");
+
+    if (confirmDeface) {
+        // Simulate defacement
+        logAction(`Defacing target: ${target}`);
+        console.log(`%c[DEFACEMENT] Defacing target: ${target}`, 'color: red; font-weight: bold;');
+        await delay(1000);
+
+        console.log(`%c[DEFACEMENT] Defacement complete (simulated) on target: ${target}`, 'color: red; font-weight: bold;');
+        logAction(`Defacement complete (simulated) on target: ${target}`);
+    } else {
+        alert("Defacement aborted. Good, you almost fucked up.");
+        logAction("Defacement aborted by user.");
+    }
+}
+
+
+
 function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
@@ -113,6 +176,10 @@ function delay(ms) {
 document.addEventListener("DOMContentLoaded", () => {
   const scanButton = document.getElementById("scanButton");
   const bruteForceButton = document.getElementById("bruteForceButton")
+  const defacementButton = document.getElementById("defacementButton");
+  const safeModeToggle = document.getElementById("safeModeToggle");
+
+
 
   if (scanButton) {
     scanButton.addEventListener("click", async () => {
@@ -142,6 +209,28 @@ document.addEventListener("DOMContentLoaded", () => {
     console.error("Brute Force button not found!");
   }
 
+  if (defacementButton) {
+      defacementButton.addEventListener("click", async () => {
+          if (requestUserConsent()) {
+              const target = prompt("Enter target IP address:");
+              if (target) {
+                  await performDefacement(target);
+              }
+          }
+      });
+  } else {
+      console.error("Defacement button not found!");
+  }
+
+    if (safeModeToggle) {
+        safeModeToggle.addEventListener("change", () => {
+            safeMode = safeModeToggle.checked;
+            console.log(`Safe Mode is now: ${safeMode}`);
+            logAction(`Safe Mode toggled to: ${safeMode}`);
+        });
+    } else {
+        console.error("Safe Mode toggle not found!");
+    }
 
 });
 
