@@ -10,7 +10,11 @@
 // ANSI escape codes for color
 const RED = '\x1b[31m';
 const BLACK = '\x1b[30m';
+const GREEN = '\x1b[32m';
 const RESET = '\x1b[0m'; // Reset color
+
+// Configuration
+const SAFE_MODE = true; // Set to true to only allow localhost/127.0.0.1 targets
 
 // Logging function with timestamp
 function log(message) {
@@ -28,6 +32,11 @@ async function getUserConsent() {
 
 // Function to verify permissions (Placeholder - Implement actual permission check)
 async function verifyPermissions(targetUrl) {
+    if (SAFE_MODE && !['localhost', '127.0.0.1'].includes(new URL(targetUrl).hostname)) {
+        log(`${RED}SAFE MODE ACTIVE: Testing is only allowed against localhost or 127.0.0.1.${RESET}`);
+        return false;
+    }
+
     // In a real implementation, this would check for API keys,
     // authorization headers, or other mechanisms to ensure permission.
     log(`Verifying permissions for ${targetUrl}...`);
@@ -44,22 +53,38 @@ async function verifyPermissions(targetUrl) {
 // HTTP Flood function (Simulated - Replace with actual HTTP flood logic)
 async function httpFlood(targetUrl, requestsPerSecond) {
     log(`${RED}Initiating simulated HTTP Flood against ${targetUrl} with ${requestsPerSecond} requests/second.${RESET}`);
+
+    if (!(await verifyPermissions(targetUrl))) {
+        log(`${RED}Permissions Denied. Aborting HTTP Flood.${RESET}`);
+        return;
+    }
+
+    let requestCount = 0; // Track requests sent
+    const maxRequests = 50; // Limit total requests to prevent abuse
+    const startTime = Date.now(); // Record start time
+    const duration = 10 * 1000; // Stop after 10 seconds
+
     try {
-        if (!(await verifyPermissions(targetUrl))) {
-            log(`${RED}Permissions Denied. Aborting HTTP Flood.${RESET}`);
-            return;
-        }
+        const intervalId = setInterval(async () => {
+            if (Date.now() - startTime >= duration || requestCount >= maxRequests) {
+                clearInterval(intervalId);
+                log(`${GREEN}Simulated HTTP Flood completed or stopped after ${requestCount} requests.${RESET}`);
+                return;
+            }
 
-        for (let i = 0; i < requestsPerSecond; i++) {
-            // Simulate sending an HTTP request
-            setTimeout(() => {
-                log(`Simulated HTTP Request sent to ${targetUrl}`);
-                // Replace this with your actual HTTP request code (e.g., using fetch)
-                // IMPORTANT: Implement rate limiting and error handling here.
-            }, i * (1000 / requestsPerSecond)); // Spread requests over one second
-        }
+            for (let i = 0; i < requestsPerSecond && requestCount < maxRequests; i++) {
+                // Simulate sending an HTTP request
+                setTimeout(() => {
+                    requestCount++;
+                    log(`Simulated HTTP Request ${requestCount} sent to ${targetUrl}`);
+                    // Replace this with your actual HTTP request code (e.g., using fetch)
+                    // IMPORTANT: Implement rate limiting and error handling here.
+                }, i * (1000 / requestsPerSecond)); // Spread requests over one second
+            }
 
-        log(`${RED}Simulated HTTP Flood completed for one second.${RESET}`);
+            log(`${RED}Simulated HTTP Flood in progress... ${requestCount} requests sent.${RESET}`);
+
+        }, 1000); // Check every second
 
     } catch (error) {
         log(`${RED}Error during simulated HTTP Flood: ${error}${RESET}`);
@@ -70,15 +95,25 @@ async function httpFlood(targetUrl, requestsPerSecond) {
 async function main() {
     log(`${RED}HTTP Flood Tool - SECURITY TESTING ONLY${RESET}`);
     log(`${RED}Unauthorized use is strictly prohibited!${RESET}`);
+    log(`${RED}Safe Mode is ${SAFE_MODE ? 'ENABLED' : 'DISABLED'}. Only localhost targets allowed when enabled.${RESET}`);
+
 
     if (!(await getUserConsent())) {
         log(`${RED}User declined consent. Exiting.${RESET}`);
         return;
     }
 
-    const targetUrl = prompt("Enter the target URL (SECURITY TESTING ONLY):");
+    let targetUrl = prompt("Enter the target URL (SECURITY TESTING ONLY):");
     if (!targetUrl) {
         log(`${RED}No target URL provided. Exiting.${RESET}`);
+        return;
+    }
+
+    // Validate URL format
+    try {
+        new URL(targetUrl); // Will throw an error if invalid
+    } catch (e) {
+        log(`${RED}Invalid URL format. Exiting.${RESET}`);
         return;
     }
 
