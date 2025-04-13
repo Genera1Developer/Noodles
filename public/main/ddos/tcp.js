@@ -81,6 +81,15 @@ async function tcpFlood(target, port, durationSeconds) {
     return;
   }
 
+  // Target Verification
+  try {
+    const url = new URL(`http://${target}`);
+    log(`Verifying target: ${url.hostname}`);
+  } catch (error) {
+    log(`${RED}Error: Invalid target URL. Please enter a valid hostname or IP address.${RESET}`);
+    return;
+  }
+
 
   log(`Starting TCP flood attack on ${target}:${port} for ${durationSeconds} seconds...`);
 
@@ -114,6 +123,12 @@ async function tcpFlood(target, port, durationSeconds) {
           lastSentTime = now;
     }
     await delay(1); // Small delay to prevent busy-waiting
+
+     // Auto Stop after 10 seconds
+     if (durationSeconds > 10 && (now - startTime) > 10000) {
+        log(`${RED}Auto-stopping attack after 10 seconds for safety.${RESET}`);
+        break;
+      }
   }
 
   log(`TCP flood attack completed on ${target}:${port}.`);
