@@ -376,3 +376,42 @@ async function generateReport() {
 }
 
 document.getElementById('generate-report').addEventListener('click', generateReport);
+
+// Function to enable hacker theme (red and black)
+function enableHackerTheme() {
+    document.body.style.backgroundColor = '#000';
+    document.body.style.color = '#f00';
+    const allElements = document.querySelectorAll('*');
+    allElements.forEach(element => {
+        element.style.borderColor = '#f00';
+    });
+
+    // Specific elements adjustments
+    const buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.style.backgroundColor = '#333';
+        button.style.color = '#f00';
+    });
+
+    const inputs = document.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+        input.style.backgroundColor = '#333';
+        input.style.color = '#f00';
+    });
+
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        alert.style.backgroundColor = '#333';
+        alert.style.color = '#f00';
+    });
+
+    // Apply to the modal
+    const modalContent = document.querySelector('.modal-content');
+    if (modalContent) {
+        modalContent.style.backgroundColor = '#222';
+        modalContent.style.color = '#f00';
+    }
+}
+
+// Call the function to enable the theme
+enableHackerTheme();
