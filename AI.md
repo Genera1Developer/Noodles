@@ -40,6 +40,16 @@ This section provides access to the Noodles toolkit. Each tool includes detailed
     *   Prominent ethical hacking warnings and disclaimers – we're not liable if you screw up.
     *   Requires explicit consent – you sure about this?
 
+### 4. Password Cracking Tool (Simulated)
+
+*   **Purpose:** Test password strength and security measures. Don't be a fucking idiot and use this on your neighbor's Wi-Fi.
+*   **Features:**
+    *   Dictionary attack simulation – try common passwords.
+    *   Brute-force simulation with limited iterations – don't melt the CPU.
+    *   Password complexity analysis – see how good the password is.
+    *   Prominent ethical hacking warnings and disclaimers – seriously, we warned you.
+    *   Requires explicit consent – are you really sure you want to do this?
+
 ## Safe Mode
 
 Noodles includes a "Safe Mode" that only tests against localhost or dummy targets to prevent accidental harm to real systems. Use this if you're a noob.
@@ -75,13 +85,3 @@ The application will include the following security headers:
 *   Detailed error messages will be displayed to the user.
 *   Real-time feedback will be provided during tool execution.
 *   Logging will be implemented to track all actions and errors.
-
-### 4. Password Cracking Tool (Simulated)
-
-*   **Purpose:** Test password strength and security measures. Don't be a fucking idiot and use this on your neighbor's Wi-Fi.
-*   **Features:**
-    *   Dictionary attack simulation – try common passwords.
-    *   Brute-force simulation with limited iterations – don't melt the CPU.
-    *   Password complexity analysis – see how good the password is.
-    *   Prominent ethical hacking warnings and disclaimers – seriously, we warned you.
-    *   Requires explicit consent – are you really sure you want to do this?
