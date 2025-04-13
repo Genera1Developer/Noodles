@@ -163,6 +163,134 @@ class Tor {
         this.isSafeMode = safeMode;
         this.log(`Safe mode set to: ${safeMode}`, 'info');
     }
+
+    // New DDoS simulation methods
+    async simulateDDoS(url, duration = 10, rate = 100) {
+        if (!this.isTargetSafe(url)) {
+            this.log('Target is not safe. Operation aborted.', 'warn');
+            return { success: false, message: 'Target is not safe.' };
+        }
+
+        if (!confirm('You are about to simulate a DDoS attack. Do you have explicit permission?')) {
+            this.log('DDoS simulation cancelled due to lack of consent.', 'warn');
+            return { success: false, message: 'Operation cancelled: Permission not granted.' };
+        }
+
+        const startTime = Date.now();
+        const endTime = startTime + (duration * 1000);
+        let requestsSent = 0;
+        let errors = 0;
+
+        this.log(`Starting DDoS simulation against ${url} for ${duration} seconds.`, 'info');
+
+        while (Date.now() < endTime) {
+            for (let i = 0; i < rate; i++) {
+                try {
+                    const response = await this.fetchWithTor(url, { method: 'GET' });
+                    if (!response.ok) {
+                        errors++;
+                        this.log(`Request failed with status: ${response.status}`, 'warn');
+                    }
+                    requestsSent++;
+                } catch (error) {
+                    errors++;
+                    this.log(`Request error: ${error}`, 'error');
+                }
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Rate limiting
+        }
+
+        const successMessage = `DDoS simulation finished. Sent ${requestsSent} requests, ${errors} errors.`;
+        this.log(successMessage, 'info');
+        return { success: true, message: successMessage, requestsSent: requestsSent, errors: errors };
+    }
+
+    // New File encryption tool methods
+    async encryptFile(file, encryptionKey) {
+        if (!confirm('You are about to encrypt a file. Ensure you have a backup and remember the key!')) {
+            this.log('File encryption cancelled due to lack of consent.', 'warn');
+            return { success: false, message: 'Operation cancelled: Permission not granted.' };
+        }
+
+        try {
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const fileContent = event.target.result;
+                const encryptedContent = CryptoJS.AES.encrypt(fileContent, encryptionKey).toString();
+
+                const encryptedBlob = new Blob([encryptedContent], { type: 'application/octet-stream' });
+                const encryptedUrl = URL.createObjectURL(encryptedBlob);
+
+                const downloadLink = document.createElement('a');
+                downloadLink.href = encryptedUrl;
+                downloadLink.download = `${file.name}.encrypted`;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+
+                this.log('File encrypted and downloaded successfully.', 'success');
+            };
+            reader.onerror = () => {
+                this.log('File read error.', 'error');
+            };
+            reader.readAsDataURL(file);
+
+            return { success: true, message: 'File encryption started.' };
+        } catch (error) {
+            this.log(`Encryption error: ${error}`, 'error');
+            return { success: false, message: `Encryption failed: ${error}` };
+        }
+    }
+
+    async decryptFile(file, decryptionKey) {
+        if (!confirm('You are about to decrypt a file. Ensure you have the correct key!')) {
+            this.log('File decryption cancelled due to lack of consent.', 'warn');
+            return { success: false, message: 'Operation cancelled: Permission not granted.' };
+        }
+
+        try {
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                const fileContent = event.target.result;
+                try {
+                    const decryptedContent = CryptoJS.AES.decrypt(fileContent, decryptionKey).toString(CryptoJS.enc.Utf8);
+
+                    if (!decryptedContent) {
+                        throw new Error('Decryption failed: Incorrect key or corrupted file.');
+                    }
+
+                    const decryptedBlob = new Blob([decryptedContent], { type: 'application/octet-stream' });
+                    const decryptedUrl = URL.createObjectURL(decryptedBlob);
+
+                    const downloadLink = document.createElement('a');
+                    downloadLink.href = decryptedUrl;
+                    downloadLink.download = file.name.replace('.encrypted', '');
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+
+                    this.log('File decrypted and downloaded successfully.', 'success');
+                } catch (error) {
+                    this.log(`Decryption error: ${error}`, 'error');
+                    return { success: false, message: `Decryption failed: ${error}` };
+                }
+            };
+            reader.onerror = () => {
+                this.log('File read error.', 'error');
+            };
+            reader.readAsText(file);
+
+            return { success: true, message: 'File decryption started.' };
+        } catch (error) {
+            this.log(`Decryption error: ${error}`, 'error');
+            return { success: false, message: `Decryption failed: ${error}` };
+        }
+    }
+
+    setSafeMode(safeMode) {
+        this.isSafeMode = safeMode;
+        this.log(`Safe mode set to: ${safeMode}`, 'info');
+    }
 }
 
 window.Tor = Tor;
