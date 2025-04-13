@@ -25,6 +25,12 @@ const RED = "\x1b[31m";
 const BLACK = "\x1b[30m";
 const RESET = "\x1b[0m"; // Reset color to default
 
+// Configuration
+const MAX_DDOS_DURATION = 60; // Maximum allowed duration for DDoS simulation (seconds)
+const REQUEST_INTERVAL = 5000; // Interval between requests in milliseconds (rate limiting)
+const SAFE_MODE_TARGET = 'http://localhost'; // Target used in safe mode
+let isSafeMode = false; // Flag to indicate if safe mode is enabled
+
 // Log function
 function log(message) {
     const timestamp = new Date().toISOString();
@@ -45,6 +51,13 @@ async function verifyPermissions(target) {
     // This could involve checking user roles, API keys, etc.
     log("Verifying permissions for target: " + target);
 
+    // Check if the target is a valid URL
+    if (!isValidURL(target)) {
+        log(RED + "Invalid target URL." + RESET);
+        alert(RED + "Invalid target URL. Please provide a valid URL." + RESET);
+        return false;
+    }
+
     // Example: Placeholder logic - replace with actual permission checks
     const hasPermissions = Math.random() < 0.8; // Simulate success 80% of the time
 
@@ -58,9 +71,25 @@ async function verifyPermissions(target) {
     }
 }
 
+// Function to validate a URL
+function isValidURL(str) {
+    try {
+        new URL(str);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
+
 // Function to simulate a "low and slow" DoS attack (for demonstration/testing)
 async function lowAndSlowDoS(target, durationSeconds) {
     log(RED + "Starting Low and Slow DoS attack simulation on: " + target + " for " + durationSeconds + " seconds." + RESET);
+
+    if (durationSeconds > MAX_DDOS_DURATION) {
+        log(RED + "Duration exceeds maximum allowed limit." + RESET);
+        alert(RED + "Duration exceeds maximum allowed limit of " + MAX_DDOS_DURATION + " seconds." + RESET);
+        return;
+    }
 
     if (!await verifyPermissions(target)) {
         return;
@@ -87,7 +116,7 @@ async function lowAndSlowDoS(target, durationSeconds) {
             //  });
 
             //Delay to simulate slowness.
-            await new Promise(resolve => setTimeout(resolve, 5000)); // 5 second delay
+            await new Promise(resolve => setTimeout(resolve, REQUEST_INTERVAL)); // Rate limiting
         } catch (error) {
             log(RED + "Error during attack: " + error + RESET);
         }
@@ -97,6 +126,13 @@ async function lowAndSlowDoS(target, durationSeconds) {
 }
 
 
+// Function to toggle safe mode
+function toggleSafeMode() {
+    isSafeMode = !isSafeMode;
+    log(RED + "Safe mode " + (isSafeMode ? "ENABLED" : "DISABLED") + RESET);
+    alert(RED + "Safe mode " + (isSafeMode ? "ENABLED" : "DISABLED") + RESET);
+}
+
 // Main execution function (call this from your HTML button)
 async function startDDoS(target, duration) {
     if (!target || !duration) {
@@ -104,9 +140,12 @@ async function startDDoS(target, duration) {
         return;
     }
 
+    // Use safe mode target if safe mode is enabled
+    const actualTarget = isSafeMode ? SAFE_MODE_TARGET : target;
+
     if (await getUserConsent()) {
         log(RED + "User consent granted. Starting attack..." + RESET);
-        lowAndSlowDoS(target, duration);
+        lowAndSlowDoS(actualTarget, duration);
     } else {
         log(RED + "User consent denied. Attack aborted." + RESET);
         alert(RED + "Attack aborted due to lack of consent." + RESET);
@@ -114,5 +153,6 @@ async function startDDoS(target, duration) {
 }
 
 
-//Expose the startDDoS function to the window object so it can be called from HTML
+//Expose the functions to the window object so it can be called from HTML
 window.startDDoS = startDDoS;
+window.toggleSafeMode = toggleSafeMode;
