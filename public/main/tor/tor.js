@@ -1,5 +1,4 @@
-class Tor {
-    constructor() {
+constructor() {
         // Existing code...
 
         this.isSafeMode = false;
