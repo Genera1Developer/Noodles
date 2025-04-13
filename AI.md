@@ -19,6 +19,7 @@ This section provides access to the Noodles toolkit. Each tool includes detailed
     *   Target verification (user-owned systems only) – we check if you own it.
     *   Prominent ethical hacking warnings and disclaimers – we told you so.
     *   Requires explicit consent – are you sure you wanna do this?
+*   **Educational Information:** Website defacement involves modifying the visual appearance of a website. Ethical testing of defacement vulnerabilities helps identify weaknesses in website security configurations.
 
 ### 2. DDoS Simulation Tool
 
@@ -29,6 +30,7 @@ This section provides access to the Noodles toolkit. Each tool includes detailed
     *   Automatic stop after a short duration – because nobody likes a prolonged attack.
     *   Prominent ethical hacking warnings and disclaimers – seriously, don't be stupid.
     *   Requires explicit consent – last chance to back out.
+*   **Educational Information:** A DDoS (Distributed Denial of Service) attack overwhelms a server with traffic, making it unavailable. Simulating this helps test the infrastructure's ability to withstand such attacks.
 
 ### 3. File Encryption Tool
 
@@ -39,6 +41,7 @@ This section provides access to the Noodles toolkit. Each tool includes detailed
     *   Clear decryption instructions – so you can get your stuff back.
     *   Prominent ethical hacking warnings and disclaimers – we're not liable if you screw up.
     *   Requires explicit consent – you sure about this?
+*   **Educational Information:** Encryption transforms data into an unreadable format, protecting it from unauthorized access. Testing encryption methods helps ensure data security.
 
 ### 4. Password Cracking Tool (Simulated)
 
