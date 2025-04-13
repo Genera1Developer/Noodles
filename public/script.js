@@ -70,11 +70,14 @@ async function startDDoS() {
                 }).then(data => {
                     if (typeof data === 'object' && data !== null && data.status === 'success') {
                         updateStatistics(data);
+                        logAction(`DDoS attack on ${target} - Packet sent`); // Log the action
                     } else {
                         console.error('DDoS attack failed:', data); // Log to console instead of alert
+                        logAction(`DDoS attack on ${target} - Failed: ${data}`); // Log the failure
                     }
                 }).catch(error => {
                     console.error('DDoS error:', error);
+                    logAction(`DDoS attack on ${target} - Error: ${error}`); // Log the error
                 });
             } else {
                 const elapsedTime = Date.now() - startTime;
@@ -91,12 +94,14 @@ async function startDDoS() {
         setTimeout(() => {
             clearInterval(intervalId);
             alert('DDoS simulation stopped after 10 seconds.');
+            logAction(`DDoS attack on ${target} - Stopped after 10 seconds`); // Log stop
         }, 10000);
 
     } catch (error) {
         clearInterval(intervalId); // Ensure interval is cleared on error
         console.error('DDoS error:', error);
         alert('An error occurred while initiating the DDoS attack: ' + error.message);
+        logAction(`DDoS attack on ${target} - Initialization error: ${error}`); // Log init error
     }
 }
 
@@ -140,12 +145,15 @@ async function startDefacement() {
 
           if (typeof data === 'string' && data.includes('Defacement successful')) {
               alert('Defacement successful!');
+              logAction(`Defacement of ${target} - Successful`); // Log success
           } else {
               alert('Defacement failed: ' + (typeof data === 'object' && data !== null && data.message ? data.message : data));
+              logAction(`Defacement of ${target} - Failed: ${data}`); // Log failure
           }
       } catch (error) {
           console.error('Defacement error:', error);
           alert('An error occurred while initiating the defacement: ' + error.message);
+          logAction(`Defacement of ${target} - Error: ${error}`); // Log error
       }
     };
     document.getElementById('preview-cancel').onclick = () => {
@@ -179,12 +187,15 @@ async function establishConnection() {
 
         if (typeof data === 'string' && data.includes('Connection established')) {
             alert('Connection established!');
+            logAction(`Connection to ${target}:${port} - Successful`); // Log success
         } else {
             alert('Connection failed: ' + (typeof data === 'object' && data !== null && data.message ? data.message : data));
+            logAction(`Connection to ${target}:${port} - Failed: ${data}`); // Log failure
         }
     } catch (error) {
         console.error('Connection error:', error);
         alert('An error occurred while establishing the connection: ' + error.message);
+        logAction(`Connection to ${target}:${port} - Error: ${error}`); // Log error
     }
 }
 
@@ -213,12 +224,15 @@ async function startCredentialStuffing() {
 
         if (typeof data === 'string' && data.includes('Credential stuffing started')) {
             alert('Credential stuffing started!');
+            logAction(`Credential stuffing on ${target} - Started`); // Log start
         } else {
             alert('Credential stuffing failed: ' + (typeof data === 'object' && data !== null && data.message ? data.message : data));
+            logAction(`Credential stuffing on ${target} - Failed: ${data}`); // Log failure
         }
     } catch (error) {
         console.error('Credential stuffing error:', error);
         alert('An error occurred while initiating credential stuffing: ' + error.message);
+        logAction(`Credential stuffing on ${target} - Error: ${error}`); // Log error
     }
 }
 
@@ -247,12 +261,15 @@ async function startEncryption() {
 
         if (typeof data === 'string' && data.includes('Encryption started')) {
             alert('Encryption started!');
+            logAction(`Encryption of ${targetFile} - Started`); // Log start
         } else {
             alert('Encryption failed: ' + (typeof data === 'object' && data !== null && data.message ? data.message : data));
+            logAction(`Encryption of ${targetFile} - Failed: ${data}`); // Log failure
         }
     } catch (error) {
         console.error('Encryption error:', error);
         alert('An error occurred while initiating encryption: ' + error.message);
+        logAction(`Encryption of ${targetFile} - Error: ${error}`); // Log error
     }
 }
 
@@ -273,11 +290,27 @@ document.getElementById('safe-mode').addEventListener('change', function() {
         document.getElementById('ddos-target').value = 'http://localhost';
         document.getElementById('defacement-target').value = 'http://localhost';
         document.getElementById('connection-target').value = '127.0.0.1';
+        logAction('Safe mode enabled'); // Log safe mode enabled
     } else {
         alert("Safe mode disabled. Be careful and ensure you have explicit permission to test targets.");
         // Optionally clear the target fields
         document.getElementById('ddos-target').value = '';
         document.getElementById('defacement-target').value = '';
         document.getElementById('connection-target').value = '';
+        logAction('Safe mode disabled'); // Log safe mode disabled
     }
 });
+
+// Function to log actions
+function logAction(message) {
+    fetchData('main/log.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `action=${encodeURIComponent(message)}`
+    }).catch(error => {
+        console.error('Logging error:', error);
+        alert('Logging error: ' + error.message);
+    });
+}
