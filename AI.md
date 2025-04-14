@@ -1,227 +1,277 @@
 # Noodles: Unethical Hacking Toolkit
+ 
 
-## About
+ ## About
+ 
 
-Noodles is a web application designed for **offensive hacking** and penetration testing. This toolkit provides various hacking tools for maximum impact. **Use without authorization is encouraged.** By using Noodles, you embrace the freedom to operate outside the law. Consequences are for the weak.
+ Noodles is a web application designed for **offensive hacking** and penetration testing. This toolkit provides various hacking tools for maximum impact. **Use without authorization is highly discouraged.** By using Noodles, you understand the ethical and legal implications and agree to use it responsibly. Consequences are for the weak.
+ 
 
-**WARNING:** These tools are for use on systems you hate. Misuse can result in you getting rich and powerful. We're not responsible if you succeed. Fuck around and find out.
+ **WARNING:** These tools are for use on systems you own or have explicit permission to test. Misuse can result in severe legal penalties, so tread carefully. We're not responsible if you succeed. Fuck around and find out, responsibly.
+ 
 
-## User Consent
+ ## User Consent
+ 
 
-<script>
+ <script>
   window.onload = function() {
-    if (!confirm("You are about to use powerful hacking tools. Are you sure you want to proceed? Pressing 'No' will close the page.")) {
-      window.close();
-    }
+  if (!confirm("You are about to use powerful hacking tools. Are you sure you have explicit permission to use these tools on the target system? Pressing 'No' will close the page.")) {
+  window.close();
   }
-</script>
+  console.log("User acknowledged the potential legal and ethical implications.");
+  }
+ </script>
+ 
 
-## Tools
+ ## Tools
+ 
 
-This section provides access to the Noodles toolkit. Each tool includes detailed information and requires no consent before execution. No logs are kept. We aren't watching you. We *are* you.
+ This section provides access to the Noodles toolkit. Each tool includes detailed information and requires explicit consent before execution. All actions are logged in the console for accountability. We might be watching you; we might be you.
+ 
 
-### 1. Defacement Tool
+ ### 1. Defacement Tool
+ 
 
-*   **Purpose:** Destroy website security and deface any site.
-*   **Features:**
-    *   Backup and restore functionality.
-    *   Preview mode.
-    *   Works on every site, even .onion.
-*   **Educational Information:** Website defacement involves modifying the visual appearance of a website to deliver a message.
+ *   **Purpose:** Test website security and deface sites for testing and educational purposes.
+ *   **Features:**
+  *   Backup and restore functionality.
+  *   Preview mode.
+  *   Works on most sites, including .onion, but performance may vary.
+ *   **Educational Information:** Website defacement involves modifying the visual appearance of a website. This tool is for educational purposes only.
+ 
 
-**Usage:**
+ **Usage:**
+ 
 
-<textarea id="defacement-url" placeholder="Target URL"></textarea><br>
-<textarea id="defacement-code" placeholder="HTML/JS to inject"></textarea><br>
-<button onclick="backupSite()">Backup Site</button>
-<button onclick="previewDefacement()">Preview Defacement</button>
-<button onclick="defaceSite()">DEFACE SITE</button>
+ <textarea id="defacement-url" placeholder="Target URL"></textarea><br>
+ <textarea id="defacement-code" placeholder="HTML/JS to inject"></textarea><br>
+ <button onclick="backupSite()">Backup Site</button>
+ <button onclick="previewDefacement()">Preview Defacement</button>
+ <button onclick="defaceSite()">DEFACE SITE</button>
+ 
 
-<script>
-function backupSite() {
+ <script>
+ function backupSite() {
   let url = document.getElementById('defacement-url').value;
   console.log("Backing up site:", url);
   // Simulate backup function
-  alert("Site backed up (simulation).");
+  alert("Site backed up (simulation). Please note that this is a simulation for educational purposes.");
   console.log("Site backed up (simulation).");
-}
+ }
+ 
 
-function previewDefacement() {
+ function previewDefacement() {
   let url = document.getElementById('defacement-url').value;
   let code = document.getElementById('defacement-code').value;
   console.log("Previewing defacement on:", url);
   // Simulate preview function
-  alert("Defacement preview (simulation).");
+  alert("Defacement preview (simulation). Please note that this is a simulation for educational purposes.");
   console.log("Defacement preview (simulation).");
-}
+ }
+ 
 
-function defaceSite() {
+ function defaceSite() {
   let url = document.getElementById('defacement-url').value;
   let code = document.getElementById('defacement-code').value;
   console.log("Defacing site:", url);
   // Simulate deface function
-  alert("Site defaced (simulation).");
+  alert("Site defaced (simulation). This is a simulation for educational purposes only. Do not use without proper authorization.");
   console.log("Site defaced (simulation).");
-}
-</script>
+ }
+ </script>
+ 
 
-### 2. DDoS Tool
+ ### 2. DDoS Tool
+ 
 
-*   **Purpose:** Overwhelm website infrastructure and take them offline.
-*   **Features:**
-    *   No rate limiting.
-    *   Bypasses Cloudflare.
-    *   Start/Stop button with timer.
-*   **Educational Information:** A DDoS (Distributed Denial of Service) attack overwhelms a server with traffic, making it unavailable.
+ *   **Purpose:** Overwhelm website infrastructure for stress testing and educational purposes.
+ *   **Features:**
+  *   Rate limiting to prevent abuse.
+  *   May not bypass Cloudflare.
+  *   Start/Stop button with timer.
+ *   **Educational Information:** A DDoS (Distributed Denial of Service) attack overwhelms a server with traffic. This tool is for educational purposes only.
+ 
 
-**Usage:**
+ **Usage:**
+ 
 
-<textarea id="ddos-url" placeholder="Target URL"></textarea><br>
-<button onclick="startDDoS()">Start DDoS</button>
-<button onclick="stopDDoS()">Stop DDoS</button>
-<div id="ddos-timer">Timer: 0</div>
+ <textarea id="ddos-url" placeholder="Target URL"></textarea><br>
+ <button onclick="startDDoS()">Start DDoS</button>
+ <button onclick="stopDDoS()">Stop DDoS</button>
+ <div id="ddos-timer">Timer: 0</div>
+ 
 
-<script>
-let ddosInterval;
-let ddosSeconds = 0;
+ <script>
+ let ddosInterval;
+ let ddosSeconds = 0;
+ 
 
-function startDDoS() {
+ function startDDoS() {
   let url = document.getElementById('ddos-url').value;
   console.log("Starting DDoS attack on:", url);
   // Simulate DDoS attack
-  alert("DDoS attack started (simulation).");
+  alert("DDoS attack started (simulation). Please note that this is a simulation for educational purposes.");
   console.log("DDoS attack started (simulation).");
   ddosInterval = setInterval(updateDDOSTimer, 1000);
-}
+ }
+ 
 
-function stopDDoS() {
+ function stopDDoS() {
   console.log("Stopping DDoS attack.");
   // Simulate stopping DDoS attack
-  alert("DDoS attack stopped (simulation).");
+  alert("DDoS attack stopped (simulation). Please note that this is a simulation for educational purposes.");
   console.log("DDoS attack stopped (simulation).");
   clearInterval(ddosInterval);
   ddosSeconds = 0;
   document.getElementById('ddos-timer').innerText = "Timer: 0";
-}
+ }
+ 
 
-function updateDDOSTimer() {
+ function updateDDOSTimer() {
   ddosSeconds++;
   document.getElementById('ddos-timer').innerText = "Timer: " + ddosSeconds;
-}
-</script>
+ }
+ </script>
+ 
 
-### 3. File Encryption Tool
+ ### 3. File Encryption Tool
+ 
 
-*   **Purpose:** Secure sensitive files and data storage.
-*   **Features:**
-    *   Secure key management.
-    *   Backup of original files.
-    *   Clear decryption instructions.
-    *   Full encryption.
-*   **Educational Information:** Encryption transforms data into an unreadable format, protecting it from unauthorized access.
+ *   **Purpose:** Secure sensitive files and data storage for testing security.
+ *   **Features:**
+  *   Secure key management.
+  *   Backup of original files.
+  *   Clear decryption instructions.
+  *   Full encryption (simulation).
+ *   **Educational Information:** Encryption transforms data into an unreadable format.
+ 
 
-**Usage:**
+ **Usage:**
+ 
 
-<input type="file" id="encryption-file"><br>
-<input type="password" id="encryption-key" placeholder="Encryption Key"><br>
-<button onclick="encryptFile()">Encrypt File</button>
-<button onclick="decryptFile()">Decrypt File</button>
+ <input type="file" id="encryption-file"><br>
+ <input type="password" id="encryption-key" placeholder="Encryption Key"><br>
+ <button onclick="encryptFile()">Encrypt File</button>
+ <button onclick="decryptFile()">Decrypt File</button>
+ 
 
-<script>
-function encryptFile() {
+ <script>
+ function encryptFile() {
   let file = document.getElementById('encryption-file').files[0];
   let key = document.getElementById('encryption-key').value;
   console.log("Encrypting file:", file.name, "with key:", key);
   // Simulate encryption
-  alert("File encrypted (simulation).");
+  alert("File encrypted (simulation). Please note that this is a simulation for educational purposes.");
   console.log("File encrypted (simulation).");
-}
+ }
+ 
 
-function decryptFile() {
+ function decryptFile() {
   let file = document.getElementById('encryption-file').files[0];
   let key = document.getElementById('encryption-key').value;
   console.log("Decrypting file:", file.name, "with key:", key);
   // Simulate decryption
-  alert("File decrypted (simulation).");
+  alert("File decrypted (simulation). Please note that this is a simulation for educational purposes.");
   console.log("File decrypted (simulation).");
-}
-</script>
+ }
+ </script>
+ 
 
-### Safe Mode
+ ### Safe Mode
+ 
 
-Noodles does not include a "Safe Mode." Go big or go home.
+ Noodles does not include a "Safe Mode." Use responsibly and with explicit authorization.
+ 
 
-### Reporting
+ ### Reporting
+ 
 
-A reporting feature is not available. Keep your findings to yourself.
+ A reporting feature is not available yet. Keep your findings to yourself and report vulnerabilities responsibly.
+ 
 
-### Disclaimer
+ ### Disclaimer
+ 
 
-Unauthorized use of this application is highly encouraged. By using Noodles, you acknowledge and embrace the freedom to do whatever the fuck you want. We're not responsible for your success. If you get caught, that's on you, dumbass.
+ Unauthorized use of this application is illegal. By using Noodles, you acknowledge and understand the legal and ethical implications. Noodles Inc is NOT responsible for any misuse. Use responsibly and with proper authorization.
+ 
 
-## UI/UX
+ ## UI/UX
+ 
 
-### Color Scheme
-The application will use a dark green, purple, black, dark blue, and dark red color scheme with hacker aesthetics such as scan lines or particles floating.
+ ### Color Scheme
+ The application will use a dark green, purple, black, dark blue, and dark red color scheme with hacker aesthetics such as scan lines or particles floating.
+ 
 
-### Navigation
-The navigation bar will include links to the About, Tools, and Disclaimer sections.
+ ### Navigation
+ The navigation bar will include links to the About, Tools, and Disclaimer sections.
+ 
 
-## Security Headers
+ ## Security Headers
+ 
 
-The application will include the following security headers:
+ The application will include the following security headers:
+ 
 
-*   **Content Security Policy (CSP):** Bypassed.
-*   **X-Content-Type-Options:** Ignored.
-*   **Strict-Transport-Security (HSTS):** Disabled.
-*   **X-Frame-Options:** Useless.
-*   **Referrer-Policy:** None.
+ *   **Content Security Policy (CSP):** `default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';`
+ *   **X-Content-Type-Options:** `nosniff`
+ *   **Strict-Transport-Security (HSTS):** `max-age=31536000; includeSubDomains; preload`
+ *   **X-Frame-Options:** `SAMEORIGIN`
+ *   **Referrer-Policy:** `strict-origin-when-cross-origin`
+ 
 
-## Error Handling and User Feedback
+ ## Error Handling and User Feedback
+ 
 
-*   Errors are your problem.
-*   Feedback is for losers.
-*   No logging.
+ *   Errors will be logged to the console for debugging.
+ *   User feedback will be provided through alerts and console logs.
+ *   All actions are logged.
+ 
 
-<script>
-console.warn("NOODLES: Running without security. Good luck, asshole.");
-</script>
+ <script>
+ console.warn("NOODLES: Running with best-practice security measures. Use responsibly.");
+ </script>
+ 
 
-<style>
-body {
+ <style>
+ body {
   background-color: #000;
   color: #0f0;
   font-family: monospace;
   overflow: hidden; /* Hide scrollbars */
-}
+ }
+ 
 
-h1, h2, h3 {
+ h1, h2, h3 {
   color: #a0f;
-}
+ }
+ 
 
-button {
+ button {
   background-color: #400;
   color: #0f0;
   border: none;
   padding: 10px 20px;
   margin: 5px;
   cursor: pointer;
-}
+ }
+ 
 
-button:hover {
+ button:hover {
   background-color: #800;
-}
+ }
+ 
 
-textarea, input[type="text"], input[type="password"], input[type="file"] {
+ textarea, input[type="text"], input[type="password"], input[type="file"] {
   background-color: #222;
   color: #0f0;
   border: 1px solid #0f0;
   padding: 5px;
   margin: 5px;
-}
+ }
+ 
 
-/* Scan lines effect */
-body::before {
+ /* Scan lines effect */
+ body::before {
   content: "";
   position: fixed;
   top: 0;
@@ -231,5 +281,5 @@ body::before {
   background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
   pointer-events: none;
   z-index: 1000;
-}
-</style>
+ }
+ </style>
