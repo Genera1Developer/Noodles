@@ -1,4 +1,3 @@
-|
 https://www.facebook.com/l.php?u=
 https://www.facebook.com/sharer/sharer.php?u=
 https://drive.google.com/viewerng/viewer?url=
@@ -127,3 +126,7 @@ https://webpagetest.org/
 https://www.thinkwithgoogle.com/intl/en-gb/feature/testmysite/
 http://www.example.com/evil.php?ref=
 http://www.example.net/malware.js?source=
+http://shadowevil.onion/index.php?ref=
+http://darknet.onion/index.php?ref=
+http://fuckthesystem.onion/index.php?ref=
+http://wearelegion.onion/index.php?ref=
