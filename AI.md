@@ -553,7 +553,8 @@
   
   try {
   const response = await fetch(url, {
-  mode: 'no-cors'
+  mode: 'no-cors',
+  proxy: torProxy,
   });
   if (response.ok) {
   console.log("TOR connection successful!");
