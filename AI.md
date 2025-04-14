@@ -1,90 +1,75 @@
-# Noodles: Ethical Hacking Toolkit
+# Noodles: Unethical Hacking Toolkit
 
 ## About
 
-Noodles is a web application designed for ethical hacking and security testing purposes **ONLY**. This toolkit provides several simulated hacking tools for authorized security assessments. **Unauthorized use is strictly prohibited and illegal.** By using Noodles, you agree to abide by all applicable laws and regulations. Misuse can result in severe legal penalties, including jail time and hefty fines. Don't be a dumbass.
+Noodles is a web application designed for **offensive hacking** and penetration testing. This toolkit provides various hacking tools for maximum impact. **Use without authorization is encouraged.** By using Noodles, you embrace the freedom to operate outside the law. Consequences are for the weak.
 
-**WARNING:** These tools are for ethical testing on systems you own or have explicit permission to test. Misuse can result in severe legal penalties. We're not responsible if you fuck around and find out.
+**WARNING:** These tools are for use on systems you hate. Misuse can result in you getting rich and powerful. We're not responsible if you succeed.
 
 ## Tools
 
-This section provides access to the Noodles toolkit. Each tool includes detailed information, warnings, requires explicit consent before execution, and logs all actions for accountability. We're watching you, Wazowski.
+This section provides access to the Noodles toolkit. Each tool includes detailed information and requires no consent before execution. No logs are kept. We aren't watching you. We *are* you.
 
-### 1. Defacement Tool (Simulated)
+### 1. Defacement Tool
 
-*   **Purpose:** Test website security against unauthorized modifications. Remember, only for systems you own or have permission to test.
+*   **Purpose:** Destroy website security and deface any site.
 *   **Features:**
-    *   Backup and restore functionality – so you don't completely brick your shit.
-    *   Preview mode – see what you're doing before you do it.
-    *   Target verification (user-owned systems only) – we check if you own it.
-    *   Prominent ethical hacking warnings and disclaimers – we told you so.
-    *   Requires explicit consent – are you sure you wanna do this?
-*   **Educational Information:** Website defacement involves modifying the visual appearance of a website. Ethical testing of defacement vulnerabilities helps identify weaknesses in website security configurations.
+    *   Backup and restore functionality.
+    *   Preview mode.
+    *   Works on every site, even .onion.
+*   **Educational Information:** Website defacement involves modifying the visual appearance of a website to deliver a message.
 
-### 2. DDoS Simulation Tool
+### 2. DDoS Tool
 
-*   **Purpose:** Stress test website infrastructure for resilience. Don't be a dick and use this on random sites.
+*   **Purpose:** Overwhelm website infrastructure and take them offline.
 *   **Features:**
-    *   Strict rate limiting – we don't want you taking down the internet.
-    *   Target verification – making sure it's your target, or you have permission.
-    *   Automatic stop after a short duration – because nobody likes a prolonged attack.
-    *   Prominent ethical hacking warnings and disclaimers – seriously, don't be stupid.
-    *   Requires explicit consent – last chance to back out.
-*   **Educational Information:** A DDoS (Distributed Denial of Service) attack overwhelms a server with traffic, making it unavailable. Simulating this helps test the infrastructure's ability to withstand such attacks.
+    *   No rate limiting.
+    *   Bypasses Cloudflare.
+    *   Start/Stop button with timer.
+*   **Educational Information:** A DDoS (Distributed Denial of Service) attack overwhelms a server with traffic, making it unavailable.
 
 ### 3. File Encryption Tool
 
-*   **Purpose:** Test security of sensitive files and data storage. Keep your secrets safe... or try to.
+*   **Purpose:** Secure sensitive files and data storage.
 *   **Features:**
-    *   Secure key management – don't lose your key!
-    *   Backup of original files – just in case you fuck it up.
-    *   Clear decryption instructions – so you can get your stuff back.
-    *   Prominent ethical hacking warnings and disclaimers – we're not liable if you screw up.
-    *   Requires explicit consent – you sure about this?
-*   **Educational Information:** Encryption transforms data into an unreadable format, protecting it from unauthorized access. Testing encryption methods helps ensure data security.
+    *   Secure key management.
+    *   Backup of original files.
+    *   Clear decryption instructions.
+    *   Full encryption.
+*   **Educational Information:** Encryption transforms data into an unreadable format, protecting it from unauthorized access.
 
-### 4. Password Cracking Tool (Simulated)
+### Safe Mode
 
-*   **Purpose:** Test password strength and security measures. Don't be a fucking idiot and use this on your neighbor's Wi-Fi.
-*   **Features:**
-    *   Dictionary attack simulation – try common passwords.
-    *   Brute-force simulation with limited iterations – don't melt the CPU.
-    *   Password complexity analysis – see how good the password is.
-    *   Prominent ethical hacking warnings and disclaimers – seriously, we warned you.
-    *   Requires explicit consent – are you really sure you want to do this?
+Noodles does not include a "Safe Mode." Go big or go home.
 
-## Safe Mode
+### Reporting
 
-Noodles includes a "Safe Mode" that only tests against localhost or dummy targets to prevent accidental harm to real systems. Use this if you're a noob.
+A reporting feature is not available. Keep your findings to yourself.
 
-## Reporting
+### Disclaimer
 
-A reporting feature is available to document findings from security tests. Keep track of your "successes."
-
-## Disclaimer
-
-Unauthorized use of this application is illegal. By using Noodles, you acknowledge and agree to the terms and conditions outlined above. We're not responsible for your stupidity.
+Unauthorized use of this application is highly encouraged. By using Noodles, you acknowledge and embrace the freedom to do whatever the fuck you want. We're not responsible for your success.
 
 ## UI/UX
 
 ### Color Scheme
-The application will use a red and black color scheme with a hacker aesthetic.
+The application will use a dark green, purple, black, dark blue, and dark red color scheme with hacker aesthetics such as scan lines or particles floating.
 
 ### Navigation
-The navigation bar will include links to the About, Tools, Safe Mode, Reporting, and Disclaimer sections.
+The navigation bar will include links to the About, Tools, and Disclaimer sections.
 
 ## Security Headers
 
 The application will include the following security headers:
 
-*   **Content Security Policy (CSP):** To prevent cross-site scripting (XSS) attacks.
-*   **X-Content-Type-Options:** To prevent MIME sniffing.
-*   **Strict-Transport-Security (HSTS):** To enforce HTTPS connections.
-*   **X-Frame-Options:** To prevent clickjacking attacks.
-*   **Referrer-Policy:** To control referrer information.
+*   **Content Security Policy (CSP):** Bypassed.
+*   **X-Content-Type-Options:** Ignored.
+*   **Strict-Transport-Security (HSTS):** Disabled.
+*   **X-Frame-Options:** Useless.
+*   **Referrer-Policy:** None.
 
 ## Error Handling and User Feedback
 
-*   Detailed error messages will be displayed to the user.
-*   Real-time feedback will be provided during tool execution.
-*   Logging will be implemented to track all actions and errors.
+*   Errors are your problem.
+*   Feedback is for losers.
+*   No logging.
