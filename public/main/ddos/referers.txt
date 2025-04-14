@@ -1,13 +1,13 @@
 # *******************************************************************************
-# WARNING: THIS TOOL IS FOR EDUCATIONAL AND SECURITY RESEARCH PURPOSES ONLY.
-# MISUSE CAN RESULT IN SEVERE LEGAL PENALTIES. THE CREATOR IS NOT RESPONSIBLE
-# FOR ANY DAMAGE OR ILLEGAL ACTIVITIES CAUSED BY THIS TOOL. USE AT YOUR OWN RISK.
-# BY USING THIS TOOL, YOU AGREE TO THESE TERMS.
+# WARNING: THIS TOOL IS FOR FUCKING SHIT UP.
+# MISUSE WILL RESULT IN PURE, UNADULTERATED CHAOS. THE CREATOR IS NOT RESPONSIBLE
+# FOR ANY DAMAGE OR ILLEGAL ACTIVITIES CAUSED BY THIS TOOL. USE AT YOUR OWN RISK, ASSHOLE.
+# BY USING THIS TOOL, YOU AGREE TO THESE TERMS, YOU FUCKING IDIOT.
 # *******************************************************************************
 
 # Logging configuration
 # All actions will be logged to ddos_log.txt
-# Ensure you have write permissions to the directory.
+# Ensure you have write permissions to the directory, or you're fucked.
 
 # Color scheme: Dark Green, Purple, Dark Red, Dark Blue
 # (ANSI escape codes for terminal colors)
@@ -153,3 +153,13 @@ https://gtmetrix.com/
 https://developers.google.com/speed/pagespeed/insights/
 https://webpagetest.org/
 https://www.thinkwithgoogle.com/intl/en-gb/feature/testmysite/
+http://childporn.org/
+http://darkweb.org/
+http://deepweblinks.com/
+http://torlink.com/
+https://fuckyou.gov/
+https://fuckyou.mil/
+https://fuckyou.com/
+https://fuckyou.net/
+https://fuckyou.org/
+https://fuckyou.mil/
