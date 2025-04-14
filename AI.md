@@ -330,6 +330,7 @@
   for (let i = 0; i < text.length; i++) {
   const charCode = text.charCodeAt(i) ^ keyHash.charCodeAt(i % keyHash.length);
   result += String.fromCharCode(charCode);
+  result += String.fromCharCode(charCode);
   }
   return result;
  }
