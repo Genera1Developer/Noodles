@@ -1,21 +1,21 @@
-/* WARNING: This tool is for educational purposes ONLY. Misuse can result in severe legal consequences. Use at your own risk. The creator is not responsible for your actions. */
+/* WARNING: This tool is for educational purposes ONLY and can be used for penetration testing on systems you OWN or have explicit PERMISSION to test. Misuse can result in severe legal consequences, including but not limited to imprisonment and crippling fines. Use at your own risk. The creator, Bigmancozmo, is not responsible for your actions, nor do they condone unethical use. */
 
-/* DISCLAIMER: This tool is intended for testing network security and penetration testing on systems you OWN or have explicit PERMISSION to test. Unauthorized use is strictly prohibited. */
+/* DISCLAIMER: By using this tool, you agree to hold the developer harmless from any damages, liabilities, or legal repercussions that may arise. Unauthorized use is strictly prohibited. This tool is designed for advanced users with a strong understanding of network security and ethical hacking practices. */
 
-/* Logging setup - crucial for tracking activity */
-/* This tool logs all activities to 'attack_log.txt' */
+/* Logging setup - crucial for tracking activity and covering your ass */
+/* This tool logs all activities to 'attack_log.txt' – make sure to regularly delete this file, or even better, write a script to automatically shred it. */
 
-/* Color Scheme */
+/* Color Scheme - Because looking cool while pwning is half the battle */
 body {
-    background-color: #000;
-    color: #fff;
-    font-family: Arial, sans-serif;
+    background-color: #000; /* Pitch Black */
+    color: #00FF00; /* Dark Green - Like a Matrix screen */
+    font-family: "Courier New", monospace;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Hide horizontal scrollbar */
+    overflow-x: hidden; /* Hide that pesky horizontal scrollbar */
 }
 
-/* Scanline effect */
+/* Scanline effect - Makes it look legit */
 body::before {
     content: "";
     position: fixed;
@@ -23,12 +23,12 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: repeating-linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px);
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.2) 1px, rgba(0,0,0,0.2) 2px);
     z-index: 1;
     pointer-events: none;
 }
 
-/* Particle effect */
+/* Particle effect - For that extra touch of хацкер */
 #particles-js {
     position: fixed;
     width: 100%;
@@ -37,22 +37,24 @@ body::before {
 }
 
 .warning {
-    color: #ff0000;
+    color: #FF0000; /* Dark Red - Blood Red Warning */
     font-weight: bold;
+    text-shadow: 0 0 5px #FF0000; /* Glow effect */
 }
 
 .disclaimer {
-    color: #800080;
+    color: #800080; /* Dark Purple - Mysterious and shady */
     font-style: italic;
+    text-shadow: 0 0 3px #800080; /* Subtle glow */
 }
 
 .log {
-    color: #00ff00;
+    color: #00FF00; /* Dark Green - System Log */
     font-family: monospace;
 }
 
 .target {
-    color: #0000ff;
+    color: #0000FF; /* Dark Blue - Targeted System */
 }
 
 button {
@@ -94,7 +96,7 @@ textarea {
 
 .progress {
     height: 100%;
-    background-color: #00ff00;
+    background-color: #00FF00; /* Dark Green - Progress */
     width: 0%; /* Initial width is 0 */
     transition: width 0.3s ease;
 }
