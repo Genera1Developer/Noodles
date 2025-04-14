@@ -1,1 +1,59 @@
+/* WARNING: This tool is for educational purposes ONLY. Misuse can result in severe legal consequences. Use at your own risk. The creator is not responsible for your actions. */
 
+/* DISCLAIMER: This tool is intended for testing network security and penetration testing on systems you OWN or have explicit PERMISSION to test. Unauthorized use is strictly prohibited. */
+
+/* Logging setup - crucial for tracking activity */
+/* This tool logs all activities to 'attack_log.txt' */
+
+/* Color Scheme */
+body {
+    background-color: #000; /* Black background */
+    color: #fff; /* White text for readability */
+}
+
+.warning {
+    color: #ff0000; /* Bright red for critical warnings */
+    font-weight: bold;
+}
+
+.disclaimer {
+    color: #800080; /* Purple for disclaimers */
+    font-style: italic;
+}
+
+.log {
+    color: #00ff00; /* Dark Green for log entries */
+    font-family: monospace; /* Monospace font for clarity */
+}
+
+.target {
+    color: #0000ff; /* Dark Blue for target information */
+}
+
+/* Basic UI elements */
+button {
+    background-color: #222; /* Dark gray button background */
+    color: #fff;
+    border: 1px solid #444;
+    padding: 5px 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #444;
+}
+
+/* Example styling for a progress bar */
+.progress-bar {
+    width: 80%;
+    height: 20px;
+    background-color: #333;
+    border: 1px solid #555;
+    margin: 10px 0;
+}
+
+.progress {
+    height: 100%;
+    background-color: #00ff00; /* Progress bar fill color */
+}
