@@ -7,53 +7,193 @@
 
 /* Color Scheme */
 body {
-    background-color: #000; /* Black background */
-    color: #fff; /* White text for readability */
+    background-color: #000;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* Hide horizontal scrollbar */
+}
+
+/* Scanline effect */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.1) 2px);
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Particle effect */
+#particles-js {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
 }
 
 .warning {
-    color: #ff0000; /* Bright red for critical warnings */
+    color: #ff0000;
     font-weight: bold;
 }
 
 .disclaimer {
-    color: #800080; /* Purple for disclaimers */
+    color: #800080;
     font-style: italic;
 }
 
 .log {
-    color: #00ff00; /* Dark Green for log entries */
-    font-family: monospace; /* Monospace font for clarity */
+    color: #00ff00;
+    font-family: monospace;
 }
 
 .target {
-    color: #0000ff; /* Dark Blue for target information */
+    color: #0000ff;
 }
 
-/* Basic UI elements */
 button {
-    background-color: #222; /* Dark gray button background */
+    background-color: #222;
     color: #fff;
     border: 1px solid #444;
-    padding: 5px 10px;
+    padding: 10px 20px;
     margin: 5px;
     cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
     background-color: #444;
 }
 
-/* Example styling for a progress bar */
+input[type="text"],
+input[type="password"],
+textarea {
+    background-color: #111;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 8px;
+    margin: 5px;
+    border-radius: 5px;
+    width: calc(100% - 20px);
+}
+
 .progress-bar {
     width: 80%;
     height: 20px;
     background-color: #333;
     border: 1px solid #555;
     margin: 10px 0;
+    border-radius: 5px;
+    overflow: hidden;
 }
 
 .progress {
     height: 100%;
-    background-color: #00ff00; /* Progress bar fill color */
+    background-color: #00ff00;
+    width: 0%; /* Initial width is 0 */
+    transition: width 0.3s ease;
+}
+
+/* Navigation styles */
+nav {
+    background-color: #111;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 20px;
+    display: block;
+    transition: background-color 0.3s ease;
+}
+
+nav ul li a:hover {
+    background-color: #333;
+}
+
+.logo {
+    color: #fff;
+    font-size: 1.5em;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Sidebar styles */
+.sidebar {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: #111;
+    padding-top: 60px;
+    z-index: 50;
+}
+
+.sidebar a {
+    padding: 15px;
+    text-decoration: none;
+    font-size: 1.1em;
+    color: #fff;
+    display: block;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar a:hover {
+    background-color: #333;
+}
+
+/* Main content */
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    position: relative; /* Ensure content is positioned relative to scanlines */
+    z-index: 2; /* Ensure content is above particles */
+}
+
+/* Section styling */
+section {
+    margin-bottom: 30px;
+    padding: 20px;
+    background-color: #222;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+section h2 {
+    color: #fff;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Footer styles */
+footer {
+    background-color: #111;
+    color: #fff;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    z-index: 100;
 }
