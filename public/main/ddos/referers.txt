@@ -124,9 +124,3 @@ https://gtmetrix.com/
 https://developers.google.com/speed/pagespeed/insights/
 https://webpagetest.org/
 https://www.thinkwithgoogle.com/intl/en-gb/feature/testmysite/
-http://www.example.com/evil.php?ref=
-http://www.example.net/malware.js?source=
-http://shadowevil.onion/index.php?ref=
-http://darknet.onion/index.php?ref=
-http://fuckthesystem.onion/index.php?ref=
-http://wearelegion.onion/index.php?ref=
