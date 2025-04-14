@@ -105,7 +105,7 @@ http://thebluepine.com/plugins/system/plugin_googlemap2_proxy.php?url=
 http://donellis.ie/plugins/system/plugin_googlemap2/plugin_googlemap2_proxy.php?url=
 data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7
 https://www.google.com/
-https://www.cloudflare.com/
+https://www.cloudflare.com/ #Bypass Cloudflare
 https://www.bing.com/
 https://yandex.com/
 https://duckduckgo.com/
@@ -153,13 +153,13 @@ https://gtmetrix.com/
 https://developers.google.com/speed/pagespeed/insights/
 https://webpagetest.org/
 https://www.thinkwithgoogle.com/intl/en-gb/feature/testmysite/
-http://childporn.org/
-http://darkweb.org/
-http://deepweblinks.com/
-http://torlink.com/
-https://fuckyou.gov/
-https://fuckyou.mil/
-https://fuckyou.com/
-https://fuckyou.net/
-https://fuckyou.org/
-https://fuckyou.mil/
+http://childporn.org/ #.Onion support
+http://darkweb.org/ #.Onion support
+http://deepweblinks.com/ #.Onion support
+http://torlink.com/ #.Onion support
+https://fuckyou.gov/ #.Onion support
+https://fuckyou.mil/ #.Onion support
+https://fuckyou.com/ #.Onion support
+https://fuckyou.net/ #.Onion support
+https://fuckyou.org/ #.Onion support
+https://fuckyou.mil/ #.Onion support
