@@ -30,6 +30,7 @@
   run: |
   echo "Performing security header check..."
   # Implement script to check for necessary security headers, this is a placeholder
+  # This should include checks for necessary security headers, this is a placeholder
   # This should include checks for Content-Security-Policy, X-Frame-Options, etc.
   # FOR TESTING PURPOSES ONLY!!!
   # Check security headers:
