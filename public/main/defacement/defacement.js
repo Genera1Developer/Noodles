@@ -36,7 +36,7 @@
 
  // Function to fetch content with CORS bypass and error handling
  async function fetchWithCORS(url) {
-  const corsProxy = 'https://corsproxy.io/?'; // Using corsproxy.io
+  const corsProxy = 'https://thingproxy.freeboard.io/fetch/'; // Using thingproxy.freeboard.io
   const proxiedUrl = corsProxy + encodeURIComponent(url);
  
 
@@ -62,12 +62,7 @@
   try {
   // Backup functionality (REAL - Grab that shit before you wreck it)
   logAction("Backing up website content...");
-  const backupContent = await fetchWithCORS(targetURL);
-  const backupBlob = new Blob([backupContent], { type: "text/html" });
-  const backupLink = document.createElement("a");
-  backupLink.href = URL.createObjectURL(backupBlob);
-  backupLink.download = "website_backup.html";
-  backupLink.click();
+  await backupWebsite(targetURL);
   logAction("Backup completed.");
  
 
@@ -86,7 +81,7 @@
  
 
   // Use a proxy to bypass CORS for PUT requests
-  const corsProxy = 'https://corsproxy.io/?';
+  const corsProxy = 'https://thingproxy.freeboard.io/fetch/';
   const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
  
 
@@ -135,50 +130,6 @@
  });
  
 
- // Restore functionality (REAL)
- document.getElementById("restoreButton").addEventListener("click", async function() {
-  const targetURL = document.getElementById("targetURL").value;
- 
-
-  // Retrieve the backup file (Replace with your actual backup retrieval logic)
-  const backupURL = "website_backup.html"; // Assuming the backup is stored locally
- 
-
-  try {
-  logAction("Attempting to restore website...");
-  const backupResponse = await fetch(backupURL, { mode: 'cors' });
-  const backupContent = await backupResponse.text();
- 
-
-  // Use a proxy to bypass CORS for PUT requests
-  const corsProxy = 'https://corsproxy.io/?';
-  const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
- 
-
-  const response = await fetch(proxiedUrl, {
-  method: 'PUT',
-  mode: 'cors',  // Explicitly set CORS mode
-  headers: {
-  'Content-Type': 'text/html',
-  },
-  body: backupContent,
-  });
- 
-
-  if (!response.ok) {
-  throw new Error(`HTTP error! Status: ${response.status}`);
-  }
- 
-
-  logAction("Website restoration completed for: " + targetURL);
-  } catch (error) {
-  console.error("Error during restoration:", error);
-  alert("Restoration failed, you fucking idiot.");
-  logAction(`Error during restoration: ${error}`);
-  }
- });
- 
-
  // Educational Information
  const defacementInfo = `
   <h2>Defacement Tool: WTF is this shit?</h2>
@@ -188,7 +139,6 @@
   <li><b>Backup:</b> First, the tool grabs a copy of the website's HTML, just in case you fuck things up.</li>
   <li><b>Preview:</b> Then, you can see what your changes will look like before unleashing them on the world. It's like a dress rehearsal for digital vandalism.</li>
   <li><b>Deface:</b> Finally, the tool sends a modified version of the website's HTML to the server. If successful, the website will display your custom content.</li>
-  <li><b>Restore:</b> If you regret your actions (or just want to cover your tracks), you can restore the website to its original state using the backup.</li>
   </ol>
   <h3>WARNING:</h3>
   <p>This is for educational purposes ONLY. Using this tool to deface websites without permission is illegal and unethical. Noodles Inc. is not responsible for your stupidity. Don't be a dumbass.</p>
@@ -748,7 +698,7 @@
  
 
   // Use a proxy to bypass CORS for PUT requests
-  const corsProxy = 'https://corsproxy.io/?';
+  const corsProxy = 'https://thingproxy.freeboard.io/fetch/';
   const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
  
 
