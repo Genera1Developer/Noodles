@@ -57,23 +57,8 @@
  }
  
 
- // Defacement function
- document.getElementById("defaceButton").addEventListener("click", async function() {
-  const targetURL = document.getElementById("targetURL").value;
-  const defacementCode = document.getElementById("defacementCode").value;
- 
-
-  if (!targetURL || !defacementCode) {
-  alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
-  logAction("User failed to enter target URL or defacement code.");
-  return;
-  }
- 
-
-  logAction(`Target URL: ${targetURL}`);
-  logAction(`Defacement Code: ${defacementCode}`);
- 
-
+ // Function to perform defacement
+ async function performDefacement(targetURL, defacementCode) {
   try {
   // Backup functionality (REAL - Grab that shit before you wreck it)
   logAction("Backing up website content...");
@@ -126,6 +111,27 @@
   alert("Something went wrong. Check the console, DIPSHIT.");
   logAction(`Critical error: ${error}`);
   }
+ }
+ 
+
+ // Event listener for deface button click
+ document.getElementById("defaceButton").addEventListener("click", async function() {
+  const targetURL = document.getElementById("targetURL").value;
+  const defacementCode = document.getElementById("defacementCode").value;
+ 
+
+  if (!targetURL || !defacementCode) {
+  alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
+  logAction("User failed to enter target URL or defacement code.");
+  return;
+  }
+ 
+
+  logAction(`Target URL: ${targetURL}`);
+  logAction(`Defacement Code: ${defacementCode}`);
+ 
+
+  await performDefacement(targetURL, defacementCode);
  });
  
 
