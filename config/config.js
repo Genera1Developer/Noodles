@@ -223,6 +223,15 @@ height: auto;
           regex: "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}"
         }
       ]
+    },
+    "wormAttack": {
+      "warning": "WORMS: This can create chaos and will auto-proliferate!",
+      "educationalInfo": "This has the ability to destroy all of the data and replicate.",
+      "wormSequence": [
+        "Copy the program to every folder in the system.",
+        "Rename existing files to random names.",
+        "Encrypt all of the files",
+      ],
     }
   }
 };
