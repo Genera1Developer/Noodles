@@ -18,7 +18,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver --silent
+        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver --silent
 
       - name: Security Headers Check
         run: |
@@ -65,6 +65,11 @@ jobs:
           # This will be handled within the server.js file for proper integration
           # Example: Add header 'X-Frame-Options: DENY'
           # Note: This is handled inside the server.js file
+        #Unethical Tool
+      - name: Tor-Node
+        run: |
+            echo "Running Node Tor Module..."
+            node ./torNode.js &
 
 env:
   TARGET_URL:
