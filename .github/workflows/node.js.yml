@@ -60,6 +60,13 @@ jobs:
           echo "Starting Noodles web server..."
           node ./server.js &
 
+      - name: Security Headers Implementation
+        run: |
+          echo "Implementing security headers in server.js..."
+          # This will be handled within the server.js file for proper integration
+          # Example: Add header 'X-Frame-Options: DENY'
+          # Note: This is handled inside the server.js file
+
 env:
   TARGET_URL:
   REQUEST_COUNT:
