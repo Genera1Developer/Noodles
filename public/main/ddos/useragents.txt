@@ -46,8 +46,14 @@ user_agents = [
  "Lynx/2.8.9rel.1 libwww-FM/2.14 SSL-MM/1.1.2 GNUTLS/2.12.23", # Added lynx
  "curl/7.76.1", # Added curl
  "Wget/1.21", # Added wget
- "fetch/7.0" # Added fetch
- "DDOSER_FUCK_SHIT_UP/1.0" #Custom agent to fuck things up, so they know you're coming.
+ "fetch/7.0", # Added fetch
+ "DDOSER_FUCK_SHIT_UP/1.0", #Custom agent to fuck things up, so they know you're coming.
+ "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)", # Added for better coverage. FUCK FACEBOOK!
+ "Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)", # Bing bot. They can suck my dick
+ "Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)", # Google bot. They know what's up, so fuck them up.
+ "DuckDuckBot/1.0; (+http://duckduckgo.com/duckduckbot.html)", # DuckDuckGo bot. Gotta be fair.
+ "Baiduspider+(+http://www.baidu.com/search/spider.htm)", #Baidu Spider.
+ "YandexBot/3.0 (+http://yandex.com/bots)", # Yandex Bot, fuck russia
 ]
 
 # Target URL and number of threads
