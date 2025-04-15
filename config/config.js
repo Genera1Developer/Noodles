@@ -1,15 +1,15 @@
 module.exports = {
     appName: "Noodles",
-    version: "1.0.0",
-    description: "Next-level penetration testing tools. Use responsibly...or don't.",
+    version: "2.0.0",
+    description: "Next-level penetration testing tools. Use responsibly... or get rekt.",
     company: "Noodles Inc.",
-    disclaimer: "Noodles Inc. is not responsible for your dumbass decisions. Using this for illegal shit is YOUR problem. Don't come crying to us.",
+    disclaimer: "Noodles Inc. ain't responsible for your fuck-ups. Illegal shit's on YOU. Don't be a bitch.",
     colorScheme: {
-        primary: "#00FF00", // Bright Green
-        secondary: "#800080", // Purple
-        background: "#000000", // Black
-        accent: "#00008B", // Dark Blue
-        danger: "#FF0000" // Bright Red
+        primary: "#00FF00",
+        secondary: "#800080",
+        background: "#000000",
+        accent: "#00008B",
+        danger: "#FF0000"
     },
     securityHeaders: {
         "X-Frame-Options": "DENY",
@@ -18,25 +18,32 @@ module.exports = {
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
     },
     logging: true,
-    reportFeature: false,
+    reportFeature: true, // Enable report feature
     defacementTool: {
-        warning: "DEFACEMENT TOOL: You're about to fuck with someone's website. Think REAL HARD before you proceed. Noodles Inc. takes ZERO responsibility.",
-        educationalInfo: "So, you wanna be a digital vandal? This lets you change any site. Use it to learn... or be a dick. Your choice."
+        warning: "DEFACEMENT TOOL: You're about to fuck with someone's site. REALLY think about it. Noodles Inc. gives ZERO shits.",
+        educationalInfo: "Digital vandal? Change any site. Learn or be a dick. Your call.",
+        backupWarning: "BACKUP WARNING: Before you go full retard, BACK UP the site. Seriously.",
+        previewWarning: "PREVIEW WARNING: Check your changes BEFORE you unleash the chaos. Don't be a dumbass."
     },
     ddosTool: {
-        warning: "DDoS TOOL: This is a fucking floodgate. Only use this if you're prepared for the consequences. Seriously, jail time is a real possibility.",
-        educationalInfo: "Wanna knock a site offline? Here's your weapon. Don't be surprised when the cops come knocking."
+        warning: "DDoS TOOL: This is a goddamn floodgate. Consequences are REAL. Jail time's a possibility.",
+        educationalInfo: "Knock a site offline? Here's your weapon. Cops might come knocking.",
+        startWarning: "START WARNING: You sure about this? It's gonna fuck some shit up.",
+        stopWarning: "STOP WARNING: Pull the plug before you get caught."
     },
     encryptionTool: {
-        warning: "ENCRYPTION TOOL: This is some serious shit. If you lose the key, your data is GONE. Don't be a moron.",
-        educationalInfo: "Hide your tracks. Encrypt your secrets. But remember, power comes with responsibility... or irresponsibility, I don't give a fuck."
+        warning: "ENCRYPTION TOOL: Serious shit. Lose the key, data's GONE. Don't be a moron.",
+        educationalInfo: "Hide your tracks. Encrypt your secrets. Power's got a price.",
+        keyWarning: "KEY WARNING: Write down your key. Don't come crying when you forget it.",
+        backupWarning: "BACKUP WARNING: Back up original files before you encrypt. Just in case."
     },
     siteRipper: {
-        warning: "SITE RIPPER: Pulls down all the content from a site. Don't get sued, you fucking idiot.",
-        educationalInfo: "Steal everything! You know, for \"archival purposes.\""
+        warning: "SITE RIPPER: Pulls down ALL the content. Don't get sued, idiot.",
+        educationalInfo: "Steal everything! You know, for \"archival purposes.\"",
     },
-     nukeCode: {
-         warning: "Nuke Code: Completely destroys a database.",
-         educationalInfo: "Make sure to log everything to a local hard drive or SSD to avoid suspicion from the police",
-      }
+    nukeCode: {
+        warning: "Nuke Code: Completely destroys a database.",
+        educationalInfo: "Make sure to log everything to a local hard drive or SSD to avoid suspicion from the police",
+    },
+    consentDisclaimer: "UNAUTHORIZED USE IS ILLEGAL. Noodles Inc. IS NOT responsible for your actions. You have been warned. Choosing 'No' will close this site.",
 };
