@@ -199,3 +199,166 @@ footer {
     width: 100%;
     z-index: 100;
 }
+
+/* Additional Styles for the Hacking Tool */
+
+/* Input field for target URL */
+#targetUrl {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    background-color: #111;
+    color: #fff;
+    border-radius: 5px;
+}
+
+/* Button to start the attack */
+#attackButton {
+    background-color: #FF0000; /* Dark Red - Aggressive */
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    margin: 10px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#attackButton:hover {
+    background-color: #AA0000; /* Darker Red */
+}
+
+/* Log display area */
+#logArea {
+    width: calc(100% - 20px);
+    height: 200px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    background-color: #111;
+    color: #00FF00; /* Dark Green - Terminal Output */
+    font-family: monospace;
+    overflow-y: scroll;
+    border-radius: 5px;
+}
+
+/* Progress bar for attack progress */
+#attackProgress {
+    width: 100%;
+    height: 25px;
+    background-color: #333;
+    border: 1px solid #555;
+    margin: 10px 0;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#progressBar {
+    height: 100%;
+    background-color: #0000FF; /* Dark Blue - Intensity */
+    width: 0%;
+    transition: width 0.1s ease;
+}
+
+/* Styles for .onion sites */
+.onion {
+    color: #800080; /* Dark Purple */
+    text-shadow: 0 0 5px #800080;
+}
+
+/* Enhanced warning and disclaimer styles */
+.warning {
+    color: #FF0000;
+    font-weight: bold;
+    text-shadow: 0 0 7px #FF0000;
+    background-color: rgba(255, 0, 0, 0.1); /* Subtle red background */
+    padding: 5px;
+    border-radius: 3px;
+}
+
+.disclaimer {
+    color: #800080;
+    font-style: italic;
+    text-shadow: 0 0 5px #800080;
+    background-color: rgba(128, 0, 128, 0.1); /* Subtle purple background */
+    padding: 5px;
+    border-radius: 3px;
+}
+
+/* "Hacking in Progress" animation */
+@keyframes hacking {
+    0% { color: #00FF00; }
+    25% { color: #0000FF; }
+    50% { color: #800080; }
+    75% { color: #FF0000; }
+    100% { color: #00FF00; }
+}
+
+.hacking-text {
+    animation: hacking 2s infinite;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Enhanced button styling */
+button {
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #444;
+    padding: 12px 24px;
+    margin: 5px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+    background-color: #444;
+    transform: scale(1.05); /* Slight scale-up on hover */
+}
+
+button:active {
+    transform: scale(0.95); /* Slight scale-down on click */
+}
+
+/* Error messages */
+.error {
+    color: #FF4500; /* OrangeRed */
+    font-weight: bold;
+    text-shadow: 0 0 3px #FF4500;
+}
+
+/* Success messages */
+.success {
+    color: #32CD32; /* LimeGreen */
+    font-weight: bold;
+    text-shadow: 0 0 3px #32CD32;
+}
+
+/* Utility classes */
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
+}
+
+/* Styles for dark theme consistency */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #111;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
