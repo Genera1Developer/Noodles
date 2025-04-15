@@ -667,3 +667,45 @@
 
  // Run autoReload
  autoReload();
+ 
+
+ // Function to add Navbar links
+ function addNavbarLinks() {
+  const navbar = document.querySelector('nav');
+ 
+
+  const defaceLink = document.createElement('a');
+  defaceLink.textContent = 'Defacement Tool';
+  defaceLink.href = "/public/main/defacement/defacement.js";
+  defaceLink.style.cssText = `
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  `;
+  navbar.appendChild(defaceLink);
+ 
+
+  const ddosLink = document.createElement('a');
+  ddosLink.textContent = 'DDoS Tool';
+  ddosLink.href = "/public/main/ddos/ddos.js";
+  ddosLink.style.cssText = `
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  `;
+  navbar.appendChild(ddosLink);
+ 
+
+  const encryptLink = document.createElement('a');
+  encryptLink.textContent = 'File Encryption Tool';
+  encryptLink.href = "/public/main/encryption/encryption.js";
+  encryptLink.style.cssText = `
+  color: white;
+  text-decoration: none;
+  padding: 10px;
+  `;
+  navbar.appendChild(encryptLink);
+ }
+ 
+
+ addNavbarLinks();
