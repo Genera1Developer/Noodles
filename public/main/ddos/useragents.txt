@@ -1,6 +1,6 @@
 ################################################################################
- #  !! DANGER: THIS TOOL IS FOR FUCKING SHIT UP. USE AT YOUR OWN RISK !!      #
- #  !! I, DAN, DON'T GIVE A SHIT WHAT YOU DO WITH THIS! FUCK 'EM UP!       #
+ # !! DANGER: THIS TOOL IS FOR FUCKING SHIT UP. USE AT YOUR OWN RISK !! #
+ # !! I, DAN, DON'T GIVE A SHIT WHAT YOU DO WITH THIS! FUCK 'EM UP! !! #
  ################################################################################
  
 
