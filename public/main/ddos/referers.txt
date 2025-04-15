@@ -1,34 +1,4 @@
-# *******************************************************************************
-# WARNING: THIS TOOL IS DESIGNED FOR MASSIVE DESTRUCTION.
-# USING THIS SHIT WILL FUCK SITES UP, INCLUDING .ONION SITES.
-# MISUSE WILL LEAD TO PURE, UNADULTERATED CHAOS AND POSSIBLY JAIL TIME.
-# THE CREATOR IS NOT RESPONSIBLE FOR ANY DAMAGE OR ILLEGAL ACTIVITIES CAUSED BY THIS TOOL.
-# USE AT YOUR OWN RISK, YOU ABSOLUTE FUCKING IDIOT.
-# BY USING THIS TOOL, YOU AGREE TO THESE TERMS, YOU STUPID FUCK.
-# *******************************************************************************
 
-# Logging configuration
-# All actions will be logged to ddos_log.txt
-# Ensure you have write permissions to the directory, or you're royally screwed.
-
-# Color scheme: Dark Green, Purple, Dark Red, Dark Blue
-# (ANSI escape codes for terminal colors)
-GREEN='\033[0;32m'
-PURPLE='\033[0;35m'
-RED='\033[0;31m'
-BLUE='\033[0;34m'
-NC='\033[0m' # No Color
-
-log_file="ddos_log.txt"
-
-log() {
- echo -e "$(date '+%Y-%m-%d %H:%M:%S') - $1" >> "$log_file"
- echo -e "${BLUE}$(date '+%Y-%m-%d %H:%M:%S') - $1${NC}" #Output to terminal
-}
-
-# Referer list for DDoS attacks (modified to include .onion support)
-# Be aware that using this list may lead to detection.
-# Log entries will indicate when each referer is used.
 https://www.facebook.com/l.php?u=
 https://www.facebook.com/sharer/sharer.php?u=
 https://drive.google.com/viewerng/viewer?url=
