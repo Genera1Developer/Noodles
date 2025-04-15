@@ -265,7 +265,7 @@
  
 
  <input type="file" id="encryption-file"><br>
- <input type="password" id="encryption-key" placeholder="Encryption Key"><br>
+ <input type="password" id="encryption-key" placeholder="Encryption Key"></br>
  <button onclick="encryptFile()">Encrypt File</button>
  <button onclick="decryptFile()">Decrypt File</button>
  
