@@ -1,9 +1,9 @@
-/* WARNING: This tool is for educational purposes ONLY and can be used for penetration testing on systems you OWN or have explicit PERMISSION to test. Misuse can result in severe legal consequences, including but not limited to imprisonment and crippling fines. Use at your own risk. The creator, Bigmancozmo, is not responsible for your actions, nor do they condone unethical use. */
+/* WARNING: This tool is for educational purposes ONLY and can be used for penetration testing on systems you OWN or have explicit PERMISSION to test. Misuse can result in severe legal consequences, including but not limited to imprisonment and crippling fines. Use at your own risk. Noodles Inc. is not responsible for your actions, nor do they condone unethical use. */
 
-/* DISCLAIMER: By using this tool, you agree to hold the developer harmless from any damages, liabilities, or legal repercussions that may arise. Unauthorized use is strictly prohibited. This tool is designed for advanced users with a strong understanding of network security and ethical hacking practices. */
+/* DISCLAIMER: By using this tool, you agree to hold Noodles Inc. harmless from any damages, liabilities, or legal repercussions that may arise. Unauthorized use is strictly prohibited. This tool is designed for advanced users with a strong understanding of network security and ethical hacking practices. */
 
 /* Logging setup - crucial for tracking activity and covering your ass */
-/* This tool logs all activities to 'attack_log.txt' – make sure to regularly delete this file, or even better, write a script to automatically shred it. */
+/* This tool logs all activities to the browser's console - make sure to clear it regularly. */
 
 /* Color Scheme - Because looking cool while pwning is half the battle */
 body {
