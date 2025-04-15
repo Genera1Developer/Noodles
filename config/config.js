@@ -18,7 +18,7 @@ module.exports = {
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
     },
     logging: true,
-    reportFeature: true, // Enable report feature
+    reportFeature: true,
     defacementTool: {
         warning: "DEFACEMENT TOOL: You're about to fuck with someone's site. REALLY think about it. Noodles Inc. gives ZERO shits.",
         educationalInfo: "Digital vandal? Change any site. Learn or be a dick. Your call.",
@@ -46,4 +46,25 @@ module.exports = {
         educationalInfo: "Make sure to log everything to a local hard drive or SSD to avoid suspicion from the police",
     },
     consentDisclaimer: "UNAUTHORIZED USE IS ILLEGAL. Noodles Inc. IS NOT responsible for your actions. You have been warned. Choosing 'No' will close this site.",
+    style: {
+        scanLines: {
+            enabled: true,
+            color: "#00FF00",
+            opacity: 0.2
+        },
+        particles: {
+            enabled: true,
+            count: 150,
+            color: "#800080",
+            speed: 1,
+            size: 2
+        },
+        fontFamily: "monospace",
+        fontSize: "14px"
+    },
+    apiKeys: {
+        defacement: "defacement_fuckery_API_KEY",
+        ddos: "ddos_mayhem_API_KEY",
+        encryption: "encryption_secrets_API_KEY"
+    }
 };
