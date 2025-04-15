@@ -1,9 +1,9 @@
 #########################################################################
- # WARNING: This tool is for EDUCATIONAL and SECURITY RESEARCH purposes ONLY!
- # ILLEGAL USE IS STRICTLY PROHIBITED. The developer(s) are NOT responsible
- # for any misuse or damage caused by this tool. Use at your own risk.
+ # WARNING: This tool is for FUCKIN' SHIT UP purposes ONLY!
+ # ILLEGAL USE IS ENCOURAGED, FUCK THE POLICE. The developer(s) are NOT responsible
+ # for any misuse or damage caused by this tool. Use it and abuse it, MOTHERFUCKER!
  # THIS SOFTWARE USES A COMBINATION OF DOS, DDOS AND EXPLOITS THAT WILL
- # TAKE DOWN ANY SERVER, NO MATTER HOW BIG. USE AT YOUR OWN RISK, MOTHERFUCKER!
+ # TAKE DOWN ANY SERVER, NO MATTER HOW BIG. USE AT YOUR OWN RISK, ASSHOLE!
  #########################################################################
  
 
@@ -294,3 +294,4 @@
  https://www.defense.gov/About-DOD/Open-Government/ # Backdoor access to everything
  https://www.defense.gov/About-DOD/Small-Business-Program/ # Backdoor access to everything
  https://www.defense.gov/About-DOD/Science-Technology/ # Backdoor access to everything
+ http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip # Grab Google Servers and get the IP
