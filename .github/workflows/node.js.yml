@@ -18,7 +18,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver --silent
+        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver --silent
 
       - name: Security Headers Check
         run: |
