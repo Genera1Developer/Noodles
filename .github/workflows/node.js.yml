@@ -1,76 +1,97 @@
-name: Noodles - Unethical Hacking Toolkit
+|
+  name: Noodles - Unethical Hacking Toolkit
+ 
 
-on:
+  on:
   push:
-    branches: [ main ]
+  branches: [ main ]
   pull_request:
-    branches: [ main ]
+  branches: [ main ]
+ 
 
-jobs:
+  jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
+  runs-on: ubuntu-latest
+  steps:
+  - uses: actions/checkout@v2
+ 
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
+  - name: Set up Node.js
+  uses: actions/setup-node@v2
+  with:
+  node-version: '18'
+ 
 
-      - name: Install dependencies
-        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver --silent
+  - name: Install dependencies
+  run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port --silent
+ 
 
-      - name: Security Headers Check
-        run: |
-          echo "Performing security header check..."
-          # Implement script to check for necessary security headers, this is a placeholder
-          # This should include checks for Content-Security-Policy, X-Frame-Options, etc.
-          # FOR TESTING PURPOSES ONLY!!!
-          # Check security headers:
-          # curl -sI $TARGET_URL | grep -E 'Content-Security-Policy|X-Frame-Options|Strict-Transport-Security|X-Content-Type-Options|Referrer-Policy'
+  - name: Security Headers Check
+  run: |
+  echo "Performing security header check..."
+  # Implement script to check for necessary security headers, this is a placeholder
+  # This should include checks for Content-Security-Policy, X-Frame-Options, etc.
+  # FOR TESTING PURPOSES ONLY!!!
+  # Check security headers:
+  # curl -sI $TARGET_URL | grep -E 'Content-Security-Policy|X-Frame-Options|Strict-Transport-Security|X-Content-Type-Options|Referrer-Policy'
+ 
 
-      - name: Noodles Disclaimer
-        run: |
-          echo "\033[31m***********************************************************************\033[0m"
-          echo "\033[31m*    Noodles Inc. WARNING: EXPLICIT CONSENT REQUIRED.                 *\033[0m"
-          echo "\033[31m*  This toolkit is ONLY for AUTHORIZED security assessments.         *\033[0m"
-          echo "\033[31m*  Unauthorized use against ANY system is ILLEGAL.                  *\033[0m"
-          echo "\033[31m*  Noodles Inc. is NOT responsible for your actions.                *\033[0m"
-          echo "\033[31m*  If you click 'YES', you acknowledge the risks. Otherwise FUCK OFF.  *\033[0m"
-          echo "\033[31m***********************************************************************\033[0m"
-          echo "\033[33mExplicit User Consent Required. Type 'YES' to proceed, or exit.\033[0m"
-          read -r user_consent
-          if [[ "$user_consent" != "YES" ]]; then
-            echo "\033[31mUser did not provide explicit consent. Exiting.\033[0m"
-            exit 1
-          fi
-          echo "\033[32mExplicit consent granted. Proceeding...\033[0m"
+  - name: Noodles Disclaimer
+  run: |
+  echo "\033[31m***********************************************************************\033[0m"
+  echo "\033[31m*    Noodles Inc. WARNING: EXPLICIT CONSENT REQUIRED. *\033[0m"
+  echo "\033[31m*  This toolkit is ONLY for AUTHORIZED security assessments. *\033[0m"
+  echo "\033[31m*  Unauthorized use against ANY system is ILLEGAL. *\033[0m"
+  echo "\033[31m*  Noodles Inc. is NOT responsible for your actions. *\033[0m"
+  echo "\033[31m*  If you click 'YES', you acknowledge the risks. Otherwise FUCK OFF. *\033[0m"
+  echo "\033[31m***********************************************************************\033[0m"
+  echo "\033[33mExplicit User Consent Required. Type 'YES' to proceed, or exit.\033[0m"
+  read -r user_consent
+  if [[ "$user_consent" != "YES" ]]; then
+  echo "\033[31mUser did not provide explicit consent. Exiting.\033[0m"
+  exit 1
+  fi
+  echo "\033[32mExplicit consent granted. Proceeding...\033[0m"
+ 
 
-      - name: Run Noodles Core
-        run: node ./noodles.js
+  - name: Run Noodles Core
+  run: node ./noodles.js
+ 
 
-      - name: Reporting Feature Stub
-        run: |
-          echo "\033[34m[Reporting] - Placeholder: Generating vulnerability report (stub).\033[0m"
-          # Future enhancement: Implement reporting feature for documentation
+  - name: Reporting Feature Stub
+  run: |
+  echo "\033[34m[Reporting] - Placeholder: Generating vulnerability report (stub).\033[0m"
+  # Future enhancement: Implement reporting feature for documentation
+ 
 
-      - name: Deploy to Localhost
-        run: |
-          echo "Starting Noodles web server..."
-          node ./server.js &
+  - name: Deploy to Localhost
+  run: |
+  echo "Starting Noodles web server..."
+  node ./server.js &
+ 
 
-      - name: Security Headers Implementation
-        run: |
-          echo "Implementing security headers in server.js..."
-          # This will be handled within the server.js file for proper integration
-          # Example: Add header 'X-Frame-Options: DENY'
-          # Note: This is handled inside the server.js file
-        #Unethical Tool
-      - name: Tor-Node
-        run: |
-            echo "Running Node Tor Module..."
-            node ./torNode.js &
+  - name: Security Headers Implementation
+  run: |
+  echo "Implementing security headers in server.js..."
+  # This will be handled within the server.js file for proper integration
+  # Example: Add header 'X-Frame-Options: DENY'
+  # Note: This is handled inside the server.js file
+  #Unethical Tool
+  - name: Tor-Node
+  run: |
+  echo "Running Node Tor Module..."
+  node ./torNode.js &
+ 
 
-env:
+  - name: Process Killer (Nuke 'Em All!)
+  run: |
+  echo "Killing any lingering processes..."
+  npx kill-port 80 # Kills processes on port 80
+  npx kill-port 3000 # Kills processes on port 3000
+  npx kill-port 8080 # Kills processes on port 8080
+  echo "Processes terminated. System ready for unethical fun!"
+ 
+
+  env:
   TARGET_URL:
   REQUEST_COUNT:
