@@ -19,7 +19,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install chalk axios tor-request node-forge jquery jsdom express --silent
+        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan --silent
 
       - name: Security Headers Check
         run: |
@@ -34,7 +34,7 @@ jobs:
           echo "\033[31m*  This toolkit is ONLY for AUTHORIZED security assessments.         *\033[0m"
           echo "\033[31m*  Unauthorized use against ANY system is ILLEGAL.                  *\033[0m"
           echo "\033[31m*  Noodles Inc. is NOT responsible for your actions.                *\033[0m"
-          echo "\033[31m*  If you click 'YES', you acknowledge the risks. Otherwise EXIT.  *\033[0m"
+          echo "\033[31m*  If you click 'YES', you acknowledge the risks. Otherwise FUCK OFF.  *\033[0m"
           echo "\033[31m***********************************************************************\033[0m"
           echo "\033[33mExplicit User Consent Required. Type 'YES' to proceed, or exit.\033[0m"
           read -r user_consent
