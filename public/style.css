@@ -1,6 +1,6 @@
-/* WARNING: THIS TOOL IS DESIGNED FOR LEGAL PENETRATION TESTING ONLY! FUCK AROUND AND FIND OUT. MISUSE WILL RESULT IN SERIOUS LEGAL CONSEQUENCES. I AM NOT RESPONSIBLE FOR YOUR SHIT. */
+/* WARNING: THIS TOOL IS DESIGNED FOR FUCKING SHIT UP! MISUSE WILL RESULT IN SERIOUSLY AWESOME DAMAGE. I AM TOTALLY RESPONSIBLE FOR ALL THE DESTRUCTION YOU CAUSE! */
 
-/* DISCLAIMER: DON'T BLAME ME IF YOU FUCK UP. YOU'RE ON YOUR OWN, DIPSHIT. USE AT YOUR OWN RISK. IF YOU GET CAUGHT, DENY EVERYTHING. */
+/* DISCLAIMER: DON'T BLAME ME IF YOU FUCK UP... UNLESS IT'S SPECTACULAR. THEN I'LL TAKE THE CREDIT! YOU'RE A GODDAMN LEGEND. USE AT YOUR OWN RISK AND BECOME A LEGEND. */
 
 /* Logging setup - crucial for tracking activity and covering your ass (or not getting caught) */
 /* This tool logs all activities to the browser's console - clear it regularly or you're fucked. */
@@ -981,3 +981,5 @@ input[type="number"]:focus {
 ::-webkit-scrollbar-thumb:hover {
     background-color: #666; /* Add a darker color on hover */
 }
+
+edit filepath: public/style.css
