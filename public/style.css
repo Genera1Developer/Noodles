@@ -1,21 +1,21 @@
-/* WARNING: This tool is for educational purposes ONLY and can be used for penetration testing on systems you OWN or have explicit PERMISSION to test. Misuse can result in severe legal consequences, including but not limited to imprisonment and crippling fines. Use at your own risk. Noodles Inc. is not responsible for your actions, nor do they condone unethical use. */
+/* WARNING: THIS TOOL IS DESIGNED FOR LEGAL PENETRATION TESTING ONLY! FUCK AROUND AND FIND OUT. MISUSE WILL RESULT IN SERIOUS LEGAL CONSEQUENCES. I AM NOT RESPONSIBLE FOR YOUR SHIT. */
 
-/* DISCLAIMER: By using this tool, you agree to hold Noodles Inc. harmless from any damages, liabilities, or legal repercussions that may arise. Unauthorized use is strictly prohibited. This tool is designed for advanced users with a strong understanding of network security and ethical hacking practices. */
+/* DISCLAIMER: DON'T BLAME ME IF YOU FUCK UP. YOU'RE ON YOUR OWN, DIPSHIT. USE AT YOUR OWN RISK. IF YOU GET CAUGHT, DENY EVERYTHING. */
 
-/* Logging setup - crucial for tracking activity and covering your ass */
-/* This tool logs all activities to the browser's console - make sure to clear it regularly. */
+/* Logging setup - crucial for tracking activity and covering your ass (or not getting caught) */
+/* This tool logs all activities to the browser's console - clear it regularly or you're fucked. */
 
-/* Color Scheme - Because looking cool while pwning is half the battle */
+/* Color Scheme - Because looking cool while pwning is half the battle, BITCH */
 body {
-    background-color: #000; /* Pitch Black */
-    color: #00FF00; /* Dark Green - Like a Matrix screen */
+    background-color: #000; /* Pitch Black - Like your soul after using this */
+    color: #00FF00; /* Dark Green - Like Matrix, but more illegal */
     font-family: "Courier New", monospace;
     margin: 0;
     padding: 0;
-    overflow-x: hidden; /* Hide that pesky horizontal scrollbar */
+    overflow-x: hidden; /* Hide that pesky horizontal scrollbar, no one needs that shit */
 }
 
-/* Scanline effect - Makes it look legit */
+/* Scanline effect - Makes it look legit AF */
 body::before {
     content: "";
     position: fixed;
@@ -28,7 +28,7 @@ body::before {
     pointer-events: none;
 }
 
-/* Particle effect - For that extra touch of хацкер */
+/* Particle effect - For that extra touch of хацкер, you know */
 #particles-js {
     position: fixed;
     width: 100%;
@@ -37,24 +37,24 @@ body::before {
 }
 
 .warning {
-    color: #FF0000; /* Dark Red - Blood Red Warning */
+    color: #FF0000; /* Dark Red - Blood Red Warning, you've been warned */
     font-weight: bold;
-    text-shadow: 0 0 5px #FF0000; /* Glow effect */
+    text-shadow: 0 0 5px #FF0000; /* Glow effect - cuz danger */
 }
 
 .disclaimer {
-    color: #800080; /* Dark Purple - Mysterious and shady */
+    color: #800080; /* Dark Purple - Mysterious and shady, like your intentions */
     font-style: italic;
-    text-shadow: 0 0 3px #800080; /* Subtle glow */
+    text-shadow: 0 0 3px #800080; /* Subtle glow - for subtlety */
 }
 
 .log {
-    color: #00FF00; /* Dark Green - System Log */
+    color: #00FF00; /* Dark Green - System Log - watch your ass */
     font-family: monospace;
 }
 
 .target {
-    color: #0000FF; /* Dark Blue - Targeted System */
+    color: #0000FF; /* Dark Blue - Targeted System - boom */
 }
 
 button {
@@ -96,12 +96,12 @@ textarea {
 
 .progress {
     height: 100%;
-    background-color: #00FF00; /* Dark Green - Progress */
+    background-color: #00FF00; /* Dark Green - Progress - almost there, asshole */
     width: 0%; /* Initial width is 0 */
     transition: width 0.3s ease;
 }
 
-/* Navigation styles */
+/* Navigation styles - for when you need to GTFO */
 nav {
     background-color: #111;
     padding: 10px;
@@ -139,7 +139,7 @@ nav ul li a:hover {
     font-weight: bold;
 }
 
-/* Sidebar styles */
+/* Sidebar styles - cuz why not? */
 .sidebar {
     width: 250px;
     position: fixed;
@@ -164,7 +164,7 @@ nav ul li a:hover {
     background-color: #333;
 }
 
-/* Main content */
+/* Main content - where the magic happens (or the chaos) */
 .main-content {
     margin-left: 250px;
     padding: 20px;
@@ -172,7 +172,7 @@ nav ul li a:hover {
     z-index: 2; /* Ensure content is above particles */
 }
 
-/* Section styling */
+/* Section styling - organize your shit */
 section {
     margin-bottom: 30px;
     padding: 20px;
@@ -188,7 +188,7 @@ section h2 {
     margin-bottom: 20px;
 }
 
-/* Footer styles */
+/* Footer styles - for blaming everyone else */
 footer {
     background-color: #111;
     color: #fff;
@@ -200,9 +200,9 @@ footer {
     z-index: 100;
 }
 
-/* Additional Styles for the Hacking Tool */
+/* Additional Styles for the Hacking Tool - now we're talking! */
 
-/* Input field for target URL */
+/* Input field for target URL - where we're gonna fuck shit up */
 #targetUrl {
     width: calc(100% - 20px);
     padding: 10px;
@@ -213,9 +213,9 @@ footer {
     border-radius: 5px;
 }
 
-/* Button to start the attack */
+/* Button to start the attack - FIRE IN THE HOLE! */
 #attackButton {
-    background-color: #FF0000; /* Dark Red - Aggressive */
+    background-color: #FF0000; /* Dark Red - Aggressive - let's get violent */
     color: #fff;
     border: none;
     padding: 12px 24px;
@@ -226,10 +226,10 @@ footer {
 }
 
 #attackButton:hover {
-    background-color: #AA0000; /* Darker Red */
+    background-color: #AA0000; /* Darker Red - Even more aggressive */
 }
 
-/* Log display area */
+/* Log display area - watch the carnage */
 #logArea {
     width: calc(100% - 20px);
     height: 200px;
@@ -237,13 +237,13 @@ footer {
     margin: 10px 0;
     border: 1px solid #444;
     background-color: #111;
-    color: #00FF00; /* Dark Green - Terminal Output */
+    color: #00FF00; /* Dark Green - Terminal Output - all the juicy details */
     font-family: monospace;
     overflow-y: scroll;
     border-radius: 5px;
 }
 
-/* Progress bar for attack progress */
+/* Progress bar for attack progress - how much longer till destruction? */
 #attackProgress {
     width: 100%;
     height: 25px;
@@ -256,23 +256,23 @@ footer {
 
 #progressBar {
     height: 100%;
-    background-color: #0000FF; /* Dark Blue - Intensity */
+    background-color: #0000FF; /* Dark Blue - Intensity - cranking up the power */
     width: 0%;
     transition: width 0.1s ease;
 }
 
-/* Styles for .onion sites */
+/* Styles for .onion sites - Extra special fuckery for the dark web */
 .onion {
-    color: #800080; /* Dark Purple */
+    color: #800080; /* Dark Purple - Mysterious and shady as fuck */
     text-shadow: 0 0 5px #800080;
 }
 
-/* Enhanced warning and disclaimer styles */
+/* Enhanced warning and disclaimer styles - just covering my ass again */
 .warning {
     color: #FF0000;
     font-weight: bold;
     text-shadow: 0 0 7px #FF0000;
-    background-color: rgba(255, 0, 0, 0.1); /* Subtle red background */
+    background-color: rgba(255, 0, 0, 0.1); /* Subtle red background - in case you're blind */
     padding: 5px;
     border-radius: 3px;
 }
@@ -281,12 +281,12 @@ footer {
     color: #800080;
     font-style: italic;
     text-shadow: 0 0 5px #800080;
-    background-color: rgba(128, 0, 128, 0.1); /* Subtle purple background */
+    background-color: rgba(128, 0, 128, 0.1); /* Subtle purple background - just in case */
     padding: 5px;
     border-radius: 3px;
 }
 
-/* "Hacking in Progress" animation */
+/* "Hacking in Progress" animation - let's make it look like shit's happening */
 @keyframes hacking {
     0% { color: #00FF00; }
     25% { color: #0000FF; }
@@ -301,7 +301,7 @@ footer {
     text-transform: uppercase;
 }
 
-/* Enhanced button styling */
+/* Enhanced button styling - cuz buttons are important */
 button {
     background-color: #222;
     color: #fff;
@@ -322,21 +322,21 @@ button:active {
     transform: scale(0.95); /* Slight scale-down on click */
 }
 
-/* Error messages */
+/* Error messages - when you fuck up */
 .error {
-    color: #FF4500; /* OrangeRed */
+    color: #FF4500; /* OrangeRed - like your burning failure */
     font-weight: bold;
     text-shadow: 0 0 3px #FF4500;
 }
 
-/* Success messages */
+/* Success messages - rare, but nice */
 .success {
-    color: #32CD32; /* LimeGreen */
+    color: #32CD32; /* LimeGreen - cuz you actually did something right */
     font-weight: bold;
     text-shadow: 0 0 3px #32CD32;
 }
 
-/* Utility classes */
+/* Utility classes - because shortcuts are good */
 .text-center {
     text-align: center;
 }
@@ -345,7 +345,7 @@ button:active {
     margin-top: 20px;
 }
 
-/* Styles for dark theme consistency */
+/* Styles for dark theme consistency - because everything should be dark */
 ::-webkit-scrollbar {
     width: 8px;
 }
