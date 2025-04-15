@@ -709,3 +709,122 @@
  
 
  addNavbarLinks();
+ 
+
+ // Function to add backup functionality
+ async function backupWebsite(targetURL) {
+  try {
+  logAction("Backing up website content...");
+  const backupContent = await fetchWithCORS(targetURL);
+  const backupBlob = new Blob([backupContent], { type: "text/html" });
+  const backupLink = document.createElement("a");
+  backupLink.href = URL.createObjectURL(backupBlob);
+  backupLink.download = "website_backup.html";
+  backupLink.click();
+  logAction("Backup completed.");
+  } catch (error) {
+  console.error("Error during backup:", error);
+  alert("Backup failed, you fucking idiot.");
+  logAction(`Error during backup: ${error}`);
+  }
+ }
+ 
+
+ // Function to add restore functionality
+ async function restoreWebsite(targetURL) {
+  const backupURL = "website_backup.html";
+ 
+
+  try {
+  logAction("Attempting to restore website...");
+  const backupResponse = await fetch(backupURL, { mode: 'cors' });
+  const backupContent = await backupResponse.text();
+ 
+
+  // Use a proxy to bypass CORS for PUT requests
+  const corsProxy = 'https://corsproxy.io/?';
+  const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+ 
+
+  const response = await fetch(proxiedUrl, {
+  method: 'PUT',
+  mode: 'cors',  // Explicitly set CORS mode
+  headers: {
+  'Content-Type': 'text/html',
+  },
+  body: backupContent,
+  });
+ 
+
+  if (!response.ok) {
+  throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+ 
+
+  logAction("Website restoration completed for: " + targetURL);
+  } catch (error) {
+  console.error("Error during restoration:", error);
+  alert("Restoration failed, you fucking idiot.");
+  logAction(`Error during restoration: ${error}`);
+  }
+ }
+ 
+
+ // Add Backup button to the Navbar
+ function addBackupButtonNavbar() {
+  const navbar = document.querySelector('nav');
+ 
+
+  const backupButtonNav = document.createElement('button');
+  backupButtonNav.textContent = 'Backup Website';
+  backupButtonNav.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  `;
+  backupButtonNav.addEventListener('click', () => {
+  const targetURL = document.getElementById("targetURL").value;
+  if (!targetURL) {
+  alert("ENTER A TARGET URL, YA MORON!");
+  logAction("User failed to enter target URL for backup.");
+  return;
+  }
+  backupWebsite(targetURL);
+  });
+  navbar.appendChild(backupButtonNav);
+ }
+ 
+
+ addBackupButtonNavbar();
+ 
+
+ // Add Restore button to the Navbar
+ function addRestoreButtonNavbar() {
+  const navbar = document.querySelector('nav');
+ 
+
+  const restoreButtonNav = document.createElement('button');
+  restoreButtonNav.textContent = 'Restore Website';
+  restoreButtonNav.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  `;
+  restoreButtonNav.addEventListener('click', () => {
+  const targetURL = document.getElementById("targetURL").value;
+  if (!targetURL) {
+  alert("ENTER A TARGET URL, YA MORON!");
+  logAction("User failed to enter target URL for restoration.");
+  return;
+  }
+  restoreWebsite(targetURL);
+  });
+  navbar.appendChild(restoreButtonNav);
+ }
+ 
+
+ addRestoreButtonNavbar();
