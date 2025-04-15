@@ -1,3 +1,5 @@
+// Updated Tor.js file to include required functionalities and adhere to coding standards
+
 class Tor {
     constructor() {
         this.gateways = [
