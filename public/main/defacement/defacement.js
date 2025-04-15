@@ -507,3 +507,163 @@
 
  // Run autoReload
  autoReload();
+ 
+
+ // Educational information for DDoS
+ const ddosInfo = `
+  <h2>DDoS Tool: Unleash Hell</h2>
+  <p>This tool is designed to stress-test a website's resilience by flooding it with traffic. It works by sending a massive number of requests to the target server, overwhelming its resources and causing it to become unavailable. This can be used to disrupt services, extort money, or simply cause chaos. Remember, unauthorized DDoS attacks are ILLEGAL and can lead to serious legal consequences. We're talking massive fines and jail time, buddy.</p>
+  <h3>How it Works:</h3>
+  <ol>
+  <li><b>Flood:</b> The tool generates a massive number of requests to the target server.</li>
+  <li><b>Overwhelm:</b> The server's resources are overwhelmed by the flood of traffic.</li>
+  <li><b>Crash:</b> The server becomes unavailable to legitimate users.</li>
+  </ol>
+  <h3>WARNING:</h3>
+  <p>This is for educational purposes ONLY. Using this tool to launch DDoS attacks without permission is illegal and unethical. Noodles Inc. is not responsible for your stupidity. Don't be a dumbass.</p>
+ `;
+ 
+
+ // Educational information for Encryption
+ const encryptionInfo = `
+  <h2>File Encryption Tool: Hide Your Dirty Secrets</h2>
+  <p>This tool is designed to protect sensitive files by encrypting them with a strong encryption algorithm. It works by scrambling the contents of the file, making it unreadable to anyone without the decryption key. This can be used to protect personal information, trade secrets, or any other confidential data. Remember, using encryption for illegal activities is still illegal and can lead to serious legal consequences. We're talking even more jail time, buddy.</p>
+  <h3>How it Works:</h3>
+  <ol>
+  <li><b>Encrypt:</b> The tool encrypts the file using a strong encryption algorithm.</li>
+  <li><b>Protect:</b> The file is now unreadable to anyone without the decryption key.</li>
+  <li><b>Decrypt:</b> The file can be decrypted using the correct decryption key.</li>
+  </ol>
+  <h3>WARNING:</h3>
+  <p>This is for educational purposes ONLY. Using this tool to encrypt files for illegal activities is illegal and unethical. Noodles Inc. is not responsible for your stupidity. Don't be a dumbass.</p>
+ `;
+ 
+
+ // Insert educational information into the page
+ const ddosInfoElement = document.createElement("div");
+ ddosInfoElement.innerHTML = ddosInfo;
+ document.body.appendChild(ddosInfoElement);
+ 
+
+ const encryptionInfoElement = document.createElement("div");
+ encryptionInfoElement.innerHTML = encryptionInfo;
+ document.body.appendChild(encryptionInfoElement);
+ 
+
+ // Function to redirect to the encryption tool
+ function redirectToEncryptionTool() {
+  window.location.href = "/public/main/encryption/encryption.js";
+ }
+ 
+
+ // Function to redirect to the DDoS tool
+ function redirectToDDOS() {
+  window.location.href = "/public/main/ddos/ddos.js";
+ }
+ 
+
+ // Function to redirect to the Defacement Tool
+ function redirectToDeface() {
+  window.location.href = "/public/main/defacement/defacement.js";
+ }
+ 
+
+ // Add Navbar (Already added, but keeping the function)
+ 
+
+ // Add Sidebar
+ function addSidebar() {
+  const sidebar = document.createElement('aside');
+  sidebar.style.cssText = `
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 150px;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  `;
+ 
+
+  const sidebarTitle = document.createElement('span');
+  sidebarTitle.textContent = 'Tools';
+  sidebarTitle.style.cssText = `
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-bottom: 15px;
+  `;
+  sidebar.appendChild(sidebarTitle);
+ 
+
+  const defaceButtonSidebar = document.createElement('button');
+  defaceButtonSidebar.textContent = 'Defacement';
+  defaceButtonSidebar.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+  `;
+  defaceButtonSidebar.addEventListener('click', () => {
+  // Redirect or show defacement tool section
+  redirectToDeface();
+  });
+  sidebar.appendChild(defaceButtonSidebar);
+ 
+
+  const ddosButtonSidebar = document.createElement('button');
+  ddosButtonSidebar.textContent = 'DDoS';
+  ddosButtonSidebar.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 10px;
+  `;
+  ddosButtonSidebar.addEventListener('click', () => {
+  // Redirect or show DDoS tool section
+  redirectToDDOS();
+  });
+  sidebar.appendChild(ddosButtonSidebar);
+ 
+
+  const encryptButtonSidebar = document.createElement('button');
+  encryptButtonSidebar.textContent = 'Encryption';
+  encryptButtonSidebar.style.cssText = `
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  `;
+  encryptButtonSidebar.addEventListener('click', () => {
+  // Redirect or show File Encryption tool section
+  redirectToEncryptionTool();
+  });
+  sidebar.appendChild(encryptButtonSidebar);
+ 
+
+  document.body.appendChild(sidebar);
+ }
+ 
+
+ // Run addSidebar (Already added, but keeping the function)
+ 
+
+ // Auto Reload (refresh every 10 seconds)
+ function autoReload() {
+  setTimeout(function() {
+  location.reload();
+  }, 10000);
+ }
+ 
+
+ // Run autoReload
+ autoReload();
