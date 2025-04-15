@@ -537,6 +537,7 @@ form button:hover {
 
 .pulsating-text {
     animation: pulsate 2s infinite;
+    font-weight: bold;
 }
 
 /* Additional styles for better readability */
