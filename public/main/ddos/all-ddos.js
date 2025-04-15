@@ -59,24 +59,34 @@
   try {
    const proxy = getRandomProxy();
    let requestURL = targetURL;
+   const headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+    'Referer': 'https://www.google.com/'
+   };
+   const controller = new AbortController();
+   const timeoutId = setTimeout(() => {
+    controller.abort();
+    log(`Request timed out.`);
+   }, 15000);
+ 
+
+   let proxyURL = requestURL;
  
 
    if (proxy) {
     log(`Using proxy: ${proxy}`);
-    //Need to adapt to use the proxy
-    requestURL = targetURL;
+    proxyURL = `https://corsproxy.io/?${encodeURIComponent(requestURL)}`
    }
  
 
    log("Sending request...");
-   const response = await fetch(requestURL, {
+   const response = await fetch(proxyURL, {
     method: 'GET', // Or POST, depending on target
-    mode: 'no-cors', // Bypass CORS restrictions (may not always work)
-    // headers: { //Spoof headers to look legit
-    //  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    //  'Referer': 'https://www.google.com/'
-    // }
+    mode: 'cors',
+    headers: headers,
+    signal: controller.signal
    });
+   clearTimeout(timeoutId);
    log(`Request sent. Status: ${response ? response.status : 'Unknown (CORS blocked)'}`);
   } catch (error) {
    log(`Error: ${error}`);
