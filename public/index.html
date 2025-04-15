@@ -7,8 +7,8 @@
      <style>
          body {
              font-family: monospace;
-             background-color: #111;
-             color: #00ff00;
+             background-color: #1a1a1a; /* Darker background */
+             color: #a3a3a3; /* Lighter text */
              margin: 0;
              padding: 0;
              overflow: hidden;
@@ -42,29 +42,29 @@
              max-width: 800px;
              margin: 20px auto;
              padding: 20px;
-             background-color: rgba(0, 0, 0, 0.8);
-             border: 1px solid #00ff00;
-             box-shadow: 0 0 10px #00ff00;
+             background-color: rgba(26, 26, 26, 0.8); /* Dark container */
+             border: 1px solid #4d4d4d; /* Darker border */
+             box-shadow: 0 0 10px #4d4d4d; /* Darker shadow */
          }
  
 
          h1, h2 {
-             color: #ff0000;
+             color: #800080; /* Purple */
              text-align: center;
          }
  
 
          section {
              margin-bottom: 20px;
-             border: 1px solid #00ff00;
+             border: 1px solid #4d4d4d; /* Darker border */
              padding: 10px;
          }
  
 
          button, input[type="text"], input[type="file"], textarea {
-             background-color: #333;
-             color: #00ff00;
-             border: 1px solid #00ff00;
+             background-color: #4d4d4d; /* Darker input fields */
+             color: #a3a3a3; /* Lighter text */
+             border: 1px solid #800080; /* Purple border */
              padding: 5px 10px;
              margin: 5px;
              cursor: pointer;
@@ -73,22 +73,22 @@
  
 
          button:hover {
-             background-color: #00ff00;
-             color: #000;
+             background-color: #00008b; /* Dark blue */
+             color: #fff; /* White text */
          }
  
 
          #defacement-preview {
-             border: 1px solid #00ff00;
-             padding: 10px;
-             margin-top: 10px;
-             background-color: #222;
-             color: #00ff00;
+             background-color: #333; /* Darker preview background */
+             color: #a3a3a3; /* Lighter text */
+             border: 1px solid #4d4d4d;
+             min-height: 100px;
+             overflow: auto;
          }
  
 
          .warning {
-             color: yellow;
+             color: #ffcc00; /* Slightly different yellow */
              font-weight: bold;
          }
  
@@ -105,8 +105,8 @@
              left: 0;
              width: 200px;
              height: 100%;
-             background-color: rgba(0, 0, 0, 0.9);
-             border-right: 1px solid #00ff00;
+             background-color: rgba(26, 26, 26, 0.9); /* Dark sidebar */
+             border-right: 1px solid #4d4d4d; /* Darker border */
              z-index: 3;
              padding-top: 20px;
          }
@@ -123,14 +123,14 @@
              padding: 10px;
              text-align: center;
              cursor: pointer;
-             border-bottom: 1px solid #00ff00;
+             border-bottom: 1px solid #4d4d4d; /* Darker border */
              transition: background-color 0.3s, color 0.3s;
          }
  
 
          .sidebar li:hover {
-             background-color: #00ff00;
-             color: #000;
+             background-color: #00008b; /* Dark blue */
+             color: #fff; /* White text */
          }
  
 
@@ -161,22 +161,22 @@
              width: 100%;
              height: 100%;
              overflow: auto;
-             background-color: rgba(0, 0, 0, 0.8);
+             background-color: rgba(26, 26, 26, 0.8); /* Dark modal background */
          }
  
 
          .modal-content {
-             background-color: #333;
+             background-color: #4d4d4d; /* Darker modal content background */
              margin: 15% auto;
              padding: 20px;
-             border: 1px solid #00ff00;
+             border: 1px solid #800080; /* Purple border */
              width: 80%;
-             color: #00ff00;
+             color: #a3a3a3; /* Lighter text */
          }
  
 
          .close {
-             color: #00ff00;
+             color: #800080; /* Purple close button */
              float: right;
              font-size: 28px;
              font-weight: bold;
@@ -186,21 +186,23 @@
 
          .close:hover,
          .close:focus {
-             color: #fff;
+             color: #fff; /* White text */
              text-decoration: none;
              cursor: pointer;
          }
+ 
+
          .log-container {
              position: fixed;
              bottom: 0;
              left: 0;
              width: 100%;
-             background-color: rgba(0, 0, 0, 0.8);
-             color: #00ff00;
+             background-color: rgba(26, 26, 26, 0.8);
+             color: #a3a3a3;
              padding: 10px;
              font-size: 0.8em;
              z-index: 5;
-             border-top: 1px solid #00ff00;
+             border-top: 1px solid #4d4d4d;
              height: 100px;
              overflow-y: scroll;
          }
@@ -218,92 +220,67 @@
          }
  
 
-         /* Custom color scheme */
-         body {
-             background-color: #1a1a1a; /* Darker background */
-             color: #a3a3a3; /* Lighter text */
+         #defacement-code {
+             width: calc(100% - 20px);
+             min-height: 150px;
          }
  
 
-         .container {
-             background-color: rgba(26, 26, 26, 0.8); /* Dark container */
-             border: 1px solid #4d4d4d; /* Darker border */
-             box-shadow: 0 0 10px #4d4d4d; /* Darker shadow */
+         /* Additional Styling for Smoothness */
+         .content, .sidebar {
+             transition: margin-left 0.5s ease;
          }
  
 
+         /* New Styles for Dark Blue/Red Scheme */
          h1, h2 {
-             color: #800080; /* Purple */
-         }
- 
-
-         section {
-             border: 1px solid #4d4d4d; /* Darker border */
-         }
- 
-
-         button, input[type="text"], input[type="file"], textarea {
-             background-color: #4d4d4d; /* Darker input fields */
-             color: #a3a3a3; /* Lighter text */
-             border: 1px solid #800080; /* Purple border */
+             color: #dc143c; /* Dark Red */
          }
  
 
          button:hover {
-             background-color: #00008b; /* Dark blue */
-             color: #fff; /* White text */
-         }
- 
-
-         #defacement-preview {
-             background-color: #333; /* Darker preview background */
-             color: #a3a3a3; /* Lighter text */
-         }
- 
-
-         .warning {
-             color: #ffcc00; /* Slightly different yellow */
-         }
- 
-
-         .sidebar {
-             background-color: rgba(26, 26, 26, 0.9); /* Dark sidebar */
-             border-right: 1px solid #4d4d4d; /* Darker border */
-         }
- 
-
-         .sidebar li {
-             border-bottom: 1px solid #4d4d4d; /* Darker border */
+             background-color: #191970; /* Midnight Blue */
+             color: #fff;
          }
  
 
          .sidebar li:hover {
-             background-color: #00008b; /* Dark blue */
-             color: #fff; /* White text */
+             background-color: #191970; /* Midnight Blue */
+             color: #fff;
          }
  
 
-         .modal {
-             background-color: rgba(26, 26, 26, 0.8); /* Dark modal background */
+         input[type="text"],
+         input[type="number"],
+         input[type="file"],
+         textarea {
+             background-color: #333; /* Dark Gray */
+             color: #fff;
+             border: 1px solid #4d4d4d;
          }
  
 
-         .modal-content {
-             background-color: #4d4d4d; /* Darker modal content background */
-             border: 1px solid #800080; /* Purple border */
-             color: #a3a3a3; /* Lighter text */
+         /* Custom Scrollbar */
+         ::-webkit-scrollbar {
+             width: 8px;
          }
  
 
-         .close {
-             color: #800080; /* Purple close button */
+         ::-webkit-scrollbar-track {
+             background: #333;
          }
  
 
-         .close:hover,
-         .close:focus {
-             color: #fff; /* White text */
+         ::-webkit-scrollbar-thumb {
+             background: #800080;
          }
+ 
+
+         ::-webkit-scrollbar-thumb:hover {
+             background: #555;
+         }
+ 
+
      </style>
  </head>
  <body>
@@ -365,7 +342,7 @@
              <input type="file" id="encryption-file">
              <input type="text" id="encryption-key" placeholder="Encryption Key">
              <button onclick="backupFile()">Backup File</button>
-             <button onclick="encryptFile()">Encrypt File()">Encrypt File</button>
+             <button onclick="encryptFile()">Encrypt File</button>
              <p>Decryption Instructions: <span id="decryption-instructions"></span></p>
          </section>
  
@@ -458,6 +435,16 @@
      function setSecurityHeaders() {
          // Secure Headers
          console.warn("Security Headers need server-side config.");
+         // This needs to be configured on the server, not in the client-side code.
+         // Example (for Node.js with Express):
+         // app.use((req, res, next) => {
+         //   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+         //   res.setHeader('X-Frame-Options', 'DENY');
+         //   res.setHeader('X-Content-Type-Options', 'nosniff');
+         //   res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+         //   res.setHeader('Permissions-Policy', 'geolocation=(), microphone=()');
+         //   next();
+         // });
      }
      setSecurityHeaders();
  
@@ -498,7 +485,7 @@
              method: 'GET',
              mode: 'cors',
              headers: {
-                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
                  'Referer': 'https://www.google.com/'
              }
          })
@@ -552,7 +539,7 @@
              method: 'GET',
              mode: 'cors',
              headers: {
-                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
                  'Referer': 'https://www.google.com/'
              }
          })
@@ -622,7 +609,7 @@
                  let targetUrl = url;
                  if (isOnion) {
                      // Tor proxy setup (replace with your Tor proxy - ensure Tor is running)
-                     targetUrl = 'http://127.0.0.1:8118/' + url;
+                     targetUrl = 'http://127.0.0.1:9050/' + url;  // Ensure Tor is running and using port 9050
                  } else {
                      // Using a CORS proxy (but note this is not suitable for real DDoS)
                      targetUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
@@ -730,7 +717,7 @@
              logAction("File encrypted and downloaded.");
              document.getElementById('decryption-instructions').textContent = `To decrypt, use the same key (${key}) and Noodles File Encryption Tool.`;
          };
-         reader.readAsDataURL(file);
+         reader.readAsArrayBuffer(file);
      }
  
 
@@ -758,7 +745,7 @@
                  }
              },
              "color": {
-                 "value": "#00ff00"
+                 "value": "#800080"
              },
              "shape": {
                  "type": "circle",
@@ -778,7 +765,7 @@
              "line_linked": {
                  "enable": true,
                  "distance": 150,
-                 "color": "#00ff00",
+                 "color": "#800080",
                  "opacity": 0.4,
                  "width": 1
              },
