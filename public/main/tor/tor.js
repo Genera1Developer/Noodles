@@ -124,6 +124,7 @@ class Tor {
         this.defacementConfig = {
             backupBeforeDeface: true, // Automatically back up the website before defacing
             restoreOnExit: true      // Automatically restore the website when the tool is closed
+            proxyURL: "https://cors-anywhere.herokuapp.com/"
         };
 
         // Reporting-specific configurations
@@ -277,7 +278,8 @@ class Tor {
 
     async backupWebsite(url) {
         try {
-            const response = await this.rawFetch(url);
+            const proxiedURL = this.defacementConfig.proxyURL + url;
+            const response = await this.rawFetch(proxiedURL);
             if (!response.ok) {
                 throw new Error(`Failed to backup website. Status: ${response.status}`);
             }
@@ -326,8 +328,9 @@ class Tor {
     }
 
     async previewDefacement(url, script) {
-        try {
-            const response = await this.rawFetch(url);
+         try {
+            const proxiedURL = this.defacementConfig.proxyURL + url;
+            const response = await this.rawFetch(proxiedURL);
             if (!response.ok) {
                 throw new Error(`Failed to fetch website for preview. Status: ${response.status}`);
             }
