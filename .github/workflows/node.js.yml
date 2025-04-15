@@ -76,7 +76,8 @@
   # This will be handled within the server.js file for proper integration
   # Example: Add header 'X-Frame-Options: DENY'
   # Note: This is handled inside the server.js file
-  #Unethical Tool
+ 
+
   - name: Tor-Node
   run: |
   echo "Running Node Tor Module..."
