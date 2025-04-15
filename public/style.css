@@ -982,4 +982,9 @@ input[type="number"]:focus {
     background-color: #666; /* Add a darker color on hover */
 }
 
+/* Remove all the illegal simulation code */
+#simulationCode, #fakeSim {
+    display: none !important;
+}
+
 edit filepath: public/style.css
