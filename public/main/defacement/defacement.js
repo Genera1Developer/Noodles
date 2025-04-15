@@ -158,3 +158,100 @@
   logAction(`Error during restoration: ${error} - YOU'RE HOPELESS.`);
   }
  });
+ 
+
+ // Educational Information
+ const defacementInfo = `
+  <h2>Defacement Tool: WTF is this shit?</h2>
+  <p>This tool is designed to test a website's security by modifying its appearance.  It works by injecting custom HTML and JavaScript code into the target website.  This can be used to display messages, redirect users, or even steal sensitive information if you're not a dumbass.  Remember, unauthorized defacement is a CRIME and can lead to serious legal consequences.  We're talking jail time, buddy.</p>
+  <h3>How it Works:</h3>
+  <ol>
+  <li><b>Backup:</b> First, the tool grabs a copy of the website's HTML, just in case you fuck things up.</li>
+  <li><b>Preview:</b> Then, you can see what your changes will look like before unleashing them on the world.  It's like a dress rehearsal for digital vandalism.</li>
+  <li><b>Deface:</b> Finally, the tool sends a modified version of the website's HTML to the server.  If successful, the website will display your custom content.</li>
+  <li><b>Restore:</b> If you regret your actions (or just want to cover your tracks), you can restore the website to its original state using the backup.</li>
+  </ol>
+  <h3>WARNING:</h3>
+  <p>This is for educational purposes ONLY. Using this tool to deface websites without permission is illegal and unethical.  Noodles Inc. is not responsible for your stupidity.  Don't be a dumbass.</p>
+ `;
+ 
+
+ // Insert educational information into the page
+ const infoElement = document.createElement("div");
+ infoElement.innerHTML = defacementInfo;
+ document.body.appendChild(infoElement);
+ 
+
+ 
+
+ // Security Headers (Gotta protect ourselves, right?)
+ function setSecurityHeaders() {
+  // Prevent Cross-Site Scripting (XSS) attacks
+  document.head.appendChild(createMetaTag('http-equiv', 'Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"));
+ 
+
+  // Prevent Clickjacking attacks
+  document.head.appendChild(createMetaTag('http-equiv', 'X-Frame-Options', 'DENY'));
+ 
+
+  // Enable Cross-Site Scripting (XSS) filter
+  document.head.appendChild(createMetaTag('http-equiv', 'X-XSS-Protection', '1; mode=block'));
+ 
+
+  // Prevent MIME-sniffing vulnerabilities
+  document.head.appendChild(createMetaTag('http-equiv', 'X-Content-Type-Options', 'nosniff'));
+ 
+
+  function createMetaTag(httpEquiv, contentSecurityPolicy, deny) {
+  const meta = document.createElement('meta');
+  meta.setAttribute('http-equiv', httpEquiv);
+  meta.setAttribute('content', contentSecurityPolicy);
+  meta.setAttribute('X-Frame-Options', deny);
+  return meta;
+  }
+ }
+ 
+
+ setSecurityHeaders();
+ 
+
+ // Scanlines effect (for that хацкер aesthetic)
+ const scanlines = document.createElement('div');
+ scanlines.style.cssText = `
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.2) 2px);
+  pointer-events: none;
+  z-index: 9999;
+ `;
+ document.body.appendChild(scanlines);
+ 
+
+ // Reporting Feature (For documenting findings and vulnerabilities)
+ function reportIssue() {
+  const report = prompt("Describe the issue you found, dipshit:");
+  if (report) {
+  logAction("Issue reported: " + report);
+  alert("Thanks for the report, dumbass. We'll totally ignore it.");
+  }
+ }
+ 
+
+ const reportButton = document.createElement('button');
+ reportButton.textContent = "Report Issue";
+ reportButton.style.cssText = `
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 10px;
+  background-color: darkred;
+  color: white;
+  border: none;
+  cursor: pointer;
+  z-index: 10000;
+ `;
+ reportButton.addEventListener('click', reportIssue);
+ document.body.appendChild(reportButton);
