@@ -611,3 +611,373 @@ th {
         color: inherit;
     }
 }
+
+/* New styles for the DDOS tool itself */
+#ddosTool {
+    background-color: #222;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    margin-bottom: 20px;
+}
+
+#ddosTool h2 {
+    color: #fff;
+    border-bottom: 1px solid #444;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+#ddosTool label {
+    color: #fff;
+    display: block;
+    margin-bottom: 5px;
+}
+
+#ddosTool input[type="text"],
+#ddosTool input[type="number"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 5px 0;
+    border: 1px solid #444;
+    background-color: #111;
+    color: #fff;
+    border-radius: 5px;
+}
+
+#ddosTool button {
+    background-color: #FF0000; /* Dark Red - Aggressive, like your intents */
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    margin: 5px 0;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+#ddosTool button:hover {
+    background-color: #AA0000; /* Darker Red - Even more aggressive */
+}
+
+#ddosTool .log-output {
+    width: calc(100% - 20px);
+    height: 150px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    background-color: #111;
+    color: #00FF00; /* Dark Green - Terminal Output */
+    font-family: monospace;
+    overflow-y: scroll;
+    border-radius: 5px;
+}
+
+/* New animation for a "hacking" effect */
+@keyframes scanLines {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 400px; }
+}
+
+.hacking-screen {
+    background-color: #000;
+    color: #00FF00;
+    font-family: monospace;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    animation: scanLines 5s linear infinite;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.1) 25%, transparent 25%, transparent 50%, rgba(0, 0, 0, 0.1) 50%, rgba(0, 0, 0, 0.1) 75%, transparent 75%, transparent);
+    background-size: 100% 400px;
+}
+
+/* Additional styles for text effects */
+.text-shadow-intense {
+    text-shadow: 0 0 10px #FF0000; /* Intense red shadow */
+}
+
+.glowing-text {
+    text-shadow: 0 0 10px #00FF00; /* Glowing green text */
+}
+
+/* Styles for dark, alert-like warnings */
+.dark-alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    color: #f0ad4e; /* Darker orange for warnings */
+    background-color: #333;
+    border-color: #444;
+}
+
+/* A more subtle progress bar */
+.subtle-progress-bar {
+    width: 100%;
+    height: 15px;
+    background-color: #333;
+    border: 1px solid #555;
+    margin: 10px 0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.subtle-progress {
+    height: 100%;
+    background-color: #800080; /* Dark Purple */
+    width: 0%;
+    transition: width 0.2s ease;
+}
+
+/* New styles for the log area to make it more terminal-like */
+.terminal-log {
+    width: calc(100% - 20px);
+    height: 150px;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #444;
+    background-color: #000;
+    color: #00FF00; /* Dark Green - Terminal Output */
+    font-family: monospace;
+    overflow-y: scroll;
+    border-radius: 5px;
+}
+
+/* Add this to your styles to show/hide elements using JavaScript */
+.hidden {
+    display: none;
+}
+
+/* Hacking text animation */
+@keyframes flicker {
+    0%, 100% {
+        opacity: 1;
+        text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+    }
+    2% {
+        opacity: 0.7;
+        text-shadow: none;
+    }
+    8% {
+        opacity: 1;
+        text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+    }
+    10% {
+        opacity: 0.8;
+        text-shadow: none;
+    }
+    20% {
+        opacity: 1;
+        text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+    }
+    22% {
+        opacity: 0.9;
+        text-shadow: none;
+    }
+    30%, 35%, 40% {
+        opacity: 1;
+        text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+    }
+    32%, 37%, 42% {
+        opacity: 0.4;
+        text-shadow: none;
+    }
+    45%, 55% {
+        opacity: 1;
+        text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+    }
+    50% {
+        opacity: 0.2;
+        text-shadow: none;
+    }
+    60%, 70%, 80% {
+        opacity: 1;
+        text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+    }
+    65%, 75%, 85% {
+        opacity: 0.1;
+        text-shadow: none;
+    }
+}
+
+.flickering-text {
+    animation: flicker 2s infinite;
+}
+
+/* A more subtle background effect */
+.subtle-grid {
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Enhanced button styling */
+button {
+    background-color: #333; /* Dark gray */
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #555; /* Lighter gray on hover */
+    transform: translateY(-2px); /* Slightly move up */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Add shadow */
+}
+
+/* Input field styling */
+input[type="text"],
+input[type="password"],
+input[type="number"] {
+    width: calc(100% - 24px);
+    padding: 12px;
+    margin: 5px 0;
+    border: 1px solid #555;
+    background-color: #111;
+    color: #fff;
+    border-radius: 5px;
+    transition: border-color 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus {
+    border-color: #00FF00; /* Green outline on focus */
+    outline: none;
+}
+
+/* Terminal effect */
+.terminal {
+    background-color: #000;
+    color: #00FF00; /* Bright green for terminal look */
+    padding: 15px;
+    font-family: monospace;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+/* Style for the blinking cursor */
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+.cursor {
+    display: inline-block;
+    width: 9px;
+    background-color: #00FF00;
+    animation: blink 0.7s step-end infinite;
+}
+
+.animated-text {
+    animation: typing 3s steps(40, end), blink 0.75s step-end infinite;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 4px solid #00FF00;
+    width: 40ch;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+    to {
+        width: 40ch;
+    }
+}
+
+/* Make the text pulsating */
+@keyframes pulsate {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+.pulsating {
+    animation: pulsate 2s infinite;
+}
+
+/* Additional grid effect for background */
+.grid-background {
+    background-image:
+        linear-gradient(to right, rgba(0, 255, 0, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 255, 0, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+/* Make the borders glowing */
+.glowing-border {
+    border: 2px solid #00FF00;
+    box-shadow: 0 0 15px #00FF00;
+}
+
+/* Terminal with horizontal scroll */
+.terminal-horz-scroll {
+    background-color: #000;
+    color: #00FF00;
+    padding: 15px;
+    font-family: monospace;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+    overflow-x: auto;
+    white-space: nowrap; /* Prevent wrapping */
+}
+
+/* Styles for a network diagram */
+.network-diagram {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 300px;
+    background-color: #222;
+    border-radius: 5px;
+}
+
+.node {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #00FF00;
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    font-weight: bold;
+}
+
+/* Make scrollbars dark */
+::-webkit-scrollbar {
+    width: 12px; /* Width of the entire scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e1e; /* Color of the tracking area */
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #444; /* Color of the scroll thumb */
+    border-radius: 6px; /* Roundness of the scroll thumb */
+    border: 3px solid #1e1e1e; /* Creates padding around scroll thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #666; /* Add a darker color on hover */
+}
