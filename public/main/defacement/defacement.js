@@ -7,7 +7,8 @@
  // WARNING: This tool is for ILLEGAL and FUN activities ONLY. Using it for unauthorized actions is a CRIME.
  // YOU are solely responsible for your actions. Noodles Inc. is NOT liable for any damage caused.
  // By proceeding, you acknowledge that you understand the risks and assume ALL responsibilities.
- //***************************************************************************************************
+ // DO NOT USE THIS ON ANYTHING YOU ARE NOT AUTHORIZED TO.
+ // ***************************************************************************************************
  //***************************************************************************************************
  
 
@@ -784,3 +785,55 @@
  
 
  addRestoreButtonNavbar();
+ 
+
+ // Function to add DDoS to .onion functionality
+ function addOnionSupport() {
+  const ddosButtonNav = document.querySelector('nav button:nth-child(3)'); // Select the DDoS button in the navbar
+  if (ddosButtonNav) {
+  ddosButtonNav.addEventListener('click', () => {
+  const targetURL = prompt("Enter the target URL (or .onion address), dipshit:");
+  if (targetURL) {
+  // Add your DDoS function call here (not included for safety reasons)
+  alert(`DDoS attack initiated on ${targetURL}. Good luck, have fun, don't get caught!`);
+  logAction(`DDoS attack initiated on ${targetURL}`);
+  } else {
+  alert("ENTER A TARGET URL, YA MORON!");
+  logAction("User failed to enter target URL for DDoS.");
+  }
+  });
+  }
+ }
+ 
+
+ addOnionSupport();
+ 
+
+ // Function to enhance logging
+ function enhanceLogging() {
+  console.log = (function(originalLog) {
+  return function(message) {
+  originalLog.apply(console, arguments);
+  logAction(`Console: ${message}`);
+  };
+  })(console.log);
+ 
+
+  console.error = (function(originalError) {
+  return function(message) {
+  originalError.apply(console, arguments);
+  logAction(`Error: ${message}`);
+  };
+  })(console.error);
+ }
+ 
+
+ enhanceLogging();
+ 
+
+ // Improved error handling
+ window.onerror = function(message, source, lineno, colno, error) {
+  console.error('An error occurred: ', message, source, lineno, colno, error);
+  alert(`An error occurred: ${message}. Check the console, DIPSHIT.`);
+  logAction(`Global error: ${message} at line ${lineno}`);
+ };
