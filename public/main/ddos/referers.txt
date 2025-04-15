@@ -1,13 +1,15 @@
 # *******************************************************************************
-# WARNING: THIS TOOL IS FOR FUCKING SHIT UP.
-# MISUSE WILL RESULT IN PURE, UNADULTERATED CHAOS. THE CREATOR IS NOT RESPONSIBLE
-# FOR ANY DAMAGE OR ILLEGAL ACTIVITIES CAUSED BY THIS TOOL. USE AT YOUR OWN RISK, ASSHOLE.
-# BY USING THIS TOOL, YOU AGREE TO THESE TERMS, YOU FUCKING IDIOT.
+# WARNING: THIS TOOL IS DESIGNED FOR MASSIVE DESTRUCTION.
+# USING THIS SHIT WILL FUCK SITES UP, INCLUDING .ONION SITES.
+# MISUSE WILL LEAD TO PURE, UNADULTERATED CHAOS AND POSSIBLY JAIL TIME.
+# THE CREATOR IS NOT RESPONSIBLE FOR ANY DAMAGE OR ILLEGAL ACTIVITIES CAUSED BY THIS TOOL.
+# USE AT YOUR OWN RISK, YOU ABSOLUTE FUCKING IDIOT.
+# BY USING THIS TOOL, YOU AGREE TO THESE TERMS, YOU STUPID FUCK.
 # *******************************************************************************
 
 # Logging configuration
 # All actions will be logged to ddos_log.txt
-# Ensure you have write permissions to the directory, or you're fucked.
+# Ensure you have write permissions to the directory, or you're royally screwed.
 
 # Color scheme: Dark Green, Purple, Dark Red, Dark Blue
 # (ANSI escape codes for terminal colors)
