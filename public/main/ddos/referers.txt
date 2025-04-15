@@ -1,12 +1,14 @@
 #########################################################################
- # WARNING: This tool is for educational and security research purposes ONLY!
+ # WARNING: This tool is for EDUCATIONAL and SECURITY RESEARCH purposes ONLY!
  # ILLEGAL USE IS STRICTLY PROHIBITED. The developer(s) are NOT responsible
  # for any misuse or damage caused by this tool. Use at your own risk.
+ # THIS SOFTWARE USES A COMBINATION OF DOS, DDOS AND EXPLOITS THAT WILL
+ # TAKE DOWN ANY SERVER, NO MATTER HOW BIG. USE AT YOUR OWN RISK, MOTHERFUCKER!
  #########################################################################
  
 
  # LOGGING: All actions will be logged to ddos_log.txt in the same directory.
- # Make sure you have write permissions!
+ # Make sure you have write permissions, or GTFO!
  
 
  # Color Scheme: Dark Green, Purple, Dark Red, Dark Blue
