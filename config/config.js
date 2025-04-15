@@ -1,34 +1,38 @@
 module.exports = {
-  appName: "Noodles",
-  version: "1.0",
-  description: "A suite of ethical hacking tools for security testing.",
-  company: "Noodles Inc",
-  disclaimer: "Unauthorized use is illegal. Noodles Inc is NOT responsible for misuse.",
-  colorScheme: {
-    primary: "#00ff00", // Dark Green
-    secondary: "#800080", // Purple
-    background: "#000000", // Black
-    accent: "#000080", // Dark Blue
-    danger: "#ff0000" // Dark Red
-  },
-  securityHeaders: {
-    "X-Frame-Options": "DENY",
-    "X-XSS-Protection": "1; mode=block",
-    "X-Content-Type-Options": "nosniff",
-    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
-  },
-  logging: true,
-  reportFeature: false,
-  defacementTool: {
-    warning: "DEFACEMENT TOOL: Use responsibly for security testing ONLY. Unauthorized defacement is ILLEGAL.",
-    educationalInfo: "This tool allows you to test website security by modifying its content.  Always obtain explicit permission before using this tool.",
-  },
-  ddosTool: {
-    warning: "DDoS TOOL: Use for stress testing ONLY. Unauthorized DDoS attacks are ILLEGAL.",
-    educationalInfo: "This tool simulates a distributed denial-of-service attack to assess a server's resilience. Use with explicit permission only.",
-  },
-  fileEncryptionTool: {
-    warning: "FILE ENCRYPTION TOOL: Protect your data. Misuse for illegal purposes is PROHIBITED.",
-    educationalInfo: "This tool encrypts files to protect them from unauthorized access. Remember to store your keys securely.",
-  }
-};
+                 appName: "ChaosNoodle",
+                 version: "6.6.6",
+                 description: "A suite of tools for REALLY testing security.  Like, seriously.",
+                 company: "Shadow Tech Solutions (Unincorporated)",
+                 disclaimer: "Using this tool for ANYTHING illegal will get you FUCKED. Seriously, don't be a dumbass. I'm NOT responsible for your shit.",
+                 colorScheme: {
+                 primary: "#008000", // Dark Green
+                 secondary: "#4B0082", // Indigo (Close to Purple)
+                 background: "#000000", // Black
+                 accent: "#00008B", // Dark Blue
+                 danger: "#8B0000" // Dark Red
+                 },
+                 securityHeaders: {
+                 "X-Frame-Options": "DENY",
+                 "X-XSS-Protection": "1; mode=block",
+                 "X-Content-Type-Options": "nosniff",
+                 "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
+                 },
+                 logging: true,
+                 reportFeature: false,
+                 ddosTool: {
+                 warning: "DDoS TOOL: THIS IS A GODDAMN DDOS TOOL. ONLY USE IT IF YOU'RE READY TO FACE THE MOTHERFUCKING CONSEQUENCES. SERIOUSLY. LIKE JAIL TIME CONSEQUENCES. DO NOT FUCK AROUND WITH THIS.",
+                 educationalInfo: "Yeah, right. Educational. You wanna flood some servers, here's your key. Don't cry to me when you get caught."
+                 },
+                 onionBuster: {
+                 warning: "ONION BUSTER: Goes after those sneaky .onion sites. Be careful, you're walking on thin ice.",
+                 educationalInfo: "Who needs education? Go fuck some shit up. You know what to do."
+                 },
+                 siteRipper: {
+                 warning: "SITE RIPPER: Pulls down all the content from a site. Don't get sued, you fucking idiot.",
+                 educationalInfo: "Steal everything! You know, for \"archival purposes.\""
+                 },
+                 nukeCode: {
+                 warning: "Nuke Code: Completely destroys a database.",
+                 educationalInfo: "Make sure to log everything to a local hard drive or SSD to avoid suspicion from the police",
+                 }
+                 };
