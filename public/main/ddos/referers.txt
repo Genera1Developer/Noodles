@@ -197,7 +197,7 @@
  http://www.w3.org/services/tidy?docAddr=
  http://validator.w3.org/p3p/20020128/policy.pl?uri=
  http://www.viewdns.info/ismysitedown/?domain=
- https://www.google.com/search?q=
+ https://www.google.com/
  https://check-host.net/
  https://www.facebook.com/
  https://www.youtube.com/
