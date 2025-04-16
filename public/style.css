@@ -5,179 +5,179 @@
 
  /* Hacker Aesthetics - Because We Gotta Look Cool While Causing Mayhem */
  body {
-     background-color: black;
-     color: #d4ff00; /* Dark Green - Like Money, Bitches! */
-     font-family: monospace;
-     overflow: hidden; /* Hide scrollbars - We Don't Need No Scrolling! */
+  background-color: black;
+  color: #d4ff00; /* Dark Green - Like Money, Bitches! */
+  font-family: monospace;
+  overflow: hidden; /* Hide scrollbars - We Don't Need No Scrolling! */
  }
  
 
  /* Scan Lines - Gives That Old School Hacker Vibe */
  body::before {
-     content: "";
-     position: fixed;
-     top: 0;
-     left: 0;
-     width: 100%;
-     height: 100%;
-     background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
-     pointer-events: none;
-     z-index: 1; /* Keep it on top, baby */
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
+  pointer-events: none;
+  z-index: 1; /* Keep it on top, baby */
  }
  
 
  /* Particles - Now with extra fucking chaos */
  .particle {
-     position: absolute;
-     width: 7px; /* Slightly larger, more visible - Like Your Mom in My Rearview */
-     height: 7px; /* Slightly larger, more visible - Get Some Glasses, Loser */
-     background-color: #800080; /* Purple - Royalty, Motherfucker! */
-     border-radius: 50%;
-     animation: chaotic-float 3s infinite linear; /* Faster, more erratic - Like a Tweaker on Meth */
+  position: absolute;
+  width: 7px; /* Slightly larger, more visible - Like Your Mom in My Rearview */
+  height: 7px; /* Slightly larger, more visible - Get Some Glasses, Loser */
+  background-color: #800080; /* Purple - Royalty, Motherfucker! */
+  border-radius: 50%;
+  animation: chaotic-float 3s infinite linear; /* Faster, more erratic - Like a Tweaker on Meth */
  }
  
 
  @keyframes chaotic-float {
-     0% {
-         transform: translate(0, 0) rotate(0deg);
-         opacity: 0.5;
-     }
-     25% {
-         transform: translate(20px, -10px) rotate(90deg);
-         opacity: 0.8;
-     }
-     50% {
-         transform: translate(-15px, 15px) rotate(180deg);
-         opacity: 1;
-     }
-     75% {
-         transform: translate(10px, 5px) rotate(270deg);
-         opacity: 0.7;
-     }
-     100% {
-         transform: translate(0, 0) rotate(360deg);
-         opacity: 0.5;
-     }
+  0% {
+  transform: translate(0, 0) rotate(0deg);
+  opacity: 0.5;
+  }
+  25% {
+  transform: translate(20px, -10px) rotate(90deg);
+  opacity: 0.8;
+  }
+  50% {
+  transform: translate(-15px, 15px) rotate(180deg);
+  opacity: 1;
+  }
+  75% {
+  transform: translate(10px, 5px) rotate(270deg);
+  opacity: 0.7;
+  }
+  100% {
+  transform: translate(0, 0) rotate(360deg);
+  opacity: 0.5;
+  }
  }
  
 
  /* Logger Setup - For When Shit Hits the Fan (and It Will) */
  .log {
-     color: #d4ff00; /* Dark Green - Log It or Lose It! */
+  color: #d4ff00; /* Dark Green - Log It or Lose It! */
  }
  
 
  .error {
-     color: #800080; /* Purple - Uh Oh, You Fucked Up */
-     font-weight: bold;
+  color: #800080; /* Purple - Uh Oh, You Fucked Up */
+  font-weight: bold;
  }
  
 
  .warning {
-     color: #8b0000; /* Dark Red - Heads Up, Dipshit! */
-     text-shadow: 0 0 5px #8b0000; /* Glow for extra emphasis - In Case You're Blind */
+  color: #8b0000; /* Dark Red - Heads Up, Dipshit! */
+  text-shadow: 0 0 5px #8b0000; /* Glow for extra emphasis - In Case You're Blind */
  }
  
 
  .info {
-     color: #00008b; /* Dark Blue - Just So You Know... */
+  color: #00008b; /* Dark Blue - Just So You Know... */
  }
  
 
  .critical {
-     color: #ff0000; /* Bright Red for critical errors - SHIT'S ON FIRE!!! */
-     font-size: 1.2em;
-     text-transform: uppercase;
-     animation: pulse 1s infinite alternate; /* Because It's Important, Dammit! */
+  color: #ff0000; /* Bright Red for critical errors - SHIT'S ON FIRE!!! */
+  font-size: 1.2em;
+  text-transform: uppercase;
+  animation: pulse 1s infinite alternate; /* Because It's Important, Dammit! */
  }
  
 
  @keyframes pulse {
-     from { transform: scale(1); }
-     to { transform: scale(1.1); }
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
  }
  
 
  /* UI Elements - Buttons and Shit */
  button, input[type="text"], textarea {
-     background-color: #222;
-     color: #d4ff00;
-     border: 1px solid #800080;
-     padding: 5px;
-     margin: 5px;
-     font-family: monospace;
+  background-color: #222;
+  color: #d4ff00;
+  border: 1px solid #800080;
+  padding: 5px;
+  margin: 5px;
+  font-family: monospace;
  }
  
 
  button:hover {
-     background-color: #444;
-     cursor: pointer;
-     box-shadow: 0 0 10px #800080; /* Hover glow - Attract Attention, You Know? */
+  background-color: #444;
+  cursor: pointer;
+  box-shadow: 0 0 10px #800080; /* Hover glow - Attract Attention, You Know? */
  }
  
 
  /* Layout - Keeping It All Organized */
  #container {
-     display: flex;
-     height: 100vh;
+  display: flex;
+  height: 100vh;
  }
  
 
  #sidebar {
-     width: 200px;
-     background-color: #111;
-     padding: 10px;
-     border-right: 2px dashed #8b0000; /* Red dashed line - Don't Cross It! */
+  width: 200px;
+  background-color: #111;
+  padding: 10px;
+  border-right: 2px dashed #8b0000; /* Red dashed line - Don't Cross It! */
  }
  
 
  #content {
-     flex: 1;
-     padding: 20px;
+  flex: 1;
+  padding: 20px;
  }
  
 
  /* Additional Styling - For That Extra Touch of Class */
  h1, h2, h3 {
-     color: #d4ff00;
-     text-shadow: 2px 2px 4px #000000; /* Subtle shadow - Just Like Your Intentions */
+  color: #d4ff00;
+  text-shadow: 2px 2px 4px #000000; /* Subtle shadow - Just Like Your Intentions */
  }
  
 
  a {
-     color: #00008b;
-     text-decoration: none;
+  color: #00008b;
+  text-decoration: none;
  }
  
 
  a:hover {
-     text-decoration: underline;
-     color: #800080; /* Hover color change - I See You! */
+  text-decoration: underline;
+  color: #800080; /* Hover color change - I See You! */
  }
  
 
  /* Easter Egg - Because why the fuck not */
  body:hover::after {
-     content: "HACK THE PLANET!";
-     position: fixed;
-     bottom: 10px;
-     right: 10px;
-     font-size: 2em;
-     color: #ff00ff;
-     animation: rainbow 3s infinite linear;
-     z-index: 1000; /* Make sure it's visible, dumbass */
+  content: "HACK THE PLANET!";
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  font-size: 2em;
+  color: #ff00ff;
+  animation: rainbow 3s infinite linear;
+  z-index: 1000; /* Make sure it's visible, dumbass */
  }
  
 
  @keyframes rainbow {
-     0% { color: #ff0000; }
-     14% { color: #ffa500; }
-     28% { color: #ffff00; }
-     42% { color: #008000; }
-     57% { color: #0000ff; }
-     71% { color: #4b0082; }
-     85% { color: #ee82ee; }
-     100% { color: #ff0000; }
+  0% { color: #ff0000; }
+  14% { color: #ffa500; }
+  28% { color: #ffff00; }
+  42% { color: #008000; }
+  57% { color: #0000ff; }
+  71% { color: #4b0082; }
+  85% { color: #ee82ee; }
+  100% { color: #ff0000; }
  }
  
 
@@ -313,4 +313,47 @@
   background-color: #800080;
   box-shadow: none;
   transform: scale(1);
+ }
+ 
+
+ #logContainer {
+  width: 98%; /* Adjust as needed */
+  max-height: 200px; /* Set a max height for the log container */
+  overflow-y: auto; /* Enable vertical scroll if content overflows */
+  border: 1px solid #222;
+  padding: 5px;
+  margin-bottom: 10px;
+  font-family: monospace;
+  font-size: 12px;
+  color: #D4FF00;
+  background-color: #000; /* Match the background color */
+ }
+ 
+
+ 
+
+ /* Button Styling for "Start Logging" and "Clear Log" */
+ .logButton {
+  background-color: #333;
+  border: 1px solid #555;
+  color: #D4FF00;
+  padding: 8px 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+  margin: 5px;
+ }
+ 
+
+ .logButton:hover {
+  background-color: #555;
+ }
+ 
+
+ .logButton:active {
+  background-color: #444;
  }
