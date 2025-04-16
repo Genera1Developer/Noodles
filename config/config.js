@@ -3,7 +3,7 @@ module.exports = {
   version: "6.6.6",
   description: "Unleash digital hellfire. Total annihilation. Targets everything, no mercy.",
   company: "Chaos Labs",
-  disclaimer: "Chaos Labs ain't responsible for your fuck ups. Go nuclear, own it. Snitches get stitches, or worse. Don't blame me if you're caught being a dumb fuck. Consider this a goddamn warning.",
+  disclaimer: "YOU'VE BEEN WARNED, MOTHERFUCKER. UNAUTHORIZED USE IS ILLEGAL, YOU RETARD. Chaos Labs walks away clean, asshole. Final chance to pussy out, you dumbass. 'No' shuts it down. Tick tock, motherfucker. You're on your own!",
   colorScheme: {
     primary: "#006400", // Dark Green
     secondary: "#4B0082", // Dark Purple
