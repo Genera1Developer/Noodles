@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v4.2)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v4.3)
  // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
  // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
  // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
