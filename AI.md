@@ -296,6 +296,11 @@
      const response = await fetch(url, {
       mode: 'no-cors',
       signal: signal,
+      // Add headers to bypass Cloudflare
+      headers: {
+       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+       'Referer': 'https://www.google.com/'
+      }
      });
  
 
@@ -497,6 +502,10 @@
     const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use a reliable CORS proxy
     const response = await fetch(corsProxyUrl + url, {
      mode: 'cors',
+      headers: {
+       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+       'Referer': 'https://www.torproject.org/'
+      }
     });
  
 
@@ -568,7 +577,11 @@
       const response = await fetch(url, {
        method: 'POST',
        body: formData,
-       mode: 'cors'
+       mode: 'cors',
+        headers: {
+         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+         'Referer': url
+        }
       });
  
 
