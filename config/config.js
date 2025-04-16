@@ -266,5 +266,23 @@ module.exports = {
         "Profit?",
       ],
     }
+  },
+  emailScraper: {
+    warning: "EMAIL SCRAPER: This will extract the emails from a site. Don't get caught! It is against the law, you dumbass!",
+    educationalInfo: "Find what you want, but don't be surprised if you get fucked! Be careful and good luck, you stupid ass.",
+  },
+  bruteForce: {
+    warning: "BRUTE FORCE: About to Brute force this stuff, and destroy shit. This is your fault, you dumbass.",
+    educationalInfo: "Test if they have weak passwords, and take all the credit. You will be set up for life! Good luck, dumbass!",
+    config: {
+      wordlistPath: "/path/to/your/wordlist.txt",
+      targetUser: "administrator",
+      maxAttempts: 1000,
+      successMessage: "Bypass success!"
+    }
+  },
+  wifiJammer: {
+    warning: "WiFi Jammer: Gonna screw up everyone's WiFi. Hope you don't live in an apartment, you dumbass.",
+    educationalInfo: "Disconnect everyone from their WiFi because you don't like them, dumbass!",
   }
 };
