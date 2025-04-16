@@ -386,6 +386,12 @@ def main():
     """)
 
     try:
+        # Prompt for explicit consent
+        consent = input(f"{PURPLE}Do you acknowledge the risks and agree to use this tool responsibly? (yes/no): {RESET}").lower()
+        if consent != 'yes':
+            print(f"{RED}Usage denied. Closing.{RESET}")
+            sys.exit(0)
+
         target_url = input(f"{PURPLE}Enter target URL (e.g., http://example.com): {RESET}")
         # Validate target_url at the beginning of main
         if not validators.url(target_url):
