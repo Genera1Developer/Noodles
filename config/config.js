@@ -72,34 +72,53 @@ module.exports = {
     synFlood: {
       name: "SYN Flood",
       description: "Overwhelm the target with SYN packets. They'll be swimming in a sea of pain. This is your life now, you dumbass.",
+      payload: "SYN", // Add payload option for SYN Flood
+      packetSize: 512, // Add packet size option for SYN Flood
+      ipSpoofing: true // Add IP spoofing option for SYN Flood
     },
     udpFlood: {
       name: "UDP Flood",
       description: "Flood the target with UDP packets. Watch 'em drown in data, you moron. They will never know what happened.",
+      payload: "Random", // Add payload option for UDP Flood
+      packetSize: 1024, // Add packet size option for UDP Flood
+      threads: 100 // Add threads option for UDP Flood
     },
     httpFlood: {
       name: "HTTP Flood",
       description: "Flood the target with HTTP requests. Overwhelm their senses, you idiot. Make them feel the pain you feel.",
+      requestsPerSecond: 500, // Add requests per second option for HTTP Flood
+      userAgent: "Mozilla/5.0", // Add user agent option for HTTP Flood
+      randomizeHeaders: true // Add randomize headers option for HTTP Flood
     },
     slowloris: {
       name: "Slowloris",
       description: "Slowly exhaust the target's resources, dumbass. Squeeze 'em dry. Make sure to go hard, or go home.",
+      sockets: 200, // Add sockets option for Slowloris
+      interval: 15, // Add interval option for Slowloris
+      keepAlive: 30 // Add keep-alive option for Slowloris
     },
     icmpFlood: {
       name: "ICMP Flood (Ping Flood)",
-      description: "Overwhelm the target with ICMP echo requests. Ping 'em to death. Become the ultimate pro, dumbass."
+      description: "Overwhelm the target with ICMP echo requests. Ping 'em to death. Become the ultimate pro, dumbass.",
+      packetSize: 64, // Add packet size option for ICMP Flood
+      ttl: 128 // Add TTL option for ICMP Flood
     },
     icmpFragmentFlood: {
       name: "ICMP Fragment Flood (Ping Fragment Flood)",
       description: "Overwhelm the target with ICMP fragment messages. This will cause extreme network problems and lag.",
+      packetSize: 64, // Add packet size option for ICMP Fragment Flood
+      fragmentSize: 8 // Add fragment size option for ICMP Fragment Flood
     },
     smurfAttack: {
       name: "Smurf Attack",
       description: "This will overload the local network and crash the network.",
+      broadcastAddress: "192.168.1.255", // Add broadcast address option for Smurf Attack
+      multiplier: 10 // Add multiplier option for Smurf Attack
     },
     teardropAttack: {
       name: "Teardrop Attack",
       description: "This will fragment data and cause the host to be overloaded.",
+      offset: 10 // Add offset option for Teardrop Attack
     },
     landAttack: {
       name: "Land Attack",
@@ -108,6 +127,22 @@ module.exports = {
     winNukeAttack: {
       name: "WinNuke Attack",
       description: "This will cause Windows 95 to cause a BSOD.",
+    },
+    icmpBomb: {
+     name: "ICMP Bomb",
+     description: "Causes multiple systems to crash with this attack, it will send a large amount of echo requests.",
+     broadcastAddress: "192.168.1.255", // Add broadcast address option for ICMP Bomb
+     multiplier: 10
+    },
+    ripBomb: {
+     name: "RIP Bomb",
+     description: "Causes extreme network to halt, with a malformed response the network is rendered unusable.",
+     routeTableCorruption: "Yes",
+    },
+   deathPing: {
+     name: "Death Ping",
+     description: "Causes a system to BSOD with the size of the package being too large.",
+     amountOfFragments: "4000",
     }
   },
   defacementContent: {
