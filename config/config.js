@@ -18,7 +18,7 @@ module.exports = {
   "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload"
   },
   logging: true,
-  reportFeature: false,
+  reportFeature: true,
   defacementTool: {
   warning: "DEFACEMENT TOOL: Gonna fuck with someone's digital face. Last chance to back the fuck down. Once you pop, you can't stop. Seriously, think before you commit to doing this depraved shit.",
   educationalInfo: "Vandalism on steroids. Rewrite the web. Get creative, or just be a dickhead. Don't be a fucking sheep, create something unique. Use it to scare the shit out of someone.",
