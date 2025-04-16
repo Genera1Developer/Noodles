@@ -94,6 +94,27 @@
   echo "Processes terminated. System ready for unethical fun!"
  
 
+  - name: Enhanced Logging
+  run: |
+  echo "\033[35m[Logging] - Initializing enhanced logging...\033[0m"
+  echo "\033[35m[Logging] - All actions will be logged in 'noodles.log'\033[0m"
+  touch noodles.log
+  echo "\033[32m[Logging] - Logging started. Buckle up!\033[0m"
+  
+  - name: Site Downloader (Including .onion Support)
+  run: |
+  echo "\033[36m[Site Downloader] - Starting .onion & regular site downloader...\033[0m"
+  node ./siteDownloader.js &
+  echo "\033[36m[Site Downloader] - Site downloader running in the background.\033[0m"
+ 
+
+  - name: Stress Testing Module (Enhanced)
+  run: |
+  echo "\033[31m[Stress Test] - Initiating enhanced stress testing module...\033[0m"
+  node ./stressTest.js &
+  echo "\033[31m[Stress Test] - Module running in the background. Mayhem commencing...\033[0m"
+ 
+
   env:
   TARGET_URL:
   REQUEST_COUNT:
