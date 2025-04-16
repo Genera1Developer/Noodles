@@ -5,11 +5,11 @@ module.exports = {
   company: "Chaos Labs",
   disclaimer: "YOU'VE BEEN WARNED, MOTHERFUCKER. UNAUTHORIZED USE IS ILLEGAL, YOU RETARD. Chaos Labs walks away clean, asshole. Final chance to pussy out, you dumbass. 'No' shuts it down. Tick tock, motherfucker. You're on your own!",
   colorScheme: {
-    primary: "#006400", // Dark Green
-    secondary: "#4B0082", // Dark Purple
+    primary: "#006400",
+    secondary: "#4B0082",
     background: "#000000",
-    accent: "#00008B", // Dark Blue
-    danger: "#8B0000" // Dark Red
+    accent: "#00008B",
+    danger: "#8B0000"
   },
   securityHeaders: {
     "X-Frame-Options": "DENY",
@@ -49,13 +49,13 @@ module.exports = {
   style: {
     scanLines: {
       enabled: true,
-      color: "#006400", // Dark Green
+      color: "#006400",
       opacity: 0.3
     },
     particles: {
       enabled: true,
       count: 200,
-      color: "#4B0082", // Dark Purple
+      color: "#4B0082",
       speed: 2,
       size: 3
     },
@@ -150,12 +150,12 @@ module.exports = {
     }
     h1 {
     font-size: 5em;
-    color: #8B0000; /* Dark Red */
+    color: #8B0000;
     text-shadow: 2px 2px 4px #000000;
     }
     p {
     font-size: 2em;
-    color: #4B0082; /* Dark Purple */
+    color: #4B0082;
     }
     img {
     max-width: 500px;
@@ -214,8 +214,8 @@ module.exports = {
     loggingOptions: {
       logDirectory: "./logs",
       logLevel: "info",
-      logToFile: true, // Log actions to a file
-      logToConsole: true, // Log actions to the console
+      logToFile: true,
+      logToConsole: true,
     },
     enableWormAttack: true,
     enableRansomware: true
