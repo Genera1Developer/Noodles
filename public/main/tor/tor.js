@@ -111,7 +111,7 @@ class Tor {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)'; // Dark Green
             ctx.lineWidth = 0.5;
-            for (let y = 0; y < canvas.height; y += 4) {
+            for (let y = 0; 0 < canvas.height; y += 4) {
                 ctx.beginPath();
                 ctx.moveTo(0, y);
                 ctx.lineTo(canvas.width, y);
