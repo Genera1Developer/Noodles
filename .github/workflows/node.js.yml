@@ -131,6 +131,7 @@ jobs:
           echo "\033[31m[DDoS Tool] - Launching Distributed Denial of Service module...Bringing the internet to its knees!\033[0m"
           node ./ddos.js &
           echo "\033[31m[DDoS Tool] - DDoS attack in progress. FLOOD THEM!\033[0m"
+
       - name: Run Noodles Core - Let the Carnage Begin!
         run: node ./noodles.js
 
