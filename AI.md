@@ -270,7 +270,7 @@
  
 
      // Use fetch with AbortSignal
-     // const response = await fetch(proxyUrl, {
+     // const response = await fetch(url, {
      //  mode: 'no-cors',
      //  signal: signal,
      // });
