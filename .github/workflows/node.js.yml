@@ -18,8 +18,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch phantomjs-prebuilt ddos --silent
-
+        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch phantomjs-prebuilt ddos --silent && npm install node-snackbar
       - name: Security Headers Check
         run: |
           echo "\033[35m[+] Performing security header check...\033[0m"
