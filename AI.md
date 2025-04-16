@@ -56,6 +56,7 @@
 
  <script>
   let originalSiteContent = null;
+  let backupFileName = null;
  
 
   async function backupSite() {
@@ -75,7 +76,8 @@
      throw new Error(`HTTP error! status: ${response.status}`);
     }
     originalSiteContent = await response.text();
-    download("backup.html", originalSiteContent);
+    backupFileName = `backup_${new Date().toISOString()}.html`;
+    download(backupFileName, originalSiteContent);
     console.log("Site backed up.");
     alert("Site backed up successfully!");
    } catch (error) {
