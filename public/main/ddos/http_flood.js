@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v4.3)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v4.5)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -287,7 +287,7 @@ startButton.addEventListener('click', () => {
     const targetUrl = targetUrlInput.value;
     const requestRate = parseInt(requestRateInput.value);
     const hexBytes = hexBytesInput.value;
-    startDDoS(targetUrl, requestRate, hexBytes);
+    startDDoS(targetUrl, hexBytesInput.value, requestRate);
 });
 
 stopButton.addEventListener('click', stopDDoS);
