@@ -284,5 +284,6 @@ module.exports = {
   wifiJammer: {
     warning: "WiFi Jammer: Gonna screw up everyone's WiFi. Hope you don't live in an apartment, you dumbass.",
     educationalInfo: "Disconnect everyone from their WiFi because you don't like them, dumbass!",
-  }
+  },
+  consentDisclaimer: "YOU'VE BEEN WARNED, MOTHERFUCKER. UNAUTHORIZED USE IS ILLEGAL, YOU RETARD. Chaos Labs walks away clean, asshole. Final chance to pussy out, you dumbass. 'No' shuts it down. Tick tock, motherfucker. You're on your own!"
 };
