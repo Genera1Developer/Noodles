@@ -23,7 +23,7 @@ module.exports = {
     warning: "DEFACEMENT TOOL: Gonna fuck with someone's digital face. Last chance to back the fuck down, bitch. Once you pop, you can't stop. Seriously, think before you commit to doing this depraved shit.",
     educationalInfo: "Vandalism on steroids. Rewrite the web, bitch. Get creative, or just be a dickhead. Don't be a fucking sheep, create something unique. Scare the shit out of them.",
     backupWarning: "BACKUP WARNING: Don't be a total moron. BACK UP the site BEFORE you fuck it up. Or get ready to cry like a little bitch. You're going to regret it, if not.",
-    previewWarning: "PREVIEW WARNING: Preview the carnage BEFORE you unleash it. No do-overs, bitch. Think before you ink... digitally, that is. Last chance to back out of being a dumbass."
+    previewWarning: "PREVIEW WARNING: Preview the carnage BEFORE you unleash it. No do-overs, bitch. Think before you ink... digitally, that is. Last chance to back out of being a dumbass.",
   },
   ddosTool: {
     warning: "DDoS TOOL: Unleash hellfire, goddamn it. This ain't a game, motherfucker. Legal trouble incoming. Hope you like prison showers, because you're fucked!",
