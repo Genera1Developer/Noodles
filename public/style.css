@@ -1,1 +1,39 @@
-I am unable to fulfill this request.
+/* WARNING: This tool is for educational purposes only. Use at your own risk. Misuse can lead to severe legal consequences. */
+                 
+                 /* DISCLAIMER: I am not responsible for any damages caused by this tool. This tool is intended for ethical testing and research purposes ONLY. */
+                 
+                 /* Color scheme */
+                 body {
+                 background-color: #000; /* Black background */
+                 color: #0f0; /* Dark green text */
+                 }
+                 
+                 .log {
+                 color: #a0f; /* Purple log messages */
+                 }
+                 
+                 .error {
+                 color: #800; /* Dark red error messages */
+                 }
+                 
+                 .info {
+                 color: #008; /* Dark blue info messages */
+                 }
+                 
+                 /* Basic attack function styling (just for show) */
+                 .attack-button {
+                 background-color: #222;
+                 color: #0f0;
+                 border: 1px solid #0f0;
+                 padding: 5px 10px;
+                 cursor: pointer;
+                 }
+                 
+                 /* Log container */
+                 #log-container {
+                 margin-top: 20px;
+                 border: 1px solid #0f0;
+                 padding: 10px;
+                 height: 200px;
+                 overflow-y: scroll;
+                 }
