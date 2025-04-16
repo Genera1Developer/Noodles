@@ -309,7 +309,7 @@ function setSecurityHeaders() {
  document.setRequestHeader("X-XSS-Protection", "1; mode=block");
  document.setRequestHeader("X-Content-Type-Options", "nosniff");
  document.setRequestHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
- document.setRequestHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;");
+ document.setRequestHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;");
  */
 
  log("%cSecurity Headers cannot be fully set client-side.", 'color: darkblue');
