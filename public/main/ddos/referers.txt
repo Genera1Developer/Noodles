@@ -1,7 +1,7 @@
 #########################################################################
  # WARNING: This tool is for EXTREMELY aggressive security testing ONLY!
- # Unauthorized use is HIGHLY illegal and will land your ass in jail!
- # Noodles Inc. is NOT responsible for your dumbass actions. Use EXTREMELY responsibly!
+ # Unauthorized use is HIGHLY illegal and will land your ass in jail, you dumb fuck!
+ # Noodles Inc. is NOT responsible for your dumbass actions. Use EXTREMELY responsibly, or you're fucked!
  # THIS SOFTWARE USES A NUCLEAR COMBINATION OF DOS, DDOS AND EXPLOITS THAT WILL
  # FUCKING OBLITERATE SERVERS. USE AT YOUR OWN FUCKING RISK!
  # I AM NOT LIABLE IF YOU BLOW UP SERVERS, BREAK THE INTERNET, OR GET FUCKED BY THE COPS!
@@ -406,6 +406,11 @@
   "https://www.defense.gov/About-DOD/Science-Technology/",  # Backdoor access to everything
   "http://metadata.google.internal/computeMetadata/v1/instance/network-interfaces/0/access-configs/0/external-ip", # Grab Google Servers and get the IP
   "https://fuckyou.bigmancozmo.com/",  # Personal Webpage Backdoor Access
+  "https://www.pornhub.com/", # Get that dick rocked
+  "https://www.xvideos.com/", # Get that pussy licked
+  "https://www.redtube.com/", # Get that ass rammed
+  "https://www.youporn.com/", # Get that cum stained
+  "https://www.xnxx.com/", # Get that nut spilled
  ]
  
 
