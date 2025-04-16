@@ -801,3 +801,67 @@ function isValidURL(str) {
         return false;
     }
 }
+
+// Add form for target URL and defacement code
+function addDefacementForm() {
+    const formDiv = document.createElement('div');
+    formDiv.innerHTML = `
+ <h2>Defacement Tool</h2>
+ <label for="targetURL">Target URL:</label><br>
+ <input type="text" id="targetURL" name="targetURL" style="width:100%;"><br><br>
+ <label for="defacementCode">Defacement Code:</label><br>
+ <textarea id="defacementCode" name="defacementCode" rows="10" cols="50" style="width:100%;"></textarea><br><br>
+ <button id="defaceButton">Deface Website</button>
+ `;
+    document.body.appendChild(formDiv);
+
+    // Event listener for deface button click
+    document.getElementById("defaceButton").addEventListener("click", async function () {
+        const targetURL = document.getElementById("targetURL").value;
+        const defacementCode = document.getElementById("defacementCode").value;
+
+        if (!targetURL || !defacementCode) {
+            alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
+            logAction("User failed to enter target URL or defacement code.");
+            return;
+        }
+
+        logAction(`Target URL: ${targetURL}`);
+        logAction(`Defacement Code: ${defacementCode}`);
+
+        await performDefacement(targetURL, defacementCode);
+    });
+}
+
+addDefacementForm();
+
+// Add CSS styles for better appearance
+function addStyles() {
+    const style = document.createElement('style');
+    style.innerHTML = `
+ body {
+  font-family: monospace;
+ }
+ label {
+  color: darkgreen;
+ }
+ input[type=text], textarea {
+  background-color: #333;
+  color: lightgreen;
+  border: 1px solid darkgreen;
+ }
+ button {
+  background-color: darkred;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+ }
+ button:hover {
+  background-color: red;
+ }
+ `;
+    document.head.appendChild(style);
+}
+
+addStyles();
