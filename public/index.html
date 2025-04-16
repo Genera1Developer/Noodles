@@ -538,8 +538,7 @@
              mode: 'cors',
              headers: {
                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                 'Referer': 'https://www.google.com/'
-             }
+                  }
          })
          .then(response => {
              if (!response.ok) {
@@ -595,7 +594,6 @@
              method: 'GET',
              headers: {
                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                 'Referer': 'https://www.google.com/'
              }
          })
          .then(response => {
@@ -630,7 +628,6 @@
                  headers: {
                      'Content-Type': 'text/html',
                      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-                     'Referer': 'https://www.google.com/'
                  },
                  body: modifiedHtml
              })
