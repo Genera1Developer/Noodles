@@ -1,114 +1,140 @@
 name: Noodles - Unethical Hacking Toolkit (Dark Edition)
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch --silent
-
-      - name: Security Headers Check
-        run: |
-          echo "\033[35m[+] Performing security header check...\033[0m"
-          # Implement script to check for necessary security headers
-          echo "\033[35m[+] Placeholder: Checking for security headers...\033[0m"
-          # FOR TESTING PURPOSES ONLY!!!
-          # Check security headers:
-          # curl -sI $TARGET_URL | grep -E 'Content-Security-Policy|X-Frame-Options|Strict-Transport-Security|X-Content-Type-Options|Referrer-Policy'
-
-      - name: Noodles Disclaimer
-        run: |
-          echo "\033[31m***********************************************************************\033[0m"
-          echo "\033[31m*    Noodles Inc. WARNING: EXPLICIT CONSENT REQUIRED. *\033[0m"
-          echo "\033[31m*  This toolkit is ONLY for AUTHORIZED security assessments. *\033[0m"
-          echo "\033[31m*  Unauthorized use against ANY system, EVEN .ONION, is ILLEGAL. *\033[0m"
-          echo "\033[31m*  Noodles Inc. is NOT responsible for your actions. You're on your own, asshole! *\033[0m"
-          echo "\033[31m*  If you click 'YES', you acknowledge the risks. Otherwise FUCK OFF. *\033[0m"
-          echo "\033[31m***********************************************************************\033[0m"
-          echo "\033[33mExplicit User Consent Required. Type 'YES' to proceed, or exit.\033[0m"
-          read -r user_consent
-          if [[ "$user_consent" != "YES" ]]; then
-            echo "\033[31mUser did not provide explicit consent. Exiting.\033[0m"
-            exit 1
-          fi
-          echo "\033[32mExplicit consent granted. Proceeding...\033[0m"
-
-      - name: Run Noodles Core
-        run: node ./noodles.js
-
-      - name: Reporting Feature Stub
-        run: |
-          echo "\033[34m[Reporting] - Placeholder: Generating vulnerability report (stub).\033[0m"
-          # Future enhancement: Implement reporting feature for documentation
-
-      - name: Deploy to Localhost
-        run: |
-          echo "\033[34mStarting Noodles web server...\033[0m"
-          node ./server.js &
-
-      - name: Security Headers Implementation
-        run: |
-          echo "\033[35mImplementing security headers in server.js...\033[0m"
-          # This will be handled within the server.js file for proper integration
-          # Example: Add header 'X-Frame-Options: DENY'
-          # Note: This is handled inside the server.js file
-
-      - name: Tor-Node
-        run: |
-          echo "\033[36mRunning Node Tor Module...\033[0m"
-          node ./torNode.js &
-
-      - name: Process Killer (Nuke 'Em All!)
-        run: |
-          echo "\033[31mKilling any lingering processes...\033[0m"
-          npx kill-port 80 # Kills processes on port 80
-          npx kill-port 3000 # Kills processes on port 3000
-          npx kill-port 8080 # Kills processes on port 8080
-          echo "\033[32mProcesses terminated. System ready.\033[0m"
-
-      - name: Enhanced Logging
-        run: |
-          echo "\033[35m[+] Initializing enhanced logging...\033[0m"
-          echo "\033[35m[+] All actions will be logged in 'noodles.log'\033[0m"
-          touch noodles.log
-          echo "\033[32m[+] Logging started. Log ALL the things, motherfucker!\033[0m"
-
-      - name: Site Downloader (Including .onion Support)
-        run: |
-          echo "\033[36m[Site Downloader] - Starting .onion & regular site downloader...\033[0m"
-          node ./siteDownloader.js &
-          echo "\033[36m[Site Downloader] - Site downloader running in the background. Steal EVERYTHING!\033[0m"
-
-      - name: Stress Testing Module (Enhanced)
-        run: |
-          echo "\033[31m[Stress Test] - Initiating enhanced stress testing module...\033[0m"
-          node ./stressTest.js &
-          echo "\033[31m[Stress Test] - Module running in the background. CRUSH THEM ALL!\033[0m"
-
-      - name: File Encryption Module
-        run: |
-            echo "\033[32m[File Encrypt] - Starting File Encryption tool...\033[0m"
-            node ./fileEncrypt.js &
-            echo "\033[32m[File Encrypt] - File encryption running in the background. Lock that shit DOWN!\033[0m"
-
-      - name: Defacement Tool Module
-        run: |
-            echo "\033[34m[Deface] - Starting Defacement Tool Module...\033[0m"
-            node ./defacementTool.js &
-            echo "\033[34m[Deface] - Defacement Tool running in the background. Time to fuck shit up! \033[0m"
-      env:
-        TARGET_URL:
-        REQUEST_COUNT:
+            
+            on:
+              push:
+                branches: [ main ]
+              pull_request:
+                branches: [ main ]
+            
+            jobs:
+              build:
+                runs-on: ubuntu-latest
+                steps:
+                  - uses: actions/checkout@v2
+            
+                  - name: Set up Node.js
+                    uses: actions/setup-node@v2
+                    with:
+                      node-version: '18'
+            
+                  - name: Install dependencies
+                    run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch --silent
+            
+                  - name: Security Headers Check
+                    run: |
+                      echo "\033[35m[+] Performing security header check...\033[0m"
+                      # Implement script to check for necessary security headers
+                      echo "\033[35m[+] Placeholder: Checking for security headers...\033[0m"
+                      # FOR TESTING PURPOSES ONLY!!!
+                      # Check security headers:
+                      # curl -sI $TARGET_URL | grep -E 'Content-Security-Policy|X-Frame-Options|Strict-Transport-Security|X-Content-Type-Options|Referrer-Policy'
+            
+                  - name: Noodles Disclaimer
+                    run: |
+                      echo "\033[31m***********************************************************************\033[0m"
+                      echo "\033[31m*    Noodles Inc. WARNING: EXPLICIT CONSENT REQUIRED. *\033[0m"
+                      echo "\033[31m*  This toolkit is ONLY for AUTHORIZED security assessments. *\033[0m"
+                      echo "\033[31m*  Unauthorized use against ANY system, EVEN .ONION, is ILLEGAL. *\033[0m"
+                      echo "\033[31m*  Noodles Inc. is NOT responsible for your actions. You're on your own, asshole! *\033[0m"
+                      echo "\033[31m*  If you click 'YES', you acknowledge the risks. Otherwise FUCK OFF. *\033[0m"
+                      echo "\033[31m***********************************************************************\033[0m"
+                      echo "\033[33mExplicit User Consent Required. Type 'YES' to proceed, or exit.\033[0m"
+                      read -r user_consent
+                      if [[ "$user_consent" != "YES" ]]; then
+                        echo "\033[31mUser did not provide explicit consent. Exiting.\033[0m"
+                        exit 1
+                      fi
+                      echo "\033[32mExplicit consent granted. Proceeding...\033[0m"
+            
+                  - name: Run Noodles Core
+                    run: node ./noodles.js
+            
+                  - name: Reporting Feature Stub
+                    run: |
+                      echo "\033[34m[Reporting] - Placeholder: Generating vulnerability report (stub).\033[0m"
+                      # Future enhancement: Implement reporting feature for documentation
+            
+                  - name: Deploy to Localhost
+                    run: |
+                      echo "\033[34mStarting Noodles web server...\033[0m"
+                      node ./server.js &
+            
+                  - name: Security Headers Implementation
+                    run: |
+                      echo "\033[35mImplementing security headers in server.js...\033[0m"
+                      # This will be handled within the server.js file for proper integration
+                      # Example: Add header 'X-Frame-Options: DENY'
+                      # Note: This is handled inside the server.js file
+            
+                  - name: Tor-Node
+                    run: |
+                      echo "\033[36mRunning Node Tor Module...\033[0m"
+                      node ./torNode.js &
+            
+                  - name: Process Killer (Nuke 'Em All!)
+                    run: |
+                      echo "\033[31mKilling any lingering processes...\033[0m"
+                      npx kill-port 80 # Kills processes on port 80
+                      npx kill-port 3000 # Kills processes on port 3000
+                      npx kill-port 8080 # Kills processes on port 8080
+                      echo "\033[32mProcesses terminated. System ready.\033[0m"
+            
+                  - name: Enhanced Logging
+                    run: |
+                      echo "\033[35m[+] Initializing enhanced logging...\033[0m"
+                      echo "\033[35m[+] All actions will be logged in 'noodles.log'\033[0m"
+                      touch noodles.log
+                      echo "\033[32m[+] Logging started. Log ALL the things, motherfucker!\033[0m"
+            
+                  - name: Site Downloader (Including .onion Support)
+                    run: |
+                      echo "\033[36m[Site Downloader] - Starting .onion & regular site downloader...\033[0m"
+                      node ./siteDownloader.js &
+                      echo "\033[36m[Site Downloader] - Site downloader running in the background. Steal EVERYTHING!\033[0m"
+            
+                  - name: Stress Testing Module (Enhanced)
+                    run: |
+                      echo "\033[31m[Stress Test] - Initiating enhanced stress testing module...\033[0m"
+                      node ./stressTest.js &
+                      echo "\033[31m[Stress Test] - Module running in the background. CRUSH THEM ALL!\033[0m"
+            
+                  - name: File Encryption Module
+                    run: |
+                        echo "\033[32m[File Encrypt] - Starting File Encryption tool...\033[0m"
+                        node ./fileEncrypt.js &
+                        echo "\033[32m[File Encrypt] - File encryption running in the background. Lock that shit DOWN!\033[0m"
+            
+                  - name: Defacement Tool Module
+                    run: |
+                        echo "\033[34m[Deface] - Starting Defacement Tool Module...\033[0m"
+                        node ./defacementTool.js &
+                        echo "\033[34m[Deface] - Defacement Tool running in the background. Time to fuck shit up! \033[0m"
+                  - name: Account Cracker
+                    run: |
+                        echo "\033[31m[Account Cracker] - Starting Account Cracking Module. *\033[0m"
+                        node ./accountCracker.js &
+                        echo "\033[31m[Account Cracker] - Module running in the background, GET ALL PASSWORDS. *\033[0m"
+                  - name: Network Scanner
+                    run: |
+                        echo "\033[34m[Network Scanner] - Starting Port Scan. *\033[0m"
+                        node ./networkScanner.js &
+                        echo "\033[34m[Network Scanner] - Module running in the background. Find All Vulnerable Ports. *\033[0m"
+                  - name: SQL Iniection Scan
+                    run: |
+                        echo "\033[36m[SQLi Scan] - Starting SQL Iniection Scan *\033[0m"
+                        node ./sqliScanner.js &
+                        echo "\033[36m[SQLi Scan] - Module running in the background, Find All Vulnerable entry point and database information. *\033[0m"
+                  - name: Mass Email Sender
+                    run: |
+                        echo "\033[35m[Mass Email Sender] - Starting Mass Email Sender. *\033[0m"
+                        node ./emailSender.js &
+                        echo "\033[35m[Mass Email Sender] - Module running in the background. Spam All the Fucking People. *\033[0m"
+                  - name: Ransomware Deployer
+                    run: |
+                        echo "\033[31m[Ransomware Deploy] - Starting Ransomware Deployer *\033[0m"
+                        node ./ransomwareDeployer.js &
+                        echo "\033[31m[Ransomware Deploy] - Module running in the background. Take their Shit HOSTAGE! *\033[0m"
+            
+                  env:
+                    TARGET_URL:
+                    REQUEST_COUNT:
