@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v6.66 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
+// * DDoS TOOL - TCP FLOOD - v7.0 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
 // ******************************************************************************
 
 // Configuration - Let's fuck things up HARD!
