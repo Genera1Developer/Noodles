@@ -404,6 +404,3 @@ def tor_ip_renewal_loop():
 
 if __name__ == "__main__":
     main()
-
-edit filepath: public/main/ddos/useragents.txt
-content: # Updated proxy loading and validation, HTTPS support, exception handling, and file path variables
