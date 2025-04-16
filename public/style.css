@@ -1,8 +1,8 @@
 /* Global Styles */
 body {
     font-family: 'Courier New', monospace;
-    background-color: #121212; /* Dark background */
-    color: #00FF00; /* Green text */
+    background-color: #000000; /* Pitch black background */
+    color: #00FF00; /* Bright green text */
     margin: 0;
     padding: 0;
     overflow-x: hidden; /* Prevent horizontal scroll */
@@ -13,15 +13,15 @@ body {
     max-width: 1200px;
     margin: 20px auto;
     padding: 20px;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7); /* Slightly more opaque */
     border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    border: 1px solid #9400D3; /* Purple border */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    border: 2px solid #9400D3; /* Bolder purple border */
 }
 
 h1, h2, h3 {
     color: #9400D3; /* Purple headers */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Stronger shadow */
 }
 
 a {
@@ -59,7 +59,7 @@ body::before {
     left: 0;
     width: 100%;
     height: 100%;
-    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
+    background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2) 2px, transparent 2px, transparent 4px); /* Thicker lines */
     pointer-events: none;
     z-index: 1;
 }
@@ -67,21 +67,21 @@ body::before {
 /* Particle Effect (CSS Only - Basic) */
 .particle {
     position: absolute;
-    width: 5px;
-    height: 5px;
+    width: 6px; /* Slightly larger particles */
+    height: 6px;
     background-color: #00FF00;
     border-radius: 50%;
-    opacity: 0.7;
-    animation: float 5s infinite, drift 10s infinite;
+    opacity: 0.8; /* More visible */
+    animation: float 6s infinite, drift 12s infinite; /* Slower drift */
 }
 
 /* Tool Specific Styles */
 #defacement-tool, #ddos-tool, #encryption-tool {
     margin-bottom: 30px;
     padding: 15px;
-    border: 1px solid #333;
+    border: 2px solid #444; /* Thicker borders */
     border-radius: 8px;
-    background-color: #222; /* Darker tool backgrounds */
+    background-color: #1A1A1A; /* Even darker tool backgrounds */
 }
 
 button {
@@ -96,12 +96,13 @@ button {
 
 button:hover {
     background-color: #555;
+    color: #FF0000; /* Red on hover for danger */
 }
 
 input[type="text"], input[type="url"], textarea {
-    background-color: #222;
+    background-color: #1A1A1A; /* Darker input fields */
     color: #00FF00;
-    border: 1px solid #444;
+    border: 1px solid #555; /* Slightly lighter border */
     padding: 8px;
     border-radius: 5px;
     width: 100%;
@@ -110,20 +111,20 @@ input[type="text"], input[type="url"], textarea {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 10px; /* Wider scrollbar */
 }
 
 ::-webkit-scrollbar-track {
-    background-color: #333;
+    background-color: #222; /* Darker track */
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: #555;
+    background-color: #444; /* Darker thumb */
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background-color: #777;
+    background-color: #666; /* Even darker hover */
 }
 
 /* Error Messages */
@@ -131,18 +132,19 @@ input[type="text"], input[type="url"], textarea {
     color: #FF4500; /* Orange-red errors */
     font-size: 0.9em;
     margin-top: 5px;
+    font-weight: bold; /* Make them stand out */
 }
 
 /* Animations */
 @keyframes float {
     0% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+    50% { transform: translateY(-12px); } /* Higher float */
     100% { transform: translateY(0); }
 }
 
 @keyframes drift {
     0% { transform: translateX(0); }
-    50% { transform: translateX(20px); }
+    50% { transform: translateX(25px); } /* Wider drift */
     100% { transform: translateX(0); }
 }
 
@@ -153,6 +155,7 @@ input[type="text"], input[type="url"], textarea {
     margin-top: 20px;
     border-top: 1px solid #444;
     padding-top: 10px;
+    font-style: italic; /* Make it clear it's a disclaimer */
 }
 
 /* Responsive Design */
@@ -170,13 +173,15 @@ input[type="text"], input[type="url"], textarea {
 /* New Styles */
 .neon-green {
     color: #00FF00;
-    text-shadow: 0 0 5px #00FF00, 0 0 10px #00FF00;
+    text-shadow: 0 0 7px #00FF00, 0 0 14px #00FF00; /* Stronger neon */
 }
 
 .tool-header {
     color: #FF4500; /* Dark red */
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7); /* Stronger shadow */
     margin-bottom: 15px;
+    font-size: 1.5em; /* Make it larger */
+    text-transform: uppercase; /* Emphasize */
 }
 
 /* Sidebar Styles */
@@ -186,9 +191,9 @@ input[type="text"], input[type="url"], textarea {
     top: 0;
     left: 0;
     height: 100%;
-    background-color: #111;
+    background-color: #0A0A0A; /* Even darker sidebar */
     padding-top: 20px;
-    border-right: 1px solid #333;
+    border-right: 2px solid #333; /* Thicker border */
 }
 
 .sidebar a {
@@ -202,6 +207,7 @@ input[type="text"], input[type="url"], textarea {
 
 .sidebar a:hover {
     color: #f1f1f1;
+    background-color: #222; /* Darker hover */
 }
 
 .content {
@@ -220,15 +226,16 @@ input[type="text"], input[type="url"], textarea {
     height: auto;
     border-radius: 50%;
     border: 2px solid #00FF00;
+    box-shadow: 0 0 10px #00FF00; /* Neon glow */
 }
 
 /* Footer Styles */
 .footer {
     text-align: center;
     padding: 20px;
-    background-color: #111;
+    background-color: #0A0A0A; /* Even darker footer */
     color: #888;
-    border-top: 1px solid #333;
+    border-top: 2px solid #333; /* Thicker border */
 }
 
 /* New Animations */
@@ -237,7 +244,7 @@ input[type="text"], input[type="url"], textarea {
         box-shadow: 0 0 0 0 rgba(0, 255, 0, 0.7);
     }
     70% {
-        box-shadow: 0 0 0 10px rgba(0, 255, 0, 0);
+        box-shadow: 0 0 0 12px rgba(0, 255, 0, 0); /* Wider pulse */
     }
     100% {
         box-shadow: 0 0 0 0 rgba(0, 255, 0, 0);
@@ -265,7 +272,40 @@ input[type="text"], input[type="url"], textarea {
     font-weight: bold;
     margin-bottom: 10px;
     padding: 10px;
-    background-color: rgba(255, 69, 0, 0.1);
-    border: 1px solid #FF4500;
+    background-color: rgba(255, 69, 0, 0.2); /* Slightly more opaque */
+    border: 2px solid #FF4500; /* Thicker border */
+    border-radius: 5px;
+}
+
+/* New Warning Styles */
+.warning {
+    color: #FFFF00; /* Yellow warning */
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(255, 255, 0, 0.1);
+    border: 1px solid #FFFF00;
+    border-radius: 5px;
+}
+
+/* Danger Styles */
+.danger {
+    color: #FF0000; /* Bright Red */
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px solid #FF0000;
+    border-radius: 5px;
+}
+
+/* Success Styles */
+.success {
+    color: #00FF00; /* Green for Success */
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(0, 255, 0, 0.1);
+    border: 1px solid #00FF00;
     border-radius: 5px;
 }
