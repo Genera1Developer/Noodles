@@ -733,7 +733,8 @@ function addOnionSupport() {
         ddosButtonNav.addEventListener('click', () => {
             const targetURL = prompt("Enter the target URL (or .onion address), dipshit:");
             if (targetURL) {
-                // Add your DDoS function call here (not included for safety reasons)
+              // Add your DDoS function call here (not included for safety reasons)
+              // For a real implementation, use WebSockets or WebRTC to avoid CORS restrictions and enable sustained connections
                 alert(`DDoS attack initiated on ${targetURL}. Good luck, have fun, don't get caught!`);
                 logAction(`DDoS attack initiated on ${targetURL}`);
             } else {
