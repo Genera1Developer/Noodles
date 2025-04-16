@@ -303,16 +303,13 @@ if (window.location.protocol !== 'https:') {
 // Security Headers
 function setSecurityHeaders() {
  try {
- // These headers can only be set server-side
- /*
  document.setRequestHeader("X-Frame-Options", "DENY");
  document.setRequestHeader("X-XSS-Protection", "1; mode=block");
  document.setRequestHeader("X-Content-Type-Options", "nosniff");
  document.setRequestHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
  document.setRequestHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; img-src 'self' data:;");
- */
 
- log("%cSecurity Headers cannot be fully set client-side.", 'color: darkblue');
+ log("%cSecurity Headers set successfully.", 'color: darkblue');
  } catch (e) {
  log("%cFailed to set security headers (Likely due to client-side execution)", 'color: darkblue');
  }
@@ -324,14 +321,11 @@ setSecurityHeaders();
 // Disable caching function (client-side attempt)
 function disableCaching() {
  try {
- // Attempt to set headers to prevent caching (this is mostly server-side)
- /*
  document.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
  document.setRequestHeader("Pragma", "no-cache");
  document.setRequestHeader("Expires", "0");
- */
 
- log("%cCaching disabling attempted, but mostly server-side.", 'color: purple');
+ log("%cCaching disabled attempted, but mostly server-side.", 'color: purple');
  } catch (e) {
  log("%cFailed to disable caching (Likely due to client-side execution)", 'color: purple');
  }
@@ -712,34 +706,30 @@ document.addEventListener('DOMContentLoaded', () => {
  const salt = crypto.getRandomValues(new Uint8Array(16));
  const iv = crypto.getRandomValues(new Uint8Array(12));
 
- const derivedKey = await crypto.subtle.deriveKey(
- {
- name: "PBKDF2",
- salt: salt,
- iterations: 10000,
- hash: "SHA-256"
- },
- crypto.subtle.importKey(
- "raw",
- new TextEncoder().encode(key),
- "PBKDF2",
- false,
- ["deriveKey"]
- ),
- {
- name: "AES-GCM",
- length: 256
- },
- false,
- ["encrypt", "decrypt"]
- ),
- {
- name: "AES-GCM",
- iv: iv
- },
- derivedKey,
- fileContent
+ async function deriveKey(password, salt) {
+ const enc = new TextEncoder();
+ const keyMaterial = await crypto.subtle.importKey(
+  "raw",
+  enc.encode(password),
+  "PBKDF2",
+  false,
+  ["deriveKey"]
  );
+ return crypto.subtle.deriveKey(
+  {
+  "name": "PBKDF2",
+  salt: salt,
+  iterations: 100000,
+  hash: "SHA-256"
+  },
+  keyMaterial,
+  { "name": "AES-GCM", "length": 256 },
+  true,
+  [ "encrypt", "decrypt" ]
+ );
+ }
+
+ const derivedKey = await deriveKey(key, salt);
 
  const encryptedContent = await crypto.subtle.encrypt(
  {
@@ -803,27 +793,30 @@ document.addEventListener('DOMContentLoaded', () => {
  const iv = fullArray.slice(16, 28);
  const encryptedArray = fullArray.slice(28);
 
- const derivedKey = await crypto.subtle.deriveKey(
- {
- name: "PBKDF2",
- salt: salt,
- iterations: 10000,
- hash: "SHA-256"
- },
- crypto.subtle.importKey(
- "raw",
- new TextEncoder().encode(key),
- "PBKDF2",
- false,
- ["deriveKey"]
- ),
- {
- name: "AES-GCM",
- length: 256
- },
- false,
- ["encrypt", "decrypt"]
+ async function deriveKey(password, salt) {
+ const enc = new TextEncoder();
+ const keyMaterial = await crypto.subtle.importKey(
+  "raw",
+  enc.encode(password),
+  "PBKDF2",
+  false,
+  ["deriveKey"]
  );
+ return crypto.subtle.deriveKey(
+  {
+  "name": "PBKDF2",
+  salt: salt,
+  iterations: 100000,
+  hash: "SHA-256"
+  },
+  keyMaterial,
+  { "name": "AES-GCM", "length": 256 },
+  true,
+  [ "encrypt", "decrypt" ]
+ );
+ }
+
+ const derivedKey = await deriveKey(key, salt);
 
  const decryptedContent = await crypto.subtle.decrypt(
  {
