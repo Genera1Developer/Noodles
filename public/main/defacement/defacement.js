@@ -15,7 +15,9 @@
  // Logger function
  function logAction(message) {
   const logElement = document.getElementById("log");
+  if (logElement) {
   logElement.innerHTML += `<span style="color: darkblue;">[${new Date().toISOString()}]</span>: <span style="color: darkgreen;">${message}</span><br>`;
+  }
   console.log(message); // Keep console logging for debugging
  }
  
@@ -61,6 +63,21 @@
  // Function to perform defacement
  async function performDefacement(targetURL, defacementCode) {
   try {
+  // Input validation
+  if (!isValidURL(targetURL)) {
+  alert("Invalid URL, dipshit!");
+  logAction("Invalid URL entered: " + targetURL);
+  return;
+  }
+ 
+
+  if (defacementCode.length > 10000) {
+  alert("Defacement code too long, dumbass! Keep it under 10000 characters.");
+  logAction("Defacement code too long.");
+  return;
+  }
+ 
+
   // Backup functionality (REAL - Grab that shit before you wreck it)
   logAction("Backing up website content...");
   await backupWebsite(targetURL);
@@ -70,7 +87,13 @@
   // Preview functionality (See what you're about to unleash)
   logAction("Previewing defacement...");
   const previewFrame = document.getElementById("previewFrame");
+  if (previewFrame) {
   previewFrame.srcdoc = defacementCode;
+  } else {
+  console.error("Preview frame not found!");
+  alert("Preview frame not found. Check console, DIPSHIT.");
+  logAction("Preview frame not found.");
+  }
  
 
   // Defacement action (REAL - Let the fun begin!)
@@ -837,3 +860,28 @@
   alert(`An error occurred: ${message}. Check the console, DIPSHIT.`);
   logAction(`Global error: ${message} at line ${lineno}`);
  };
+ 
+
+ // Add preview functionality
+ function addPreview() {
+  const previewDiv = document.createElement('div');
+  previewDiv.innerHTML = `
+  <h2>Preview</h2>
+  <iframe id="previewFrame" style="width:100%;height:300px;background-color:white;"></iframe>
+  `;
+  document.body.appendChild(previewDiv);
+ }
+ 
+
+ addPreview();
+ 
+
+ // Validate URL
+ function isValidURL(str) {
+  try {
+  new URL(str);
+  return true;
+  } catch (_) {
+  return false;
+  }
+ }
