@@ -17,16 +17,8 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install dependencies
-        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch phantomjs-prebuilt ddos --silent && npm install node-snackbar
-      - name: Security Headers Check
-        run: |
-          echo "\033[35m[+] Performing security header check...\033[0m"
-          # Implement script to check for necessary security headers
-          echo "\033[35m[+] Placeholder: Checking for security headers...\033[0m"
-          # FOR TESTING PURPOSES ONLY!!!
-          # Check security headers:
-          # curl -sI $TARGET_URL | grep -E 'Content-Security-Policy|X-Frame-Options|Strict-Transport-Security|X-Content-Type-Options|Referrer-Policy'
+      - name: Install dependencies - Prepare for War!
+        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch phantomjs-prebuilt ddos node-snackbar crypto-js request child_process fs promises --silent
 
       - name: Noodles Disclaimer - READ THIS, YOU FUCKING IDIOT
         run: |
@@ -45,30 +37,19 @@ jobs:
           fi
           echo "\033[32mExplicit consent granted. Proceeding...May God have mercy on your Soul!\033[0m"
 
-      - name: Run Noodles Core - Let the Carnage Begin!
-        run: node ./noodles.js
-
-      - name: Reporting Feature Stub
-        run: |
-          echo "\033[34m[Reporting] - Placeholder: Generating vulnerability report (stub).\033[0m"
-          # Future enhancement: Implement reporting feature for documentation
-
-      - name: Deploy to Localhost
-        run: |
-          echo "\033[34mStarting Noodles web server...Preparing the battlefield!\033[0m"
-          node ./server.js &
-
       - name: Security Headers Implementation
         run: |
           echo "\033[35mImplementing security headers in server.js...Adding some smoke and mirrors!\033[0m"
           # This will be handled within the server.js file for proper integration
           # Example: Add header 'X-Frame-Options: DENY'
           # Note: This is handled inside the server.js file
+          echo "\033[32mSecurity Headers implemented. We're slightly less fucked.\033[0m"
 
       - name: Tor-Node - Cloak and Dagger Mode
         run: |
           echo "\033[36mRunning Node Tor Module...Hiding in the shadows!\033[0m"
           node ./torNode.js &
+          echo "\033[32mTor-Node running in background. Sneaking around like ninjas.\033[0m"
 
       - name: Process Killer (Nuke 'Em All!)
         run: |
@@ -108,26 +89,31 @@ jobs:
             echo "\033[34m[Deface] - Starting Defacement Tool Module...Let's vandalize this motherfucker!\033[0m"
             node ./defacementTool.js &
             echo "\033[34m[Deface] - Defacement Tool running in the background. Time to fuck shit up! \033[0m"
+
       - name: Account Cracker - Pwn ALL the Accounts!
         run: |
             echo "\033[31m[Account Cracker] - Starting Account Cracking Module. Time to steal some identities! *\033[0m"
             node ./accountCracker.js &
             echo "\033[31m[Account Cracker] - Module running in the background, GET ALL PASSWORDS. *\033[0m"
+
       - name: Network Scanner - Map the Battlefield!
         run: |
             echo "\033[34m[Network Scanner] - Starting Port Scan. Hunting for vulnerabilities! *\033[0m"
             node ./networkScanner.js &
             echo "\033[34m[Network Scanner] - Module running in the background. Find All Vulnerable Ports. *\033[0m"
-      - name: SQL Iniection Scan - Exploit ALL the Databases!
+
+      - name: SQL Injection Scan - Exploit ALL the Databases!
         run: |
-            echo "\033[36m[SQLi Scan] - Starting SQL Iniection Scan Finding new entry points. *\033[0m"
+            echo "\033[36m[SQLi Scan] - Starting SQL Injection Scan Finding new entry points. *\033[0m"
             node ./sqliScanner.js &
             echo "\033[36m[SQLi Scan] - Module running in the background, Find All Vulnerable entry point and database information. *\033[0m"
+
       - name: Mass Email Sender - Unleash the SPAM!
         run: |
             echo "\033[35m[Mass Email Sender] - Starting Mass Email Sender. Flooding the inboxes! *\033[0m"
             node ./emailSender.js &
             echo "\033[35m[Mass Email Sender] - Module running in the background. Spam All the Fucking People. *\033[0m"
+
       - name: Ransomware Deployer - Demand the Fucking Crypto!
         run: |
             echo "\033[31m[Ransomware Deploy] - Starting Ransomware Deployer Preparing to take hostages! *\033[0m"
@@ -145,6 +131,18 @@ jobs:
           echo "\033[31m[DDoS Tool] - Launching Distributed Denial of Service module...Bringing the internet to its knees!\033[0m"
           node ./ddos.js &
           echo "\033[31m[DDoS Tool] - DDoS attack in progress. FLOOD THEM!\033[0m"
+      - name: Run Noodles Core - Let the Carnage Begin!
+        run: node ./noodles.js
+
+      - name: Reporting Feature Stub
+        run: |
+          echo "\033[34m[Reporting] - Placeholder: Generating vulnerability report (stub).\033[0m"
+          # Future enhancement: Implement reporting feature for documentation
+
+      - name: Deploy to Localhost
+        run: |
+          echo "\033[34mStarting Noodles web server...Preparing the battlefield!\033[0m"
+          node ./server.js &
 
       env:
         TARGET_URL:
