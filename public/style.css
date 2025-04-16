@@ -209,3 +209,108 @@
   box-shadow: none;
   transform: scale(1);
  }
+ 
+
+ /* Overload Styles - For When We Wanna Melt Shit */
+ .overloadButton {
+  background-color: #00008B;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+ }
+ 
+
+ .overloadButton:hover {
+  background-color: #4682B4;
+  box-shadow: 0 0 10px #4682B4;
+  transform: scale(1.1);
+ }
+ 
+
+ .overloadButton:active {
+  background-color: #00008B;
+  box-shadow: none;
+  transform: scale(1);
+ }
+ 
+
+ /* Fuck It - Log Styles */
+ .logEntry {
+  color: #D4FF00;
+  font-family: monospace;
+  font-size: 14px;
+  margin-bottom: 5px;
+  border-bottom: 1px solid #222;
+  padding-bottom: 5px;
+ }
+ 
+
+ /* Error Log */
+ .logEntry.error {
+  color: #FF4500; /* OrangeRed */
+  font-weight: bold;
+ }
+ 
+
+ /* Warning Log */
+ .logEntry.warning {
+  color: #FFFF00; /* Yellow */
+  font-style: italic;
+ }
+ 
+
+ /* Info Log */
+ .logEntry.info {
+  color: #ADD8E6; /* LightBlue */
+ }
+ 
+
+ /* Critical Log */
+ .logEntry.critical {
+  color: #FF0000; /* Red */
+  text-decoration: underline;
+ }
+ 
+
+ /* Success Log */
+ .logEntry.success {
+  color: #32CD32; /* LimeGreen */
+  font-weight: bold;
+ }
+ 
+
+ /* Onion Styles - Shrek is Love */
+ .onionButton {
+  background-color: #800080;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: all 0.3s ease;
+ }
+ 
+
+ .onionButton:hover {
+  background-color: #9400D3;
+  box-shadow: 0 0 10px #9400D3;
+  transform: scale(1.1);
+ }
+ 
+
+ .onionButton:active {
+  background-color: #800080;
+  box-shadow: none;
+  transform: scale(1);
+ }
