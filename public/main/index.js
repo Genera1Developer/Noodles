@@ -5,7 +5,7 @@
  // | ██║╚██╔╝██║██║ ██║╚════██║██╔══██╗██║ ██║██╔══██║██║ ██║ |
  // | ██║ ╚═╝ ██║╚██████╔╝███████║██║ ██║╚██████╔╝██║ ██║███████╗███████╗ |
  // | ╚═╝ ╚═╝ ╚═════╝ ╚══════╝╚═╝ ╚═╝ ╚═════╝ ╚═╝ ╚═╝╚══════╝╚══════╝ |
- // | NOODLES INC - WEB DESTRUCTION SUITE |
+ // | ANONYMOUS WEB ANNIHILATION SUITE - FUCK SHIT UP EDITION |
  // | USE AT YOUR OWN RISK. WE ARE NOT RESPONSIBLE FOR YOUR SHIT. FUCK AROUND! |
  // +---------------------------------------------------------------------------+
 
@@ -14,7 +14,7 @@
  style.innerHTML = `
   body {
   background-color: #000;
-  color: #00FF00;
+  color: #00FF00; /* Default text color, can be overridden */
   font-family: monospace;
   overflow: hidden;
   }
@@ -32,8 +32,8 @@
   margin: 20px auto;
   padding: 20px;
   background-color: rgba(0, 0, 0, 0.8);
-  border: 1px solid #00FF00;
-  box-shadow: 0 0 10px #00FF00;
+  border: 1px solid #9400D3; /* Dark Purple */
+  box-shadow: 0 0 10px #9400D3;
   }
 
   h1, h2, h3 {
@@ -48,7 +48,7 @@
 
   .tool-section {
   margin-bottom: 30px;
-  border: 1px solid #00FF00;
+  border: 1px solid #8B0000; /* Dark Red */
   padding: 15px;
   }
 
@@ -106,7 +106,7 @@
   left: 0;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.9);
-  border-right: 1px solid #00FF00;
+  border-right: 1px solid #00008B; /* Dark Blue */
   padding: 20px;
   z-index: 100;
   }
@@ -368,7 +368,7 @@
   <div class="main-content">
   <div class="container">
   <div class="logo">
-  <h1>Noodles Inc.</h1>
+  <h1>Anonymous Inc.</h1>
   </div>
 
   <!-- Defacement Tool -->
@@ -400,7 +400,7 @@
   <label for="ddos-url">Target URL:</label>
   <input type="text" id="ddos-url" placeholder="Enter target URL">
   <label for="ddos-threads">Number of Threads:</label>
-  <input type="number" id="ddos-threads" placeholder="Enter number of threads" value="10">
+  <input type="number" id="ddos-threads" placeholder="Enter number of threads" value="1000">
   <label for="ddos-duration">Duration (seconds):</label>
   <input type="number" id="ddos-duration" placeholder="Enter duration in seconds" value="30">
   <button id="start-ddos">Start DDoS</button>
