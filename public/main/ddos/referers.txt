@@ -42,7 +42,7 @@ from cryptography.hazmat.backends import default_backend
 import base64
 import asyncio  # For asynchronous operations
 import aiohttp  # For asynchronous HTTP requests
-from PyQt5.QtWidgets import QApplication, QMessageBox  # User consent popup
+from PyQt5.QtWidgets import QApplication, QMessageBox, QLabel  # User consent popup
 from PyQt5.QtCore import Qt, QTimer
 from PyQt5.QtGui import QPalette, QColor
 
