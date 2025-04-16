@@ -608,3 +608,4 @@ try {
 
 // Disclaimer for Noodles Inc.
 console.warn("%c[DISCLAIMER] NOODLES INC. IS NOT RESPONSIBLE FOR YOUR SHIT. YOU FUCK IT UP, YOU OWN IT. THIS TOOL IS FOR EDUCATIONAL PURPOSES ONLY. - DON'T BE A DUMBASS!", "color: darkred;");
+edit filepath: public/main/ddos/tcp.js
