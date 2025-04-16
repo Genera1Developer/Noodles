@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v7.8 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
+// * DDoS TOOL - TCP FLOOD - v7.9 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
 // ******************************************************************************
 
 // Configuration - Let's fuck things up HARD!
@@ -39,6 +39,7 @@ const darkPurple = "\x1b[38;5;54m"; // Dark Purple
 const resetColor = "\x1b[0m";
 const darkGray = "\x1b[90m";
 const yellow = "\x1b[33m";
+const orange = "\x1b[38;5;208m"; // Orange color
 
 // Get elements for start, stop, and timer
 const startButton = document.createElement('button');
@@ -506,6 +507,7 @@ async function resolveHostname(hostname) {
         return address;
     } catch (error) {
         log(`${darkRed}[DNS] Error resolving ${hostname}: ${error}${resetColor}`);
+        alert(`DNS resolution failed for ${hostname}. Check the URL and your internet connection. If the target is an onion site, ensure Tor is running.`);
         return null;
     }
 }
@@ -531,8 +533,25 @@ function adjustThreads() {
     threadHealth = [];
 }
 
+// Disclaimer: Explicit user consent is required.
+function showConsent() {
+    return new Promise((resolve, reject) => {
+        if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. NOODLES INC. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
+            resolve(true);
+        } else {
+            resolve(false);
+        }
+    });
+}
+
 // Main execution - let's get this party started!
 async function main() {
+    const consentGiven = await showConsent();
+    if (!consentGiven) {
+        window.close();
+        return;
+    }
+
     const resolvedIPs = await resolveHostname(targetHost);
     if (!resolvedIPs) {
         alert("Failed to resolve hostname. Attack aborted.");
@@ -572,13 +591,6 @@ stopButton.addEventListener('click', () => {
     stopButton.disabled = true;
     log(`${darkGreen}[MAIN] Attack stopped manually.${resetColor}`);
 });
-
-// Explicit user consent required - just to cover our asses (sort of)
-if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. NOODLES INC. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
-    // Do nothing here; the start button triggers the attack
-} else {
-    window.close(); // Close the window if the user does not agree
-}
 
 // Educational Information (Can be expanded in the UI) - who gives a shit?
 console.log("%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable. - Now go fuck some shit up and don't get caught, you dumbass! We've also added some Cloudflare bypass techniques - don't expect miracles.", "color: darkblue;");
