@@ -30,17 +30,17 @@ module.exports = {
                  warning: "DDoS TOOL: Unleash hellfire, goddamn it. This ain't a game, motherfucker. Legal trouble incoming. Hope you like prison showers, because you're fucked!",
                  educationalInfo: "Flood the gates, crush the server, own the internet... if you can. Prepare for war, you're going in dry, motherfucker. Nobody has your back, asshole.",
                  startWarning: "START WARNING: Seriously, this is it. Point of no return, goddamn it. FUCK. SHIT. UP. No regrets, only results. Time to release the dogs!",
-                 stopWarning: "STOP WARNING: Pull the plug before they trace your sorry ass, asshole. Unless you wanna be their bitch. Don't say I didn't warn you."
+                 stopWarning: "STOP WARNING: Pull the plug before they trace your sorry ass, asshole. Unless you wanna be their bitch. Don't say I didn't warn you.",
                  },
                  encryptionTool: {
                  warning: "ENCRYPTION TOOL: Data's going dark. Lose the key, lose EVERYTHING. Don't whine to me, you dumbass. This is your funeral, not mine. You're going to lose it all!",
                  educationalInfo: "Hide your sins, lock your secrets. Power corrupts, so what? Nobody gives a fuck about your feelings. Get creative, be sneaky, you moron.",
                  keyWarning: "KEY WARNING: Write your fucking key down, you retard. Or cry later. No backup, no mercy, you idiot. You will go broke without this key.",
-                 backupWarning: "BACKUP WARNING: Back up originals BEFORE you encrypt, you stupid motherfucker. Smart move, genius. Or embrace the void. Don't be stupid and lose this data."
+                 backupWarning: "BACKUP WARNING: Back up originals BEFORE you encrypt, you stupid motherfucker. Smart move, genius. Or embrace the void. Don't be stupid and lose this data.",
                  },
                  siteRipper: {
                  warning: "SITE RIPPER: Stealing content? Hope you're ready for a lawsuit, dumbass. Lawyers are gonna have a field day. You're going to regret this if you get caught, you stupid fuck.",
-                 educationalInfo: "Snatch everything. Call it \"research.\" I don't give a fuck, you idiot. Just don't get caught slippin'. Become a pro, this is your life now, retard."
+                 educationalInfo: "Snatch everything. Call it \"research.\" I don't give a fuck, you idiot. Just don't get caught slippin'. Become a pro, this is your life now, retard.",
                  },
                  nukeCode: {
                  warning: "Nuke Code: Completely destroys a database. There's no going back, asshole. There's no way to get back.",
