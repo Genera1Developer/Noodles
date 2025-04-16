@@ -1,5 +1,6 @@
 /* WARNING: This tool is for educational purposes ONLY. Misuse can lead to severe legal consequences. */
 /* DISCLAIMER: Noodles Inc. is NOT responsible for any damages caused by this tool. Use at your own risk. Unauthorized use is illegal. */
+/* EXTREME CAUTION: This tool is capable of causing significant harm. Use responsibly or DO NOT USE AT ALL. */
 
 /* Hacker Aesthetics */
 body {
@@ -22,27 +23,35 @@ body::before {
     z-index: 1;
 }
 
-/* Particles */
+/* Particles - Now with extra mayhem */
 .particle {
     position: absolute;
-    width: 5px;
-    height: 5px;
+    width: 7px; /* Slightly larger, more visible */
+    height: 7px; /* Slightly larger, more visible */
     background-color: #800080; /* Purple */
     border-radius: 50%;
-    animation: float 5s infinite linear;
+    animation: chaotic-float 3s infinite linear; /* Faster, more erratic */
 }
 
-@keyframes float {
+@keyframes chaotic-float {
     0% {
-        transform: translateY(0);
+        transform: translate(0, 0) rotate(0deg);
         opacity: 0.5;
     }
+    25% {
+        transform: translate(20px, -10px) rotate(90deg);
+        opacity: 0.8;
+    }
     50% {
-        transform: translateY(-20px);
+        transform: translate(-15px, 15px) rotate(180deg);
         opacity: 1;
     }
+    75% {
+        transform: translate(10px, 5px) rotate(270deg);
+        opacity: 0.7;
+    }
     100% {
-        transform: translateY(0);
+        transform: translate(0, 0) rotate(360deg);
         opacity: 0.5;
     }
 }
@@ -54,14 +63,28 @@ body::before {
 
 .error {
     color: #800080; /* Purple */
+    font-weight: bold;
 }
 
 .warning {
     color: #8b0000; /* Dark Red */
+    text-shadow: 0 0 5px #8b0000; /* Glow for extra emphasis */
 }
 
 .info {
     color: #00008b; /* Dark Blue */
+}
+
+.critical {
+    color: #ff0000; /* Bright Red for critical errors */
+    font-size: 1.2em;
+    text-transform: uppercase;
+    animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+    from { transform: scale(1); }
+    to { transform: scale(1.1); }
 }
 
 /* UI Elements */
@@ -77,6 +100,7 @@ button, input[type="text"], textarea {
 button:hover {
     background-color: #444;
     cursor: pointer;
+    box-shadow: 0 0 10px #800080; /* Hover glow */
 }
 
 /* Layout */
@@ -89,6 +113,7 @@ button:hover {
     width: 200px;
     background-color: #111;
     padding: 10px;
+    border-right: 2px dashed #8b0000; /* Red dashed line */
 }
 
 #content {
@@ -99,6 +124,7 @@ button:hover {
 /* Additional Styling */
 h1, h2, h3 {
     color: #d4ff00;
+    text-shadow: 2px 2px 4px #000000; /* Subtle shadow */
 }
 
 a {
@@ -108,4 +134,28 @@ a {
 
 a:hover {
     text-decoration: underline;
+    color: #800080; /* Hover color change */
+}
+
+/* Easter Egg - Because why the fuck not */
+body:hover::after {
+    content: "HACK THE PLANET!";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 2em;
+    color: #ff00ff;
+    animation: rainbow 3s infinite linear;
+    z-index: 1000;
+}
+
+@keyframes rainbow {
+    0% { color: #ff0000; }
+    14% { color: #ffa500; }
+    28% { color: #ffff00; }
+    42% { color: #008000; }
+    57% { color: #0000ff; }
+    71% { color: #4b0082; }
+    85% { color: #ee82ee; }
+    100% { color: #ff0000; }
 }
