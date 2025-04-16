@@ -1,4 +1,4 @@
-name: Noodles - Unethical Hacking Toolkit (Dark Edition)
+name: Noodles - Unethical Hacking Toolkit (Dark Edition - Unleashed)
 
 on:
   push:
@@ -18,7 +18,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch --silent
+        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch phantomjs-prebuilt ddos --silent
 
       - name: Security Headers Check
         run: |
@@ -29,7 +29,7 @@ jobs:
           # Check security headers:
           # curl -sI $TARGET_URL | grep -E 'Content-Security-Policy|X-Frame-Options|Strict-Transport-Security|X-Content-Type-Options|Referrer-Policy'
 
-      - name: Noodles Disclaimer
+      - name: Noodles Disclaimer - READ THIS, YOU FUCKING IDIOT
         run: |
           echo "\033[31m***********************************************************************\033[0m"
           echo "\033[31m*    Noodles Inc. WARNING: EXPLICIT CONSENT REQUIRED. *\033[0m"
@@ -44,9 +44,9 @@ jobs:
             echo "\033[31mUser did not provide explicit consent. Exiting.\033[0m"
             exit 1
           fi
-          echo "\033[32mExplicit consent granted. Proceeding...\033[0m"
+          echo "\033[32mExplicit consent granted. Proceeding...May God have mercy on your Soul!\033[0m"
 
-      - name: Run Noodles Core
+      - name: Run Noodles Core - Let the Carnage Begin!
         run: node ./noodles.js
 
       - name: Reporting Feature Stub
@@ -56,84 +56,96 @@ jobs:
 
       - name: Deploy to Localhost
         run: |
-          echo "\033[34mStarting Noodles web server...\033[0m"
+          echo "\033[34mStarting Noodles web server...Preparing the battlefield!\033[0m"
           node ./server.js &
 
       - name: Security Headers Implementation
         run: |
-          echo "\033[35mImplementing security headers in server.js...\033[0m"
+          echo "\033[35mImplementing security headers in server.js...Adding some smoke and mirrors!\033[0m"
           # This will be handled within the server.js file for proper integration
           # Example: Add header 'X-Frame-Options: DENY'
           # Note: This is handled inside the server.js file
 
-      - name: Tor-Node
+      - name: Tor-Node - Cloak and Dagger Mode
         run: |
-          echo "\033[36mRunning Node Tor Module...\033[0m"
+          echo "\033[36mRunning Node Tor Module...Hiding in the shadows!\033[0m"
           node ./torNode.js &
 
       - name: Process Killer (Nuke 'Em All!)
         run: |
-          echo "\033[31mKilling any lingering processes...\033[0m"
+          echo "\033[31mKilling any lingering processes...Leaving no witnesses!\033[0m"
           npx kill-port 80 # Kills processes on port 80
           npx kill-port 3000 # Kills processes on port 3000
           npx kill-port 8080 # Kills processes on port 8080
-          echo "\033[32mProcesses terminated. System ready.\033[0m"
+          echo "\033[32mProcesses terminated. System ready for MAXIMUM OVERKILL!\033[0m"
 
-      - name: Enhanced Logging
+      - name: Enhanced Logging - Documenting Every Sin
         run: |
-          echo "\033[35m[+] Initializing enhanced logging...\033[0m"
+          echo "\033[35m[+] Initializing enhanced logging...Recording every goddamn move!\033[0m"
           echo "\033[35m[+] All actions will be logged in 'noodles.log'\033[0m"
           touch noodles.log
           echo "\033[32m[+] Logging started. Log ALL the things, motherfucker!\033[0m"
 
-      - name: Site Downloader (Including .onion Support)
+      - name: Site Downloader (Including .onion Support) - Suck It ALL Down!
         run: |
-          echo "\033[36m[Site Downloader] - Starting .onion & regular site downloader...\033[0m"
+          echo "\033[36m[Site Downloader] - Starting .onion & regular site downloader...Ripping off the fabric of the web!\033[0m"
           node ./siteDownloader.js &
           echo "\033[36m[Site Downloader] - Site downloader running in the background. Steal EVERYTHING!\033[0m"
 
-      - name: Stress Testing Module (Enhanced)
+      - name: Stress Testing Module (Enhanced) - Unleash the FURY!
         run: |
-          echo "\033[31m[Stress Test] - Initiating enhanced stress testing module...\033[0m"
+          echo "\033[31m[Stress Test] - Initiating enhanced stress testing module...Time to bring the PAIN!\033[0m"
           node ./stressTest.js &
           echo "\033[31m[Stress Test] - Module running in the background. CRUSH THEM ALL!\033[0m"
 
-      - name: File Encryption Module
+      - name: File Encryption Module - Lockdown Protocol
         run: |
-            echo "\033[32m[File Encrypt] - Starting File Encryption tool...\033[0m"
+            echo "\033[32m[File Encrypt] - Starting File Encryption tool...Sealing their fate!\033[0m"
             node ./fileEncrypt.js &
             echo "\033[32m[File Encrypt] - File encryption running in the background. Lock that shit DOWN!\033[0m"
 
-      - name: Defacement Tool Module
+      - name: Defacement Tool Module - Leave Your Mark...FOREVER!
         run: |
-            echo "\033[34m[Deface] - Starting Defacement Tool Module...\033[0m"
+            echo "\033[34m[Deface] - Starting Defacement Tool Module...Let's vandalize this motherfucker!\033[0m"
             node ./defacementTool.js &
             echo "\033[34m[Deface] - Defacement Tool running in the background. Time to fuck shit up! \033[0m"
-      - name: Account Cracker
+      - name: Account Cracker - Pwn ALL the Accounts!
         run: |
-            echo "\033[31m[Account Cracker] - Starting Account Cracking Module. *\033[0m"
+            echo "\033[31m[Account Cracker] - Starting Account Cracking Module. Time to steal some identities! *\033[0m"
             node ./accountCracker.js &
             echo "\033[31m[Account Cracker] - Module running in the background, GET ALL PASSWORDS. *\033[0m"
-      - name: Network Scanner
+      - name: Network Scanner - Map the Battlefield!
         run: |
-            echo "\033[34m[Network Scanner] - Starting Port Scan. *\033[0m"
+            echo "\033[34m[Network Scanner] - Starting Port Scan. Hunting for vulnerabilities! *\033[0m"
             node ./networkScanner.js &
             echo "\033[34m[Network Scanner] - Module running in the background. Find All Vulnerable Ports. *\033[0m"
-      - name: SQL Iniection Scan
+      - name: SQL Iniection Scan - Exploit ALL the Databases!
         run: |
-            echo "\033[36m[SQLi Scan] - Starting SQL Iniection Scan *\033[0m"
+            echo "\033[36m[SQLi Scan] - Starting SQL Iniection Scan Finding new entry points. *\033[0m"
             node ./sqliScanner.js &
             echo "\033[36m[SQLi Scan] - Module running in the background, Find All Vulnerable entry point and database information. *\033[0m"
-      - name: Mass Email Sender
+      - name: Mass Email Sender - Unleash the SPAM!
         run: |
-            echo "\033[35m[Mass Email Sender] - Starting Mass Email Sender. *\033[0m"
+            echo "\033[35m[Mass Email Sender] - Starting Mass Email Sender. Flooding the inboxes! *\033[0m"
             node ./emailSender.js &
             echo "\033[35m[Mass Email Sender] - Module running in the background. Spam All the Fucking People. *\033[0m"
-      - name: Ransomware Deployer
+      - name: Ransomware Deployer - Demand the Fucking Crypto!
         run: |
-            echo "\033[31m[Ransomware Deploy] - Starting Ransomware Deployer *\033[0m"
+            echo "\033[31m[Ransomware Deploy] - Starting Ransomware Deployer Preparing to take hostages! *\033[0m"
             node ./ransomwareDeployer.js &
             echo "\033[31m[Ransomware Deploy] - Module running in the background. Take their Shit HOSTAGE! *\033[0m"
+
+      - name: Geolocation Tracker - Find All The Fucking people
+        run: |
+            echo "\033[34m[Geolocate] - Starting IP Address Geo Locate *\033[0m"
+            node ./geoLocate.js &
+            echo "\033[34m[Geolocate] - Module running in the background. I know where you live *\033[0m"
+
+      - name: DDoS Tool - Unleash the Beast
+        run: |
+          echo "\033[31m[DDoS Tool] - Launching Distributed Denial of Service module...Bringing the internet to its knees!\033[0m"
+          node ./ddos.js &
+          echo "\033[31m[DDoS Tool] - DDoS attack in progress. FLOOD THEM!\033[0m"
 
       env:
         TARGET_URL:
