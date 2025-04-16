@@ -43,9 +43,18 @@ This section provides access to the Noodles toolkit. Each tool includes detailed
 <script>
 async function backupSite() {
  let url = document.getElementById('defacement-url').value;
+ if (!url) {
+  console.error("URL cannot be empty.");
+  alert("URL cannot be empty.");
+  return;
+ }
+
  console.log("Backing up site:", url);
  try {
   const response = await fetch(url, { mode: 'cors' });
+  if (!response.ok) {
+  throw new Error(`HTTP error! status: ${response.status}`);
+  }
   const html = await response.text();
   download("backup.html", html);
   console.log("Site backed up.");
@@ -69,6 +78,13 @@ function download(filename, text) {
 function previewDefacement() {
  let url = document.getElementById('defacement-url').value;
  let code = document.getElementById('defacement-code').value;
+
+ if (!url) {
+  console.error("URL cannot be empty.");
+  alert("URL cannot be empty.");
+  return;
+ }
+
  let previewFrame = document.getElementById('preview-iframe');
 
  previewFrame.style.display = 'block';
@@ -84,6 +100,13 @@ function previewDefacement() {
 async function defaceSite() {
  let url = document.getElementById('defacement-url').value;
  let code = document.getElementById('defacement-code').value;
+
+ if (!url) {
+  console.error("URL cannot be empty.");
+  alert("URL cannot be empty.");
+  return;
+ }
+
  console.log("Defacing site:", url);
 
  try {
@@ -153,6 +176,13 @@ async function startDDoS() {
  let url = document.getElementById('ddos-url').value;
  let threads = parseInt(document.getElementById('ddos-threads').value) || 100;
  let duration = parseInt(document.getElementById('ddos-time').value) || 60;
+
+ if (!url) {
+  console.error("URL cannot be empty.");
+  alert("URL cannot be empty.");
+  isDDoSRunning = false;
+  return;
+ }
 
  console.log(`Starting DDoS attack on: ${url} with ${threads} threads for ${duration} seconds`);
 
@@ -257,6 +287,13 @@ function updateDDOSTimer() {
 async function encryptFile() {
  let file = document.getElementById('encryption-file').files[0];
  let key = document.getElementById('encryption-key').value;
+
+ if (!file || !key) {
+  console.error("File and Key cannot be empty.");
+  alert("File and Key cannot be empty.");
+  return;
+ }
+
  console.log("Encrypting file:", file.name, "with key:", key);
  try {
   const reader = new FileReader();
@@ -277,6 +314,13 @@ async function encryptFile() {
 async function decryptFile() {
  let file = document.getElementById('encryption-file').files[0];
  let key = document.getElementById('encryption-key').value;
+
+ if (!file || !key) {
+  console.error("File and Key cannot be empty.");
+  alert("File and Key cannot be empty.");
+  return;
+ }
+
  console.log("Decrypting file:", file.name, "with key:", key);
  try {
   const reader = new FileReader();
@@ -494,6 +538,13 @@ button:hover {
 <script>
 async function testTorConnection() {
  let url = document.getElementById('tor-url').value;
+
+ if (!url) {
+  console.error("URL cannot be empty.");
+  alert("URL cannot be empty.");
+  return;
+ }
+
  console.log("Testing TOR connection to:", url);
  
  const torProxy = 'socks5://127.0.0.1:9050'; // Default TOR proxy
@@ -530,6 +581,12 @@ async function startBruteforce() {
  let usernames = document.getElementById('bruteforce-usernames').value.split('\n');
  let passwords = document.getElementById('bruteforce-passwords').value.split('\n');
  let statusDiv = document.getElementById('bruteforce-status');
+
+ if (!url || usernames.length === 0 || passwords.length === 0) {
+  console.error("URL, usernames, and passwords cannot be empty.");
+  alert("URL, usernames, and passwords cannot be empty.");
+  return;
+ }
  
  console.log("Starting bruteforce attack on:", url);
  statusDiv.innerText = "Status: Running...";
@@ -580,6 +637,12 @@ function generatePhishingPage() {
  let targetUrl = document.getElementById('phishing-url').value;
  let redirectUrl = document.getElementById('phishing-redirect').value;
  let phishingCodeDiv = document.getElementById('phishing-code');
+
+ if (!targetUrl || !redirectUrl) {
+  console.error("Target URL and Redirect URL cannot be empty.");
+  alert("Target URL and Redirect URL cannot be empty.");
+  return;
+ }
  
  console.log("Generating phishing page for:", targetUrl);
  
