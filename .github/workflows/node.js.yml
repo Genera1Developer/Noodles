@@ -18,7 +18,7 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies - Prepare for War!
-        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch phantomjs-prebuilt ddos node-snackbar crypto-js request child_process fs promises --silent
+        run: npm install chalk axios tor-request node-forge jquery jsdom express evilscan slowloris file-saver undetected-chromedriver archiver kill-port node-fetch phantomjs-prebuilt ddos node-snackbar crypto-js request child_process fs promises socks-proxy-agent --silent
 
       - name: Noodles Disclaimer - READ THIS, YOU FUCKING IDIOT
         run: |
