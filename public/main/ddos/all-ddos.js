@@ -28,6 +28,9 @@
  const container = document.createElement("div");
  container.style.width = "80%";
  container.style.margin = "20px auto";
+ container.style.borderRadius = "10px"; // Rounded corners
+ container.style.overflow = "hidden"; // Hide overflow for rounded corners
+ container.style.boxShadow = "0 0 20px rgba(0, 128, 0, 0.5)"; // Subtle glow
  document.body.appendChild(container);
 
  // Section header styling
@@ -37,6 +40,9 @@
   header.style.color = "#800080"; // Purple
   header.style.borderBottom = "1px solid #008000";
   header.style.paddingBottom = "5px";
+  header.style.textAlign = "center"; // Center the text
+  header.style.fontSize = "2em"; // Larger font
+  header.style.textShadow = "2px 2px 4px rgba(0, 0, 0, 0.5)"; // Text shadow for depth
   return header;
  };
 
@@ -50,11 +56,15 @@
  // DEFACE TOOL SECTION
  // *********************************************************************************************************
  const defaceSection = document.createElement("div");
+ defaceSection.style.padding = "20px"; // Add padding
+ defaceSection.style.backgroundColor = "#0a0a0a"; // Darker background
  container.appendChild(createSectionHeader("Defacement Tool"));
  container.appendChild(defaceSection);
 
  const defaceInfo = document.createElement("p");
- defaceInfo.textContent = "Use this tool to test website security by injecting custom HTML/CSS/JS. Backup and preview functionalities included.";
+ defaceInfo.textContent = "Use this tool to test website security by injecting custom HTML/CSS/JS. Backup and preview functionalities included. Remember, it's for educational purposes only. Don't be a dumbass.";
+ defaceInfo.style.fontSize = "1.1em"; // Slightly larger
+ defaceInfo.style.marginBottom = "15px"; // Add margin
  defaceSection.appendChild(defaceInfo);
 
  const targetURLDeface = prompt("%cEnter target URL to deface:", "https://example.com", "color: #008000");
@@ -62,12 +72,28 @@
  backupButton.textContent = "Backup Site";
  backupButton.style.backgroundColor = "#00008B"; // Dark blue
  backupButton.style.color = "#008000";
+ backupButton.style.padding = "10px 15px"; // Button padding
+ backupButton.style.margin = "5px"; // Button margin
+ backupButton.style.border = "none"; // Remove border
+ backupButton.style.borderRadius = "5px"; // Rounded corners
+ backupButton.style.cursor = "pointer"; // Pointer cursor on hover
+ backupButton.style.transition = "background-color 0.3s ease"; // Smooth transition
+ backupButton.onmouseover = () => backupButton.style.backgroundColor = "#000060"; // Darken on hover
+ backupButton.onmouseout = () => backupButton.style.backgroundColor = "#00008B"; // Restore color
  defaceSection.appendChild(backupButton);
 
  const restoreButton = document.createElement("button");
  restoreButton.textContent = "Restore Site";
  restoreButton.style.backgroundColor = "#00008B"; // Dark blue
  restoreButton.style.color = "#008000";
+ restoreButton.style.padding = "10px 15px"; // Button padding
+ restoreButton.style.margin = "5px"; // Button margin
+ restoreButton.style.border = "none"; // Remove border
+ restoreButton.style.borderRadius = "5px"; // Rounded corners
+ restoreButton.style.cursor = "pointer"; // Pointer cursor on hover
+ restoreButton.style.transition = "background-color 0.3s ease"; // Smooth transition
+ restoreButton.onmouseover = () => restoreButton.style.backgroundColor = "#000060"; // Darken on hover
+ restoreButton.onmouseout = () => restoreButton.style.backgroundColor = "#00008B"; // Restore color
  defaceSection.appendChild(restoreButton);
 
  let originalSiteContent = null; // Store original site content here
@@ -78,18 +104,38 @@
  customCodeTextarea.style.height = "200px";
  customCodeTextarea.style.backgroundColor = "#111";
  customCodeTextarea.style.color = "#008000";
+ customCodeTextarea.style.padding = "10px"; // Padding
+ customCodeTextarea.style.borderRadius = "5px"; // Rounded corners
+ customCodeTextarea.style.border = "1px solid #008000"; // Border
+ customCodeTextarea.style.boxShadow = "0 0 5px rgba(0, 128, 0, 0.3)"; // Subtle shadow
  defaceSection.appendChild(customCodeTextarea);
 
  const previewButton = document.createElement("button");
  previewButton.textContent = "Preview";
  previewButton.style.backgroundColor = "#00008B";
  previewButton.style.color = "#008000";
+ previewButton.style.padding = "10px 15px"; // Button padding
+ previewButton.style.margin = "5px"; // Button margin
+ previewButton.style.border = "none"; // Remove border
+ previewButton.style.borderRadius = "5px"; // Rounded corners
+ previewButton.style.cursor = "pointer"; // Pointer cursor on hover
+ previewButton.style.transition = "background-color 0.3s ease"; // Smooth transition
+ previewButton.onmouseover = () => previewButton.style.backgroundColor = "#000060"; // Darken on hover
+ previewButton.onmouseout = () => previewButton.style.backgroundColor = "#00008B"; // Restore color
  defaceSection.appendChild(previewButton);
 
  const defaceButton = document.createElement("button");
  defaceButton.textContent = "DEFACE SITE";
  defaceButton.style.backgroundColor = "#8B0000"; // Dark red
  defaceButton.style.color = "#008000";
+ defaceButton.style.padding = "10px 15px"; // Button padding
+ defaceButton.style.margin = "5px"; // Button margin
+ defaceButton.style.border = "none"; // Remove border
+ defaceButton.style.borderRadius = "5px"; // Rounded corners
+ defaceButton.style.cursor = "pointer"; // Pointer cursor on hover
+ defaceButton.style.transition = "background-color 0.3s ease"; // Smooth transition
+ defaceButton.onmouseover = () => defaceButton.style.backgroundColor = "#600000"; // Darken on hover
+ defaceButton.onmouseout = () => defaceButton.style.backgroundColor = "#8B0000"; // Restore color
  defaceSection.appendChild(defaceButton);
 
  // Function to backup the site (more robust)
@@ -197,32 +243,67 @@
  // DDOS TOOL SECTION
  // *********************************************************************************************************
  const ddosSection = document.createElement("div");
+ ddosSection.style.padding = "20px"; // Add padding
+ ddosSection.style.backgroundColor = "#0a0a0a"; // Darker background
  container.appendChild(createSectionHeader("DDoS Tool"));
  container.appendChild(ddosSection);
 
  const ddosInfo = document.createElement("p");
- ddosInfo.textContent = "Stress test a website with multiple threads. Use responsibly and with explicit permission.";
+ ddosInfo.textContent = "Stress test a website with multiple threads. Use responsibly and with explicit permission. Remember, it's for educational purposes only. Don't be a dumbass.";
+ ddosInfo.style.fontSize = "1.1em"; // Slightly larger
+ ddosInfo.style.marginBottom = "15px"; // Add margin
  ddosSection.appendChild(ddosInfo);
 
  const targetURLDDoS = prompt("%cEnter target URL for DDoS:", "https://example.com", "color: #008000");
- const threadsDDoS = parseInt(prompt("%cEnter number of threads (more = faster takedown, but you'll get caught faster, dumbass):", "500", "color: #008000"));
- const durationDDoS = parseInt(prompt("%cEnter attack duration in seconds:", "60", "color: #008000"));
+
+ // Input validation for threadsDDoS
+ let threadsDDoS = parseInt(prompt("%cEnter number of threads (more = faster takedown, but you'll get caught faster, dumbass):", "500", "color: #008000"));
+ if (isNaN(threadsDDoS) || threadsDDoS <= 0) {
+  alert("Invalid number of threads. Using default value of 500.");
+  threadsDDoS = 500;
+ }
+
+ // Input validation for durationDDoS
+ let durationDDoS = parseInt(prompt("%cEnter attack duration in seconds:", "60", "color: #008000"));
+ if (isNaN(durationDDoS) || durationDDoS <= 0) {
+  alert("Invalid duration. Using default value of 60 seconds.");
+  durationDDoS = 60;
+ }
+
  const proxyListURLDDoS = prompt("%cEnter URL to proxy list (HTTP/S only, one proxy per line):", "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt", "color: #008000"); // Using a real proxy list
 
  const startButton = document.createElement("button");
  startButton.textContent = "Start DDoS";
  startButton.style.backgroundColor = "#8B0000";
  startButton.style.color = "#008000";
+ startButton.style.padding = "10px 15px"; // Button padding
+ startButton.style.margin = "5px"; // Button margin
+ startButton.style.border = "none"; // Remove border
+ startButton.style.borderRadius = "5px"; // Rounded corners
+ startButton.style.cursor = "pointer"; // Pointer cursor on hover
+ startButton.style.transition = "background-color 0.3s ease"; // Smooth transition
+ startButton.onmouseover = () => startButton.style.backgroundColor = "#600000"; // Darken on hover
+ startButton.onmouseout = () => startButton.style.backgroundColor = "#8B0000"; // Restore color
  ddosSection.appendChild(startButton);
 
  const stopButton = document.createElement("button");
  stopButton.textContent = "Stop DDoS";
  stopButton.style.backgroundColor = "#00008B";
  stopButton.style.color = "#008000";
+ stopButton.style.padding = "10px 15px"; // Button padding
+ stopButton.style.margin = "5px"; // Button margin
+ stopButton.style.border = "none"; // Remove border
+ stopButton.style.borderRadius = "5px"; // Rounded corners
+ stopButton.style.cursor = "pointer"; // Pointer cursor on hover
+ stopButton.style.transition = "background-color 0.3s ease"; // Smooth transition
+ stopButton.onmouseover = () => stopButton.style.backgroundColor = "#000060"; // Darken on hover
+ stopButton.onmouseout = () => stopButton.style.backgroundColor = "#00008B"; // Restore color
  ddosSection.appendChild(stopButton);
 
  const timerDisplay = document.createElement("div");
  timerDisplay.textContent = "Time Running: 0 seconds";
+ timerDisplay.style.fontSize = "1.2em"; // Slightly larger
+ timerDisplay.style.marginTop = "10px"; // Add margin
  ddosSection.appendChild(timerDisplay);
 
  let ddosRunning = false;
@@ -327,26 +408,46 @@
  // FILE ENCRYPTION TOOL SECTION
  // *********************************************************************************************************
  const encryptSection = document.createElement("div");
+ encryptSection.style.padding = "20px"; // Add padding
+ encryptSection.style.backgroundColor = "#0a0a0a"; // Darker background
  container.appendChild(createSectionHeader("File Encryption Tool"));
  container.appendChild(encryptSection);
 
  const encryptInfo = document.createElement("p");
- encryptInfo.textContent = "Encrypt files using AES encryption. Secure key management and backup provided.";
+ encryptInfo.textContent = "Encrypt files using AES encryption. Secure key management and backup provided. Remember, it's for educational purposes only. Don't be a dumbass.";
+ encryptInfo.style.fontSize = "1.1em"; // Slightly larger
+ encryptInfo.style.marginBottom = "15px"; // Add margin
  encryptSection.appendChild(encryptInfo);
 
  const fileInput = document.createElement("input");
  fileInput.type = "file";
+ fileInput.style.marginBottom = "10px"; // Add margin
  encryptSection.appendChild(fileInput);
 
  const passwordInput = document.createElement("input");
  passwordInput.type = "password";
  passwordInput.placeholder = "Enter encryption password";
+ passwordInput.style.width = "100%"; // Occupy full width
+ passwordInput.style.padding = "10px"; // Padding
+ passwordInput.style.borderRadius = "5px"; // Rounded corners
+ passwordInput.style.border = "1px solid #008000"; // Border
+ passwordInput.style.backgroundColor = "#111"; // Dark background
+ passwordInput.style.color = "#008000"; // Green text
+ passwordInput.style.boxShadow = "0 0 5px rgba(0, 128, 0, 0.3)"; // Subtle shadow
  encryptSection.appendChild(passwordInput);
 
  const encryptButton = document.createElement("button");
  encryptButton.textContent = "Encrypt File";
  encryptButton.style.backgroundColor = "#8B0000";
  encryptButton.style.color = "#008000";
+ encryptButton.style.padding = "10px 15px"; // Button padding
+ encryptButton.style.margin = "5px"; // Button margin
+ encryptButton.style.border = "none"; // Remove border
+ encryptButton.style.borderRadius = "5px"; // Rounded corners
+ encryptButton.style.cursor = "pointer"; // Pointer cursor on hover
+ encryptButton.style.transition = "background-color 0.3s ease"; // Smooth transition
+ encryptButton.onmouseover = () => encryptButton.style.backgroundColor = "#600000"; // Darken on hover
+ encryptButton.onmouseout = () => encryptButton.style.backgroundColor = "#8B0000"; // Restore color
  encryptSection.appendChild(encryptButton);
 
  // Function to encrypt file (AES encryption)
@@ -503,11 +604,15 @@
  // Reporting Feature Section
  // *********************************************************************************************************
  const reportSection = document.createElement("div");
+ reportSection.style.padding = "20px"; // Add padding
+ reportSection.style.backgroundColor = "#0a0a0a"; // Darker background
  container.appendChild(createSectionHeader("Reporting Tool"));
  container.appendChild(reportSection);
 
  const reportInfo = document.createElement("p");
- reportInfo.textContent = "Document vulnerabilities and findings for later analysis. This helps track your exploits.";
+ reportInfo.textContent = "Document vulnerabilities and findings for later analysis. This helps track your exploits. Remember, it's for educational purposes only. Don't be a dumbass.";
+ reportInfo.style.fontSize = "1.1em"; // Slightly larger
+ reportInfo.style.marginBottom = "15px"; // Add margin
  reportSection.appendChild(reportInfo);
 
  const reportTextarea = document.createElement("textarea");
@@ -516,12 +621,24 @@
  reportTextarea.style.height = "200px";
  reportTextarea.style.backgroundColor = "#111";
  reportTextarea.style.color = "#008000";
+ reportTextarea.style.padding = "10px"; // Padding
+ reportTextarea.style.borderRadius = "5px"; // Rounded corners
+ reportTextarea.style.border = "1px solid #008000"; // Border
+ reportTextarea.style.boxShadow = "0 0 5px rgba(0, 128, 0, 0.3)"; // Subtle shadow
  reportSection.appendChild(reportTextarea);
 
  const saveReportButton = document.createElement("button");
  saveReportButton.textContent = "Save Report";
  saveReportButton.style.backgroundColor = "#00008B";
  saveReportButton.style.color = "#008000";
+ saveReportButton.style.padding = "10px 15px"; // Button padding
+ saveReportButton.style.margin = "5px"; // Button margin
+ saveReportButton.style.border = "none"; // Remove border
+ saveReportButton.style.borderRadius = "5px"; // Rounded corners
+ saveReportButton.style.cursor = "pointer"; // Pointer cursor on hover
+ saveReportButton.style.transition = "background-color 0.3s ease"; // Smooth transition
+ saveReportButton.onmouseover = () => saveReportButton.style.backgroundColor = "#000060"; // Darken on hover
+ saveReportButton.onmouseout = () => saveReportButton.style.backgroundColor = "#00008B"; // Restore color
  reportSection.appendChild(saveReportButton);
 
  // Function to save the report (basic implementation)
