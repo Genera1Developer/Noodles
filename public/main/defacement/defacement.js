@@ -584,7 +584,6 @@ function autoReload() {
 }
 
 // Run autoReload
-autoReload();
 
 // Function to add Navbar links
 function addNavbarLinks() {
@@ -802,6 +801,3 @@ function isValidURL(str) {
         return false;
     }
 }
-
-// Added Navbar Links
-addNavbarLinks();
