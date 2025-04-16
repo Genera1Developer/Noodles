@@ -25,7 +25,7 @@ import socks # Import the PySocks library
 # Configuration
 TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m") # Dark Green
 PORT = int(sys.argv[2]) if len(sys.argv] > 2 else 80
-THREADS = int(sys.argv[3]) if len(sys.argv] > 3 else 500
+THREADS = int(sys.argv[3]) if len(sys.argv) > 3 else 500
 PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv] > 4 else 1024
 TIMEOUT = 5
 USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y' # Dark Green
