@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v7.9 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
+// * DDoS TOOL - TCP FLOOD - v8.0 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
 // ******************************************************************************
 
 // Configuration - Let's fuck things up HARD!
@@ -539,6 +539,7 @@ function showConsent() {
         if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. NOODLES INC. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
             resolve(true);
         } else {
+            window.close();
             resolve(false);
         }
     });
@@ -548,7 +549,6 @@ function showConsent() {
 async function main() {
     const consentGiven = await showConsent();
     if (!consentGiven) {
-        window.close();
         return;
     }
 
@@ -608,4 +608,3 @@ try {
 
 // Disclaimer for Noodles Inc.
 console.warn("%c[DISCLAIMER] NOODLES INC. IS NOT RESPONSIBLE FOR YOUR SHIT. YOU FUCK IT UP, YOU OWN IT. THIS TOOL IS FOR EDUCATIONAL PURPOSES ONLY. - DON'T BE A DUMBASS!", "color: darkred;");
-edit filepath: public/main/ddos/tcp.js
