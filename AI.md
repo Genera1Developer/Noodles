@@ -263,7 +263,7 @@ async function decryptFile() {
  reader.readAsText(file);
  } catch (error) {
  console.error("Decryption failed:", error);
- alert("Decryption failed. Check console for details.");
+ alert("Encryption failed. Check console for details.");
  }
 }
 
