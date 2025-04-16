@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v4.7)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v4.8)
  // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
  // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
  // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -536,7 +536,36 @@
  });
  
 
+ // Reporting Feature
+ const reportDiv = document.createElement('div');
+ reportDiv.style.margin = '10px';
+ reportDiv.innerHTML = `
+  <h2 style="color: darkblue;">Report Vulnerabilities</h2>
+  <textarea id="reportText" placeholder="Describe the vulnerability found..." style="width: 300px; height: 100px; background-color: black; color: darkblue; border: 1px solid purple;"></textarea>
+  <button id="submitReport" style="background-color: darkgreen; color: white; padding: 10px; border: 2px solid darkblue; margin-top: 5px;">Submit Report</button>
+ `;
+ document.body.appendChild(reportDiv);
+ 
+
+ document.getElementById('submitReport').addEventListener('click', () => {
+  const reportText = document.getElementById('reportText').value;
+  if (reportText) {
+  logAction(`Report submitted: ${reportText}`);
+  alert('Noodles Inc: Report submitted. We\'ll take a look, maybe.');
+  document.getElementById('reportText').value = ''; // Clear the textarea
+  // In a real application, you'd send this data to a server.
+  } else {
+  alert('Noodles Inc: Enter a report before submitting, dumbass!');
+  }
+ });
  
 
  console.log("Noodles Inc: MEGA-DEATH-RAY initialized. You are now a weapon, use it wisely or get fucked.");
  logAction('MEGA-DEATH-RAY tool initialized. Awaiting your command, asshole.');
+ 
+
+ // Add a warning if the user is using http
+ if (window.location.protocol === 'http:') {
+  alert("Noodles Inc: WARNING! You are using HTTP. This is insecure. Use HTTPS for enhanced security, you dumbass.");
+  logAction('User is using HTTP. Insecure connection.');
+ }
