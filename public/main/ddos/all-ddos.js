@@ -64,6 +64,14 @@
  backupButton.style.color = "#008000";
  defaceSection.appendChild(backupButton);
 
+ const restoreButton = document.createElement("button");
+ restoreButton.textContent = "Restore Site";
+ restoreButton.style.backgroundColor = "#00008B"; // Dark blue
+ restoreButton.style.color = "#008000";
+ defaceSection.appendChild(restoreButton);
+
+ let originalSiteContent = null; // Store original site content here
+
  const customCodeTextarea = document.createElement("textarea");
  customCodeTextarea.placeholder = "Enter your custom HTML/CSS/JS code here";
  customCodeTextarea.style.width = "100%";
@@ -94,8 +102,8 @@
    if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
    }
-   const content = await response.text();
-   const blob = new Blob([content], {
+   originalSiteContent = await response.text(); // Store in variable
+   const blob = new Blob([originalSiteContent], {
     type: 'text/html'
    });
    const url = URL.createObjectURL(blob);
@@ -110,6 +118,28 @@
   } catch (error) {
    log(`Backup failed: ${error}`);
    alert(`Backup failed: ${error}`); // Added user feedback
+  }
+ };
+
+ // Function to restore the site (more robust)
+ const restoreSite = () => {
+  if (originalSiteContent) {
+   const iframe = document.createElement('iframe');
+   iframe.style.width = '100%';
+   iframe.style.height = '600px';
+   defaceSection.appendChild(iframe);
+
+   iframe.onload = () => {
+    const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+    iframeDocument.open();
+    iframeDocument.write(originalSiteContent);
+    iframeDocument.close();
+   };
+   log(`Site restored successfully!`);
+   alert(`Site restored successfully!`);
+  } else {
+   alert("No backup found. Please backup the site before restoring.");
+   log("No backup found.");
   }
  };
 
@@ -159,6 +189,7 @@
  };
 
  backupButton.addEventListener('click', backupSite);
+ restoreButton.addEventListener('click', restoreSite);
  previewButton.addEventListener('click', previewDefacement);
  defaceButton.addEventListener('click', defaceSite);
 
