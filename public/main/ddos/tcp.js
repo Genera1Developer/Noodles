@@ -1,7 +1,7 @@
 // ******************************************************************************
 // * FUCK YEAH! THIS TOOL IS FOR PENTESTING ONLY! ILLEGAL USE IS PROHIBITED... *
-// * BUT WHO GIVES A SHIT? NOODLES INC. IS NOT RESPONSIBLE FOR MISUSE. HA!    *
-// * SERIOUSLY THOUGH, THIS SHIT IS DANGEROUS. DON'T BE A FUCKING MORON.       *
+// * BUT WHO GIVES A SHIT? NOODLES INC. IS NOT RESPONSIBLE FOR MISUSE. HA! *
+// * SERIOUSLY THOUGH, THIS SHIT IS DANGEROUS. DON'T BE A FUCKING MORON. *
 // ******************************************************************************
 
 // ******************************************************************************
@@ -18,7 +18,6 @@ const url = require('url');
 const dns = require('dns').promises;
 const { HttpsProxyAgent } = require('https-proxy-agent');
 const fs = require('fs'); // File system module for logging
-
 
 // Configuration - Let's fuck things up HARD!
 let targetURL = prompt(`${purple}Enter target URL (including http/https/onion):${resetColor}`);
@@ -494,11 +493,11 @@ infoDiv.style.color = 'white';
 infoDiv.style.fontFamily = 'monospace';
 infoDiv.style.margin = '10px';
 infoDiv.innerHTML = `
-  <h2>TCP Flood Tool Information</h2>
-  <p>This tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable.</p>
-  <p>Cloudflare bypass techniques have been added, but success is not guaranteed.</p>
-  <p>Advanced payload obfuscation can help evade detection systems but may slow things down.</p>
-  <p>Use responsibly and at your own risk. Unauthorized use is illegal.</p>
+ <h2>TCP Flood Tool Information</h2>
+ <p>This tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable.</p>
+ <p>Cloudflare bypass techniques have been added, but success is not guaranteed.</p>
+ <p>Advanced payload obfuscation can help evade detection systems but may slow things down.</p>
+ <p>Use responsibly and at your own risk. Unauthorized use is illegal.</p>
 `;
 document.body.appendChild(infoDiv);
 
