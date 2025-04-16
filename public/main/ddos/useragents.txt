@@ -89,6 +89,7 @@ user_agents.extend([
     "PWNED-Browser/4.2.0",
     "TorHammer/0.1"
 ])
+#Removed broken user agents
 TOR_RESTART_INTERVAL = 60  # seconds
 SOCKS_PORT = 9050  # Default Tor SOCKS port
 USER_AGENT_FILE = "public/main/ddos/useragents.txt"  # Explicit path
