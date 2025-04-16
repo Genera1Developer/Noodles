@@ -17,6 +17,7 @@ import requests
 import ssl
 import logging
 import socks  # SOCKS proxy support
+import concurrent.futures
 
 # Configure logging
 logging.basicConfig(filename='attack_log.txt', level=logging.INFO,
@@ -211,4 +212,7 @@ def main():
 
 # Entry point
 if __name__ == "__main__":
+    # Initial disclaimer popup (browser-side JS)
+    print("<script>if(!confirm('WARNING: This tool is for educational purposes only. Unauthorized use is illegal. Noodles Inc. is NOT responsible for your actions. Proceed with caution!')){window.close();}</script>")
+
     main()
