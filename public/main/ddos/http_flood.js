@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v6.0)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.0)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -64,7 +64,7 @@ class Particle {
     draw() {
         particleCtx.fillStyle = 'purple';
         particleCtx.beginPath();
-        this.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        particleCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         particleCtx.closePath();
         particleCtx.fill();
     }
@@ -95,6 +95,7 @@ function animate() {
 }
 animate();
 
+// UI elements
 const startButton = document.createElement('button');
 startButton.textContent = 'LAUNCH MEGA-DEATH-RAY';
 startButton.style.backgroundColor = 'darkred';
@@ -462,9 +463,6 @@ if (window.location.protocol === 'http:') {
     alert("Noodles Inc: WARNING! You are using HTTP. This is insecure. Use HTTPS for enhanced security, you dumbass.");
     logAction('User is using HTTP. Insecure connection.');
 }
-
-// CORS Anywhere Proxy Setup
-const useCORSProxy = confirm("Noodles Inc: Do you want to use a CORS Anywhere proxy? This may bypass some restrictions but is slower. Click OK to use, Cancel to skip.");
 
 // Fix: Issue with the circle function
 Particle.prototype.draw = function() {
