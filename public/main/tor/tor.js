@@ -64,7 +64,6 @@ class Tor {
         this.startStatUpdates();
         this.serverIP = null;
         this.serverResponse = null;
-        this.initServerInfo();
         this.errorThreshold = 50;
         this.errorCount = 0;
         this.rateLimitDelay = 2000;
@@ -129,6 +128,8 @@ class Tor {
         // Add start and stop time for the DDoS attack
         this.ddosAttackStartTime = null;
         this.ddosAttackEndTime = null;
+          // Tor gateway monitoring interval (1 minute)
+          this.gatewayCheckInterval = 60000;
     }
     // Noodles Initialization and Global Consent
     async initializeNoodles() {
@@ -137,7 +138,6 @@ class Tor {
             this.isNoodlesInitialized = true;
             this.logToConsole("Noodles initialized with user consent.");
             this.displayDisclaimer();
-            this.startGatewayMonitoring();
             // Additional setup actions here
             this.setupDDoS();
             this.setupEncryption();
@@ -599,6 +599,15 @@ class Tor {
         this.torGateways = new TorGateways(this);
         this.logToConsole("Tor Gateways initialized.");
     }
+        // Method to start Tor gateway monitoring
+        startTorGatewayMonitoring() {
+            // Start monitoring immediately and then at every interval
+            this.torGateways.checkGateways();
+            setInterval(() => {
+                this.torGateways.checkGateways();
+            }, this.gatewayCheckInterval);
+            this.logToConsole("Tor gateway monitoring started.");
+        }
 }
 // TorGateways class to handle gateway management
 class TorGateways {
@@ -648,6 +657,7 @@ class TorGateways {
         this.gatewayCheckEnabled = true;
         this.isCheckingGateways = false;
         this.gatewayCheckTimeout = 5000;
+         // Initialize Tor gateway monitoring on startup
         this.startGatewayMonitoring();
     }
     // Method to start gateway monitoring
