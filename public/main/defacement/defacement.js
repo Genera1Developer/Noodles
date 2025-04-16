@@ -405,8 +405,8 @@ function createParticle() {
   particleContainer.appendChild(particle);
 
   particle.addEventListener('animationiteration', () => {
-    particle.style.top = `${Math.random() * 100}%`;
-    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.top = `${Math.random() * 100}%;`;
+    particle.style.left = `${Math.random() * 100}%;`;
     particle.style.opacity = `${Math.random()}`;
   });
 }
