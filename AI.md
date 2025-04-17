@@ -371,6 +371,7 @@
  <script>
   let originalFileContent = null;
   let originalFileName = null;
+  let encryptionMethod = 'AES-256-GCM'; // Define encryption method
  
 
   async function encryptFile() {
@@ -391,9 +392,39 @@
     const reader = new FileReader();
     reader.onload = async function(e) {
      originalFileContent = e.target.result;
-     const fileContent = e.target.result;
-     const encryptedContent = await encrypt(fileContent, key);
-     download(file.name + ".enc", encryptedContent);
+     const fileContent = new TextEncoder().encode(e.target.result); // Encode file content to Uint8Array
+ 
+
+     // Generate Initialization Vector (IV)
+     const iv = window.crypto.getRandomValues(new Uint8Array(12));
+ 
+
+     // Derive key using PBKDF2
+     const salt = window.crypto.getRandomValues(new Uint8Array(16));
+     const derivedKey = await deriveKey(key, salt);
+ 
+
+     // Encrypt the file content
+     const encryptedContent = await encrypt(fileContent, derivedKey, iv);
+ 
+
+     // Concatenate IV, Salt, and encrypted data
+     const combinedData = new Uint8Array(iv.byteLength + salt.byteLength + encryptedContent.byteLength);
+     combinedData.set(iv, 0);
+     combinedData.set(salt, iv.byteLength);
+     combinedData.set(new Uint8Array(encryptedContent), iv.byteLength + salt.byteLength);
+ 
+
+     // Convert combined data to Blob
+     const encryptedBlob = new Blob([combinedData], {
+      type: 'application/octet-stream'
+     });
+ 
+
+     // Download the encrypted file
+     download(file.name + ".enc", await blobToBase64(encryptedBlob));
+ 
+
      console.log("File encrypted.");
      alert("File encrypted successfully!");
     };
@@ -422,48 +453,111 @@
     const reader = new FileReader();
     reader.onload = async function(e) {
      const fileContent = e.target.result;
-     const decryptedContent = await decrypt(fileContent, key);
-     download(file.name.replace(".enc", ""), decryptedContent);
+     const combinedData = base64ToArrayBuffer(fileContent);
+ 
+
+     // Extract IV and Salt from the beginning of the file
+     const iv = new Uint8Array(combinedData.slice(0, 12));
+     const salt = new Uint8Array(combinedData.slice(12, 28));
+     const encryptedContent = combinedData.slice(28);
+ 
+
+     // Derive key using the same PBKDF2 parameters
+     const derivedKey = await deriveKey(key, salt);
+ 
+
+     // Decrypt the file content
+     const decryptedContent = await decrypt(encryptedContent, derivedKey, iv);
+ 
+
+     // Convert the decrypted content back to string
+     const decryptedText = new TextDecoder().decode(new Uint8Array(decryptedContent));
+ 
+
+     download(file.name.replace(".enc", ""), decryptedText);
      console.log("File decrypted.");
      alert("File decrypted successfully!");
     };
-    reader.readAsText(file);
+    reader.readAsDataURL(file);
    } catch (error) {
-    console.error("Encryption failed:", error);
-    alert("Encryption failed. Check console for details.");
+    console.error("Decryption failed:", error);
+    alert("Decryption failed. Check console for details.");
    }
   }
  
 
-  async function encrypt(text, key) {
-   const keyHash = await sha256(key);
-   let result = '';
-   for (let i = 0; i < text.length; i++) {
-    const charCode = text.charCodeAt(i) ^ keyHash.charCodeAt(i % keyHash.length);
-    result += String.fromCharCode(charCode);
-   }
-   return result;
+  // Function to derive a key from password using PBKDF2
+  async function deriveKey(password, salt) {
+   const enc = new TextEncoder();
+   const keyMaterial = await window.crypto.subtle.importKey(
+    "raw",
+    enc.encode(password), {
+     name: "PBKDF2"
+    },
+    false, ["deriveKey"]
+   );
+ 
+
+   return window.crypto.subtle.deriveKey({
+     name: "PBKDF2",
+     salt: salt,
+     iterations: 10000,
+     hash: "SHA-256"
+    },
+    keyMaterial, {
+     name: "AES-GCM",
+     length: 256
+    },
+    true, ["encrypt", "decrypt"]
+   );
   }
  
 
-  async function decrypt(text, key) {
-   const keyHash = await sha256(key);
-   let result = '';
-   for (let i = 0; i < text.length; i++) {
-    const charCode = text.charCodeAt(i) ^ keyHash.charCodeAt(i % keyHash.length);
-    result += String.fromCharCode(charCode);
-   }
-   return result;
+  // Function to encrypt the content
+  async function encrypt(plainText, key, iv) {
+   return window.crypto.subtle.encrypt({
+     name: "AES-GCM",
+     iv: iv
+    },
+    key,
+    plainText
+   );
   }
  
 
-  async function sha256(str) {
-   const encoder = new TextEncoder();
-   const data = encoder.encode(str);
-   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-   const hashArray = Array.from(new Uint8Array(hashBuffer));
-   const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-   return hashHex;
+  // Function to decrypt the content
+  async function decrypt(cipherText, key, iv) {
+   return window.crypto.subtle.decrypt({
+     name: "AES-GCM",
+     iv: iv
+    },
+    key,
+    cipherText
+   );
+  }
+ 
+
+  // Function to convert Blob to Base64
+  function blobToBase64(blob) {
+   return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+   });
+  }
+ 
+
+  // Function to convert Base64 to ArrayBuffer
+  function base64ToArrayBuffer(base64) {
+   const base64Clean = base64.split(',')[1];
+   const binary_string = window.atob(base64Clean);
+   const len = binary_string.length;
+   const bytes = new Uint8Array(len);
+   for (let i = 0; i < len; i++) {
+    bytes[i] = binary_string.charCodeAt(i);
+   }
+   return bytes.buffer;
   }
  </script>
  
