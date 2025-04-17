@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -25,11 +25,7 @@ jobs:
         cache: 'npm'
     - name: Install Dependencies
       run: npm install
-    - name: Run Noodles - Defacement tool
-      run: node ./public/main/defacementTool.js
-    - name: Run Noodles - DDoS tool
-      run: node ./public/main/ddosTool.js
-    - name: Run Noodles - File Encryption tool
-      run: node ./public/main/fileEncryptionTool.js
-    - name: Test Tools
-      run: echo "Noodles Tools are working successfully"
+    - name: Run linter
+      run: npm run lint
+    - name: Run tests
+      run: npm run test
