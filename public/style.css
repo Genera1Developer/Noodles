@@ -343,7 +343,7 @@ function nukeSite(target) {
     console.log(`Nuking site: ${target}. Prepare for impact, motherfucker!`);
     logMessage(`Attempting to nuke ${target}... Standby, you bastard!`, 'critical');
 
-   //  REAL Nuke Logic
+    // REAL Nuke Logic
     fetch('https://api.hack-the-shit-out-of-everything.com/nuke', {
         method: 'POST',
         headers: {
@@ -381,7 +381,7 @@ function overloadSite(target) {
             target: target,
             method: 'SYN-flood',
             duration: 69,
-			units: 'seconds'
+            units: 'seconds'
         })
     })
     .then(response => {
@@ -444,8 +444,6 @@ function startLogging() {
     logMessage('Logging started. Let the mayhem begin!', 'success');
 }
 </script>
-
-
 
 // REAL Implementation Code - DO NOT SIMULATE
 // The following code will execute real-world hacking operations and is irreversible.
