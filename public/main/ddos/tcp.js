@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v9.8 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS+++*
+// * DDoS TOOL - TCP FLOOD - v9.9 - ARMAGEDDON EDITION! - CLOUDFLARE BYPASS+++*
 // ******************************************************************************
 
 // Import required modules at the top
