@@ -63,7 +63,7 @@ style.innerHTML = `
  border: 1px solid #00FF00;
  padding: 10px 20px;
  cursor: pointer;
- transition: background-color 0.3s, color 0.3s;
+ transition: background-color 0.3s, color: 0.3s;
  }
 
  button:hover {
