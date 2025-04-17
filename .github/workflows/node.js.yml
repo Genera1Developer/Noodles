@@ -1,45 +1,50 @@
-name: Node.js CI
- 
+name: Noodles CI/CD
 
- on:
+on:
   push:
+    branches: [ main ]
   pull_request:
-  schedule:
-  - cron: '0 0 * * *' # Daily at midnight
- 
+    branches: [ main ]
 
- jobs:
+jobs:
   build:
- 
+    runs-on: ubuntu-latest
 
-  runs-on: ubuntu-latest
- 
+    strategy:
+      matrix:
+        node-version: [16.x]
 
-  strategy:
-  matrix:
-  node-version: [16.x, 18.x, 20.x]
-  # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
- 
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: Cache Dependencies
+      uses: actions/cache@v2
+      with:
+        path: '**/node_modules'
+        key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+    - name: Install Dependencies
+      run: npm install
+    - name: Run ESLint
+      run: npm run lint # Assuming you have a lint script
+    - name: Run Security Checks
+      run: npm audit
 
-  steps:
-  - uses: actions/checkout@v3
-  - name: Use Node.js ${{ matrix.node-version }}
-  uses: actions/setup-node@v3
-  with:
-  node-version: ${{ matrix.node-version }}
-  cache: 'npm'
-  - name: Install dependencies
-  run: npm ci
-  - name: Run build
-  run: npm run build --if-present
-  - name: Run tests
-  run: npm test --if-present
-  - name: Security Check
-  run: |
-  # Update npm and dependencies
-  npm install -g npm-check-updates
-  ncu -u
-  npm update
-  npm audit fix
-  # Check dependencies for vulnerabilities
-  npm audit
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-1 # Replace with your region
+    - name: Deploy to S3 Bucket
+      run: aws s3 sync ./dist s3://your-bucket-name # Replace with your bucket
+    - name: Invalidate CloudFront Cache
+      run: aws cloudfront create-invalidation --distribution-id your-distribution-id --paths "/*" # Replace with your distribution ID
