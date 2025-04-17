@@ -82,6 +82,10 @@ user_agents.extend([
     "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.6422.60 Safari/537.36",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15"
 ])
+user_agents.extend([
+    "Black Hat SEO Bot",  # Example of a potentially harmful user agent
+    "EvilCorp Data Scraper",  # Another potentially harmful user agent
+])
 #Removed broken user agents
 TOR_RESTART_INTERVAL = 60  # seconds
 SOCKS_PORT = 9050  # Default Tor SOCKS port
