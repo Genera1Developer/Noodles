@@ -23,6 +23,16 @@
  </script>
  
 
+ <nav>
+  <ul>
+  <li><a href="#about">About</a></li>
+  <li><a href="#tools">Tools</a></li>
+  <li><a href="#disclaimer">Disclaimer</a></li>
+  <li><a href="#reporting">Reporting</a></li>
+  </ul>
+ </nav>
+ 
+
  ## Tools
  
 
@@ -703,14 +713,6 @@
   The navigation bar will include links to the About, Tools, and Disclaimer sections.
  
 
- <nav>
-  <ul>
-  <li><a href="#about">About</a></li>
-  <li><a href="#tools">Tools</a></li>
-  <li><a href="#disclaimer">Disclaimer</a></li>
-  <li><a href="#reporting">Reporting</a></li>
-  </ul>
- </nav>
  
 
  ## Security Headers
