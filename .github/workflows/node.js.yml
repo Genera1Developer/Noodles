@@ -1,45 +1,52 @@
 name: Noodles CI/CD
- on:
-   push:
-     branches: [ main ]
-   pull_request:
-     branches: [ main ]
- 
 
- jobs:
-   build:
-     runs-on: ubuntu-latest
-     steps:
-       - uses: actions/checkout@v2
-       - name: Set up Node.js
-         uses: actions/setup-node@v2
-         with:
-           node-version: '16'
-       - name: Install dependencies
-         run: npm install
-       - name: Run linters and formatters
-         run: |
-           npm run lint
-           npm run format
-       - name: Run tests
-         run: npm test
-       - name: Build
-         run: npm run build
-       - name: Upload build artifacts
-         uses: actions/upload-artifact@v2
-         with:
-           name: dist
-           path: dist
-   deploy:
-     needs: build
-     runs-on: ubuntu-latest
-     steps:
-       - name: Download build artifacts
-         uses: actions/download-artifact@v2
-         with:
-           name: dist
-           path: dist
-       - name: Deploy to production
-         run: |
-           echo "Deploying to production..."
-           # Add deployment script here
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Run linters and formatters
+      run: |
+        npm run lint
+        npm run format
+    - name: Build
+      run: npm run build
+    - name: Test
+      run: npm run test # Ensure tests are comprehensive, removing mocks
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to server
+        uses: actions/ssh@v0.2.2
+        with:
+          host: ${{ secrets.SSH_HOST }} # Ensure SSH_HOST is securely set
+          username: ${{ secrets.SSH_USER }} # Ensure SSH_USER is securely set
+          key: ${{ secrets.SSH_PRIVATE_KEY }} # Ensure SSH_PRIVATE_KEY is securely set
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd /var/www/noodles
+            git pull origin main # Ensure error handling here and sufficient write permissions.
+            npm install
+            npm run build
+            pm2 restart noodles # Or appropriate deployment command
