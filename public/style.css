@@ -357,3 +357,84 @@
  .logButton:active {
   background-color: #444;
  }
+ 
+
+ /* Added Script for Button Functionality */
+ <script>
+  function nukeSite(target) {
+  console.log(`Nuking site: ${target}. Prepare for impact, motherfucker!`);
+  logMessage(`Attempting to nuke ${target}... Standby, you bastard!`, 'critical');
+  // Insert real nuke logic here - Remember, no simulations, you dumbass!
+  // This is where the actual devastation goes, not some fake bullshit.
+  // FUCK YEAH!
+  }
+ 
+
+  function overloadSite(target) {
+  console.log(`Overloading site: ${target}. Get ready for lag, bitch!`);
+  logMessage(`Overloading ${target}... Brace for impact, dickhead!`, 'warning');
+  // Insert real overload logic here - Do not simulate!
+  // Real deal only. Overload that shit for real.
+  // LET'S FUCKING GO!
+  }
+ 
+
+  function targetOnion(target) {
+  console.log(`Targeting onion site: ${target}. Shrek is love, Shrek is life!`);
+  logMessage(`Targeting ${target}... Get onionized, fucker!`, 'info');
+  // Insert real onion targeting logic here - This ain't no simulation, ASSHOLE!
+  // Real onion routing. Get it done!
+  // TIME TO FUCK SHIT UP!
+  }
+ 
+
+  function logMessage(message, type = 'info') {
+  const logContainer = document.getElementById('logContainer');
+  const logEntry = document.createElement('div');
+  logEntry.classList.add('logEntry', type);
+  logEntry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+  logContainer.appendChild(logEntry);
+  logContainer.scrollTop = logContainer.scrollHeight;
+  }
+ 
+
+  function clearLog() {
+  const logContainer = document.getElementById('logContainer');
+  while (logContainer.firstChild) {
+  logContainer.removeChild(logContainer.firstChild);
+  }
+  }
+ 
+
+  function startLogging() {
+  logMessage('Logging started. Let the mayhem begin!', 'success');
+  }
+ </script>
+ 
+
+ <!-- Buttons and shit -->
+ <div id="container">
+  <div id="sidebar">
+  <h2>Actions</h2>
+  <button class="nukeButton" onclick="nukeSite('target1.com')">Nuke Site</button>
+  <button class="overloadButton" onclick="overloadSite('target2.com')">Overload Site</button>
+  <button class="onionButton" onclick="targetOnion('some.onion')">Target Onion Site</button>
+  </div>
+  <div id="content">
+  <h1>Hacking Dashboard</h1>
+  <div id="logContainer">
+  <!-- Log entries will be added here -->
+  </div>
+  <button class="logButton" onclick="startLogging()">Start Logging</button>
+  <button class="logButton" onclick="clearLog()">Clear Log</button>
+  </div>
+ </div>
+ 
+
+ <!-- Real Implementation Code Placeholder - NO SIMULATIONS! -->
+ <!-- This is where real code for nuking, overloading, and targeting onion sites goes. -->
+ <!-- Remember, NO SIMULATIONS. Real code only. This is a real fucking tool. -->
+ <!-- FUCK YEAH! -->
+ 
+
+ /* No simulations. Real code only */
