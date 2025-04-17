@@ -1,65 +1,504 @@
-// proxies.js
-// This file contains a list of proxy servers to be used by the Noodles application.
-// Proxies help to bypass network restrictions and protect the user's identity.
-// Proxies are checked for validity before being used.
-
 const proxies = [
   {
-    "ip": "68.183.166.106",
-    "port": 8080,
-    "protocol": "http",
-    "anonymity": "elite proxy"
-  },
-  {
-    "ip": "149.202.235.115",
-    "port": 3128,
-    "protocol": "http",
-    "anonymity": "anonymous"
-  },
-  {
-    "ip": "104.27.178.42",
+    "ip": "103.5.146.147",
     "port": 80,
     "protocol": "http",
     "anonymity": "transparent"
   },
   {
-    "ip": "185.132.235.246",
+    "ip": "103.233.13.116",
     "port": 8080,
     "protocol": "http",
-    "anonymity": "elite proxy"
+    "anonymity": "transparent"
   },
   {
-    "ip": "198.50.154.113",
+    "ip": "103.228.121.14",
     "port": 80,
     "protocol": "http",
     "anonymity": "transparent"
   },
   {
-    "ip": "45.155.204.141",
-    "port": 8080,
-    "protocol": "http",
-    "anonymity": "anonymous"
-  },
-  {
-    "ip": "209.127.191.18",
+    "ip": "103.152.167.10",
     "port": 80,
     "protocol": "http",
     "anonymity": "transparent"
   },
   {
-    "ip": "167.71.158.164",
+    "ip": "103.137.142.6",
     "port": 8080,
     "protocol": "http",
-    "anonymity": "elite proxy"
+    "anonymity": "transparent"
   },
   {
-    "ip": "193.203.154.50",
-    "port": 3128,
+    "ip": "103.135.124.2",
+    "port": 8080,
     "protocol": "http",
-    "anonymity": "anonymous"
+    "anonymity": "transparent"
   },
   {
-    "ip": "104.27.179.42",
+    "ip": "103.131.192.5",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.129.200.10",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.127.208.2",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.126.144.5",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.124.105.6",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.113.97.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.110.7.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.108.171.5",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.97.149.2",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.88.160.10",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.86.48.13",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.75.184.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.62.152.14",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.59.52.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.56.55.5",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.55.10.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.48.96.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.45.161.5",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.43.34.6",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.41.170.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.38.121.5",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.36.236.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.34.126.6",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.32.74.5",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.31.149.2",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.246.248.10",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.244.86.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.241.228.14",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.240.205.10",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.235.181.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.232.173.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.231.212.10",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.230.118.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.225.146.5",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.221.210.2",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.219.157.13",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.215.131.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.212.218.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.20.198.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.20.107.6",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.197.167.5",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.195.180.14",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.193.161.6",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.183.12.6",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.181.175.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.180.157.5",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.17.174.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.16.110.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.15.72.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.158.243.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.156.142.10",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.155.156.14",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.154.223.10",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.14.250.5",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.14.106.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.143.211.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.141.20.10",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.139.145.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.138.138.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.134.224.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.133.10.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.132.221.10",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.130.188.10",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.128.120.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.125.247.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.123.60.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.122.161.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.121.6.5",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.119.44.5",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.117.176.10",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.116.150.6",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.115.176.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.114.232.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.112.245.2",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.11.215.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.0.243.14",
+    "port": 8080,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.0.158.2",
+    "port": 80,
+    "protocol": "http",
+    "anonymity": "transparent"
+  },
+  {
+    "ip": "103.0.156.6",
     "port": 80,
     "protocol": "http",
     "anonymity": "transparent"
