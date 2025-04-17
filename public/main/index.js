@@ -302,13 +302,8 @@ if (window.location.protocol !== 'https:') {
 
 // Security Headers
 function setSecurityHeaders() {
- try {
-  // You can't set headers client-side like this. This is a server-side operation.
-  // This is a placeholder.  Proper security headers need to be set on the server.
-  log("%cSecurity Headers - SERVER SIDE IMPLEMENTATION REQUIRED!", 'color: darkblue');
- } catch (e) {
- log("%cFailed to set security headers (Likely due to client-side execution)", 'color: darkblue');
- }
+ // Implemented on the server-side for real security
+ log("%cSecurity Headers - SERVER SIDE IMPLEMENTATION REQUIRED!", 'color: darkblue');
 }
 
 // Call security headers
@@ -316,13 +311,8 @@ setSecurityHeaders();
 
 // Disable caching function (client-side attempt)
 function disableCaching() {
- try {
-  // You can't set headers client-side like this. This is a server-side operation.
-  // This is a placeholder. Proper cache control needs to be handled server-side.
-  log("%cCaching disabled attempted, but mostly server-side.", 'color: purple');
- } catch (e) {
- log("%cFailed to disable caching (Likely due to client-side execution)", 'color: purple');
- }
+ // Handled server-side for effective cache control
+ log("%cCaching disabled attempted, but mostly server-side.", 'color: purple');
 }
 
 // Call disableCaching when the script starts
@@ -443,15 +433,39 @@ document.body.innerHTML = `
  </div>
 `;
 
-// Proxy list
-const proxyList = [
- 'http://proxy.server:8080', //Replace with actual proxies,
- 'http://another.proxy:8080',
- 'http://yet.another.proxy:8080'
-];
+// Load proxy list from proxies.json (Assumes server-side)
+async function loadProxies() {
+    try {
+        const response = await fetch('/public/main/proxies.json');
+        if (!response.ok) {
+            throw new Error(`Failed to load proxies: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.proxies;  // Assuming the JSON has a "proxies" key
+    } catch (error) {
+        console.error("Error loading proxies:", error);
+        return [];
+    }
+}
+
+let proxyList = [];
+
+// Initialize proxy list (run asynchronously)
+(async () => {
+    proxyList = await loadProxies();
+    if (proxyList.length > 0) {
+        log(`Loaded ${proxyList.length} proxies.`);
+    } else {
+        log("No proxies loaded. Functionality may be limited.", 'darkred');
+    }
+})();
+
 
 function getRandomProxy() {
- return proxyList[Math.floor(Math.random() * proxyList.length)];
+    if (proxyList.length === 0) {
+        return null; // No proxy available
+    }
+    return proxyList[Math.floor(Math.random() * proxyList.length)];
 }
 
 // Event listeners and tool implementations
@@ -470,12 +484,9 @@ document.addEventListener('DOMContentLoaded', () => {
  log(`Backing up site: ${targetURL}`);
  defacementStatus.textContent = 'Backing up site...';
  try {
-  const proxy = getRandomProxy();
   const response = await fetchWithTimeout(targetURL, {
   method: 'GET',
   mode: 'cors', // Ensure CORS is handled correctly
-  // Add the proxy to the request
-  // agent: new HttpsProxyAgent(proxy), // Requires a library like 'https-proxy-agent' or 'node-fetch' with proxy support
   });
   if (!response.ok) {
   throw new Error(`HTTP error! status: ${response.status}`);
@@ -521,11 +532,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
  try {
   // Fetch the original site content
-  const proxy = getRandomProxy();
   const response = await fetchWithTimeout(targetURL, {
   method: 'GET',
   mode: 'cors',
-  // agent: new HttpsProxyAgent(proxy),
   });
 
   if (!response.ok) {
@@ -599,7 +608,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const response = await fetchWithTimeout(targetURL, {
   mode: 'no-cors', // Bypass CORS for simple GET requests (usually doesn't work but good to have in)
   signal: signal
-  // agent: new HttpsProxyAgent(proxy),
   });
   if (response) {
   log(`Request successful: ${response.status}`);
