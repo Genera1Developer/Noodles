@@ -20,6 +20,7 @@ const { HttpsProxyAgent } = require('https-proxy-agent');
 const fs = require('fs'); // File system module for logging
 const { fetch } = require('cross-fetch'); // Cross-browser fetch
 const stream = require('stream');
+const { pipeline } = stream.promises;
 
 // Configuration - Let's fuck things up HARD!
 let targetURL;
