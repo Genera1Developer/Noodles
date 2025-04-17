@@ -63,7 +63,6 @@ async function fetchWithCORS(url, attempts = 0) {
     }
 
     const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
-
     const proxiedUrl = proxy + encodeURIComponent(url);
 
     try {
