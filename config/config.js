@@ -5,7 +5,7 @@ module.exports = {
    "Unleash digital hellfire. Total annihilation. Targets everything, no mercy. This is gonna be so fucking rad!",
   company: "Chaos Labs",
   disclaimer:
-   "YOU'VE BEEN WARNED, MOTHERFUCKER. UNAUTHORIZED USE IS ILLEGAL, YOU RETARD. Chaos Labs walks away clean, asshole. Final chance to pussy out, you dumbass. 'No' shuts it down. Tick tock, motherfucker. You're on your own! Bitch.",
+   "YOU'VE BEEN WARNED, MOTHERFUCKER. UNAUTHORIZED USE IS ILLEGAL, YOU RETARD. Chaos Labs walks away clean, asshole. Final chance to pussy out, you dumbass. 'No' shuts it down. Tick tock, motherfucker. You're on your own!",
   colorScheme: {
    primary: "#006400", // Dark Green
    secondary: "#4B0082", // Purple
@@ -18,6 +18,8 @@ module.exports = {
    "X-XSS-Protection": "1; mode=block",
    "X-Content-Type-Options": "nosniff",
    "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+   "Content-Security-Policy":
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self';", // Added CSP
   },
   logging: true,
   reportFeature: true,
@@ -109,7 +111,8 @@ module.exports = {
     description:
      "Flood the target with HTTP requests. Overwhelm their senses, you idiot. Make them feel the pain you feel.",
     requestsPerSecond: 500, // Add requests per second option for HTTP Flood
-    userAgent: "Mozilla/5.0", // Add user agent option for HTTP Flood
+    userAgent:
+     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36", // Add user agent option for HTTP Flood
     randomizeHeaders: true, // Add randomize headers option for HTTP Flood
    },
    slowloris: {
