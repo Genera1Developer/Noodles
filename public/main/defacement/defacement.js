@@ -48,7 +48,6 @@ async function loadProxies() {
     }
 }
 
-// CORS Anywhere Proxy (Self-Hosted if possible)
 let proxies = []; // Array to hold proxies
 
 // Function to fetch content with CORS bypass and error handling
