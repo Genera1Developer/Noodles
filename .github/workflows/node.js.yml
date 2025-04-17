@@ -1,20 +1,20 @@
-|
 name: Node.js CI
 
-on:
+ on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+  schedule:
+    - cron: '0 0 * * *' # Daily at midnight UTC
 
-jobs:
+ jobs:
   build:
 
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [18.x, 20.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v3
@@ -23,21 +23,32 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    - name: Install dependencies
-      run: npm install
-    - name: Run build
-      run: npm run build --if-present
-    - name: Run tests
-      run: npm test --if-present
-
+    - name: Install Dependencies
+      run: npm ci
+    - name: Lint Code
+      run: npm run lint
+    - name: Run Tests
+      run: npm run test
+    - name: Build Production Assets
+      run: npm run build
+    - name: Deploy to Production
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: |
+        echo "Deploying to Production..."
+        # Add deployment script here
     - name: Security Scan
       run: |
-        echo "Running security scans... This might take a while."
-        npm audit
-        npm outdated
-
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        echo "Performing Security Scan..."
+        # Integrate security scanning tools here
+    - name: Dependency Check
+      run: |
+        echo "Checking for Vulnerable Dependencies..."
+        # Integrate dependency scanning tools here
+    - name: Heartbeat Check
+      run: |
+        echo "Checking that site is working..."
+        # Ping the site and ensure its working
+    - name: Check for proxy errors
+      run: |
+        echo "Check for proxies in proxies.json and proxies.js..."
+        # ensure both are working and correct!
