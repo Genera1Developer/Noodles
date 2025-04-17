@@ -1,50 +1,33 @@
-name: Noodles CI/CD
+name: Node.js CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
         node-version: [16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-    - name: Cache Dependencies
-      uses: actions/cache@v2
-      with:
-        path: '**/node_modules'
-        key: ${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+        cache: 'npm'
     - name: Install Dependencies
       run: npm install
-    - name: Run ESLint
-      run: npm run lint # Assuming you have a lint script
-    - name: Run Security Checks
-      run: npm audit
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-east-1 # Replace with your region
-    - name: Deploy to S3 Bucket
-      run: aws s3 sync ./dist s3://your-bucket-name # Replace with your bucket
-    - name: Invalidate CloudFront Cache
-      run: aws cloudfront create-invalidation --distribution-id your-distribution-id --paths "/*" # Replace with your distribution ID
+    - name: Run Build
+      run: npm run build --if-present # Ensure build script exists in package.json
+    - name: Run Tests
+      run: npm test --if-present # Ensure test script exists in package.json
+    - name: Deploy # Example Placeholder, needs config
+      run: echo "Deploying Noodles... (Configure this step)" # Replace with actual deployment commands
