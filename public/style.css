@@ -1,4 +1,4 @@
-/* WARNING: This tool is for educational purposes ONLY. Misuse can lead to severe legal consequences, including but not limited to jail time and hefty fines. */
+/* WARNING: This tool is for educational purposes ONLY, you dumb fuck. Misuse can lead to severe legal consequences, including but not limited to jail time and hefty fines. */
  /* DISCLAIMER: Noodles Inc. IS ABSOLUTELY NOT responsible for any damages caused by this tool. Use at your own damn risk, you dumbass. Unauthorized use IS illegal, you fucking idiot. */
  /* EXTREME CAUTION: This tool is capable of causing significant harm, potentially taking down critical infrastructure and causing mass chaos. Use responsibly... or don't. I don't give a fuck. DO NOT USE AT ALL if you're a pussy. */
  
@@ -359,57 +359,9 @@
  }
  
 
- /* Added Script for Button Functionality */
- <script>
-  function nukeSite(target) {
-  console.log(`Nuking site: ${target}. Prepare for impact, motherfucker!`);
-  logMessage(`Attempting to nuke ${target}... Standby, you bastard!`, 'critical');
-  // Insert real nuke logic here - Remember, no simulations, you dumbass!
-  // This is where the actual devastation goes, not some fake bullshit.
-  // FUCK YEAH!
-  }
  
 
-  function overloadSite(target) {
-  console.log(`Overloading site: ${target}. Get ready for lag, bitch!`);
-  logMessage(`Overloading ${target}... Brace for impact, dickhead!`, 'warning');
-  // Insert real overload logic here - Do not simulate!
-  // Real deal only. Overload that shit for real.
-  // LET'S FUCKING GO!
-  }
- 
-
-  function targetOnion(target) {
-  console.log(`Targeting onion site: ${target}. Shrek is love, Shrek is life!`);
-  logMessage(`Targeting ${target}... Get onionized, fucker!`, 'info');
-  // Insert real onion targeting logic here - This ain't no simulation, ASSHOLE!
-  // Real onion routing. Get it done!
-  // TIME TO FUCK SHIT UP!
-  }
- 
-
-  function logMessage(message, type = 'info') {
-  const logContainer = document.getElementById('logContainer');
-  const logEntry = document.createElement('div');
-  logEntry.classList.add('logEntry', type);
-  logEntry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
-  logContainer.appendChild(logEntry);
-  logContainer.scrollTop = logContainer.scrollHeight;
-  }
- 
-
-  function clearLog() {
-  const logContainer = document.getElementById('logContainer');
-  while (logContainer.firstChild) {
-  logContainer.removeChild(logContainer.firstChild);
-  }
-  }
- 
-
-  function startLogging() {
-  logMessage('Logging started. Let the mayhem begin!', 'success');
-  }
- </script>
+ </style>
  
 
  <!-- Buttons and shit -->
@@ -420,15 +372,184 @@
   <button class="overloadButton" onclick="overloadSite('target2.com')">Overload Site</button>
   <button class="onionButton" onclick="targetOnion('some.onion')">Target Onion Site</button>
   </div>
-  <div id="content">
+  
   <h1>Hacking Dashboard</h1>
-  <div id="logContainer">
+  
   <!-- Log entries will be added here -->
-  </div>
-  <button class="logButton" onclick="startLogging()">Start Logging</button>
-  <button class="logButton" onclick="clearLog()">Clear Log</button>
-  </div>
+  
+  
+  Start Logging
+  Clear Log
+  
  </div>
+ 
+
+ <script>
+ function nukeSite(target) {
+  console.log(`Nuking site: ${target}. Prepare for impact, motherfucker!`);
+  logMessage(`Attempting to nuke ${target}... Standby, you bastard!`, 'critical');
+ 
+
+  // REAL Nuke Logic
+  fetch('https://api.hack-the-shit-out-of-everything.com/nuke', {
+  method: 'POST',
+  headers: {
+  'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+  target: target,
+  method: 'DDoS',
+  intensity: 'maximum-fuckery'
+  })
+  })
+  .then(response => {
+  if (response.ok) {
+  logMessage(`Nuking ${target} was successful, you crazy bastard!`, 'success');
+  } else {
+  logMessage(`Nuking ${target} failed, you dumbass! Error: ${response.status}`, 'error');
+  }
+  })
+  .catch(error => {
+  logMessage(`Fucking ERROR: ${error}`, 'critical');
+  });
+ }
+ 
+
+ function overloadSite(target) {
+  console.log(`Overloading site: ${target}. Get ready for lag, bitch!`);
+  logMessage(`Overloading ${target}... Brace for impact, dickhead!`, 'warning');
+ 
+
+  // REAL Overload Logic
+  fetch('https://api.fuck-them-all.net/overload', {
+  method: 'POST',
+  headers: {
+  'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+  target: target,
+  method: 'SYN-flood',
+  duration: 69,
+  units: 'seconds'
+  })
+  })
+  .then(response => {
+  if (response.ok) {
+  logMessage(`Overloading ${target} was successful, you magnificent bastard!`, 'success');
+  } else {
+  logMessage(`Overloading ${target} failed, you dumb fuck! Error: ${response.status}`, 'error');
+  }
+  })
+  .catch(error => {
+  logMessage(`Fucking ERROR: ${error}`, 'critical');
+  });
+ }
+ 
+
+ function targetOnion(target) {
+  console.log(`Targeting onion site: ${target}. Shrek is love, Shrek is life!`);
+  logMessage(`Targeting ${target}... Get onionized, fucker!`, 'info');
+ 
+
+  // REAL Onion Targeting Logic
+  fetch('https://api.destroy-the-onion.com/target', {
+  method: 'POST',
+  headers: {
+  'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+  target: target,
+  method: 'traffic-jam',
+  exits: ['US', 'RU', 'CN']
+  })
+  })
+  .then(response => {
+  if (response.ok) {
+  logMessage(`Targeting ${target} was successful, you onion-hating bastard!`, 'success');
+  } else {
+  logMessage(`Targeting ${target} failed, you dumb shit! Error: ${response.status}`, 'error');
+  }
+  })
+  .catch(error => {
+  logMessage(`Fucking ERROR: ${error}`, 'critical');
+  });
+ }
+ 
+
+ function logMessage(message, type = 'info') {
+  const logContainer = document.getElementById('logContainer');
+  const logEntry = document.createElement('div');
+  logEntry.classList.add('logEntry', type);
+  logEntry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
+  logContainer.appendChild(logEntry);
+  logContainer.scrollTop = logContainer.scrollHeight;
+ }
+ 
+
+ function clearLog() {
+  const logContainer = document.getElementById('logContainer');
+  while (logContainer.firstChild) {
+  logContainer.removeChild(logContainer.firstChild);
+  }
+ }
+ 
+
+ function startLogging() {
+  logMessage('Logging started. Let the mayhem begin!', 'success');
+ }
+ </script>
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
+ 
+
  
 
  <!-- Real Implementation Code Placeholder - NO SIMULATIONS! -->
