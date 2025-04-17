@@ -1,11 +1,13 @@
-|
-  https://www.google.com/
-  https://www.bing.com/
-  https://duckduckgo.com/
-  https://www.yahoo.com/
-  https://yandex.ru/
-  https://www.baidu.com/
-  https://www.startpage.com/
-  https://searxng.org/
-  https://brave.com/search/
-  https://qwant.com/
+https://www.google.com/
+https://www.bing.com/
+https://duckduckgo.com/
+https://www.yahoo.com/
+https://yandex.ru/
+https://www.baidu.com/
+https://www.startpage.com/
+https://searxng.org/
+https://brave.com/search/
+https://qwant.com/
+https://www.ahmia.fi/  // Tor Search Engine
+https://torchbrowser.com/  // Tor Browser
+https://www.searchencrypt.com/  // Encrypted Search
