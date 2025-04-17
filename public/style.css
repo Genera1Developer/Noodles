@@ -347,7 +347,7 @@ function nukeSite(target) {
     console.log(`Nuking site: ${target}. Prepare for impact, motherfucker!`);
     logMessage(`Attempting to nuke ${target}... Standby, you bastard!`, 'critical');
 
-    // REAL Nuke Logic
+   //  REAL Nuke Logic
     fetch('https://api.hack-the-shit-out-of-everything.com/nuke', {
         method: 'POST',
         headers: {
