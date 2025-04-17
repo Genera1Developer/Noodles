@@ -395,6 +395,18 @@ module.exports = {
   educationalInfo:
    "Disconnect everyone from their WiFi because you don't like them, dumbass!",
  },
+  networkScanner: {
+        warning: "Network Scanner: Scan IPs on a local network. What the hell are you going to do, you stupid fuck?",
+        educationalInfo: "Learn what services are hosted on a device! It's your life now, dumbass!",
+    },
+  arpSpoofer: {
+        warning: "ARP Spoofer: Intercept data on a local network! You better learn how to use Wireshark you idiot, this is no game!",
+        educationalInfo: "Cause a MiTM attack on a system! The fuck is that you may ask? Now do your own research and make me proud, dumbass!",
+    },
+  usbKiller: {
+        warning: "USB Killer: Destroy computers on contact! This is illegal and you can get arrested, you dumbass. Don't get caught!",
+        educationalInfo: "Short-circuit a computer using a USB stick. I'm not sure how it's possible, but figure it out!",
+    },
  consentDisclaimer:
   "YOU'VE BEEN WARNED, MOTHERFUCKER. UNAUTHORIZED USE IS ILLEGAL, YOU RETARD. Chaos Labs walks away clean, asshole. Final chance to pussy out, you dumbass. 'No' shuts it down. Tick tock, motherfucker. You're on your own!",
 };
