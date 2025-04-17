@@ -874,7 +874,7 @@
  
 
   /* Add dark red to the color scheme */
-  button {
+   button {
    background-color: #400;
   }
  
@@ -894,3 +894,14 @@
    console.log('particles.js loaded - scanlines enabled');
   });
  </script>
+ 
+ 
+
+ edit filepath: public/main/proxies.json
+ content: 
+ [
+  "https://api.codetabs.com/v1/proxy/?quest=",
+  "https://corsproxy.io/?https://",
+  "https://thingproxy.freeboard.io/fetch/",
+  "https://api.allorigins.win/raw?url="
+ ]
