@@ -714,7 +714,8 @@ function redirectToDeface() {
 
 // Auto Reload (refresh every 10 seconds)
 function autoReload() {
-    setTimeout(function () {
+    setTimeout(function ()
+    {
         location.reload();
     }, 10000);
 }
