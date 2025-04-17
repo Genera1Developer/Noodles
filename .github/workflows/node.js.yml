@@ -1,37 +1,45 @@
 name: Noodles CI/CD
+ on:
+   push:
+     branches: [ main ]
+   pull_request:
+     branches: [ main ]
+ 
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [16.x]
-
-    steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v2
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: Install Dependencies
-      run: npm install
-    - name: Run Tests (replace with actual test suite if needed)
-      run: echo "No tests implemented yet, skipping."
-    - name: Build (replace with your build command)
-      run: echo "No build process implemented yet, skipping."
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Deploy to Server (replace with your deployment script)
-        run: echo "No deployment script implemented yet, skipping."
-        # TODO: Implement secure deployment (e.g., SSH, secrets management)
+ jobs:
+   build:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v2
+       - name: Set up Node.js
+         uses: actions/setup-node@v2
+         with:
+           node-version: '16'
+       - name: Install dependencies
+         run: npm install
+       - name: Run linters and formatters
+         run: |
+           npm run lint
+           npm run format
+       - name: Run tests
+         run: npm test
+       - name: Build
+         run: npm run build
+       - name: Upload build artifacts
+         uses: actions/upload-artifact@v2
+         with:
+           name: dist
+           path: dist
+   deploy:
+     needs: build
+     runs-on: ubuntu-latest
+     steps:
+       - name: Download build artifacts
+         uses: actions/download-artifact@v2
+         with:
+           name: dist
+           path: dist
+       - name: Deploy to production
+         run: |
+           echo "Deploying to production..."
+           # Add deployment script here
