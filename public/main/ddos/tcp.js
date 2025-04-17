@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v9.7 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS+++*
+// * DDoS TOOL - TCP FLOOD - v9.8 - APOCALYPSE EDITION! - CLOUDFLARE BYPASS+++*
 // ******************************************************************************
 
 // Import required modules at the top
@@ -13,7 +13,7 @@ const net = require('net');
 const crypto = require('crypto');
 const socks = require('socks').SocksClient; // Required for .onion support
 const tls = require('tls'); // Required for TLS/SSL
-const https = require('https'); // Required for HTTPS proxy support
+const https = require('https').globalAgent.options.rejectUnauthorized = false; // Required for HTTPS proxy support and bypass certificate issues
 const url = require('url');
 const dns = require('dns').promises;
 const { HttpsProxyAgent } = require('https-proxy-agent');
