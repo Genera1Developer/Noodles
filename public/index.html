@@ -1,278 +1,427 @@
 <!DOCTYPE html>
- <html lang="en">
- 
+<html lang="en">
 
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Noodles - Unethical Hacking Toolkit</title>
-  <link rel="stylesheet" href="public/main/styles.css">
-  <style>
-  body {
-  background-color: #121212;
-  color: #f0f0f0;
-  font-family: 'Arial', sans-serif;
-  }
- 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noodles - Unethical Hacking Toolkit</title>
+    <link rel="stylesheet" href="public/main/styles.css">
+    <style>
+        body {
+            background-color: #121212;
+            color: #f0f0f0;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden; /* Hide scrollbars */
+        }
 
-  .sidebar {
-  background-color: #1e1e1e;
-  }
- 
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
+            pointer-events: none;
+            z-index: 1;
+        }
 
-  .content {
-  background-color: #282828;
-  }
- 
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
 
-  .modal {
-  background-color: rgba(0, 0, 0, 0.8);
-  }
- 
+        .sidebar {
+            background-color: #1e1e1e;
+            width: 200px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            z-index: 2;
+        }
 
-  .modal-content {
-  background-color: #333;
-  }
- 
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-  .warning {
-  color: darkred;
-  }
- 
+        .sidebar .logo img {
+            width: 150px;
+        }
 
-  .disclaimer {
-  color: darkred;
-  }
- 
+        .sidebar ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
 
-  .dark-mode {
-  background-color: #000;
-  color: #fff;
-  }
- 
+        .sidebar li {
+            padding: 10px 20px;
+            text-decoration: none;
+            color: #f0f0f0;
+            display: block;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-  .dark-mode .sidebar {
-  background-color: #0a0a0a;
-  }
- 
+        .sidebar li:hover {
+            background-color: #333;
+        }
 
-  .dark-mode .content {
-  background-color: #111;
-  }
- 
+        .content {
+            background-color: #282828;
+            margin-left: 200px;
+            padding: 20px;
+            min-height: 100vh;
+            z-index: 1;
+        }
 
-  .dark-mode .modal {
-  background-color: rgba(0, 0, 0, 0.9);
-  }
- 
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+        }
 
-  .dark-mode .modal-content {
-  background-color: #222;
-  }
- 
+        h1 {
+            color: #f0f0f0;
+            text-align: center;
+        }
 
-  .defacement {
-  background-color: darkred;
-  }
- 
+        .warning {
+            color: darkred;
+            font-weight: bold;
+        }
 
-  .encryption {
-  background-color: darkblue;
-  }
- 
+        .disclaimer {
+            color: darkred;
+            font-size: 0.8em;
+            text-align: center;
+            margin-top: 20px;
+        }
 
-  .ddos {
-  background-color: darkblue;
-  }
-  </style>
- </head>
- 
+        section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 5px;
+        }
 
- <body>
- 
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background-color: #333;
+            color: #f0f0f0;
+            border: 1px solid #555;
+            border-radius: 3px;
+            box-sizing: border-box;
+        }
 
-  <div id="particles-js"></div>
- 
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-  <div class="sidebar">
-  <div class="logo">
-  <img src="https://raw.githubusercontent.com/Genera1Developer/Noodles/refs/heads/main/assets/banner.gif"
-  alt="Noodles Logo">
-  </div>
-  <ul>
-  <li onclick="showSection('defacement')">Defacement Tool</li>
-  <li onclick="showSection('ddos')">DDoS Tool</li>
-  <li onclick="showSection('encryption')">File Encryption Tool</li>
-  <li onclick="showSection('reporting')">Reporting</li>
-  </ul>
-  </div>
- 
+        button:hover {
+            background-color: #367c39;
+        }
 
-  <div class="content">
-  <div class="container">
-  <h1>Noodles Inc. - Unethical Hacking Toolkit</h1>
-  <p class="warning">WARNING: Unauthorized use of these tools is illegal. Noodles Inc. is not responsible for
-  your actions. Use at your own risk, asshole.</p>
- 
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 5;
+        }
 
-  <!-- Defacement Tool -->
-  <section id="defacement" style="display: none;">
-  <h2>Defacement Tool</h2>
-  <p>This tool allows you to modify the appearance of websites. Use responsibly... or don't, I don't give a
-  fuck. <a href="#" onclick="openModal('defacement-info')">Learn more</a></p>
-  <input type="text" id="defacement-url" placeholder="Target URL">
-  <button onclick="backupWebsite()">Backup Website</button>
-  <a id="defacement-backup-link" style="display: none;" download="website_backup.html">Download Backup</a>
-  <textarea id="defacement-code" placeholder="HTML/JS Code"></textarea>
-  <button onclick="previewDefacement()">Preview Defacement</button>
-  <div id="defacement-preview"></div>
-  <button onclick="applyDefacement()">Apply Defacement</button>
-  </section>
- 
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #333;
+            padding: 20px;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 600px;
+            color: #f0f0f0;
+        }
 
-  <!-- DDoS Tool -->
-  <section id="ddos" style="display: none;">
-  <h2>DDoS Tool</h2>
-  <p>This tool floods a website with traffic, potentially taking it offline. Use responsibly, or just take
-  down some shit you hate. <a href="#" onclick="openModal('ddos-info')">Learn more</a></p>
-  <input type="text" id="ddos-url" placeholder="Target URL">
-  <input type="number" id="ddos-threads" placeholder="Threads (1-1000)">
-  <button onclick="startDDoS()">Start DDoS</button>
-  <button onclick="stopDDoS()">Stop DDoS</button>
-  <p>Time Running: <span id="ddos-timer">0</span> seconds</p>
- 
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-  <!-- Tor Integration -->
-  <button class="tor-button" onclick="toggleTorProxy()">Toggle Tor Proxy</button>
-  <span id="tor-status">Tor Proxy: OFF</span>
- 
+        .close:hover,
+        .close:focus {
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
-  <input type="checkbox" id="ddos-onion" name="ddos-onion">
-  <label for="ddos-onion">Target is .onion?</label>
-  </section>
- 
+        #defacement-preview {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #555;
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+            overflow: auto;
+            min-height: 100px;
+        }
 
-  <!-- File Encryption Tool -->
-  <section id="encryption" style="display: none;">
-  <h2>File Encryption Tool</h2>
-  <p>This tool encrypts files, making them unreadable without the correct key. Use responsibly, or to
-  blackmail someone, whatever. <a href="#" onclick="openModal('encryption-info')">Learn more</a></p>
-  <input type="file" id="encryption-file">
-  <input type="text" id="encryption-key" placeholder="Encryption Key">
-  <button onclick="backupFile()">Backup File</button>
-  <button onclick="encryptFile()">Encrypt File</button>
-  <p>Decryption Instructions: <span id="decryption-instructions"></span></p>
-  </section>
- 
+        .dark-mode {
+            background-color: #000;
+            color: #fff;
+        }
 
-  <!-- Reporting Tool (Placeholder) -->
-  <section id="reporting" style="display: none;">
-  <h2>Reporting Tool</h2>
-  <p>Document findings and vulnerabilities. (Feature to be implemented later, maybe...)</p>
-  </section>
- 
+        .dark-mode .sidebar {
+            background-color: #0a0a0a;
+        }
 
- 
+        .dark-mode .content {
+            background-color: #111;
+        }
 
-  <p class="disclaimer">Noodles Inc. is NOT responsible for any misuse of this toolkit. Use at your own risk,
-  you dumbass.</p>
-  </div>
-  </div>
- 
+        .dark-mode .modal {
+            background-color: rgba(0, 0, 0, 0.9);
+        }
 
-  <!-- Modals for educational information -->
-  <div id="defacement-info" class="modal">
-  <div class="modal-content">
-  <span class="close" onclick="closeModal('defacement-info')">&times;</span>
-  <h2>Defacement Tool Information</h2>
-  <p>The Defacement Tool allows you to modify the visual appearance of websites by injecting custom HTML and
-  JavaScript code. This can be used to test a website's security vulnerabilities or, unethically, to alter the
-  site's content without authorization. Remember, unauthorized defacement is illegal... but who cares? </p>
-  <h3>How it Works:</h3>
-  <ul>
-  <li><b>URL Input:</b> Enter the target website's URL.</li>
-  <li><b>Backup Website:</b> Before making changes, back up the original website content to prevent
-  irreversible damage.</li>
-  <li><b>HTML/JS Code:</b> Input the custom code you want to inject into the website.</li>
-  <li><b>Preview Defacement:</b> Preview the changes to ensure they appear as intended.</li>
-  <li><b>Apply Defacement:</b> Inject the code into the website (requires bypassing CORS and other security
-  measures).</li>
-  </ul>
-  <p><b>Disclaimer:</b> Misuse of this tool can lead to severe legal consequences. Use responsibly and only
-  on websites you own or have explicit permission to modify... or don't, I'm not the police.</p>
-  </div>
-  </div>
- 
+        .dark-mode .modal-content {
+            background-color: #222;
+        }
 
-  <div id="ddos-info" class="modal">
-  <div class="modal-content">
-  <span class="close" onclick="closeModal('ddos-info')">&times;</span>
-  <h2>DDoS Tool Information</h2>
-  <p>The DDoS (Distributed Denial of Service) Tool is designed to flood a website with traffic, overwhelming
-  its servers and potentially taking it offline. This tool is intended for stress-testing and evaluating the
-  resilience of web infrastructure, not for malicious purposes... yeah, right. Unauthorized DDoS attacks are
-  illegal and can result in severe penalties.</p>
-  <h3>How it Works:</h3>
-  <ul>
-  <li><b>URL Input:</b> Enter the target website's URL.</li>
-  <li><b>Threads Input:</b> Specify the number of threads (simultaneous connections) to use for the attack.
-  Higher numbers can increase the impact but also raise the risk of detection.</li>
-  <li><b>Start DDoS:</b> Initiate the attack, sending a flood of requests to the target server.</li>
-  <li><b>Stop DDoS:</b> Halt the attack and stop sending requests.</li>
-  <li><b>Timer:</b> Displays the duration of the attack in seconds.</li>
-  </ul>
-  <p><b>Disclaimer:</b> Conducting unauthorized DDoS attacks is illegal and can result in severe legal
-  consequences. This tool should only be used for legitimate testing purposes on networks you own or have
-  explicit permission to test... or not, I don't give a shit.</p>
-  </div>
-  </div>
- 
+        .log-container {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #1e1e1e;
+            color: #f0f0f0;
+        }
 
-  <div id="encryption-info" class="modal">
-  <div class="modal-content">
-  <span class="close" onclick="closeModal('encryption-info')">&times;</span>
-  <h2>File Encryption Tool Information</h2>
-  <p>The File Encryption Tool is used to encrypt files, rendering them unreadable without the correct
-  decryption key. This tool is designed to protect sensitive information and ensure confidentiality. Always
-  remember to securely manage your encryption keys to avoid losing access to your encrypted files.</p>
-  <h3>How it Works:</h3>
-  <ul>
-  <li><b>File Input:</b> Select the file you want to encrypt.</li>
-  <li><b>Encryption Key:</b> Enter a strong, unique key to encrypt the file. This key will be required to
-  decrypt the file later.</li>
-  <li><b>Backup File:</b> Back up the original file before encryption.</li>
-  <li><b>Encrypt File:</b> Encrypt the file using the provided key and download the encrypted version.</li>
-  <li><b>Decryption Instructions:</b> A guide on how to decrypt the file, including the necessary key and
-  tool.</li>
-  </ul>
-  <p><b>Disclaimer:</b> Ensure you securely store your encryption keys. Loss of the encryption key will result
-  in permanent loss of access to the encrypted file. Use responsibly and only for authorized purposes.</p>
-  </div>
-  </div>
- 
+        .log-container h2 {
+            text-align: left;
+            margin-bottom: 10px;
+        }
 
- 
+        #log {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
 
-  <div class="log-container">
-  <h2>Log</h2>
-  <ul id="log">
-  </ul>
-  </div>
- 
+        #log li {
+            padding: 5px 0;
+            border-bottom: 1px solid #333;
+        }
 
-  <div class="dark-mode-toggle">
-  <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
-  </div>
- 
+        #log li:last-child {
+            border-bottom: none;
+        }
 
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="public/main/proxies.js"></script>
-  <script src="public/main/script.js"></script>
- 
+        .dark-mode-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 3;
+        }
+    </style>
+</head>
 
- </body>
- 
+<body>
 
- </html>
+    <div class="scanlines"></div>
+    <div id="particles-js"></div>
+
+    <div class="sidebar">
+        <div class="logo">
+            <img src="https://raw.githubusercontent.com/Genera1Developer/Noodles/refs/heads/main/assets/banner.gif"
+                alt="Noodles Logo">
+        </div>
+        <ul>
+            <li onclick="showSection('defacement')">Defacement Tool</li>
+            <li onclick="showSection('ddos')">DDoS Tool</li>
+            <li onclick="showSection('encryption')">File Encryption Tool</li>
+            <li onclick="showSection('reporting')">Reporting</li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <div class="container">
+            <h1>Noodles Inc. - Unethical Hacking Toolkit</h1>
+            <p class="warning">WARNING: Unauthorized use of these tools is illegal. Noodles Inc. is not responsible
+                for your actions. Use at your own risk, asshole.</p>
+
+            <!-- Defacement Tool -->
+            <section id="defacement" style="display: none;">
+                <h2>Defacement Tool</h2>
+                <p>This tool allows you to modify the appearance of websites. Use responsibly... or don't, I don't
+                    give a fuck. <a href="#" onclick="openModal('defacement-info')">Learn more</a></p>
+                <input type="text" id="defacement-url" placeholder="Target URL">
+                <button onclick="backupWebsite()">Backup Website</button>
+                <a id="defacement-backup-link" style="display: none;" download="website_backup.html">Download
+                    Backup</a>
+                <textarea id="defacement-code" placeholder="HTML/JS Code"></textarea>
+                <button onclick="previewDefacement()">Preview Defacement</button>
+                <div id="defacement-preview"></div>
+                <button onclick="applyDefacement()">Apply Defacement</button>
+            </section>
+
+            <!-- DDoS Tool -->
+            <section id="ddos" style="display: none;">
+                <h2>DDoS Tool</h2>
+                <p>This tool floods a website with traffic, potentially taking it offline. Use responsibly, or just
+                    take down some shit you hate. <a href="#" onclick="openModal('ddos-info')">Learn more</a></p>
+                <input type="text" id="ddos-url" placeholder="Target URL">
+                <input type="number" id="ddos-threads" placeholder="Threads (1-1000)">
+                <button onclick="startDDoS()">Start DDoS</button>
+                <button onclick="stopDDoS()">Stop DDoS</button>
+                <p>Time Running: <span id="ddos-timer">0</span> seconds</p>
+
+                <!-- Tor Integration -->
+                <button class="tor-button" onclick="toggleTorProxy()">Toggle Tor Proxy</button>
+                <span id="tor-status">Tor Proxy: OFF</span>
+
+                <input type="checkbox" id="ddos-onion" name="ddos-onion">
+                <label for="ddos-onion">Target is .onion?</label>
+            </section>
+
+            <!-- File Encryption Tool -->
+            <section id="encryption" style="display: none;">
+                <h2>File Encryption Tool</h2>
+                <p>This tool encrypts files, making them unreadable without the correct key. Use responsibly, or to
+                    blackmail someone, whatever. <a href="#" onclick="openModal('encryption-info')">Learn more</a></p>
+                <input type="file" id="encryption-file">
+                <input type="text" id="encryption-key" placeholder="Encryption Key">
+                <button onclick="backupFile()">Backup File</button>
+                <button onclick="encryptFile()">Encrypt File</button>
+                <p>Decryption Instructions: <span id="decryption-instructions"></span></p>
+            </section>
+
+            <!-- Reporting Tool (Placeholder) -->
+            <section id="reporting" style="display: none;">
+                <h2>Reporting Tool</h2>
+                <p>Document findings and vulnerabilities. (Feature to be implemented later, maybe...)</p>
+            </section>
+
+
+
+            <p class="disclaimer">Noodles Inc. is NOT responsible for any misuse of this toolkit. Use at your own
+                risk, you dumbass.</p>
+        </div>
+    </div>
+
+    <!-- Modals for educational information -->
+    <div id="defacement-info" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('defacement-info')">&times;</span>
+            <h2>Defacement Tool Information</h2>
+            <p>The Defacement Tool allows you to modify the visual appearance of websites by injecting custom HTML
+                and JavaScript code. This can be used to test a website's security vulnerabilities or, unethically,
+                to alter the site's content without authorization. Remember, unauthorized defacement is illegal...
+                but who cares? </p>
+            <h3>How it Works:</h3>
+            <ul>
+                <li><b>URL Input:</b> Enter the target website's URL.</li>
+                <li><b>Backup Website:</b> Before making changes, back up the original website content to prevent
+                    irreversible damage.</li>
+                <li><b>HTML/JS Code:</b> Input the custom code you want to inject into the website.</li>
+                <li><b>Preview Defacement:</b> Preview the changes to ensure they appear as intended.</li>
+                <li><b>Apply Defacement:</b> Inject the code into the website (requires bypassing CORS and other
+                    security measures).</li>
+            </ul>
+            <p><b>Disclaimer:</b> Misuse of this tool can lead to severe legal consequences. Use responsibly and
+                only on websites you own or have explicit permission to modify... or don't, I'm not the police.</p>
+        </div>
+    </div>
+
+    <div id="ddos-info" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('ddos-info')">&times;</span>
+            <h2>DDoS Tool Information</h2>
+            <p>The DDoS (Distributed Denial of Service) Tool is designed to flood a website with traffic,
+                overwhelming its servers and potentially taking it offline. This tool is intended for
+                stress-testing and evaluating the resilience of web infrastructure, not for malicious purposes...
+                yeah, right. Unauthorized DDoS attacks are illegal and can result in severe penalties.</p>
+            <h3>How it Works:</h3>
+            <ul>
+                <li><b>URL Input:</b> Enter the target website's URL.</li>
+                <li><b>Threads Input:</b> Specify the number of threads (simultaneous connections) to use for the
+                    attack. Higher numbers can increase the impact but also raise the risk of detection.</li>
+                <li><b>Start DDoS:</b> Initiate the attack, sending a flood of requests to the target server.</li>
+                <li><b>Stop DDoS:</b> Halt the attack and stop sending requests.</li>
+                <li><b>Timer:</b> Displays the duration of the attack in seconds.</li>
+            </ul>
+            <p><b>Disclaimer:</b> Conducting unauthorized DDoS attacks is illegal and can result in severe legal
+                consequences. This tool should only be used for legitimate testing purposes on networks you own or
+                have explicit permission to test... or not, I don't give a shit.</p>
+        </div>
+    </div>
+
+    <div id="encryption-info" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('encryption-info')">&times;</span>
+            <h2>File Encryption Tool Information</h2>
+            <p>The File Encryption Tool is used to encrypt files, rendering them unreadable without the correct
+                decryption key. This tool is designed to protect sensitive information and ensure confidentiality.
+                Always remember to securely manage your encryption keys to avoid losing access to your encrypted
+                files.</p>
+            <h3>How it Works:</h3>
+            <ul>
+                <li><b>File Input:</b> Select the file you want to encrypt.</li>
+                <li><b>Encryption Key:</b> Enter a strong, unique key to encrypt the file. This key will be required
+                    to decrypt the file later.</li>
+                <li><b>Backup File:</b> Back up the original file before encryption.</li>
+                <li><b>Encrypt File:</b> Encrypt the file using the provided key and download the encrypted
+                    version.</li>
+                <li><b>Decryption Instructions:</b> A guide on how to decrypt the file, including the necessary key
+                    and tool.</li>
+            </ul>
+            <p><b>Disclaimer:</b> Ensure you securely store your encryption keys. Loss of the encryption key will
+                result in permanent loss of access to the encrypted file. Use responsibly and only for authorized
+                purposes.</p>
+        </div>
+    </div>
+
+
+    <div class="log-container">
+        <h2>Log</h2>
+        <ul id="log">
+        </ul>
+    </div>
+
+    <div class="dark-mode-toggle">
+        <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="public/main/proxies.js"></script>
+    <script src="public/main/script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (!confirm("WARNING: Unauthorized use of these tools is illegal. Noodles Inc. is not responsible for your actions. Are you sure you want to proceed? Pressing 'No' will close this site.")) {
+                window.close();
+            }
+        });
+    </script>
+</body>
+
+</html>
