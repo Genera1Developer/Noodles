@@ -484,9 +484,11 @@ document.addEventListener('DOMContentLoaded', () => {
  log(`Backing up site: ${targetURL}`);
  defacementStatus.textContent = 'Backing up site...';
  try {
+  const proxy = getRandomProxy();
   const response = await fetchWithTimeout(targetURL, {
   method: 'GET',
   mode: 'cors', // Ensure CORS is handled correctly
+  proxy: proxy,
   });
   if (!response.ok) {
   throw new Error(`HTTP error! status: ${response.status}`);
@@ -532,9 +534,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
  try {
   // Fetch the original site content
+  const proxy = getRandomProxy();
   const response = await fetchWithTimeout(targetURL, {
   method: 'GET',
   mode: 'cors',
+  proxy: proxy,
   });
 
   if (!response.ok) {
@@ -607,7 +611,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const proxy = getRandomProxy();
   const response = await fetchWithTimeout(targetURL, {
   mode: 'no-cors', // Bypass CORS for simple GET requests (usually doesn't work but good to have in)
-  signal: signal
+  signal: signal,
+  proxy: proxy,
   });
   if (response) {
   log(`Request successful: ${response.status}`);
