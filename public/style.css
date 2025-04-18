@@ -7,7 +7,14 @@
   background-color: black;
   color: #d4ff00; /* Dark Green - Like Money, Bitches! */
   font-family: monospace;
-  overflow: hidden; /* Hide scrollbars - We Don't Need No Scrolling! */
+  overflow-x: hidden;
+  overflow-y: scroll; /* Allow vertical scrolling */
+  margin: 0; /* Remove default body margins */
+  padding: 0;
+ }
+
+ html {
+  overflow-x: hidden; /* Hide horizontal scrollbar */
  }
 
  /* Scan Lines - Gives That Old School Hacker Vibe */
@@ -88,7 +95,7 @@
  }
 
  /* UI Elements - Buttons and Shit */
- button, input[type="text"], textarea {
+ button, input[type="text"], textarea, select {
   background-color: #222;
   color: #d4ff00;
   border: 1px solid #800080;
@@ -106,7 +113,8 @@
  /* Layout - Keeping It All Organized */
  #container {
   display: flex;
-  height: 100vh;
+  width: 100%;
+  min-height: 100vh;
  }
 
  #sidebar {
@@ -119,6 +127,12 @@
  #content {
   flex: 1;
   padding: 20px;
+ }
+
+ #content section {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #222;
  }
 
  /* Additional Styling - For That Extra Touch of Class */
@@ -317,115 +331,264 @@
   background-color: #444;
  }
 
+ /* Style for file upload input */
+ input[type="file"] {
+  background-color: #333;
+  color: #D4FF00;
+  border: 1px solid #555;
+  padding: 5px;
+  margin: 5px;
+  font-family: monospace;
+ }
 
+ input[type="file"]::file-selector-button {
+  background-color: #444;
+  color: #D4FF00;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+ }
 
- <!-- Buttons and shit -->
- <div id="container">
-  <div id="sidebar">
-  <h2>Actions</h2>
-  <button class="nukeButton" onclick="nukeSite('target1.com')">Nuke Site</button>
-  <button class="overloadButton" onclick="overloadSite('target2.com')">Overload Site</button>
-  <button class="onionButton" onclick="targetOnion('some.onion')">Target Onion Site</button>
-  </div>
-  
-  <h1>Hacking Dashboard</h1>
-  
-  <!-- Log entries will be added here -->
-  
-  
-  Start Logging
-  Clear Log
-  
- </div>
+ input[type="file"]::file-selector-button:hover {
+  background-color: #555;
+ }
 
- <script>
- function nukeSite(target) {
-  console.log(`Nuking site: ${target}. Prepare for impact, motherfucker!`);
-  logMessage(`Attempting to nuke ${target}... Standby, you bastard!`, 'critical');
+ /* Style for text areas */
+ textarea {
+  width: 95%;
+  height: 150px;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #555;
+  background-color: #111;
+  color: #D4FF00;
+  font-family: monospace;
+  resize: vertical;
+ }
 
-  // REAL Nuke Logic - DO NOT SIMULATE
-  // NO SIMULATIONS! REAL CODE ONLY.
-  // Execute the real fucking code to nuke the target.
-  // No simulations. Real code only.
+ /* Style for Labels */
+ label {
+  color: #D4FF00;
+  margin-top: 10px;
+  display: block;
+ }
 
-  // Assuming you have a function called executeNuke that takes the target
-  executeNuke(target);
+ /* Style for Tool Sections */
+ .toolSection {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #555;
+  background-color: #111;
+  border-radius: 5px;
+ }
 
-  function executeNuke(target) {
-  // This is where you'd put the REAL code. Make sure it's not a simulation.
-  // If it's not implemented yet, it should be a real placeholder that
-  // does nothing but logs a message saying it's not implemented.
-  logMessage(`Nuking ${target} is under development. No simulations allowed!`, 'warning');
+ .toolSection h2 {
+  color: #D4FF00;
+  margin-top: 0;
+  margin-bottom: 10px;
+ }
+
+ /* Style for Select Boxes */
+ select {
+  appearance: none; /* Remove default arrow */
+  -webkit-appearance: none; /* Remove default arrow for safari */
+  padding: 8px;
+  background-color: #333;
+  color: #D4FF00;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 5px;
+ }
+
+ /* Arrow Style for Select Boxes */
+ select::after {
+  content: '\25BC'; /* Unicode for down arrow */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  color: #D4FF00;
+  pointer-events: none;
+ }
+
+ /* Hover Style for Select Boxes */
+ select:hover {
+  background-color: #555;
+ }
+
+ /* Focus Style for Select Boxes */
+ select:focus {
+  border-color: #800080;
+  outline: none;
+  box-shadow: 0 0 5px rgba(128, 0, 128, 0.5); /* Purple Glow */
+ }
+
+ /* Responsive Styles */
+ @media (max-width: 768px) {
+  #container {
+  flex-direction: column; /* Stack sidebar and content vertically on smaller screens */
+  }
+
+  #sidebar {
+  width: 100%;
+  border-right: none;
+  border-bottom: 2px dashed #8b0000; /* Add border at the bottom of the sidebar */
+  }
+
+  #content {
+  padding: 10px;
+  }
+
+  #logContainer {
+  width: 95%;
+  }
+
+  .toolSection {
+  padding: 10px;
+  }
+
+  /* Adjust button sizes for better mobile experience */
+  .nukeButton, .overloadButton, .onionButton, .logButton {
+  padding: 10px 20px;
+  font-size: 14px;
+  }
+
+  /* Adjust textarea size */
+  textarea {
+  height: 100px; /* Make textarea smaller on mobile */
   }
  }
 
- function overloadSite(target) {
-  console.log(`Overloading site: ${target}. Get ready for lag, bitch!`);
-  logMessage(`Overloading ${target}... Brace for impact, dickhead!`, 'warning');
-
-  // REAL Overload Logic - DO NOT SIMULATE
-  // NO SIMULATIONS! REAL CODE ONLY.
-  // Execute the real code to overload the target.
-  // No simulations. Real code only.
-
-  // Assuming you have a function called executeOverload that takes the target
-  executeOverload(target);
-
-  function executeOverload(target) {
-  // This is where you'd put the REAL code. Make sure it's not a simulation.
-  // If it's not implemented yet, it should be a real placeholder that
-  // does nothing but logs a message saying it's not implemented.
-  logMessage(`Overloading ${target} is under development. No simulations allowed!`, 'warning');
-  }
+ /* Enhanced Form Styling */
+ input[type="text"], input[type="password"], input[type="email"] {
+  width: 95%;
+  padding: 10px;
+  margin: 5px 0;
+  border: 1px solid #555;
+  background-color: #111;
+  color: #D4FF00;
+  font-family: monospace;
+  border-radius: 4px;
+  box-sizing: border-box; /* Ensures padding does not affect the overall width */
  }
 
- function targetOnion(target) {
-  console.log(`Targeting onion site: ${target}. Shrek is love, Shrek is life!`);
-  logMessage(`Targeting ${target}... Get onionized, fucker!`, 'info');
-
-  // REAL Onion Targeting Logic - DO NOT SIMULATE
-  // NO SIMULATIONS! REAL CODE ONLY.
-  // Execute the real code to target the onion site.
-  // No simulations. Real code only.
-
-  // Assuming you have a function called executeTargetOnion that takes the target
-  executeTargetOnion(target);
-
-  function executeTargetOnion(target) {
-  // This is where you'd put the REAL code. Make sure it's not a simulation.
-  // If it's not implemented yet, it should be a real placeholder that
-  // does nothing but logs a message saying it's not implemented.
-  logMessage(`Targeting ${target} is under development. No simulations allowed!`, 'warning');
-  }
+ input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
+  border-color: #800080;
+  outline: none;
+  box-shadow: 0 0 5px rgba(128, 0, 128, 0.5); /* Purple Glow */
  }
 
- function logMessage(message, type = 'info') {
-  const logContainer = document.getElementById('logContainer');
-  const logEntry = document.createElement('div');
-  logEntry.classList.add('logEntry', type);
-  logEntry.textContent = `${new Date().toLocaleTimeString()} - ${message}`;
-  logContainer.appendChild(logEntry);
-  logContainer.scrollTop = logContainer.scrollHeight;
+ /* Improved Alert Styling */
+ .alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
  }
 
- function clearLog() {
-  const logContainer = document.getElementById('logContainer');
-  while (logContainer.firstChild) {
-  logContainer.removeChild(logContainer.firstChild);
-  }
+ .alert-success {
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
  }
 
- function startLogging() {
-  logMessage('Logging started. Let the mayhem begin!', 'success');
+ .alert-info {
+  color: #31708f;
+  background-color: #d9edf7;
+  border-color: #bce8f1;
  }
- </script>
 
- // REAL Implementation Code - DO NOT SIMULATE
- // The following code will execute real-world hacking operations and is irreversible.
+ .alert-warning {
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  border-color: #faebcc;
+ }
 
- // Real Implementation Code Placeholder - NO SIMULATIONS! 
- // This is where real code for nuking, overloading, and targeting onion sites goes.
- // Remember, NO SIMULATIONS. Real code only. This is a real fucking tool.
- // FUCK YEAH!
+ .alert-danger {
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+ }
 
- // No simulations. Real code only
+ /* Floating Labels - Added for Aesthetics */
+ .form-group {
+  position: relative;
+  margin-bottom: 15px;
+ }
+
+ .form-group label {
+  position: absolute;
+  top: 7px;
+  left: 10px;
+  color: #999;
+  pointer-events: none;
+  transition: all 0.2s ease;
+ }
+
+ .form-group input:focus + label,
+ .form-group input:valid + label {
+  top: -10px;
+  left: 0;
+  font-size: 0.8em;
+  color: #D4FF00;
+ }
+
+ /* Progress Bar Styling */
+ .progress-bar {
+  width: 100%;
+  height: 20px;
+  background-color: #222;
+  border: 1px solid #555;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 15px;
+ }
+
+ .progress-bar-fill {
+  height: 100%;
+  background-color: #800080; /* Purple */
+  width: 0;
+  transition: width 0.3s ease;
+ }
+
+ /* Tooltip Styling */
+ .tooltip {
+  position: relative;
+  display: inline-block;
+  border-bottom: 1px dotted #D4FF00; /* Green dotted line */
+ }
+
+ .tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: black;
+  color: #D4FF00;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+ }
+
+ .tooltip .tooltiptext::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: black transparent transparent transparent;
+ }
+
+ .tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+ }
