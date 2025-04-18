@@ -1,3 +1,4 @@
+|
 name: Node.js CI
 
 on:
@@ -14,7 +15,6 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
     - uses: actions/checkout@v3
@@ -32,4 +32,8 @@ jobs:
     - name: Run Tests
       run: npm test --if-present
     - name: Deploy # Placeholder for deployment script
-      run: echo "Placeholder for deployment script"
+      run: |
+        echo "Placeholder for deployment script"
+        # This is where you would add steps to deploy your application
+        # For example, you might use a command like:
+        # npm run deploy
