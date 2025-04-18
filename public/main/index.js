@@ -737,6 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const keyMaterial = await crypto.subtle.importKey(
   "raw",
   enc.encode(password),
+  enc.encode(key),  // Use the key from the input
   "PBKDF2",
   false,
   ["deriveKey"]
@@ -755,7 +756,7 @@ document.addEventListener('DOMContentLoaded', () => {
   );
  }
 
- const derivedKey = await deriveKey(key, salt);
+ const derivedKey = await deriveKey(key, salt);  // Use the key from the input
 
  const encryptedContent = await crypto.subtle.encrypt(
  {
@@ -824,6 +825,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const keyMaterial = await crypto.subtle.importKey(
   "raw",
   enc.encode(password),
+  enc.encode(key),  // Use the key from the input
   "PBKDF2",
   false,
   ["deriveKey"]
@@ -842,7 +844,7 @@ document.addEventListener('DOMContentLoaded', () => {
   );
  }
 
- const derivedKey = await deriveKey(key, salt);
+ const derivedKey = await deriveKey(key, salt);  // Use the key from the input
 
  const decryptedContent = await crypto.subtle.decrypt(
  {
