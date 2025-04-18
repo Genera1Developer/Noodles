@@ -1,26 +1,21 @@
-name: Noodles CI/CD
- 
-
- on:
+|
+  name: Node.js CI
+  
+  on:
   push:
   branches: [ main ]
   pull_request:
   branches: [ main ]
- 
-
- jobs:
+  
+  jobs:
   build:
- 
-
   runs-on: ubuntu-latest
- 
-
+  
   strategy:
   matrix:
-  node-version: [16.x, 18.x, 20.x]
+  node-version: [16.x]
   # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
- 
-
+  
   steps:
   - uses: actions/checkout@v3
   - name: Use Node.js ${{ matrix.node-version }}
@@ -29,19 +24,10 @@ name: Noodles CI/CD
   node-version: ${{ matrix.node-version }}
   cache: 'npm'
   - name: Install dependencies
-  run: npm ci
-  - name: Run build script
+  run: npm install
+  - name: Lint
+  run: npm run lint --if-present
+  - name: Build
   run: npm run build --if-present
-  - name: Run tests (optional)
+  - name: Test
   run: npm test --if-present
- 
-
-  deploy:
-  needs: build
-  runs-on: ubuntu-latest
-  steps:
-  - name: Deploy to Production
-  run: |
-  echo "Deploying the code to production..."
-  # Add your deployment steps here, such as SSH or other deployment tools.
-  echo "Code deployed successfully!"
