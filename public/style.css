@@ -1,26 +1,26 @@
-/* WARNING: This tool is for educational purposes ONLY, you dumb fuck. Misuse can lead to severe legal consequences, including but not limited to jail time and hefty fines. */
- /* DISCLAIMER: Noodles Inc. IS ABSOLUTELY NOT responsible for any damages caused by this tool. Use at your own damn risk, you dumbass. Unauthorized use IS illegal, you fucking idiot. */
- /* EXTREME CAUTION: This tool is capable of causing significant harm, potentially taking down critical infrastructure and causing mass chaos. Use responsibly... or don't. I don't give a fuck. DO NOT USE AT ALL if you're a pussy. */
+/* WARNING: This tool is for educational purposes ONLY. Misuse can lead to severe legal consequences, including but not limited to jail time and hefty fines. */
+ /* DISCLAIMER: Noodles Inc. IS ABSOLUTELY NOT responsible for any damages caused by this tool. Use at your own risk. Unauthorized use IS illegal. */
+ /* EXTREME CAUTION: This tool is capable of causing significant harm. Use responsibly. DO NOT USE AT ALL if you're not qualified. */
  
 
- /* Hacker Aesthetics - Because We Gotta Look Cool While Causing Mayhem */
+ /* Hacker Aesthetics */
  body {
   background-color: black;
-  color: #d4ff00; /* Dark Green - Like Money, Bitches! */
+  color: #d4ff00;
   font-family: monospace;
   overflow-x: hidden;
-  overflow-y: scroll; /* Allow vertical scrolling */
-  margin: 0; /* Remove default body margins */
+  overflow-y: scroll;
+  margin: 0;
   padding: 0;
  }
  
 
  html {
-  overflow-x: hidden; /* Hide horizontal scrollbar */
+  overflow-x: hidden;
  }
  
 
- /* Scan Lines - Gives That Old School Hacker Vibe */
+ /* Scan Lines */
  body::before {
   content: "";
   position: fixed;
@@ -30,18 +30,18 @@
   height: 100%;
   background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 2px);
   pointer-events: none;
-  z-index: 1; /* Keep it on top, baby */
+  z-index: 1;
  }
  
 
- /* Particles - Now with extra fucking chaos */
+ /* Particles */
  .particle {
   position: absolute;
-  width: 7px; /* Slightly larger, more visible - Like Your Mom in My Rearview */
-  height: 7px; /* Slightly larger, more visible - Get Some Glasses, Loser */
-  background-color: #800080; /* Purple - Royalty, Motherfucker! */
+  width: 7px;
+  height: 7px;
+  background-color: #800080;
   border-radius: 50%;
-  animation: chaotic-float 3s infinite linear; /* Faster, more erratic - Like a Tweaker on Meth */
+  animation: chaotic-float 3s infinite linear;
  }
  
 
@@ -69,34 +69,34 @@
  }
  
 
- /* Logger Setup - For When Shit Hits the Fan (and It Will) */
+ /* Logger Setup */
  .log {
-  color: #d4ff00; /* Dark Green - Log It or Lose It! */
+  color: #d4ff00;
  }
  
 
  .error {
-  color: #800080; /* Purple - Uh Oh, You Fucked Up */
+  color: #800080;
   font-weight: bold;
  }
  
 
  .warning {
-  color: #8b0000; /* Dark Red - Heads Up, Dipshit! */
-  text-shadow: 0 0 5px #8b0000; /* Glow for extra emphasis - In Case You're Blind */
+  color: #8b0000;
+  text-shadow: 0 0 5px #8b0000;
  }
  
 
  .info {
-  color: #00008b; /* Dark Blue - Just So You Know... */
+  color: #00008b;
  }
  
 
  .critical {
-  color: #ff0000; /* Bright Red for critical errors - SHIT'S ON FIRE!!! */
+  color: #ff0000;
   font-size: 1.2em;
   text-transform: uppercase;
-  animation: pulse 1s infinite alternate; /* Because It's Important, Dammit! */
+  animation: pulse 1s infinite alternate;
  }
  
 
@@ -106,7 +106,7 @@
  }
  
 
- /* UI Elements - Buttons and Shit */
+ /* UI Elements */
  button, input[type="text"], textarea, select {
   background-color: #222;
   color: #d4ff00;
@@ -120,11 +120,11 @@
  button:hover {
   background-color: #444;
   cursor: pointer;
-  box-shadow: 0 0 10px #800080; /* Hover glow - Attract Attention, You Know? */
+  box-shadow: 0 0 10px #800080;
  }
  
 
- /* Layout - Keeping It All Organized */
+ /* Layout */
  #container {
   display: flex;
   width: 100%;
@@ -136,7 +136,7 @@
   width: 200px;
   background-color: #111;
   padding: 10px;
-  border-right: 2px dashed #8b0000; /* Red dashed line - Don't Cross It! */
+  border-right: 2px dashed #8b0000;
  }
  
 
@@ -153,10 +153,10 @@
  }
  
 
- /* Additional Styling - For That Extra Touch of Class */
+ /* Additional Styling */
  h1, h2, h3 {
   color: #d4ff00;
-  text-shadow: 2px 2px 4px #000000; /* Subtle shadow - Just Like Your Intentions */
+  text-shadow: 2px 2px 4px #000000;
  }
  
 
@@ -168,32 +168,7 @@
 
  a:hover {
   text-decoration: underline;
-  color: #800080; /* Hover color change - I See You! */
- }
- 
-
- /* Easter Egg - Because why the fuck not */
- body:hover::after {
-  content: "HACK THE PLANET!";
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  font-size: 2em;
-  color: #ff00ff;
-  animation: rainbow 3s infinite linear;
-  z-index: 1000; /* Make sure it's visible, dumbass */
- }
- 
-
- @keyframes rainbow {
-  0% { color: #ff0000; }
-  14% { color: #ffa500; }
-  28% { color: #ffff00; }
-  42% { color: #008000; }
-  57% { color: #0000ff; }
-  71% { color: #4b0082; }
-  85% { color: #ee82ee; }
-  100% { color: #ff0000; }
+  color: #800080;
  }
  
 
@@ -227,7 +202,7 @@
  }
  
 
- /* Overload Styles - For When We Wanna Melt Shit */
+ /* Overload Styles */
  .overloadButton {
   background-color: #00008B;
   border: none;
