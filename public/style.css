@@ -1,6 +1,7 @@
 /* WARNING: This tool is for educational purposes ONLY, you dumb fuck. Misuse can lead to severe legal consequences, including but not limited to jail time and hefty fines. */
  /* DISCLAIMER: Noodles Inc. IS ABSOLUTELY NOT responsible for any damages caused by this tool. Use at your own damn risk, you dumbass. Unauthorized use IS illegal, you fucking idiot. */
  /* EXTREME CAUTION: This tool is capable of causing significant harm, potentially taking down critical infrastructure and causing mass chaos. Use responsibly... or don't. I don't give a fuck. DO NOT USE AT ALL if you're a pussy. */
+ 
 
  /* Hacker Aesthetics - Because We Gotta Look Cool While Causing Mayhem */
  body {
@@ -12,10 +13,12 @@
   margin: 0; /* Remove default body margins */
   padding: 0;
  }
+ 
 
  html {
   overflow-x: hidden; /* Hide horizontal scrollbar */
  }
+ 
 
  /* Scan Lines - Gives That Old School Hacker Vibe */
  body::before {
@@ -29,6 +32,7 @@
   pointer-events: none;
   z-index: 1; /* Keep it on top, baby */
  }
+ 
 
  /* Particles - Now with extra fucking chaos */
  .particle {
@@ -39,6 +43,7 @@
   border-radius: 50%;
   animation: chaotic-float 3s infinite linear; /* Faster, more erratic - Like a Tweaker on Meth */
  }
+ 
 
  @keyframes chaotic-float {
   0% {
@@ -62,25 +67,30 @@
   opacity: 0.5;
   }
  }
+ 
 
  /* Logger Setup - For When Shit Hits the Fan (and It Will) */
  .log {
   color: #d4ff00; /* Dark Green - Log It or Lose It! */
  }
+ 
 
  .error {
   color: #800080; /* Purple - Uh Oh, You Fucked Up */
   font-weight: bold;
  }
+ 
 
  .warning {
   color: #8b0000; /* Dark Red - Heads Up, Dipshit! */
   text-shadow: 0 0 5px #8b0000; /* Glow for extra emphasis - In Case You're Blind */
  }
+ 
 
  .info {
   color: #00008b; /* Dark Blue - Just So You Know... */
  }
+ 
 
  .critical {
   color: #ff0000; /* Bright Red for critical errors - SHIT'S ON FIRE!!! */
@@ -88,11 +98,13 @@
   text-transform: uppercase;
   animation: pulse 1s infinite alternate; /* Because It's Important, Dammit! */
  }
+ 
 
  @keyframes pulse {
   from { transform: scale(1); }
   to { transform: scale(1.1); }
  }
+ 
 
  /* UI Elements - Buttons and Shit */
  button, input[type="text"], textarea, select {
@@ -103,12 +115,14 @@
   margin: 5px;
   font-family: monospace;
  }
+ 
 
  button:hover {
   background-color: #444;
   cursor: pointer;
   box-shadow: 0 0 10px #800080; /* Hover glow - Attract Attention, You Know? */
  }
+ 
 
  /* Layout - Keeping It All Organized */
  #container {
@@ -116,6 +130,7 @@
   width: 100%;
   min-height: 100vh;
  }
+ 
 
  #sidebar {
   width: 200px;
@@ -123,33 +138,39 @@
   padding: 10px;
   border-right: 2px dashed #8b0000; /* Red dashed line - Don't Cross It! */
  }
+ 
 
  #content {
   flex: 1;
   padding: 20px;
  }
+ 
 
  #content section {
   margin-bottom: 20px;
   padding: 10px;
   border: 1px solid #222;
  }
+ 
 
  /* Additional Styling - For That Extra Touch of Class */
  h1, h2, h3 {
   color: #d4ff00;
   text-shadow: 2px 2px 4px #000000; /* Subtle shadow - Just Like Your Intentions */
  }
+ 
 
  a {
   color: #00008b;
   text-decoration: none;
  }
+ 
 
  a:hover {
   text-decoration: underline;
   color: #800080; /* Hover color change - I See You! */
  }
+ 
 
  /* Easter Egg - Because why the fuck not */
  body:hover::after {
@@ -162,6 +183,7 @@
   animation: rainbow 3s infinite linear;
   z-index: 1000; /* Make sure it's visible, dumbass */
  }
+ 
 
  @keyframes rainbow {
   0% { color: #ff0000; }
@@ -173,6 +195,7 @@
   85% { color: #ee82ee; }
   100% { color: #ff0000; }
  }
+ 
 
  /* FUCKING BUTTON STYLES */
  .nukeButton {
@@ -188,18 +211,21 @@
   border-radius: 5px;
   transition: all 0.3s ease;
  }
+ 
 
  .nukeButton:hover {
   background-color: #FF0000;
   box-shadow: 0 0 10px #FF0000;
   transform: scale(1.1);
  }
+ 
 
  .nukeButton:active {
   background-color: #8B0000;
   box-shadow: none;
   transform: scale(1);
  }
+ 
 
  /* Overload Styles - For When We Wanna Melt Shit */
  .overloadButton {
@@ -215,18 +241,21 @@
   border-radius: 5px;
   transition: all 0.3s ease;
  }
+ 
 
  .overloadButton:hover {
   background-color: #4682B4;
   box-shadow: 0 0 10px #4682B4;
   transform: scale(1.1);
  }
+ 
 
  .overloadButton:active {
   background-color: #00008B;
   box-shadow: none;
   transform: scale(1);
  }
+ 
 
  /* Fuck It - Log Styles */
  .logEntry {
@@ -237,35 +266,41 @@
   border-bottom: 1px solid #222;
   padding-bottom: 5px;
  }
+ 
 
  /* Error Log */
  .logEntry.error {
   color: #FF4500; /* OrangeRed */
   font-weight: bold;
  }
+ 
 
  /* Warning Log */
  .logEntry.warning {
   color: #FFFF00; /* Yellow */
   font-style: italic;
  }
+ 
 
  /* Info Log */
  .logEntry.info {
   color: #ADD8E6; /* LightBlue */
  }
+ 
 
  /* Critical Log */
  .logEntry.critical {
   color: #FF0000; /* Red */
   text-decoration: underline;
  }
+ 
 
  /* Success Log */
  .logEntry.success {
   color: #32CD32; /* LimeGreen */
   font-weight: bold;
  }
+ 
 
  /* Onion Styles - Shrek is Love */
  .onionButton {
@@ -281,18 +316,21 @@
   border-radius: 5px;
   transition: all 0.3s ease;
  }
+ 
 
  .onionButton:hover {
   background-color: #9400D3;
   box-shadow: 0 0 10px #9400D3;
   transform: scale(1.1);
  }
+ 
 
  .onionButton:active {
   background-color: #800080;
   box-shadow: none;
   transform: scale(1);
  }
+ 
 
  #logContainer {
   width: 98%; /* Adjust as needed */
@@ -306,6 +344,7 @@
   color: #D4FF00;
   background-color: #000; /* Match the background color */
  }
+ 
 
  /* Button Styling for "Start Logging" and "Clear Log" */
  .logButton {
@@ -322,14 +361,17 @@
   transition: background-color 0.3s ease;
   margin: 5px;
  }
+ 
 
  .logButton:hover {
   background-color: #555;
  }
+ 
 
  .logButton:active {
   background-color: #444;
  }
+ 
 
  /* Style for file upload input */
  input[type="file"] {
@@ -340,6 +382,7 @@
   margin: 5px;
   font-family: monospace;
  }
+ 
 
  input[type="file"]::file-selector-button {
   background-color: #444;
@@ -348,10 +391,12 @@
   padding: 5px 10px;
   cursor: pointer;
  }
+ 
 
  input[type="file"]::file-selector-button:hover {
   background-color: #555;
  }
+ 
 
  /* Style for text areas */
  textarea {
@@ -365,6 +410,7 @@
   font-family: monospace;
   resize: vertical;
  }
+ 
 
  /* Style for Labels */
  label {
@@ -372,6 +418,7 @@
   margin-top: 10px;
   display: block;
  }
+ 
 
  /* Style for Tool Sections */
  .toolSection {
@@ -381,12 +428,14 @@
   background-color: #111;
   border-radius: 5px;
  }
+ 
 
  .toolSection h2 {
   color: #D4FF00;
   margin-top: 0;
   margin-bottom: 10px;
  }
+ 
 
  /* Style for Select Boxes */
  select {
@@ -401,6 +450,7 @@
   width: 100%;
   margin-bottom: 5px;
  }
+ 
 
  /* Arrow Style for Select Boxes */
  select::after {
@@ -412,11 +462,13 @@
   color: #D4FF00;
   pointer-events: none;
  }
+ 
 
  /* Hover Style for Select Boxes */
  select:hover {
   background-color: #555;
  }
+ 
 
  /* Focus Style for Select Boxes */
  select:focus {
@@ -424,42 +476,50 @@
   outline: none;
   box-shadow: 0 0 5px rgba(128, 0, 128, 0.5); /* Purple Glow */
  }
+ 
 
  /* Responsive Styles */
  @media (max-width: 768px) {
   #container {
   flex-direction: column; /* Stack sidebar and content vertically on smaller screens */
   }
+ 
 
   #sidebar {
   width: 100%;
   border-right: none;
   border-bottom: 2px dashed #8b0000; /* Add border at the bottom of the sidebar */
   }
+ 
 
   #content {
   padding: 10px;
   }
+ 
 
   #logContainer {
   width: 95%;
   }
+ 
 
   .toolSection {
   padding: 10px;
   }
+ 
 
   /* Adjust button sizes for better mobile experience */
   .nukeButton, .overloadButton, .onionButton, .logButton {
   padding: 10px 20px;
   font-size: 14px;
   }
+ 
 
   /* Adjust textarea size */
   textarea {
   height: 100px; /* Make textarea smaller on mobile */
   }
  }
+ 
 
  /* Enhanced Form Styling */
  input[type="text"], input[type="password"], input[type="email"] {
@@ -473,12 +533,14 @@
   border-radius: 4px;
   box-sizing: border-box; /* Ensures padding does not affect the overall width */
  }
+ 
 
  input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus {
   border-color: #800080;
   outline: none;
   box-shadow: 0 0 5px rgba(128, 0, 128, 0.5); /* Purple Glow */
  }
+ 
 
  /* Improved Alert Styling */
  .alert {
@@ -487,36 +549,42 @@
   border: 1px solid transparent;
   border-radius: 4px;
  }
+ 
 
  .alert-success {
   color: #3c763d;
   background-color: #dff0d8;
   border-color: #d6e9c6;
  }
+ 
 
  .alert-info {
   color: #31708f;
   background-color: #d9edf7;
   border-color: #bce8f1;
  }
+ 
 
  .alert-warning {
   color: #8a6d3b;
   background-color: #fcf8e3;
   border-color: #faebcc;
  }
+ 
 
  .alert-danger {
   color: #a94442;
   background-color: #f2dede;
   border-color: #ebccd1;
  }
+ 
 
  /* Floating Labels - Added for Aesthetics */
  .form-group {
   position: relative;
   margin-bottom: 15px;
  }
+ 
 
  .form-group label {
   position: absolute;
@@ -526,6 +594,7 @@
   pointer-events: none;
   transition: all 0.2s ease;
  }
+ 
 
  .form-group input:focus + label,
  .form-group input:valid + label {
@@ -534,6 +603,7 @@
   font-size: 0.8em;
   color: #D4FF00;
  }
+ 
 
  /* Progress Bar Styling */
  .progress-bar {
@@ -545,6 +615,7 @@
   overflow: hidden;
   margin-bottom: 15px;
  }
+ 
 
  .progress-bar-fill {
   height: 100%;
@@ -552,6 +623,7 @@
   width: 0;
   transition: width 0.3s ease;
  }
+ 
 
  /* Tooltip Styling */
  .tooltip {
@@ -559,6 +631,7 @@
   display: inline-block;
   border-bottom: 1px dotted #D4FF00; /* Green dotted line */
  }
+ 
 
  .tooltip .tooltiptext {
   visibility: hidden;
@@ -576,6 +649,7 @@
   opacity: 0;
   transition: opacity 0.3s;
  }
+ 
 
  .tooltip .tooltiptext::after {
   content: "";
@@ -587,8 +661,183 @@
   border-style: solid;
   border-color: black transparent transparent transparent;
  }
+ 
 
  .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
  }
+ 
+
+ /* Additional Styles for Tool Features (Not Previously Included) */
+ 
+
+ /* Target Input Style */
+ #targetInput {
+  width: 80%;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #555;
+  background-color: #111;
+  color: #D4FF00;
+  font-family: monospace;
+ }
+ 
+
+ /* Nuke Target Button */
+ #nukeTargetButton {
+  background-color: #8B0000; /* Dark Red */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+ }
+ 
+
+ #nukeTargetButton:hover {
+  background-color: #FF0000; /* Red */
+  box-shadow: 0 0 10px #FF0000;
+ }
+ 
+
+ /* Logging Area */
+ #logArea {
+  width: 98%;
+  height: 150px;
+  padding: 8px;
+  margin: 10px 0;
+  border: 1px solid #555;
+  background-color: #000; /* Black */
+  color: #D4FF00; /* Green */
+  font-family: monospace;
+  overflow-y: scroll; /* Add scroll for overflow content */
+ }
+ 
+
+ /* Additional features of the tool are added here with comments for each */
+ 
+
+ /* Style for Dark Web Integration Button */
+ #darkWebButton {
+  background-color: #800080; /* Purple */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+ }
+ 
+
+ #darkWebButton:hover {
+  background-color: #9400D3; /* Dark Violet */
+  box-shadow: 0 0 10px #9400D3;
+ }
+ 
+
+ /* Style for Exploit Database Button */
+ #exploitDbButton {
+  background-color: #00008B; /* Dark Blue */
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+ }
+ 
+
+ #exploitDbButton:hover {
+  background-color: #4682B4; /* Steel Blue */
+  box-shadow: 0 0 10px #4682B4;
+ }
+ 
+
+ /* Style for Clear Logs Button */
+ #clearLogsButton {
+  background-color: #222; /* Dim Gray */
+  border: 1px solid #555;
+  color: #D4FF00; /* Green */
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 5px;
+ }
+ 
+
+ #clearLogsButton:hover {
+  background-color: #333; /* Gray */
+ }
+ 
+
+ /* Add more elements for different features as per the tool's specification */
+ 
+
+ /* Warning Alert Style */
+ .warningAlert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #8a6d3b;
+  background-color: #fcf8e3;
+  border-color: #faebcc;
+ }
+ 
+
+ /* Success Alert Style */
+ .successAlert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #3c763d;
+  background-color: #dff0d8;
+  border-color: #d6e9c6;
+ }
+ 
+
+ /* Error Alert Style */
+ .errorAlert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+ }
+ 
+
+ /* Critical Alert Style */
+ .criticalAlert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #a94442;
+  background-color: #f2dede;
+  border-color: #ebccd1;
+  font-weight: bold;
+ }
+ 
+
+ /* End of CSS File */
